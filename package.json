@@ -1,0 +1,27 @@
+{
+  "name": "music-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "install": "lerna bootstrap",
+    "build": "lerna run build && node copy.js",
+    "clean": "lerna run clean",
+    "compile": "lerna run compile",
+    "start": "lerna run start:dev --no-sort --parallel",
+    "publish": "lerna publish",
+    "test": "lerna run test"
+  },
+  "devDependencies": {
+    "husky": "^6.0.0",
+    "lerna": "^4.0.0"
+  },
+  "dependencies": {
+    "fs-extra": "^9.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "echo git hooks are awesome!"
+    }
+  }
+}
