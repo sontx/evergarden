@@ -1,8 +1,11 @@
 {
     "cSpell.words": [
+        "browserslist",
         "commitlint",
         "evergarden",
+        "nestjs",
         "prebuild",
-        "reduxjs"
+        "reduxjs",
+        "typeorm"
     ]
 }

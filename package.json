@@ -9,8 +9,11 @@
     "clean": "lerna run clean",
     "compile": "lerna run compile",
     "start": "lerna run start:dev --no-sort --parallel",
+    "start:api": "lerna run start:dev --ignore=@evergarden/webapp --parallel",
+    "start:webapp": "lerna run start:dev --ignore=@evergarden/api --parallel",
     "publish": "lerna publish",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "killnode": "taskkill /im node.exe /t /f"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
