@@ -6,7 +6,9 @@ import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.use(cookieParser());
+  app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
     .setTitle("Evergarden APIs")
