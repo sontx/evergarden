@@ -1,15 +1,10 @@
-import React from 'react';
-import {Button, IntlProvider as RSIntlProvider} from 'rsuite';
-import locales from './locales';
+import React from "react";
+import { IntlProvider as RSIntlProvider } from "rsuite";
+import locales from "./locales";
 import enGB from "rsuite/lib/IntlProvider/locales/en_GB";
-import {IntlProvider} from "react-intl";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-import {Login} from "./features/login/Login";
+import { IntlProvider } from "react-intl";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Auth } from "./features/auth/Auth";
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
@@ -17,11 +12,9 @@ const App = () => (
       <Router>
         <Switch>
           <Route path="/login">
-            <Login></Login>
+            <Auth/>
           </Route>
-          <Route path="*">
-            no match
-          </Route>
+          <Route path="*">no match</Route>
         </Switch>
       </Router>
     </RSIntlProvider>

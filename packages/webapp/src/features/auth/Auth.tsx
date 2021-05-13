@@ -1,18 +1,22 @@
 import { Alert, Button, Icon, Panel } from "rsuite";
 import { FormattedMessage, useIntl } from "react-intl";
 
-import "./login.less";
+import "./auth.less";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { loginGoogleAsync, selectLoginError, selectLoginType, selectStatus } from "./loginSlice";
+import { loginGoogleAsync, selectLoginError, selectLoginType, selectStatus } from "./authSlice";
 import { useCallback, useEffect } from "react";
+import { useHistory } from 'react-router-dom';
 
-export function Login() {
+export function Auth() {
   const intl = useIntl();
+
   const status = useAppSelector(selectStatus);
   const loginType = useAppSelector(selectLoginType);
   const loginError = useAppSelector(selectLoginError);
 
+  const history = useHistory();
   const dispatch = useAppDispatch();
+
   const handleLoginGoogle = useCallback(() => {
     dispatch(loginGoogleAsync());
   }, [dispatch]);
@@ -20,6 +24,8 @@ export function Login() {
   useEffect(() => {
     if (status === "failed") {
       Alert.error(loginError || intl.formatMessage({ id: "loginFailedMessage" }), 5000);
+    } else if (status === "success") {
+      history.push("/");
     }
   }, [loginError, status]);
 

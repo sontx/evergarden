@@ -27,4 +27,7 @@ export class User {
 
   @Column({nullable: true, type: "string"})
   role?: Role;
+
+  @Column({nullable: true, type: "string"})
+  photoUrl?: string;
 }

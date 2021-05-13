@@ -4,7 +4,7 @@ export default {
   error500: 'Server error',
   loginWelcome: "Welcome to Evergarden",
   loginSlogan: "The next story reading generation",
-  loginWithFacebook: "Login with Facebook",
-  loginWithGoogle: "Login with Google",
+  loginWithFacebook: "Auth with Facebook",
+  loginWithGoogle: "Auth with Google",
   loginFailedMessage: "Oop! your login information was wrong, let try again ;)"
 };

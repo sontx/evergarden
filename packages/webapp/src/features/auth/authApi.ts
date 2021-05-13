@@ -1,6 +1,5 @@
 import { AuthUser } from "@evergarden/common";
-import axios, {AxiosError} from "axios";
-import * as ls from "local-storage";
+import axios from "axios";
 import Logger from "js-logger";
 
 export interface LoggedInData {
@@ -8,7 +7,6 @@ export interface LoggedInData {
 }
 
 export async function logout() {
-  ls.remove("currentUser");
   try {
     return await axios.post("/api/auth/logout");
   } catch (error) {
@@ -25,8 +23,8 @@ async function authenticate(token: string): Promise<AuthUser> {
   return response.data;
 }
 
-export function loginWithGoogle(): Promise<{ user?: AuthUser, success: boolean, error?: AxiosError } | null> {
-  return new Promise<{ user?: AuthUser, success: boolean, error?: AxiosError } | null>((resolve) => {
+export function loginWithGoogle(): Promise<AuthUser | null> {
+  return new Promise<AuthUser | null>((resolve, reject) => {
     const width = 600;
     const height = 600;
     const left = window.innerWidth / 2 - width / 2;
@@ -52,13 +50,15 @@ export function loginWithGoogle(): Promise<{ user?: AuthUser, success: boolean, 
         if (timer >= 0) {
           window.clearInterval(timer);
         }
+        popup?.close();
+
         const { token } = message.data || {};
         try {
           const authenticatedUser = await authenticate(token);
-          resolve({user: authenticatedUser, success: true});
+          resolve(authenticatedUser);
         } catch (e) {
           Logger.error(e);
-          resolve({error: e, success: false});
+          reject(e.message);
         }
         window.removeEventListener("message", listener);
       }

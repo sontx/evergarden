@@ -1,4 +1,4 @@
-import {AuthUser, IdType, JwtPayload} from "@evergarden/common";
+import { AuthUser, IdType, JwtPayload } from "@evergarden/common";
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -17,7 +17,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const { email, fullName } = req.user || {};
+    const { email, fullName, picture } = req.user || {};
     this.logger.debug(`Lookup ${email} in database...`);
     let found = await this.userService.getByEmail(email);
     this.logger.debug(`${found ? "Found" : "Not found"} ${email} in database!`);
@@ -28,14 +28,22 @@ export class AuthService {
         fullName,
         role: "user",
         provider: "google",
+        photoUrl: picture,
       });
       this.logger.debug(`Created a new user for ${email} with id ${found.id}`);
     }
     return found;
   }
 
-  getAuthenticatedUser(user): AuthUser {
-    return user && {id: user.id, email: user.email, fullName: user.fullName};
+  getAuthenticatedUser(user: User): AuthUser {
+    return (
+      user && {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        photoUrl: user.photoUrl,
+      }
+    );
   }
 
   getAccessToken(user: User): string {
@@ -43,7 +51,7 @@ export class AuthService {
     const expires = `${this.configService.get("jwt.auth.expires")}`;
     return this.jwtService.sign(payload, {
       secret: this.configService.get("jwt.auth.secret"),
-      expiresIn: expires
+      expiresIn: expires,
     });
   }
 
@@ -53,11 +61,11 @@ export class AuthService {
   }
 
   getCookieWithJwtRefreshToken(userId: IdType): { cookie: string; token: string } {
-    const payload: Partial<JwtPayload> = { id: userId};
+    const payload: Partial<JwtPayload> = { id: userId };
     const expires = `${this.configService.get("jwt.refresh.expires")}`;
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get("jwt.refresh.secret"),
-      expiresIn: expires
+      expiresIn: expires,
     });
     const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${ms(expires) / 1000}`;
     return {

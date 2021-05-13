@@ -34,7 +34,7 @@ export class AuthController {
     this.logger.debug("Accept redirect request from google");
     const user = await this.authService.googleLogin(req);
     const accessToken = this.authService.getAccessToken(user);
-    let responseHTML = `<html><head><title>Logged in</title></head><body></body><script>res = %value%; window.opener.postMessage(res, "*");window.close();</script></html>`;
+    let responseHTML = `<html><head><title>Logged in</title></head><body></body><script>res = %value%; window.opener.postMessage(res, "*");</script></html>`;
     responseHTML = responseHTML.replace(
       "%value%",
       JSON.stringify({
@@ -61,14 +61,15 @@ export class AuthController {
     const accessToken = this.authService.getAccessToken(user);
     const accessTokenCookie = this.authService.getAccessTokenCookie(accessToken);
     res.setHeader("Set-Cookie", accessTokenCookie);
-    res.send(this.authService.getCookieWithJwtRefreshToken(req.user))
+    res.send(this.authService.getAuthenticatedUser(req.user))
   }
 
   @Get()
   @UseGuards(JwtGuard)
   async authenticate(@Req() req, @Res() res: Response) {
     const id = req.user.id;
-    if (!id) {
+    const hasAuthCookie = !!req.headers["Authentication"];
+    if (!id || hasAuthCookie) {
       throw new UnauthorizedException();
     }
 
@@ -79,7 +80,9 @@ export class AuthController {
     await this.userService.setCurrentRefreshToken(refreshToken, id);
 
     res.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
-    res.send(this.authService.getCookieWithJwtRefreshToken(req.user));
+
+    const user = await this.userService.getById(id);
+    res.send(this.authService.getAuthenticatedUser(user));
   }
 
   @Post("logout")
