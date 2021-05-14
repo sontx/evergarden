@@ -1,6 +1,6 @@
 import { Exclude } from "class-transformer";
 import { Entity, ObjectIdColumn, Column, PrimaryGeneratedColumn } from "typeorm";
-import { IdType, Role } from "@evergarden/common";
+import { IdType, Role } from "@evergarden/shared";
 
 @Entity("users")
 export class User {

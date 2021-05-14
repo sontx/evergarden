@@ -1,4 +1,4 @@
-import { AuthUser } from "@evergarden/common";
+import { AuthUser } from "@evergarden/shared";
 import axios from "axios";
 import Logger from "js-logger";
 

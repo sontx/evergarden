@@ -15,7 +15,7 @@ export default () => ({
   jwt: {
     auth: {
       secret: "you never know",
-      expires: "60s"
+      expires: "60m"
     },
     refresh: {
       secret: "now you know",

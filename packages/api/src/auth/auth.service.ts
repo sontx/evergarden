@@ -1,4 +1,4 @@
-import { AuthUser, IdType, JwtPayload } from "@evergarden/common";
+import { AuthUser, IdType, JwtPayload } from "@evergarden/shared";
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";

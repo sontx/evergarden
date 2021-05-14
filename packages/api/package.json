@@ -16,7 +16,7 @@
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix"
   },
   "dependencies": {
-    "@evergarden/common": "1.0.0",
+    "@evergarden/shared": "1.0.0",
     "@nestjs/common": "^7.6.15",
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.6.15",
@@ -29,11 +29,13 @@
     "@nestjs/typeorm": "^7.1.5",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^9.0.1",
     "mongodb": "^3.6.6",
     "mongoose": "^5.12.7",
     "ms": "^2.1.3",
+    "nestjs-typeorm-paginate": "^2.4.1",
     "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
     "passport-google-oauth20": "^2.0.0",

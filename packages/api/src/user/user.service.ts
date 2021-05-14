@@ -1,4 +1,4 @@
-import { IdType } from "@evergarden/common";
+import { IdType } from "@evergarden/shared";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";

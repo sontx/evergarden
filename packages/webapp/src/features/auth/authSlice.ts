@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { loginWithGoogle, logout } from "./authApi";
-import { AuthUser } from "@evergarden/common";
+import { AuthUser } from "@evergarden/shared";
 
 export interface LoginState {
   status: "none" | "logging" | "success" | "failed";
