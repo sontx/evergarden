@@ -6,5 +6,9 @@ export default {
   loginSlogan: "The next story reading generation",
   loginWithFacebook: "Auth with Facebook",
   loginWithGoogle: "Auth with Google",
-  loginFailedMessage: "Oop! your login information was wrong, let try again ;)"
+  loginFailedMessage: "Oop! your login information was wrong, let try again ;)",
+  userMenuSettings: "Settings",
+  userMenuProfile: "Profile",
+  userMenuFollowing: "Following",
+  userMenuLogout: "Logout"
 };

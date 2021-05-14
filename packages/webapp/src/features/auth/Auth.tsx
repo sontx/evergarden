@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { loginGoogleAsync, selectLoginError, selectLoginType, selectStatus } from "./authSlice";
 import { useCallback, useEffect } from "react";
 import { useHistory } from 'react-router-dom';
+import {isMobile} from "react-device-detect";
 
 export function Auth() {
   const intl = useIntl();
@@ -33,6 +34,7 @@ export function Auth() {
     <div className="login-container">
       <Panel
         className="login-panel"
+        style={isMobile ? {border: "unset"} : {}}
         bordered
         header={
           <div>

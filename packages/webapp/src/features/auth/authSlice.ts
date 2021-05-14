@@ -1,7 +1,7 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {RootState} from "../../app/store";
-import {loginWithGoogle, logout} from "./authApi";
-import {AuthUser} from "@evergarden/common";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
+import { loginWithGoogle, logout } from "./authApi";
+import { AuthUser } from "@evergarden/common";
 
 export interface LoginState {
   status: "none" | "logging" | "success" | "failed";
@@ -21,14 +21,14 @@ export const loginGoogleAsync = createAsyncThunk("auth/google", async () => {
 
 export const logoutAsync = createAsyncThunk("auth/logout", async () => {
   await logout();
-})
+});
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {},
   extraReducers: {
-    [`${loginGoogleAsync.pending}`]: (state, { payload }) => {
+    [`${loginGoogleAsync.pending}`]: (state) => {
       state.loginError = undefined;
       state.status = "logging";
       state.loginType = "google";
@@ -47,11 +47,16 @@ export const authSlice = createSlice({
       state.loginError = payload;
       state.loginType = "none";
     },
-  }
+    [`${logoutAsync.fulfilled}`]: (state) => {
+      state.user = undefined;
+      state.status = "none";
+    },
+  },
 });
 
 export const selectStatus = (state: RootState) => state.login.status;
 export const selectLoginType = (state: RootState) => state.login.loginType;
 export const selectLoginError = (state: RootState) => state.login.loginError;
+export const selectUser = (state: RootState) => state.login.user;
 
 export default authSlice.reducer;
