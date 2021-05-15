@@ -2,9 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { loginWithGoogle, logout } from "./authApi";
 import { AuthUser } from "@evergarden/shared";
+import {ProcessingStatus} from "../../utils/types";
 
 export interface LoginState {
-  status: "none" | "logging" | "success" | "failed";
+  status: ProcessingStatus;
   loginType: "none" | "userpass" | "google" | "facebook";
   loginError?: string;
   user?: AuthUser;
@@ -30,7 +31,7 @@ export const authSlice = createSlice({
   extraReducers: {
     [`${loginGoogleAsync.pending}`]: (state) => {
       state.loginError = undefined;
-      state.status = "logging";
+      state.status = "processing";
       state.loginType = "google";
     },
     [`${loginGoogleAsync.fulfilled}`]: (state, { payload }) => {
@@ -43,7 +44,7 @@ export const authSlice = createSlice({
       state.loginType = "none";
     },
     [`${loginGoogleAsync.rejected}`]: (state, { payload }) => {
-      state.status = "failed";
+      state.status = "error";
       state.loginError = payload;
       state.loginType = "none";
     },

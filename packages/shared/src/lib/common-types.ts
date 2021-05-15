@@ -88,3 +88,5 @@ export interface PaginationResult<T> {
     currentPage: number;
   };
 }
+
+export type StoryCategory = "updated" | "hot";

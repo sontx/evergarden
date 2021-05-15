@@ -8,32 +8,42 @@ import {
   Req,
   UseGuards,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from "@nestjs/common";
 import { StoryService } from "./story.service";
-import {
-  CreateStoryDto,
-  GetStoryDto,
-  PaginationResult
-} from "@evergarden/shared";
+import { CreateStoryDto, GetStoryDto, PaginationResult, StoryCategory } from "@evergarden/shared";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { Role } from "../auth/role/roles.decorator";
-import {RolesGuard} from "../auth/role/roles.guard";
+import { RolesGuard } from "../auth/role/roles.guard";
+import { Role as RoleType } from "@evergarden/shared";
 
 @Controller("stories")
 export class StoryController {
   constructor(private readonly storyService: StoryService) {}
 
-  @Get("last-updated")
+  @Get()
   async getLastUpdated(
     @Query("page", ParseIntPipe) page = 1,
     @Query("limit", ParseIntPipe) limit = 10,
+    @Query("category") category: StoryCategory = "updated",
+    @Req() req,
   ): Promise<PaginationResult<GetStoryDto>> {
-    await new Promise(resolve => setTimeout(() => resolve(null), 5000));
-    return await this.storyService.getLastUpdatedStories({
+    await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
+
+    const pagination = {
       page,
       limit: limit > 100 ? 100 : limit,
-    });
+    };
+    const role = req.user && (req.user.role as RoleType);
+    const includeUnpublished = (role && role === "mod") || role === "admin";
+
+    if (category === "updated") {
+      return await this.storyService.getLastUpdatedStories(pagination, includeUnpublished);
+    } else if (category === "hot") {
+      return await this.storyService.getHotStories(pagination, includeUnpublished);
+    }
+
+    return this.storyService.getStories(pagination, undefined, includeUnpublished);
   }
 
   @Post()

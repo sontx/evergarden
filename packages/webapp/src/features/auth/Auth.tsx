@@ -23,7 +23,7 @@ export function Auth() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (status === "failed") {
+    if (status === "error") {
       Alert.error(loginError || intl.formatMessage({ id: "loginFailedMessage" }), 5000);
     } else if (status === "success") {
       history.push("/");
@@ -49,16 +49,16 @@ export function Auth() {
       >
         <div className="login-button-container">
           <Button
-            disabled={status === "logging"}
-            loading={loginType === "facebook" && status === "logging"}
+            disabled={status === "processing"}
+            loading={loginType === "facebook" && status === "processing"}
             color="blue"
             block
           >
             <Icon icon="facebook" /> <FormattedMessage id="loginWithFacebook" />
           </Button>
           <Button
-            disabled={status === "logging"}
-            loading={loginType === "google" && status === "logging"}
+            disabled={status === "processing"}
+            loading={loginType === "google" && status === "processing"}
             color="red"
             block
             onClick={handleLoginGoogle}

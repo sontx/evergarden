@@ -1,28 +1,11 @@
-import { GetStoryDto } from "@evergarden/shared";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchLastUpdatedStories } from "./lastUpdatedStoriesAPI";
+import { fetchLastUpdatedStories } from "./storiesAPI";
 import { RootState } from "../../app/store";
-
-export interface LastUpdatedStoriesState {
-  stories: GetStoryDto[];
-  status: "none" | "fetching" | "success" | "failed";
-  errorMessage?: string;
-  currentPage: number;
-  limitCount: number;
-  totalPages: number;
-}
-
-const initialState: LastUpdatedStoriesState = {
-  stories: [],
-  status: "none",
-  currentPage: 0,
-  limitCount: 100,
-  totalPages: 0,
-};
+import { initialState } from "./interfaces";
 
 export const fetchLastUpdatedStoriesAsync = createAsyncThunk(
   "last-updated-stories/fetch",
-  async (option: {page: number, limit: number}) => {
+  async (option: { page: number; limit: number }) => {
     return await fetchLastUpdatedStories(option.page, option.limit);
   },
 );
@@ -50,28 +33,32 @@ export const lastUpdatedStoriesSlice = createSlice({
   extraReducers: {
     [`${fetchLastUpdatedStoriesAsync.pending}`]: (state, action) => {
       state.errorMessage = undefined;
-      state.status = "fetching";
+      state.status = "processing";
     },
     [`${fetchLastUpdatedStoriesAsync.fulfilled}`]: (state, { payload }) => {
-      state.stories = payload.items.map((item: any) => {
-        if (Math.random() < 0.3) {
-          item.isFollowing = true;
-        }
-        return item;
-      });
+      const data = payload;
+      state.currentPage = data.meta.currentPage;
+      state.totalPages = data.meta.totalPages;
+      state.totalItems = data.meta.totalItems;
+      state.stories =
+        state.currentPage === 0 ? data.items : state.stories.concat(data.items);
       state.status = "success";
-      state.totalPages = Math.ceil(payload.meta.totalItems / state.limitCount);
     },
     [`${fetchLastUpdatedStoriesAsync.rejected}`]: (state, { payload }) => {
       state.errorMessage = payload?.message;
-      state.status = "failed";
+      state.status = "error";
     },
   },
 });
 
-export const selectStories = (state: RootState) => state.lastUpdatedStories.stories;
-export const selectCurrentPage = (state: RootState) => state.lastUpdatedStories.currentPage;
-export const selectLimitCount = (state: RootState) => state.lastUpdatedStories.limitCount;
+export const selectStories = (state: RootState) =>
+  state.lastUpdatedStories.stories;
+export const selectCurrentPage = (state: RootState) =>
+  state.lastUpdatedStories.currentPage;
+export const selectTotalItems = (state: RootState) =>
+  state.lastUpdatedStories.totalItems;
+export const selectStatus = (state: RootState) =>
+  state.lastUpdatedStories.status;
 
 export const { gotoPage, nextPage, backPage } = lastUpdatedStoriesSlice.actions;
 
