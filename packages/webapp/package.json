@@ -28,7 +28,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "redux-persist": "^6.0.0",
-    "rsuite": "^4.10.0",
+    "rsuite": "^4.10.1",
     "typescript": "^4.2.4"
   },
   "scripts": {

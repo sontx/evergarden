@@ -7,8 +7,9 @@ export default {
   loginWithFacebook: "Auth with Facebook",
   loginWithGoogle: "Auth with Google",
   loginFailedMessage: "Oop! your login information was wrong, let try again ;)",
-  userMenuSettings: "Settings",
   userMenuProfile: "Profile",
   userMenuFollowing: "Following",
+  userMenuMyStories: "My stories",
+  userMenuHistory: "History",
   userMenuLogout: "Logout"
 };

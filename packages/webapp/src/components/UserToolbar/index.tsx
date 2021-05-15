@@ -1,5 +1,15 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Avatar, Badge, Dropdown, Icon, Input, InputGroup, Nav } from "rsuite";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Divider,
+  Drawer,
+  Icon,
+  Input,
+  InputGroup,
+  Nav
+} from "rsuite";
 
 import "./index.less";
 import { useCallback, useState } from "react";
@@ -23,6 +33,7 @@ function SearchBox(props: { fillWidth?: boolean }) {
 
 export function UserToolbar() {
   const [showSearch, setShowSearch] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
   const user = useAppSelector(selectUser);
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -30,13 +41,18 @@ export function UserToolbar() {
   const handleShowSearch = useCallback(() => {
     setShowSearch((prevState) => !prevState);
   }, []);
+
   const handleLogin = useCallback(() => {
     history.push("/login");
   }, [history]);
-  const handleSettings = useCallback(() => {}, []);
+
   const handleLogout = useCallback(() => {
     dispatch(logoutAsync());
   }, [dispatch]);
+
+  const handleToggleDrawer = useCallback(() => {
+    setShowDrawer(!showDrawer);
+  }, [showDrawer]);
 
   return (
     <>
@@ -55,33 +71,13 @@ export function UserToolbar() {
                 <Icon size="lg" icon="bell" />
               </Badge>
             </Nav.Item>
-            <Dropdown
-              menuStyle={{ minWidth: "150px" }}
-              placement="bottomEnd"
-              renderTitle={() => (
-                <Nav.Item className="user-toolbar-avatar">
-                  <Avatar src={user.photoUrl} circle />
-                </Nav.Item>
-              )}
-            >
-              <Dropdown.Item>
-                <Icon size="lg" icon="user" /> <FormattedMessage id="userMenuProfile" />
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <Icon size="lg" icon="cog" /> <FormattedMessage id="userMenuSettings" />
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <Icon size="lg" icon="twinkle-star" /> <FormattedMessage id="userMenuFollowing" />
-              </Dropdown.Item>
-              <Dropdown.Item divider />
-              <Dropdown.Item onSelect={handleLogout}>
-                <Icon size="lg" icon="sign-out" /> <FormattedMessage id="userMenuLogout" />
-              </Dropdown.Item>
-            </Dropdown>
+            <Nav.Item className="user-toolbar-avatar" onSelect={handleToggleDrawer}>
+              <Avatar src={user.photoUrl} circle />
+            </Nav.Item>
           </>
         ) : (
           <>
-            <Nav.Item className="user-toolbar-icon" onSelect={handleSettings}>
+            <Nav.Item className="user-toolbar-icon">
               <Icon size="lg" icon="cog" />
             </Nav.Item>
             <Nav.Item className="user-toolbar-icon" onSelect={handleLogin}>
@@ -90,6 +86,51 @@ export function UserToolbar() {
           </>
         )}
       </Nav>
+      {user && (
+        <Drawer keyboard full={!isDesktop} placement="right" show={showDrawer} onHide={handleToggleDrawer}>
+          <Drawer.Header>
+            <Drawer.Title style={{ display: "flex" }}>
+              <Avatar src={user.photoUrl} circle />
+              <div style={{ marginLeft: "8px" }}>
+                <div>{user.fullName}</div>
+                <span className="user-toolbar-drawer-subtle">{user.email}</span>
+              </div>
+            </Drawer.Title>
+          </Drawer.Header>
+          <Drawer.Body>
+            <Button block size="lg">
+              <span>
+                <Icon size="lg" icon="star" />
+              </span>
+              <FormattedMessage id="userMenuFollowing"/>
+            </Button>
+            <Button block size="lg">
+              <span>
+                <Icon size="lg" icon="address-book" />
+              </span>
+              <FormattedMessage id="userMenuMyStories"/>
+            </Button>
+            <Button block size="lg">
+              <span>
+                <Icon size="lg" icon="history" />
+              </span>
+              <FormattedMessage id="userMenuHistory"/>
+            </Button>
+            <Divider/>
+            <Button block size="lg">
+              <span>
+                <Icon size="lg" icon="user" />
+              </span>
+              <FormattedMessage id="userMenuProfile"/>
+            </Button>
+          </Drawer.Body>
+          <Drawer.Footer style={{ margin: 0 }}>
+            <Button onClick={handleLogout} block className="user-toolbar-logout-button">
+              <Icon icon="sign-out" /> <FormattedMessage id="userMenuLogout" />
+            </Button>
+          </Drawer.Footer>
+        </Drawer>
+      )}
       {showSearch && <SearchBox fillWidth />}
     </>
   );
