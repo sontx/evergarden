@@ -1,9 +1,13 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
+  NotFoundException,
+  Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -11,7 +15,7 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { StoryService } from "./story.service";
-import { CreateStoryDto, GetStoryDto, PaginationResult, StoryCategory } from "@evergarden/shared";
+import { CreateStoryDto, GetStoryDto, PaginationResult, StoryCategory, UpdateStoryDto } from "@evergarden/shared";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { Role } from "../auth/role/roles.decorator";
 import { RolesGuard } from "../auth/role/roles.guard";
@@ -22,7 +26,7 @@ export class StoryController {
   constructor(private readonly storyService: StoryService) {}
 
   @Get()
-  async getLastUpdated(
+  async getStories(
     @Query("page", ParseIntPipe) page = 1,
     @Query("limit", ParseIntPipe) limit = 10,
     @Query("category") category: StoryCategory = "updated",
@@ -46,6 +50,15 @@ export class StoryController {
     return this.storyService.getStories(pagination, undefined, includeUnpublished);
   }
 
+  @Get(":id")
+  async getStory(@Param("id") id: string): Promise<GetStoryDto> {
+    const story = await this.storyService.getStory(id);
+    if (story) {
+      return story;
+    }
+    throw new NotFoundException();
+  }
+
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
   @Role("admin")
@@ -53,4 +66,23 @@ export class StoryController {
   addStory(@Body() story: CreateStoryDto, @Req() req): Promise<GetStoryDto> {
     return this.storyService.addStory(story, req.user);
   }
+
+  @Put(":id")
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Role("user")
+  @UseGuards(JwtGuard, RolesGuard)
+  async updateStory(@Param("id") id: string, @Body() story: UpdateStoryDto, @Req() req): Promise<GetStoryDto> {
+    const currentStory = await this.storyService.getStory(id);
+    if (currentStory) {
+      const isUploader = req.user.id === currentStory.uploadBy;
+      const isAdminOrMod = req.user.role === "admin" || req.user.role === "mod";
+      if (isUploader || isAdminOrMod) {
+        return this.storyService.updateStory(id, story, req.user);
+      }
+      throw new ForbiddenException();
+    } else {
+      throw new NotFoundException();
+    }
+  }
+
 }

@@ -45,4 +45,7 @@ export class Story {
 
   @Column({type: "string", nullable: false})
   uploadBy: IdType;
+
+  @Column({type: "string", nullable: false})
+  updatedBy: IdType;
 }

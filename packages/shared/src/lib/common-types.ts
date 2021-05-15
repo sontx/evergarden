@@ -39,6 +39,8 @@ export interface GetStoryDto {
   rating?: number;
   lastChapter?: number;
   published?: boolean;
+  uploadBy: IdType;
+  updatedBy: IdType;
 }
 
 export class CreateStoryDto {
@@ -72,6 +74,8 @@ export class CreateStoryDto {
   @IsBoolean()
   published?: boolean;
 }
+
+export type UpdateStoryDto = Omit<CreateStoryDto, "url">;
 
 export interface PaginationOptions {
   page: number;

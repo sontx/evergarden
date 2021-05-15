@@ -1,11 +1,21 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, Repository } from "typeorm";
 import { Story } from "./story.entity";
-import { AuthUser, CreateStoryDto, GetStoryDto, PaginationOptions, PaginationResult } from "@evergarden/shared";
+import {
+  AuthUser,
+  CreateStoryDto,
+  GetStoryDto,
+  IdType,
+  PaginationOptions,
+  PaginationResult,
+  UpdateStoryDto,
+} from "@evergarden/shared";
 
 @Injectable()
 export class StoryService {
+  private readonly logger = new Logger(StoryService.name);
+
   constructor(@InjectRepository(Story) private storyRepository: Repository<Story>) {}
 
   async getStories(
@@ -13,22 +23,27 @@ export class StoryService {
     findOption?: FindManyOptions<Story>,
     includeUnpublished?: boolean,
   ): Promise<PaginationResult<GetStoryDto>> {
-    const result = await this.storyRepository.findAndCount({
-      ...(findOption || {}),
-      where: includeUnpublished ? undefined : { published: true },
-      take: options.limit,
-      skip: options.page * options.limit,
-    });
-    return {
-      items: result[0].map(this.toDto),
-      meta: {
-        currentPage: options.page,
-        itemsPerPage: options.limit,
-        totalItems: result[1],
-        itemCount: result[0].length,
-        totalPages: Math.ceil(result[1] / options.limit),
-      },
-    };
+    try {
+      const result = await this.storyRepository.findAndCount({
+        ...(findOption || {}),
+        where: includeUnpublished ? undefined : { published: true },
+        take: options.limit,
+        skip: options.page * options.limit,
+      });
+      return {
+        items: result[0].map(this.toDto),
+        meta: {
+          currentPage: options.page,
+          itemsPerPage: options.limit,
+          totalItems: result[1],
+          itemCount: result[0].length,
+          totalPages: Math.ceil(result[1] / options.limit),
+        },
+      };
+    } catch (e) {
+      this.logger.warn("Error while querying stories", e);
+      throw new BadRequestException();
+    }
   }
 
   async getLastUpdatedStories(
@@ -72,14 +87,47 @@ export class StoryService {
       thumbnail: story.thumbnail,
       title: story.title,
       view: story.view,
+      uploadBy: story.uploadBy,
+      updatedBy: story.updatedBy,
     };
   }
 
   async addStory(story: CreateStoryDto, user: AuthUser): Promise<GetStoryDto> {
-    const newStory = await this.storyRepository.create(story);
-    newStory.updated = new Date();
-    newStory.uploadBy = user.id;
-    const savedStory = await this.storyRepository.save(newStory);
-    return this.toDto(savedStory);
+    try {
+      const newStory = await this.storyRepository.create(story);
+      const savedStory = await this.storyRepository.save({
+        ...newStory,
+        updated: new Date(),
+        uploadBy: user.id,
+        updatedBy: user.id,
+      });
+      return this.toDto(savedStory);
+    } catch (e) {
+      this.logger.warn("Error while adding new story", e);
+      throw new BadRequestException();
+    }
+  }
+
+  async getStory(id: IdType): Promise<GetStoryDto | null> {
+    try {
+      const story = await this.storyRepository.findOne(id);
+      return story ? this.toDto(story) : null;
+    } catch (e) {
+      this.logger.warn(`Error while querying story: ${id}`, e);
+      throw new BadRequestException();
+    }
+  }
+
+  async updateStory(id: IdType, story: UpdateStoryDto, user: AuthUser): Promise<GetStoryDto> {
+    try {
+      await this.storyRepository.update(id, {
+        ...story,
+        updatedBy: user.id,
+      });
+      return this.getStory(id);
+    } catch (e) {
+      this.logger.warn(`Error while updating story: ${id}`, e);
+      throw new BadRequestException();
+    }
   }
 }
