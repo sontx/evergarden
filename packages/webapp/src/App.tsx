@@ -1,22 +1,12 @@
 import React from "react";
-import {
-  Avatar,
-  Container, Content,
-  Dropdown,
-  Header,
-  Icon,
-  IntlProvider as RSIntlProvider,
-  Nav,
-  Navbar
-} from "rsuite";
+import { Container, Content, IntlProvider as RSIntlProvider } from "rsuite";
 import locales from "./locales";
 import enGB from "rsuite/lib/IntlProvider/locales/en_GB";
-import {FormattedMessage, IntlProvider} from "react-intl";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import {Auth} from "./features/auth/Auth";
-
-import logo from "./images/logo.png";
-import {UserToolbar} from "./features/auth/UserToolbar";
+import { IntlProvider } from "react-intl";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Auth } from "./features/auth/Auth";
+import { LastUpdatedStories } from "./features/last-updated-stories/LastUpdatedStories";
+import {AppHeader} from "./components/AppHeader";
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
@@ -28,19 +18,9 @@ const App = () => (
           </Route>
           <Route path="/">
             <Container>
-              <Header>
-                <Navbar appearance="subtle">
-                  <Navbar.Header style={{display: "flex", alignItems: "center"}}>
-                    <Avatar style={{ margin: "8px" }} src={logo} />
-                    <h4>Evergarden</h4>
-                  </Navbar.Header>
-                  <Navbar.Body>
-                    <UserToolbar/>
-                  </Navbar.Body>
-                </Navbar>
-              </Header>
-              <Content style={{padding: "10px"}}>
-                this is content
+              <AppHeader />
+              <Content style={{ padding: "10px" }}>
+                <LastUpdatedStories />
               </Content>
             </Container>
           </Route>

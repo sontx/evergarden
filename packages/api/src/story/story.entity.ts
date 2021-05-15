@@ -42,4 +42,7 @@ export class Story {
 
   @Column({ type: "number", nullable: false })
   published?: boolean;
+
+  @Column({type: "string", nullable: false})
+  uploadBy: IdType;
 }

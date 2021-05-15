@@ -1,6 +1,6 @@
 import { AuthUser } from "@evergarden/shared";
-import axios from "axios";
 import Logger from "js-logger";
+import api from "../../utils/api";
 
 export interface LoggedInData {
   user: AuthUser;
@@ -8,14 +8,14 @@ export interface LoggedInData {
 
 export async function logout() {
   try {
-    return await axios.post("/api/auth/logout");
+    return await api.post("/api/auth/logout");
   } catch (error) {
     Logger.error(error);
   }
 }
 
 async function authenticate(token: string): Promise<AuthUser> {
-  const response = await axios.get<AuthUser>("/api/auth", {
+  const response = await api.get<AuthUser>("/api/auth", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

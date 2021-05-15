@@ -1,0 +1,16 @@
+@import '~rsuite/lib/styles/themes/dark/index.less';
+
+.fixed-header {
+  position: fixed;
+  width: 100%;
+  z-index: 9999999;
+  background: @nav-bar-default-bg;
+  animation-name: changing-fixed-mode;
+  animation-duration: 300ms;
+  animation-timing-function: ease;
+}
+
+@keyframes changing-fixed-mode {
+  from {background: @body-bg;}
+  to {background: @nav-bar-default-bg;}
+}

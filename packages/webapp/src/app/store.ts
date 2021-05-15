@@ -5,10 +5,14 @@ import { combineReducers } from "redux";
 import counterReducer from "../features/counter/counterSlice";
 import authReducer from "../features/auth/authSlice";
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from "redux-persist/es/constants";
+import lastUpdatedStoriesReducer from "../features/last-updated-stories/lastUpdatedStoriesSlice";
+import settingsReducer from "../features/settings/settingsSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
+  lastUpdatedStories: lastUpdatedStoriesReducer,
   login: authReducer,
+  settings: settingsReducer,
 });
 
 const persistConfig = {

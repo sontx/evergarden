@@ -2,8 +2,13 @@ import {Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {Story} from "./story.entity";
-import {CreateStoryDto, GetStoryDto} from "@evergarden/shared";
-import {PaginationOptions, PaginationResult} from "../utils/pagination";
+import {
+  AuthUser,
+  CreateStoryDto,
+  GetStoryDto,
+  PaginationOptions,
+  PaginationResult
+} from "@evergarden/shared";
 
 @Injectable()
 export class StoryService {
@@ -45,9 +50,10 @@ export class StoryService {
     }
   }
 
-  async addStory(story: CreateStoryDto): Promise<GetStoryDto> {
+  async addStory(story: CreateStoryDto, user: AuthUser): Promise<GetStoryDto> {
     const newStory = await this.storyRepository.create(story);
     newStory.updated = new Date();
+    newStory.uploadBy = user.id;
     const savedStory = await this.storyRepository.save(newStory);
     return this.toDto(savedStory);
   }

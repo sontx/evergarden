@@ -1,12 +1,12 @@
-import {useAppDispatch, useAppSelector} from "../../app/hooks";
-import {logoutAsync, selectUser} from "./authSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Avatar, Badge, Dropdown, Icon, Input, InputGroup, Nav } from "rsuite";
 
-import "./user-toolbar.less";
+import "./index.less";
 import { useCallback, useState } from "react";
 import { isDesktop } from "react-device-detect";
 import { useHistory } from "react-router";
 import { FormattedMessage } from "react-intl";
+import { logoutAsync, selectUser } from "../../features/auth/authSlice";
 
 function SearchBox(props: { fillWidth?: boolean }) {
   return (
@@ -56,7 +56,7 @@ export function UserToolbar() {
               </Badge>
             </Nav.Item>
             <Dropdown
-              menuStyle={{minWidth: "150px"}}
+              menuStyle={{ minWidth: "150px" }}
               placement="bottomEnd"
               renderTitle={() => (
                 <Nav.Item className="user-toolbar-avatar">
