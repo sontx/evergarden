@@ -9,7 +9,11 @@ export default {
   loginFailedMessage: "Oop! your login information was wrong, let try again ;)",
   userMenuProfile: "Profile",
   userMenuFollowing: "Following",
+  userMenuMyCollection: "My collection",
   userMenuMyStories: "My stories",
   userMenuHistory: "History",
-  userMenuLogout: "Logout"
+  userMenuLogout: "Logout",
+  homeNavUpdated: "Updated",
+  homeNavHot: "Hot",
+  homeNavCollection: "Collection",
 };

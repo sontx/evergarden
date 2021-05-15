@@ -1,15 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  Avatar,
-  Badge,
-  Button,
-  Divider,
-  Drawer,
-  Icon,
-  Input,
-  InputGroup,
-  Nav
-} from "rsuite";
+import { Avatar, Badge, Button, Divider, Drawer, Icon, Input, InputGroup, Nav } from "rsuite";
 
 import "./index.less";
 import { useCallback, useState } from "react";
@@ -102,26 +92,32 @@ export function UserToolbar() {
               <span>
                 <Icon size="lg" icon="star" />
               </span>
-              <FormattedMessage id="userMenuFollowing"/>
+              <FormattedMessage id="userMenuFollowing" />
             </Button>
             <Button block size="lg">
               <span>
                 <Icon size="lg" icon="address-book" />
               </span>
-              <FormattedMessage id="userMenuMyStories"/>
+              <FormattedMessage id="userMenuMyStories" />
+            </Button>
+            <Button block size="lg">
+              <span>
+                <Icon size="lg" icon="th-list" />
+              </span>
+              <FormattedMessage id="userMenuMyCollection" />
             </Button>
             <Button block size="lg">
               <span>
                 <Icon size="lg" icon="history" />
               </span>
-              <FormattedMessage id="userMenuHistory"/>
+              <FormattedMessage id="userMenuHistory" />
             </Button>
-            <Divider/>
+            <Divider />
             <Button block size="lg">
               <span>
                 <Icon size="lg" icon="user" />
               </span>
-              <FormattedMessage id="userMenuProfile"/>
+              <FormattedMessage id="userMenuProfile" />
             </Button>
           </Drawer.Body>
           <Drawer.Footer style={{ margin: 0 }}>
