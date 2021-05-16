@@ -40,7 +40,7 @@ export class Story {
   @Column({ type: "number", nullable: true })
   lastChapter?: number;
 
-  @Column({ type: "number", nullable: false })
+  @Column({ type: "number", nullable: true })
   published?: boolean;
 
   @Column({type: "string", nullable: false})

@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindManyOptions, Repository } from "typeorm";
-import { Story } from "./story.entity";
+import {BadRequestException, Injectable, Logger} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {FindManyOptions, Repository} from "typeorm";
+import {Story} from "./story.entity";
 import {
   AuthUser,
   CreateStoryDto,
@@ -9,6 +9,8 @@ import {
   IdType,
   PaginationOptions,
   PaginationResult,
+  randomNumberString,
+  stringToSlug,
   UpdateStoryDto,
 } from "@evergarden/shared";
 
@@ -94,6 +96,22 @@ export class StoryService {
 
   async addStory(story: CreateStoryDto, user: AuthUser): Promise<GetStoryDto> {
     try {
+      if (story.url) {
+        const found = await this.getStoryByUrl(story.url);
+        if (found) {
+          throw new BadRequestException(`Duplicated story url: ${story.url}`);
+        }
+      } else {
+        let newUrl = stringToSlug(story.title);
+        try {
+          const found = await this.getStoryByUrl(newUrl);
+          if (found) {
+            newUrl = `${newUrl}-${randomNumberString(4)}`;
+          }
+        } catch (e) {}
+        story.url = newUrl;
+      }
+
       const newStory = await this.storyRepository.create(story);
       const savedStory = await this.storyRepository.save({
         ...newStory,
@@ -111,7 +129,7 @@ export class StoryService {
   async getStoryByUrl(url: string): Promise<GetStoryDto | null> {
     try {
       const story = await this.storyRepository.findOne({
-        where: {url}
+        where: { url },
       });
       return story ? this.toDto(story) : null;
     } catch (e) {

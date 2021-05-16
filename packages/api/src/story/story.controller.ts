@@ -19,7 +19,6 @@ import { CreateStoryDto, GetStoryDto, PaginationResult, StoryCategory, UpdateSto
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { Role } from "../auth/role/roles.decorator";
 import { RolesGuard } from "../auth/role/roles.guard";
-import { Role as RoleType } from "@evergarden/shared";
 
 @Controller("stories")
 export class StoryController {
@@ -30,7 +29,6 @@ export class StoryController {
     @Query("page", ParseIntPipe) page = 1,
     @Query("limit", ParseIntPipe) limit = 10,
     @Query("category") category: StoryCategory = "updated",
-    @Req() req,
   ): Promise<PaginationResult<GetStoryDto>> {
     await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
 
@@ -38,16 +36,13 @@ export class StoryController {
       page,
       limit: limit > 100 ? 100 : limit,
     };
-    const role = req.user && (req.user.role as RoleType);
-    const includeUnpublished = (role && role === "mod") || role === "admin";
-
     if (category === "updated") {
-      return await this.storyService.getLastUpdatedStories(pagination, includeUnpublished);
+      return await this.storyService.getLastUpdatedStories(pagination, false);
     } else if (category === "hot") {
-      return await this.storyService.getHotStories(pagination, includeUnpublished);
+      return await this.storyService.getHotStories(pagination, false);
     }
 
-    return this.storyService.getStories(pagination, undefined, includeUnpublished);
+    return this.storyService.getStories(pagination, undefined, false);
   }
 
   @Get(":id")

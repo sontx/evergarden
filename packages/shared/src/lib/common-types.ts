@@ -84,6 +84,33 @@ export class CreateStoryDto {
 
 export type UpdateStoryDto = Omit<CreateStoryDto, "url">;
 
+export class GetChapterDto {
+  id: IdType;
+  chapterNo: number;
+  title?: string;
+  updated: Date;
+  uploadBy: IdType;
+  updatedBy: IdType;
+  published?: boolean;
+  content: string;
+}
+
+export class CreateChapterDto {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @MinLength(7)
+  @IsString()
+  content: string;
+
+  @IsOptional()
+  @IsBoolean()
+  published?: boolean;
+}
+
+export type UpdateChapterDto = CreateChapterDto;
+
 export interface PaginationOptions {
   page: number;
   limit: number;

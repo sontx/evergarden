@@ -8,6 +8,7 @@ import { AuthModule } from "./auth/auth.module";
 import configuration from "./configuration";
 import { UserModule } from "./user/user.module";
 import { StoryModule } from './story/story.module';
+import { ChapterModule } from './chapter/chapter.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { StoryModule } from './story/story.module';
     AuthModule,
     UserModule,
     StoryModule,
+    ChapterModule,
   ],
   controllers: [AppController],
   providers: [AppService],
