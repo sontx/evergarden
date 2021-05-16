@@ -1,23 +1,29 @@
-import { Avatar, Header, Icon, Navbar } from "rsuite";
+import {Avatar, Header, Icon, Navbar} from "rsuite";
 import logo from "../../images/logo.png";
-import React, { useCallback, useEffect, useState } from "react";
-import { UserToolbar } from "../UserToolbar";
-import { useAppSelector } from "../../app/hooks";
-import { selectFixedHeader } from "../../features/settings/settingsSlice";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {UserToolbar} from "../UserToolbar";
 
 import "./index.less";
 import classNames from "classnames";
-import { Fab } from "react-tiny-fab";
+import {Fab} from "react-tiny-fab";
+import {useHistory, useLocation} from "react-router-dom";
 
 export function AppHeader() {
-  const fixedHeader = useAppSelector(selectFixedHeader);
-  const [showFixedHeader, setShowFixedHeader] = useState(window.scrollY > 0 && fixedHeader);
+  const location = useLocation();
+  const canShowFixedHeader = useMemo(() => location.pathname === "/", [location.pathname]);
+
+  const [showFixedHeader, setShowFixedHeader] = useState(
+    window.scrollY > 0 && canShowFixedHeader,
+  );
   const [showFab, setShowFab] = useState(false);
 
+  const history = useHistory();
+
   useEffect(() => {
-    let lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    let lastScrollTop =
+      window.pageYOffset || document.documentElement.scrollTop;
     const handleScroll = () => {
-      if (fixedHeader) {
+      if (canShowFixedHeader) {
         if (showFixedHeader && window.scrollY <= 0) {
           setShowFixedHeader(false);
         } else if (!showFixedHeader && window.scrollY > 0) {
@@ -25,7 +31,8 @@ export function AppHeader() {
         }
       }
 
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
       const isScrollDown = scrollTop > lastScrollTop;
       if (isScrollDown) {
         if (!showFab) {
@@ -40,7 +47,7 @@ export function AppHeader() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [showFixedHeader, showFab, fixedHeader]);
+  }, [showFixedHeader, showFab, canShowFixedHeader]);
 
   const handleClickFab = useCallback(() => {
     window.scrollTo({
@@ -50,11 +57,18 @@ export function AppHeader() {
     });
   }, []);
 
+  const handleClickLogo = useCallback(() => {
+    history.push("/");
+  }, [history]);
+
   return (
     <>
       <Header className={classNames({ "fixed-header": showFixedHeader })}>
         <Navbar appearance="subtle">
-          <Navbar.Header style={{ display: "flex", alignItems: "center" }}>
+          <Navbar.Header
+            onClick={handleClickLogo}
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <Avatar style={{ margin: "8px" }} src={logo} />
             <h4>Evergarden</h4>
           </Navbar.Header>
@@ -65,7 +79,12 @@ export function AppHeader() {
       </Header>
       {showFixedHeader && <div style={{ height: "56px" }} />}
       {showFab && (
-        <Fab onClick={handleClickFab} event="click" style={{ bottom: 0, right: 0 }} icon={<Icon icon="up" />} />
+        <Fab
+          onClick={handleClickFab}
+          event="click"
+          style={{ bottom: 0, right: 0 }}
+          icon={<Icon icon="up" />}
+        />
       )}
     </>
   );

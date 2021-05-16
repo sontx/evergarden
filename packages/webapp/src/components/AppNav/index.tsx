@@ -6,10 +6,12 @@ import React, { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectCurrentTab, setCurrentTab } from "../../features/settings/settingsSlice";
 import { isMobile } from "react-device-detect";
+import {selectUser} from "../../features/auth/authSlice";
 
 export function AppNav() {
   const currentTab = useAppSelector(selectCurrentTab);
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(selectUser);
   const handleSelect = useCallback(
     (selectKey) => {
       dispatch(setCurrentTab(selectKey));
@@ -24,9 +26,11 @@ export function AppNav() {
       <ResponsiveNav.Item eventKey="hot" icon={<Icon icon="trend" />}>
         <FormattedMessage id="homeNavHot" />
       </ResponsiveNav.Item>
-      <ResponsiveNav.Item eventKey="following" icon={<Icon icon="star" />}>
-        <FormattedMessage id="userMenuFollowing" />
-      </ResponsiveNav.Item>
+      {currentUser && (
+        <ResponsiveNav.Item eventKey="following" icon={<Icon icon="star" />}>
+          <FormattedMessage id="userMenuFollowing" />
+        </ResponsiveNav.Item>
+      )}
       <ResponsiveNav.Item eventKey="collection" icon={<Icon icon="th-list" />}>
         <FormattedMessage id="homeNavCollection" />
       </ResponsiveNav.Item>

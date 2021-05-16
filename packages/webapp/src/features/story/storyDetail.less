@@ -1,0 +1,27 @@
+.story-preview-detail {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-gap: 10px;
+  font-size: small;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.story-preview-detail label {
+  text-align: left;
+  margin: auto 0;
+  color: #a4a9b3;
+}
+
+.story-preview-detail label::after {
+  content: ":";
+}
+
+.story-preview-detail-status--full {
+  color: green;
+  font-weight: bold;
+}
+
+.story-preview-detail-status--ongoing {
+  color: orange;
+}

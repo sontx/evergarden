@@ -5,11 +5,11 @@ import {
   selectTotalItems,
 } from "./hotStoriesSlice";
 import { StoryItem } from "../../components/StoryItem";
-import { InfiniteList } from "../../components/InfiniteList";
+import { StoryList } from "./StoryList";
 
 export function HotStories() {
   return (
-    <InfiniteList
+    <StoryList
       renderItem={(item) => <StoryItem story={item} />}
       fetchFunc={fetchHotStoriesAsync}
       totalItemsSelector={selectTotalItems}

@@ -15,6 +15,7 @@ export interface InfiniteListProps {
   itemsSelector: Selector<any, ItemType>;
   totalItemsSelector: Selector<any, number>;
   statusSelector: Selector<any, ProcessingStatus>;
+  onItemClick?:(item: ItemType) => void;
   fetchFunc: AsyncThunk<
     PaginationResult<ItemType>,
     { page: number; limit: number },
@@ -30,6 +31,7 @@ export function InfiniteList(props: InfiniteListProps) {
     totalItemsSelector,
     fetchFunc,
     statusSelector,
+    onItemClick
   } = props;
 
   const items = useAppSelector(itemsSelector);
@@ -62,6 +64,12 @@ export function InfiniteList(props: InfiniteListProps) {
     setMounted(true);
   }, [fetchMore, isMounted, isStartLoading]);
 
+  const handleItemClick = useCallback((item: ItemType) => {
+    if (onItemClick) {
+      onItemClick(item);
+    }
+  }, [onItemClick]);
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <List hover size="sm">
@@ -73,7 +81,7 @@ export function InfiniteList(props: InfiniteListProps) {
           }
         >
           {items.map((item: any, index: any) => (
-            <List.Item key={item.id || index}>
+            <List.Item key={item.id || index} onClick={() => handleItemClick(item)}>
               {renderItem(item, index)}
             </List.Item>
           ))}

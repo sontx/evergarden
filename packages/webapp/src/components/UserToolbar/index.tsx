@@ -67,9 +67,6 @@ export function UserToolbar() {
           </>
         ) : (
           <>
-            <Nav.Item className="user-toolbar-icon">
-              <Icon size="lg" icon="cog" />
-            </Nav.Item>
             <Nav.Item className="user-toolbar-icon" onSelect={handleLogin}>
               <Icon size="lg" icon="sign-in" />
             </Nav.Item>

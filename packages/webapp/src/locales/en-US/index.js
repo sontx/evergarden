@@ -16,4 +16,6 @@ export default {
   homeNavUpdated: "Updated",
   homeNavHot: "Hot",
   homeNavCollection: "Collection",
+  showMore: "Show more",
+  showLess: "Show less",
 };

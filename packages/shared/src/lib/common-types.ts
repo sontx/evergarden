@@ -13,6 +13,13 @@ export interface AuthUser {
   photoUrl: string;
 }
 
+export interface GetUserDto {
+  id: IdType;
+  email?: string;
+  fullName: string;
+  photoUrl?: string;
+}
+
 export interface JwtPayload {
   id: IdType;
   email: string;

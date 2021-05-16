@@ -51,8 +51,8 @@ export class StoryController {
   }
 
   @Get(":id")
-  async getStory(@Param("id") id: string): Promise<GetStoryDto> {
-    const story = await this.storyService.getStory(id);
+  async getStory(@Param("id") id: string, @Query("url") url = false): Promise<GetStoryDto> {
+    const story = url ? await this.storyService.getStoryByUrl(id) : await this.storyService.getStory(id);
     if (story) {
       return story;
     }
@@ -84,5 +84,4 @@ export class StoryController {
       throw new NotFoundException();
     }
   }
-
 }

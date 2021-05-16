@@ -8,11 +8,13 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from "redux-persist
 import lastUpdatedStoriesReducer from "../features/stories/lastUpdatedStoriesSlice";
 import hotStoriesReducer from "../features/stories/hotStoriesSlice";
 import settingsReducer from "../features/settings/settingsSlice";
+import storyReducer from "../features/story/storySlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
   lastUpdatedStories: lastUpdatedStoriesReducer,
   hotStories: hotStoriesReducer,
+  story: storyReducer,
   login: authReducer,
   settings: settingsReducer,
 });
@@ -42,5 +44,5 @@ export const store = configureStore({
 });
 
 export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof reducers>;
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;

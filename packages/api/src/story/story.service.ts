@@ -108,6 +108,18 @@ export class StoryService {
     }
   }
 
+  async getStoryByUrl(url: string): Promise<GetStoryDto | null> {
+    try {
+      const story = await this.storyRepository.findOne({
+        where: {url}
+      });
+      return story ? this.toDto(story) : null;
+    } catch (e) {
+      this.logger.warn(`Error while querying story: ${url}`, e);
+      throw new BadRequestException();
+    }
+  }
+
   async getStory(id: IdType): Promise<GetStoryDto | null> {
     try {
       const story = await this.storyRepository.findOne(id);
