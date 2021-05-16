@@ -1,16 +1,30 @@
-import { Divider, Panel, Placeholder } from "rsuite";
+import {
+  ButtonGroup,
+  Divider,
+  Icon,
+  IconButton,
+  Panel,
+  Placeholder,
+} from "rsuite";
 import { GetStoryDto } from "@evergarden/shared";
 // @ts-ignore
 import ShowMoreText from "react-show-more-text";
 import "./storyPreviewMobile.less";
 import { useIntl } from "react-intl";
 import { StoryDetail } from "./StoryDetail";
+import { useCallback } from "react";
 
 const { Paragraph, Grid } = Placeholder;
 
 export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   const { story } = props;
   const intl = useIntl();
+  const handleExpandedChapterList = useCallback((element) => {
+    if (element) {
+      (element as HTMLElement).scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
   return story ? (
     <div className="story-preview-mobile-container">
       <Panel bodyFill>
@@ -30,8 +44,35 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
       </Panel>
       <Divider style={{ marginTop: 0, marginBottom: "20px" }} />
       <StoryDetail story={story} />
-      <Divider style={{ marginTop: "20px", marginBottom: "12px" }} />
+      <ButtonGroup
+        style={{
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          marginTop: "20px",
+          marginBottom: "12px",
+        }}
+        justified
+      >
+        <IconButton
+          placement="right"
+          icon={<Icon icon="angle-right" />}
+          style={{ fontSize: "small" }}
+          size="sm"
+        >
+          Read
+        </IconButton>
+        <IconButton
+          placement="right"
+          icon={<Icon icon="angle-double-right" />}
+          style={{ fontSize: "small" }}
+          size="sm"
+          appearance="primary"
+        >
+          Continue (112)
+        </IconButton>
+      </ButtonGroup>
       <Panel
+        onEntered={handleExpandedChapterList}
         className="story-preview-mobile-chapters"
         header="Chapters"
         collapsible
