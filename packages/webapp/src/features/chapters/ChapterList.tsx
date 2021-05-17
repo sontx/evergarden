@@ -62,11 +62,11 @@ export function ChapterList(props: { story: GetStoryDto }) {
                 key={chapter.id}
                 to={{ pathname: `/reading/${story.url}/${chapter.chapterNo}` }}
               >
-                {chapter.title ||
-                  intl.formatMessage(
-                    { id: "chapterTitle" },
-                    { chapterNo: chapter.chapterNo },
-                  )}
+                {intl.formatMessage(
+                  { id: "chapterTitle" },
+                  { chapterNo: chapter.chapterNo },
+                )}
+                {chapter.title && `: ${chapter.title}`}
               </Link>
             ))}
           </div>
