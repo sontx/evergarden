@@ -18,4 +18,6 @@ export default {
   homeNavCollection: "Collection",
   showMore: "Show more",
   showLess: "Show less",
+  loadingText: "Loading...",
+  chapterTitle: "Chapter {chapterNo}"
 };

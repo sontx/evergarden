@@ -9,12 +9,14 @@ import lastUpdatedStoriesReducer from "../features/stories/lastUpdatedStoriesSli
 import hotStoriesReducer from "../features/stories/hotStoriesSlice";
 import settingsReducer from "../features/settings/settingsSlice";
 import storyReducer from "../features/story/storySlice";
+import chaptersReducer from "../features/chapters/chaptersSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
   lastUpdatedStories: lastUpdatedStoriesReducer,
   hotStories: hotStoriesReducer,
   story: storyReducer,
+  chapters: chaptersReducer,
   login: authReducer,
   settings: settingsReducer,
 });
@@ -23,6 +25,7 @@ const persistConfig: PersistConfig<any> = {
   key: "root",
   storage,
   debug: process.env.NODE_ENV === "development",
+  blacklist: ["chapters"],
   migrate: (state: any) => {
     state = state || {};
     if (state.lastUpdatedStories) {

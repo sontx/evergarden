@@ -13,6 +13,7 @@ import "./storyPreviewMobile.less";
 import { useIntl } from "react-intl";
 import { StoryDetail } from "./StoryDetail";
 import { useCallback } from "react";
+import {ChapterList} from "../chapters/ChapterList";
 
 const { Paragraph, Grid } = Placeholder;
 
@@ -77,7 +78,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         header="Chapters"
         collapsible
       >
-        <Grid rows={7} active />
+        <ChapterList story={story}/>
       </Panel>
     </div>
   ) : (

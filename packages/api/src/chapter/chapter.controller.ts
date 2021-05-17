@@ -34,6 +34,8 @@ export class ChapterController {
     @Param("storyId") storyId: string,
     @Param("chapterNo", ParseIntPipe) chapterNo: number,
   ): Promise<GetChapterDto> {
+    await new Promise(resolve => setTimeout(() => resolve(null), 2000));
+
     let chapter;
     if (storyId && chapterNo >= 0) {
       try {
@@ -51,14 +53,15 @@ export class ChapterController {
   }
 
   @Get("stories/:storyId/chapters")
-  getChapters(
+  async getChapters(
     @Param("storyId") storyId: string,
     @Query("page", ParseIntPipe) page = 1,
     @Query("limit", ParseIntPipe) limit = 10,
     @Query("includesContent", ParseBoolPipe) includesContent = false,
   ): Promise<PaginationResult<GetChapterDto>> {
+    await new Promise(resolve => setTimeout(() => resolve(null), 2000));
     try {
-      return this.chapterService.getChapters(
+      return await this.chapterService.getChapters(
         storyId,
         {
           page,
