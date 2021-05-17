@@ -9,6 +9,7 @@ import {
 import { AppHeader } from "../../components/AppHeader";
 import { Container, Content } from "rsuite";
 import { GetStoryDto } from "@evergarden/shared";
+import {AppFooter} from "../../components/AppFooter";
 
 export function Story() {
   const { url } = useParams() as any;
@@ -36,6 +37,7 @@ export function Story() {
       <Content>
         <StoryPreviewMobile story={showStory} />
       </Content>
+      <AppFooter/>
     </Container>
   );
 }

@@ -1,16 +1,22 @@
-import {Avatar, Header, Icon, Navbar} from "rsuite";
+import { Avatar, Header, Icon, Navbar } from "rsuite";
 import logo from "../../images/logo.png";
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {UserToolbar} from "../UserToolbar";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { UserToolbar } from "../UserToolbar";
 
 import "./index.less";
 import classNames from "classnames";
-import {Fab} from "react-tiny-fab";
-import {useHistory, useLocation} from "react-router-dom";
+import { Fab } from "react-tiny-fab";
+import { useHistory, useLocation } from "react-router-dom";
 
 export function AppHeader() {
   const location = useLocation();
-  const canShowFixedHeader = useMemo(() => location.pathname === "/", [location.pathname]);
+  const canShowFixedHeader = useMemo(() => location.pathname === "/", [
+    location.pathname,
+  ]);
+  const canShowBackTopButton = useMemo(
+    () => location.pathname === "/" || location.pathname.startsWith("/reading"),
+    [location.pathname],
+  );
 
   const [showFixedHeader, setShowFixedHeader] = useState(
     window.scrollY > 0 && canShowFixedHeader,
@@ -78,7 +84,7 @@ export function AppHeader() {
         </Navbar>
       </Header>
       {showFixedHeader && <div style={{ height: "56px" }} />}
-      {showFab && (
+      {showFab && canShowBackTopButton && (
         <Fab
           onClick={handleClickFab}
           event="click"

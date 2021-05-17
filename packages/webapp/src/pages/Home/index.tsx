@@ -6,6 +6,7 @@ import { selectCurrentTab } from "../../features/settings/settingsSlice";
 import { HotStories } from "../../features/stories/HotStories";
 import { AppHeader } from "../../components/AppHeader";
 import { Container, Content } from "rsuite";
+import {AppFooter} from "../../components/AppFooter";
 
 export function Home() {
   const currentTab = useAppSelector(selectCurrentTab);
@@ -19,6 +20,7 @@ export function Home() {
         {currentTab === "following" && <div>Following will coming soon</div>}
         {currentTab === "collection" && <div>Collection will coming soon</div>}
       </Content>
+      <AppFooter/>
     </Container>
   );
 }
