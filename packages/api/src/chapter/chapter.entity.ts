@@ -16,8 +16,11 @@ export class Chapter {
   @Column({ type: "string", nullable: true })
   title?: string;
 
-  @Column({ type: "string", nullable: false, select: false })
+  @Column({ type: "string", nullable: false })
   content: string;
+
+  @Column({ type: "datetime", nullable: false })
+  created: Date;
 
   @Column({ type: "datetime", nullable: false })
   updated: Date;

@@ -77,6 +77,7 @@ export class StoryService {
   private toDto(story: Story): GetStoryDto {
     return {
       id: story.id,
+      created: story.created,
       updated: story.updated,
       authors: story.authors,
       lastChapter: story.lastChapter,
@@ -113,9 +114,11 @@ export class StoryService {
       }
 
       const newStory = await this.storyRepository.create(story);
+      const now = new Date();
       const savedStory = await this.storyRepository.save({
         ...newStory,
-        updated: new Date(),
+        created: now,
+        updated: now,
         uploadBy: user.id,
         updatedBy: user.id,
       });
@@ -152,12 +155,27 @@ export class StoryService {
     try {
       await this.storyRepository.update(id, {
         ...story,
+        updated: new Date(),
         updatedBy: user.id,
       });
       return this.getStory(id);
     } catch (e) {
       this.logger.warn(`Error while updating story: ${id}`, e);
       throw new BadRequestException();
+    }
+  }
+
+  async updateStoryInternal(story: Story, user: AuthUser): Promise<boolean> {
+    try {
+      await this.storyRepository.update(story.id, {
+        ...story,
+        updated: new Date(),
+        updatedBy: user.id,
+      });
+      return true;
+    } catch (e) {
+      this.logger.warn(`Error while updating story: ${story.id}`, e);
+      return false;
     }
   }
 }

@@ -29,6 +29,9 @@ export class Story {
   genres: string[];
 
   @Column({ type: "datetime", nullable: false })
+  created: Date;
+
+  @Column({ type: "datetime", nullable: false })
   updated: Date;
 
   @Column({ type: "number", nullable: false, default: 0 })

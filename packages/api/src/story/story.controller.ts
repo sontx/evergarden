@@ -56,7 +56,7 @@ export class StoryController {
 
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Role("admin")
+  @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   addStory(@Body() story: CreateStoryDto, @Req() req): Promise<GetStoryDto> {
     return this.storyService.addStory(story, req.user);

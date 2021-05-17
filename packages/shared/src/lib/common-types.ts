@@ -41,6 +41,7 @@ export interface GetStoryDto {
   status: StoryStatus;
   authors: string[];
   genres: string[];
+  created: Date;
   updated: Date;
   view: number;
   rating?: number;
@@ -88,6 +89,7 @@ export class GetChapterDto {
   id: IdType;
   chapterNo: number;
   title?: string;
+  created: Date;
   updated: Date;
   uploadBy: IdType;
   updatedBy: IdType;
