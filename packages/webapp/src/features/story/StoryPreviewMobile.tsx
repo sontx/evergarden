@@ -13,14 +13,16 @@ import "./storyPreviewMobile.less";
 import { useIntl } from "react-intl";
 import { StoryDetail } from "./StoryDetail";
 import { useCallback } from "react";
-import {ChapterList} from "../chapters/ChapterList";
+import { ChapterList } from "../chapters/ChapterList";
+import { Comment } from "../../components/Comment/Comment";
+import { CommentCount } from "../../components/Comment/CommentCount";
 
 const { Paragraph, Grid } = Placeholder;
 
 export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   const { story } = props;
   const intl = useIntl();
-  const handleExpandedChapterList = useCallback((element) => {
+  const handleExpandPanel = useCallback((element) => {
     if (element) {
       (element as HTMLElement).scrollIntoView({ behavior: "smooth" });
     }
@@ -73,12 +75,21 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         </IconButton>
       </ButtonGroup>
       <Panel
-        onEntered={handleExpandedChapterList}
+        onEntered={handleExpandPanel}
         className="story-preview-mobile-chapters"
         header="Chapters"
         collapsible
       >
-        <ChapterList story={story}/>
+        <ChapterList story={story} />
+      </Panel>
+      <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
+      <Panel
+        onEntered={handleExpandPanel}
+        defaultExpanded
+        collapsible
+        header={<CommentCount story={story} />}
+      >
+        <Comment story={story} />
       </Panel>
     </div>
   ) : (
