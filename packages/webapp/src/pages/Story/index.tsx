@@ -1,26 +1,40 @@
 import { StoryPreviewMobile } from "../../features/story/StoryPreviewMobile";
 import { useLocation, useParams } from "react-router-dom";
-import React, { useEffect } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import { fetchStoryByUrlAsync } from "../../features/story/storySlice";
+import React, { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  fetchStoryByUrlAsync,
+  selectStory,
+} from "../../features/story/storySlice";
 import { AppHeader } from "../../components/AppHeader";
 import { Container, Content } from "rsuite";
+import { GetStoryDto } from "@evergarden/shared";
 
 export function Story() {
   const { url } = useParams() as any;
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const { story } = (location.state || {}) as any;
+  const story = useAppSelector(selectStory);
+  const locationStory = ((location.state as any) || {}).story;
+  const [showStory, setShowStory] = useState<GetStoryDto | undefined>(
+    (locationStory || {}).url === url ? locationStory : undefined,
+  );
+
   useEffect(() => {
-    if (!story || story.url !== url) {
-      dispatch(fetchStoryByUrlAsync(url));
+    dispatch(fetchStoryByUrlAsync(url));
+  }, [url, dispatch]);
+
+  useEffect(() => {
+    if (story && story.url === url) {
+      setShowStory(story);
     }
-  }, [story, url, dispatch]);
+  }, [story, url]);
+
   return (
     <Container>
       <AppHeader />
       <Content>
-        <StoryPreviewMobile story={story} />
+        <StoryPreviewMobile story={showStory} />
       </Content>
     </Container>
   );

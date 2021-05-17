@@ -1,8 +1,8 @@
-import {ProcessingStatus} from "../../utils/types";
-import {GetStoryDto, IdType} from "@evergarden/shared";
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {fetchStory, fetchStoryByUrl} from "./storyAPI";
-import {RootState} from "../../app/store";
+import { ProcessingStatus } from "../../utils/types";
+import { GetStoryDto, IdType } from "@evergarden/shared";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchStory, fetchStoryByUrl } from "./storyAPI";
+import { RootState } from "../../app/store";
 
 export interface StoryState {
   status: ProcessingStatus;
@@ -10,25 +10,34 @@ export interface StoryState {
 }
 
 const initialState: StoryState = {
-  status: "none"
-}
+  status: "none",
+};
 
-export const fetchStoryAsync = createAsyncThunk("story/fetch", async (id: IdType) => {
-  return await fetchStory(id);
-});
+export const fetchStoryAsync = createAsyncThunk(
+  "story/fetch",
+  async (id: IdType) => {
+    return await fetchStory(id);
+  },
+);
 
-export const fetchStoryByUrlAsync = createAsyncThunk("story/fetchByUrl", async (url: string) => {
-  return await fetchStoryByUrl(url);
-});
+export const fetchStoryByUrlAsync = createAsyncThunk(
+  "story/fetchByUrl",
+  async (url: string) => {
+    return await fetchStoryByUrl(url);
+  },
+);
 
 export const storySlice = createSlice({
   name: "story",
   initialState,
-  reducers: {},
+  reducers: {
+    resetStory: (state) => {
+      state.story = undefined;
+    },
+  },
   extraReducers: {
     [`${fetchStoryAsync.pending}`]: (state) => {
       state.status = "processing";
-      state.story = undefined;
     },
     [`${fetchStoryAsync.fulfilled}`]: (state, { payload }) => {
       state.status = "success";
@@ -39,7 +48,6 @@ export const storySlice = createSlice({
     },
     [`${fetchStoryByUrlAsync.pending}`]: (state) => {
       state.status = "processing";
-      state.story = undefined;
     },
     [`${fetchStoryByUrlAsync.fulfilled}`]: (state, { payload }) => {
       state.status = "success";
@@ -48,8 +56,10 @@ export const storySlice = createSlice({
     [`${fetchStoryByUrlAsync.rejected}`]: (state, { payload }) => {
       state.status = "error";
     },
-  }
-})
+  },
+});
+
+export const { resetStory } = storySlice.actions;
 
 export const selectStory = (state: RootState) => state.story.story;
 export const selectStatus = (state: RootState) => state.story.status;

@@ -2,7 +2,9 @@ import { GetStoryDto, IdType } from "@evergarden/shared";
 import api from "../../utils/api";
 
 export async function fetchStory(id: IdType): Promise<GetStoryDto> {
-  const response = await api.get(`/api/stories/${id}`);
+  const response = await api.get(`/api/stories/${id}`, {
+    params: { url: false },
+  });
   return response.data;
 }
 

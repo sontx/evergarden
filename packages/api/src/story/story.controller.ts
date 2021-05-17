@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   Get,
   NotFoundException,
-  Param,
+  Param, ParseBoolPipe,
   ParseIntPipe,
   Post,
   Put,
@@ -46,7 +46,7 @@ export class StoryController {
   }
 
   @Get(":id")
-  async getStory(@Param("id") id: string, @Query("url") url = false): Promise<GetStoryDto> {
+  async getStory(@Param("id") id: string, @Query("url", ParseBoolPipe) url = false): Promise<GetStoryDto> {
     const story = url ? await this.storyService.getStoryByUrl(id) : await this.storyService.getStory(id);
     if (story) {
       return story;
