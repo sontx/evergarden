@@ -5,16 +5,21 @@ import { UserToolbar } from "../UserToolbar";
 
 import "./index.less";
 import classNames from "classnames";
-import { Action, Fab } from "react-tiny-fab";
+import { Fab } from "react-tiny-fab";
 import { useHistory, useLocation } from "react-router-dom";
 
 export function AppHeader() {
   const location = useLocation();
+
   const canShowFixedHeader = useMemo(() => location.pathname === "/", [
     location.pathname,
   ]);
   const canShowBackTopButton = useMemo(
     () => location.pathname === "/" || location.pathname.startsWith("/reading"),
+    [location.pathname],
+  );
+  const canShowHeader = useMemo(
+    () => !location.pathname.startsWith("/reading"),
     [location.pathname],
   );
 
@@ -69,20 +74,22 @@ export function AppHeader() {
 
   return (
     <>
-      <Header className={classNames({ "fixed-header": showFixedHeader })}>
-        <Navbar appearance="subtle">
-          <Navbar.Header
-            onClick={handleClickLogo}
-            style={{ display: "flex", alignItems: "center" }}
-          >
-            <Avatar style={{ margin: "8px" }} src={logo} />
-            <h4>Evergarden</h4>
-          </Navbar.Header>
-          <Navbar.Body>
-            <UserToolbar />
-          </Navbar.Body>
-        </Navbar>
-      </Header>
+      {canShowHeader && (
+        <Header className={classNames({ "fixed-header": showFixedHeader })}>
+          <Navbar appearance="subtle">
+            <Navbar.Header
+              onClick={handleClickLogo}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <Avatar style={{ margin: "8px" }} src={logo} />
+              <h4>Evergarden</h4>
+            </Navbar.Header>
+            <Navbar.Body>
+              <UserToolbar />
+            </Navbar.Body>
+          </Navbar>
+        </Header>
+      )}
       {showFixedHeader && <div style={{ height: "56px" }} />}
       {showFab && canShowBackTopButton && (
         <Fab
