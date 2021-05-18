@@ -17,14 +17,18 @@ import { ChapterList } from "../chapters/ChapterList";
 import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
 
-const { Paragraph, Grid } = Placeholder;
+const { Paragraph } = Placeholder;
 
 export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   const { story } = props;
   const intl = useIntl();
   const handleExpandPanel = useCallback((element) => {
     if (element) {
-      (element as HTMLElement).scrollIntoView({ behavior: "smooth" });
+      (element as HTMLElement).scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
     }
   }, []);
 
