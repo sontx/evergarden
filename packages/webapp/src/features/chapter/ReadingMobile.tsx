@@ -16,6 +16,8 @@ import moment from "moment";
 import { ReadingPanel } from "../../components/ReadingPanel";
 import { useHistory } from "react-router";
 import classNames from "classnames";
+import { useAppSelector } from "../../app/hooks";
+import { selectStatus } from "./chapterSlice";
 
 function getChapterDisplayName(
   chapter: GetChapterDto,
@@ -113,8 +115,55 @@ function ReadingNavigationTop(props: {
   );
 }
 
+function ReadingNavigationBottom(props: {
+  story: GetStoryDto;
+  chapter: GetChapterDto;
+}) {
+  const { story, chapter } = props;
+  const history = useHistory();
+  const status = useAppSelector(selectStatus);
+
+  const handleNext = useCallback(() => {
+    history.push(`/reading/${story.url}/${chapter.chapterNo + 1}`);
+  }, [chapter, history, story]);
+  const handleBack = useCallback(() => {
+    history.push(`/reading/${story.url}/${chapter.chapterNo - 1}`);
+  }, [chapter, history, story]);
+  const handleShowChapters = useCallback(() => {}, []);
+  const handleShowSettings = useCallback(() => {}, []);
+
+  return (
+    <div className="reading-navigation reading-navigation--bottom">
+      <ButtonToolbar>
+        <ButtonGroup justified>
+          <Button
+            onClick={handleBack}
+            disabled={status === "processing" || chapter.chapterNo <= 1}
+          >
+            <Icon size="lg" icon="arrow-circle-o-left" />
+          </Button>
+          <Button
+            onClick={handleNext}
+            disabled={
+              status === "processing" || chapter.chapterNo >= story.lastChapter
+            }
+          >
+            <Icon size="lg" icon="arrow-circle-right" />
+          </Button>
+          <Button onClick={handleShowChapters}>
+            <Icon size="lg" icon="list-ol" />
+          </Button>
+          <Button onClick={handleShowSettings}>
+            <Icon size="lg" icon="font" />
+          </Button>
+        </ButtonGroup>
+      </ButtonToolbar>
+    </div>
+  );
+}
+
 export function ReadingMobile(props: {
-  chapter?: GetChapterDto;
+  chapter?: GetChapterDto | false;
   story?: GetStoryDto;
 }) {
   const { story, chapter } = props;
@@ -142,7 +191,7 @@ export function ReadingMobile(props: {
 
   useEffect(() => {
     if (chapter) {
-      window.scrollTo({ top: 0 });
+      setShowNavigation(false);
     }
   }, [chapter]);
 
@@ -155,87 +204,72 @@ export function ReadingMobile(props: {
       <Panel
         className="reading-container"
         header={
-          story ? (
+          story && chapter ? (
             <>
-              {chapter && (
-                <h5>
-                  <span
-                    style={{
-                      textTransform: "uppercase",
-                      color: !chapter.title
-                        ? "unset"
-                        : "rgb(164 169 179 / 50%)",
-                    }}
-                  >
-                    {intl.formatMessage(
-                      { id: "chapterTitle" },
-                      { chapterNo: chapter.chapterNo },
-                    )}
-                    {chapter.title && ":"}
-                  </span>
-                  {chapter.title && (
-                    <span style={{ marginLeft: "5px", lineHeight: "1.5em" }}>
-                      {chapter.title}
-                    </span>
+              <h5>
+                <span
+                  style={{
+                    textTransform: "uppercase",
+                    color: !chapter.title ? "unset" : "rgb(164 169 179 / 50%)",
+                  }}
+                >
+                  {intl.formatMessage(
+                    { id: "chapterTitle" },
+                    { chapterNo: chapter.chapterNo },
                   )}
-                </h5>
-              )}
-              {chapter && (
-                <span className="reading-subtitle">
-                  {typeof chapter.uploadBy === "object"
-                    ? intl.formatMessage(
-                        { id: "readingSubtitle" },
-                        {
-                          updated: moment(chapter.updated).fromNow(),
-                          updatedBy: (
-                            <Link
-                              to={{ pathname: `/user/${chapter.uploadBy.id}` }}
-                            >
-                              {chapter.uploadBy.fullName}
-                            </Link>
-                          ),
-                        },
-                      )
-                    : moment(chapter.updated).fromNow()}
+                  {chapter.title && ":"}
                 </span>
-              )}
+                {chapter.title && (
+                  <span style={{ marginLeft: "5px", lineHeight: "1.5em" }}>
+                    {chapter.title}
+                  </span>
+                )}
+              </h5>
+              <span className="reading-subtitle">
+                {typeof chapter.uploadBy === "object"
+                  ? intl.formatMessage(
+                      { id: "readingSubtitle" },
+                      {
+                        updated: moment(chapter.updated).fromNow(),
+                        updatedBy: (
+                          <Link
+                            to={{ pathname: `/user/${chapter.uploadBy.id}` }}
+                          >
+                            {chapter.uploadBy.fullName}
+                          </Link>
+                        ),
+                      },
+                    )
+                  : moment(chapter.updated).fromNow()}
+              </span>
             </>
           ) : (
-            <Placeholder.Graph active height={20} />
+            <Placeholder.Graph active height={35} />
           )
         }
       >
         {chapter ? (
-          <ReadingPanel onClick={handleClick}>{chapter.content}</ReadingPanel>
+          <ReadingPanel
+            minHeightConfig={{
+              selectors: [".rs-panel-heading", ".rs-footer"],
+              containerVertPadding: 30,
+            }}
+            onClick={handleClick}
+          >
+            {chapter.content}
+          </ReadingPanel>
         ) : (
-          <Placeholder.Paragraph rows={50} active />
+          <Placeholder.Paragraph rows={15} active />
         )}
       </Panel>
-      {!showNavigation && chapter && (
+      {!showNavigation && chapter && window.scrollY > 0 && (
         <ReadingFooter chapter={chapter} ref={footerRef} />
       )}
       {showNavigation && story && chapter && (
-        <ReadingNavigationTop chapter={chapter} story={story} />
-      )}
-      {showNavigation && (
-        <div className="reading-navigation reading-navigation--bottom">
-          <ButtonToolbar>
-            <ButtonGroup justified>
-              <Button>
-                <Icon size="lg" icon="arrow-circle-o-left" />
-              </Button>
-              <Button>
-                <Icon size="lg" icon="arrow-circle-right" />
-              </Button>
-              <Button>
-                <Icon size="lg" icon="list-ol" />
-              </Button>
-              <Button>
-                <Icon size="lg" icon="font" />
-              </Button>
-            </ButtonGroup>
-          </ButtonToolbar>
-        </div>
+        <>
+          <ReadingNavigationTop chapter={chapter} story={story} />
+          <ReadingNavigationBottom story={story} chapter={chapter} />
+        </>
       )}
     </>
   );

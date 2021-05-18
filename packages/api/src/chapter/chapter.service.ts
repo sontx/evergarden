@@ -25,7 +25,16 @@ export class ChapterService {
     private userService: UserService,
   ) {}
 
-  async getChapterByNo(storyId: IdType, chapterNo: number): Promise<GetChapterDto> {
+  async getChapterByNo(storyId: IdType, chapterNo: number, searchById: boolean): Promise<GetChapterDto | null> {
+    if (!searchById) {
+      const url = storyId as string;
+      const story = await this.storyService.getStoryByUrl(url);
+      if (!story) {
+        return null;
+      }
+      storyId = story.id;
+    }
+
     const chapter = await this.chapterRepository.findOne({
       where: { chapterNo, storyId: new ObjectID(storyId) },
     });
@@ -98,6 +107,7 @@ export class ChapterService {
     return {
       id: chapter.id,
       chapterNo: chapter.chapterNo,
+      storyId: chapter.storyId,
       title: chapter.title,
       created: chapter.created,
       updated: chapter.updated,

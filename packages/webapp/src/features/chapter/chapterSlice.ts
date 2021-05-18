@@ -16,8 +16,16 @@ const initialState: ChapterState = {
 
 export const fetchChapterAsync = createAsyncThunk(
   "chapter/fetch",
-  async (option: { storyId: IdType; chapterNo: number }) => {
-    return await fetchChapter(option.storyId, option.chapterNo);
+  async (option: {
+    storyId: IdType;
+    chapterNo: number;
+    searchById: boolean;
+  }) => {
+    return await fetchChapter(
+      option.storyId,
+      option.chapterNo,
+      option.searchById,
+    );
   },
 );
 
@@ -25,10 +33,6 @@ export const chapterSlice = createSlice({
   name: "chapter",
   initialState,
   reducers: {
-    resetChapter: (state) => {
-      state.chapter = undefined;
-      state.status = "none";
-    },
   },
   extraReducers: {
     [`${fetchChapterAsync.pending}`]: (state, action) => {
@@ -45,8 +49,6 @@ export const chapterSlice = createSlice({
     },
   },
 });
-
-export const { resetChapter } = chapterSlice.actions;
 
 export const selectChapter = (state: RootState) => state.chapter.chapter;
 export const selectStatus = (state: RootState) => state.chapter.status;

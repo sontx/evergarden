@@ -45,7 +45,7 @@ export interface GetStoryDto {
   updated: Date;
   view: number;
   rating?: number;
-  lastChapter?: number;
+  lastChapter: number;
   published?: boolean;
   uploadBy: IdType;
   updatedBy: IdType;
@@ -87,6 +87,7 @@ export type UpdateStoryDto = Omit<CreateStoryDto, "url">;
 
 export class GetChapterDto {
   id: IdType;
+  storyId: IdType;
   chapterNo: number;
   title?: string;
   created: Date;

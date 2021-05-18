@@ -7,11 +7,12 @@ import {
   selectStory,
 } from "../../features/story/storySlice";
 import { AppHeader } from "../../components/AppHeader";
-import { Container, Content } from "rsuite";
+import { Content } from "rsuite";
 import { GetStoryDto } from "@evergarden/shared";
-import {AppFooter} from "../../components/AppFooter";
-import {SEO} from "../../components/SEO";
-import {useIntl} from "react-intl";
+import { AppFooter } from "../../components/AppFooter";
+import { SEO } from "../../components/SEO";
+import { useIntl } from "react-intl";
+import { AppContainer } from "../../components/AppContainer";
 
 export function Story() {
   const { url } = useParams() as any;
@@ -35,13 +36,13 @@ export function Story() {
   }, [story, url]);
 
   return (
-    <Container>
-      <SEO title={intl.formatMessage({id: "pageTitleStory"})}/>
+    <AppContainer>
+      <SEO title={intl.formatMessage({ id: "pageTitleStory" })} />
       <AppHeader />
       <Content>
         <StoryPreviewMobile story={showStory} />
       </Content>
-      <AppFooter/>
-    </Container>
+      <AppFooter />
+    </AppContainer>
   );
 }

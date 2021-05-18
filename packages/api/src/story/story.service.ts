@@ -121,6 +121,7 @@ export class StoryService {
         updated: now,
         uploadBy: user.id,
         updatedBy: user.id,
+        lastChapter: 0
       });
       return this.toDto(savedStory);
     } catch (e) {

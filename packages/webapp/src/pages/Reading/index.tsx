@@ -1,20 +1,21 @@
 import { ReadingMobile } from "../../features/chapter/ReadingMobile";
 import { useLocation, useParams } from "react-router-dom";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  fetchStoryByUrlAsync, resetStory,
+  fetchStoryByUrlAsync,
   selectStory,
 } from "../../features/story/storySlice";
 import {
-  fetchChapterAsync, resetChapter,
+  fetchChapterAsync,
   selectChapter,
 } from "../../features/chapter/chapterSlice";
 import { AppHeader } from "../../components/AppHeader";
-import { Container, Content } from "rsuite";
+import { Content } from "rsuite";
 import { AppFooter } from "../../components/AppFooter";
-import {SEO} from "../../components/SEO";
-import {useIntl} from "react-intl";
+import { SEO } from "../../components/SEO";
+import { useIntl } from "react-intl";
+import { AppContainer } from "../../components/AppContainer";
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
@@ -22,38 +23,53 @@ export function Reading() {
   const location = useLocation();
   const intl = useIntl();
 
-  let cachedStory = (location.state || ({} as any)).story;
-  cachedStory =
-    cachedStory && cachedStory.url === url ? cachedStory : undefined;
-
+  const cachedStory = (location.state || ({} as any)).story || ({} as any);
   const chapter = useAppSelector(selectChapter);
   const story = useAppSelector(selectStory);
+  const [showStory, setShowStory] = useState(
+    (story || {}).url === url
+      ? story
+      : cachedStory.url === url
+      ? cachedStory
+      : undefined,
+  );
 
   useEffect(() => {
-    dispatch(resetChapter());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (!story || story.url !== url) {
-      dispatch(resetStory());
+    if (showStory) {
+      dispatch(
+        fetchChapterAsync({
+          storyId: showStory.id,
+          chapterNo,
+          searchById: true,
+        }),
+      );
+    } else {
+      dispatch(
+        fetchChapterAsync({ storyId: url, chapterNo, searchById: false }),
+      );
       dispatch(fetchStoryByUrlAsync(url));
     }
-  }, [url, dispatch, story]);
+  }, [chapterNo, dispatch, url]);
 
   useEffect(() => {
     if (story && story.url === url) {
-      dispatch(fetchChapterAsync({ storyId: story.id, chapterNo }));
+      setShowStory(story);
     }
-  }, [story, url, chapterNo, dispatch]);
+  }, [story, url]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [url, chapterNo]);
+
+  const showChapter = chapter && chapter.chapterNo == chapterNo && chapter;
   return (
-    <Container>
-      <SEO title={intl.formatMessage({id: "pageTitleReading"})}/>
+    <AppContainer>
+      <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppHeader />
       <Content>
-        <ReadingMobile story={story || cachedStory} chapter={chapter} />
+        <ReadingMobile story={showStory} chapter={showChapter} />
       </Content>
       <AppFooter />
-    </Container>
+    </AppContainer>
   );
 }

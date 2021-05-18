@@ -38,13 +38,14 @@ export class ChapterController {
   async getChapterByChapterNo(
     @Param("storyId") storyId: string,
     @Param("chapterNo", ParseIntPipe) chapterNo: number,
+    @Query("searchById", ParseBoolPipe) searchById: boolean
   ): Promise<GetChapterDto> {
     await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
 
     let chapter: GetChapterDto;
     if (storyId && chapterNo >= 0) {
       try {
-        chapter = await this.chapterService.getChapterByNo(storyId, chapterNo);
+        chapter = await this.chapterService.getChapterByNo(storyId, chapterNo, searchById);
       } catch (e) {
         this.logger.warn(`Error while finding chapter by its No: storyId = ${storyId}, chapterNo = ${chapterNo}`, e);
         throw new BadRequestException();
