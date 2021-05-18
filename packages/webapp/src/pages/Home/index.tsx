@@ -7,11 +7,16 @@ import { HotStories } from "../../features/stories/HotStories";
 import { AppHeader } from "../../components/AppHeader";
 import { Container, Content } from "rsuite";
 import {AppFooter} from "../../components/AppFooter";
+import {SEO} from "../../components/SEO";
+import {useIntl} from "react-intl";
 
 export function Home() {
   const currentTab = useAppSelector(selectCurrentTab);
+  const intl = useIntl();
+
   return (
     <Container>
+      <SEO title={intl.formatMessage({id: "pageTitleHome"})}/>
       <AppHeader />
       <Content style={{ padding: "10px" }}>
         <AppNav />

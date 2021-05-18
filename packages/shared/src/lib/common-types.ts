@@ -91,8 +91,8 @@ export class GetChapterDto {
   title?: string;
   created: Date;
   updated: Date;
-  uploadBy: IdType;
-  updatedBy: IdType;
+  uploadBy: IdType | GetUserDto;
+  updatedBy: IdType | GetUserDto;
   published?: boolean;
   content: string;
 }

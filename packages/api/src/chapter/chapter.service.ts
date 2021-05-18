@@ -13,6 +13,7 @@ import {
 } from "@evergarden/shared";
 import { Story } from "../story/story.entity";
 import { StoryService } from "../story/story.service";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class ChapterService {
@@ -21,13 +22,21 @@ export class ChapterService {
   constructor(
     @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
     private storyService: StoryService,
+    private userService: UserService,
   ) {}
 
   async getChapterByNo(storyId: IdType, chapterNo: number): Promise<GetChapterDto> {
     const chapter = await this.chapterRepository.findOne({
       where: { chapterNo, storyId: new ObjectID(storyId) },
     });
-    return chapter && this.toDto(chapter);
+
+    const updatedBy = await this.userService.getById(chapter.updatedBy);
+    const uploadBy = await this.userService.getById(chapter.uploadBy);
+    return chapter && {
+      ...chapter,
+      updatedBy: updatedBy ? this.userService.toDto(updatedBy) : chapter.updatedBy,
+      uploadBy: uploadBy ? this.userService.toDto(uploadBy) : chapter.uploadBy,
+    };
   }
 
   async getChapters(

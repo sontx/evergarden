@@ -15,10 +15,7 @@ export class UserController {
       if (!user) {
         throw new NotFoundException();
       }
-      return {
-        id,
-        fullName: user.fullName,
-      };
+      return this.userService.toDto(user);
     } catch (e) {
       this.logger.warn(`Not found user id ${id}`, e);
       throw new NotFoundException();

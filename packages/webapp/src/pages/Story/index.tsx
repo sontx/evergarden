@@ -10,11 +10,14 @@ import { AppHeader } from "../../components/AppHeader";
 import { Container, Content } from "rsuite";
 import { GetStoryDto } from "@evergarden/shared";
 import {AppFooter} from "../../components/AppFooter";
+import {SEO} from "../../components/SEO";
+import {useIntl} from "react-intl";
 
 export function Story() {
   const { url } = useParams() as any;
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const intl = useIntl();
   const story = useAppSelector(selectStory);
   const locationStory = ((location.state as any) || {}).story;
   const [showStory, setShowStory] = useState<GetStoryDto | undefined>(
@@ -33,6 +36,7 @@ export function Story() {
 
   return (
     <Container>
+      <SEO title={intl.formatMessage({id: "pageTitleStory"})}/>
       <AppHeader />
       <Content>
         <StoryPreviewMobile story={showStory} />

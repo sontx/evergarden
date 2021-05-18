@@ -2,6 +2,11 @@ export default {
   id: 'en-US',
   error404: 'Page not found',
   error500: 'Server error',
+  description: "The next story reading generation",
+  pageTitleHome: "Home",
+  pageTitleLogin: "Login",
+  pageTitleStory: "Story",
+  pageTitleReading: "Reading",
   loginWelcome: "Welcome to Evergarden",
   loginSlogan: "The next story reading generation",
   loginWithFacebook: "Login with Facebook",
@@ -19,5 +24,6 @@ export default {
   showMore: "Show more",
   showLess: "Show less",
   loadingText: "Loading...",
-  chapterTitle: "Chapter {chapterNo}"
+  chapterTitle: "Chapter {chapterNo}",
+  readingSubtitle: "{updated} by {updatedBy}"
 };

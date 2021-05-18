@@ -22,21 +22,26 @@ import { Role } from "../auth/role/roles.decorator";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
 import { StoryService } from "../story/story.service";
+import { UserService } from "../user/user.service";
 
 @Controller()
 export class ChapterController {
   private readonly logger = new Logger(ChapterController.name);
 
-  constructor(private chapterService: ChapterService, private storyService: StoryService) {}
+  constructor(
+    private chapterService: ChapterService,
+    private storyService: StoryService,
+    private userService: UserService,
+  ) {}
 
   @Get("stories/:storyId/chapters/:chapterNo")
   async getChapterByChapterNo(
     @Param("storyId") storyId: string,
     @Param("chapterNo", ParseIntPipe) chapterNo: number,
   ): Promise<GetChapterDto> {
-    await new Promise(resolve => setTimeout(() => resolve(null), 2000));
+    await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
 
-    let chapter;
+    let chapter: GetChapterDto;
     if (storyId && chapterNo >= 0) {
       try {
         chapter = await this.chapterService.getChapterByNo(storyId, chapterNo);
@@ -47,6 +52,7 @@ export class ChapterController {
       if (!chapter) {
         throw new NotFoundException();
       }
+
       return chapter;
     }
     throw new BadRequestException();
@@ -59,7 +65,7 @@ export class ChapterController {
     @Query("limit", ParseIntPipe) limit = 10,
     @Query("includesContent", ParseBoolPipe) includesContent = false,
   ): Promise<PaginationResult<GetChapterDto>> {
-    await new Promise(resolve => setTimeout(() => resolve(null), 2000));
+    await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
     try {
       return await this.chapterService.getChapters(
         storyId,

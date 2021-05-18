@@ -5,7 +5,7 @@ import { UserToolbar } from "../UserToolbar";
 
 import "./index.less";
 import classNames from "classnames";
-import { Fab } from "react-tiny-fab";
+import { Action, Fab } from "react-tiny-fab";
 import { useHistory, useLocation } from "react-router-dom";
 
 export function AppHeader() {
@@ -88,7 +88,8 @@ export function AppHeader() {
         <Fab
           onClick={handleClickFab}
           event="click"
-          style={{ bottom: 0, right: 0 }}
+          mainButtonStyles={{ width: "40px", height: "40px", opacity: 0.5 }}
+          style={{ bottom: "40px", right: "10px", margin: 0 }}
           icon={<Icon icon="up" />}
         />
       )}

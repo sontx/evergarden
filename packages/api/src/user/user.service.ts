@@ -1,4 +1,4 @@
-import { IdType } from "@evergarden/shared";
+import { GetUserDto, IdType } from "@evergarden/shared";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
@@ -17,6 +17,13 @@ export class UserService {
   async getById(id: IdType): Promise<User> {
     const user = await this.userRepository.findOne(id);
     return user;
+  }
+
+  toDto(user: User): GetUserDto {
+    return {
+      id: user.id,
+      fullName: user.fullName,
+    };
   }
 
   async addUser(user: Partial<User>): Promise<User> {

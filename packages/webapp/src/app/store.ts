@@ -10,6 +10,7 @@ import hotStoriesReducer from "../features/stories/hotStoriesSlice";
 import settingsReducer from "../features/settings/settingsSlice";
 import storyReducer from "../features/story/storySlice";
 import chaptersReducer from "../features/chapters/chaptersSlice";
+import chapterReducer from "../features/chapter/chapterSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
@@ -17,6 +18,7 @@ const reducers = combineReducers({
   hotStories: hotStoriesReducer,
   story: storyReducer,
   chapters: chaptersReducer,
+  chapter: chapterReducer,
   login: authReducer,
   settings: settingsReducer,
 });
