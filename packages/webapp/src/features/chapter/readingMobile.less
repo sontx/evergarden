@@ -3,6 +3,10 @@
 .reading-container {
 }
 
+.reading-container .rs-panel-heading {
+  padding-top: 10px !important;
+}
+
 .reading-container .rs-panel-body,
 .reading-container .rs-panel-heading {
   padding-left: 10px !important;
@@ -10,7 +14,7 @@
 }
 
 .reading-container article {
-  line-height: 1.5em;
+  line-height: calc(1ex / 0.32);
 }
 
 .reading-container .reading-subtitle {
@@ -29,4 +33,44 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.reading-navigation {
+  position: fixed;
+  width: 100%;
+  background: @btn-default-bg;
+  touch-action: none;
+}
+
+.reading-navigation--top {
+  top: 0;
+}
+
+.reading-navigation-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reading-navigation--top button {
+  border-radius: 0;
+}
+
+.reading-navigation--bottom {
+  bottom: 0;
+}
+
+.reading-navigation-title {
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.reading-navigation-title--more {
+  font-size: @font-size-base - 1;
+}
+
+.reading-navigation-title--sub {
+  font-size: @font-size-base - 5;
+  margin-top: 2px;
 }

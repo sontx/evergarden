@@ -16,12 +16,15 @@ import { useCallback } from "react";
 import { ChapterList } from "../chapters/ChapterList";
 import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
+import { useLocation } from "react-router-dom";
 
 const { Paragraph } = Placeholder;
 
 export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   const { story } = props;
   const intl = useIntl();
+  const { state = {} } = useLocation() as any;
+
   const handleExpandPanel = useCallback((element) => {
     if (element) {
       (element as HTMLElement).scrollIntoView({
@@ -31,6 +34,15 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
       });
     }
   }, []);
+
+  const handleCommentReady = useCallback(() => {
+    if (state.focusTo === "comment") {
+      const commentPanel = document.getElementById("comment-panel");
+      if (commentPanel) {
+        handleExpandPanel(commentPanel);
+      }
+    }
+  }, [handleExpandPanel, state.focusOn]);
 
   return story ? (
     <div className="story-preview-mobile-container">
@@ -88,12 +100,13 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
       </Panel>
       <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
       <Panel
+        id="comment-panel"
         onEntered={handleExpandPanel}
         defaultExpanded
         collapsible
         header={<CommentCount story={story} />}
       >
-        <Comment story={story} />
+        <Comment onReady={handleCommentReady} story={story} />
       </Panel>
     </div>
   ) : (
