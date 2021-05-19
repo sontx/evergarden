@@ -41,8 +41,8 @@ export function UserToolbar() {
   }, [dispatch]);
 
   const handleToggleDrawer = useCallback(() => {
-    setShowDrawer(!showDrawer);
-  }, [showDrawer]);
+    setShowDrawer(prevState => !prevState);
+  }, []);
 
   return (
     <>

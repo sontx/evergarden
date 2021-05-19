@@ -34,6 +34,9 @@ export const storySlice = createSlice({
     resetStory: (state) => {
       state.story = undefined;
     },
+    setStory: (state, {payload}) => {
+      state.story = payload;
+    }
   },
   extraReducers: {
     [`${fetchStoryAsync.pending}`]: (state) => {
@@ -59,7 +62,7 @@ export const storySlice = createSlice({
   },
 });
 
-export const { resetStory } = storySlice.actions;
+export const { resetStory, setStory } = storySlice.actions;
 
 export const selectStory = (state: RootState) => state.story.story;
 export const selectStatus = (state: RootState) => state.story.status;

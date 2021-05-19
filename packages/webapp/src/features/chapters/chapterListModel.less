@@ -1,0 +1,58 @@
+@import "~rsuite/lib/styles/themes/dark/index.less";
+
+.chapter-list-modal-container .rs-modal-dialog {
+  margin: 0 !important;
+}
+
+.chapter-list-modal-container .rs-modal-content {
+  height: 100vh !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.chapter-list-modal-container.rs-modal {
+  width: 100vw !important;
+  margin: 0;
+}
+
+.chapter-list-modal-container .rs-modal-body {
+  max-height: unset !important;
+  padding-bottom: 0 !important;
+  margin-top: 15px !important;
+  flex: 1;
+}
+
+.chapter-list-modal-container .rs-list {
+  background: @modal-content-bg;
+  box-shadow: 0 1px 0 @border-base-color, 0 -1px 0 @border-base-color;
+}
+
+.chapter-list-modal-container .rs-list-item {
+  background: @modal-content-bg;
+  box-shadow: 0 -1px 0 @border-base-color, 0 1px 0 @border-base-color;
+}
+
+.chapter-list-modal-container .chapter-title--current {
+  color: @input-border-focus;
+}
+
+.chapter-list-modal-container .chapter-sub {
+  font-size: @font-size-base - 2;
+  color: #a4a9b3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: calc(100vw - 70px);
+  margin-top: 2px;
+}
+
+.chapter-list-modal-container .rs-list-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chapter-list-modal-container .best-match {
+  margin-left: 2px;
+  color: @rate-selected-color;
+}

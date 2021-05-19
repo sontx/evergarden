@@ -36,9 +36,12 @@
     "react-show-more-text": "^1.4.6",
     "react-simple-pull-to-refresh": "^1.2.3",
     "react-tiny-fab": "^4.0.2",
+    "react-virtualized-auto-sizer": "^1.0.5",
+    "react-window": "^1.8.6",
     "redux-persist": "^6.0.0",
     "rsuite": "^4.10.1",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "use-debounce": "^6.0.1"
   },
   "scripts": {
     "start": "npm run start:dev",
@@ -67,6 +70,8 @@
     "@types/react-infinite-scroller": "^1.2.1",
     "@types/react-router": "^5.1.14",
     "@types/react-router-dom": "^5.1.7",
+    "@types/react-virtualized-auto-sizer": "^1.0.0",
+    "@types/react-window": "^1.8.3",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
     "http-proxy-middleware": "^2.0.0",

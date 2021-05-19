@@ -18,6 +18,7 @@ import { useHistory } from "react-router";
 import classNames from "classnames";
 import { useAppSelector } from "../../app/hooks";
 import { selectStatus } from "./chapterSlice";
+import { ChapterListModal } from "../chapters/ChapterListModal";
 
 function getChapterDisplayName(
   chapter: GetChapterDto,
@@ -62,8 +63,8 @@ function ReadingNavigationTop(props: {
   }, [url, history]);
 
   const handleClickMore = useCallback(() => {
-    setShowMore(!showMore);
-  }, [showMore]);
+    setShowMore(prevState => !prevState);
+  }, []);
 
   const handleClickComment = useCallback(() => {
     history.push(`/story/${url}`, { focusTo: "comment" });
@@ -122,14 +123,23 @@ function ReadingNavigationBottom(props: {
   const { story, chapter } = props;
   const history = useHistory();
   const status = useAppSelector(selectStatus);
+  const [showChapterList, setShowChapterList] = useState(false);
 
   const handleNext = useCallback(() => {
     history.push(`/reading/${story.url}/${chapter.chapterNo + 1}`);
   }, [chapter, history, story]);
+
   const handleBack = useCallback(() => {
     history.push(`/reading/${story.url}/${chapter.chapterNo - 1}`);
   }, [chapter, history, story]);
-  const handleShowChapters = useCallback(() => {}, []);
+
+  const handleShowChapters = useCallback(() => {
+    setShowChapterList(true);
+  }, []);
+  const handleHideChapters = useCallback(() => {
+    setShowChapterList(false);
+  }, []);
+
   const handleShowSettings = useCallback(() => {}, []);
 
   return (
@@ -158,13 +168,14 @@ function ReadingNavigationBottom(props: {
           </Button>
         </ButtonGroup>
       </ButtonToolbar>
+      <ChapterListModal show={showChapterList} onClose={handleHideChapters}/>
     </div>
   );
 }
 
 export function ReadingMobile(props: {
   chapter?: GetChapterDto | false;
-  story?: GetStoryDto;
+  story?: GetStoryDto | false;
 }) {
   const { story, chapter } = props;
   const intl = useIntl();
@@ -196,8 +207,8 @@ export function ReadingMobile(props: {
   }, [chapter]);
 
   const handleClick = useCallback(() => {
-    setShowNavigation(!showNavigation);
-  }, [showNavigation]);
+    setShowNavigation(prevState => !prevState);
+  }, []);
 
   return (
     <>

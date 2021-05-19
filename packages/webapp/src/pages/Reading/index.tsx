@@ -1,10 +1,11 @@
 import { ReadingMobile } from "../../features/chapter/ReadingMobile";
 import { useLocation, useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   fetchStoryByUrlAsync,
   selectStory,
+  setStory,
 } from "../../features/story/storySlice";
 import {
   fetchChapterAsync,
@@ -23,45 +24,42 @@ export function Reading() {
   const location = useLocation();
   const intl = useIntl();
 
-  const cachedStory = (location.state || ({} as any)).story || ({} as any);
+  const cachedStory = useMemo(() => (location.state || ({} as any)).story, [
+    location.state,
+  ]);
+
+  useEffect(() => {
+    if (cachedStory && cachedStory.url === url) {
+      dispatch(setStory(cachedStory));
+    }
+  }, [cachedStory, dispatch, url]);
+
   const chapter = useAppSelector(selectChapter);
   const story = useAppSelector(selectStory);
-  const [showStory, setShowStory] = useState(
-    (story || {}).url === url
-      ? story
-      : cachedStory.url === url
-      ? cachedStory
-      : undefined,
-  );
+
+  const showChapter = chapter && chapter.chapterNo == chapterNo && chapter;
+  const showStory = story && story.url === url && story;
 
   useEffect(() => {
-    if (showStory) {
+    if (!showChapter) {
       dispatch(
         fetchChapterAsync({
-          storyId: showStory.id,
+          storyId: story ? story.id : url,
           chapterNo,
-          searchById: true,
+          searchById: !!story,
         }),
       );
-    } else {
-      dispatch(
-        fetchChapterAsync({ storyId: url, chapterNo, searchById: false }),
-      );
+    }
+
+    if (!story) {
       dispatch(fetchStoryByUrlAsync(url));
     }
-  }, [chapterNo, dispatch, url]);
-
-  useEffect(() => {
-    if (story && story.url === url) {
-      setShowStory(story);
-    }
-  }, [story, url]);
+  }, [chapterNo, dispatch, story, url, showChapter]);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [url, chapterNo]);
 
-  const showChapter = chapter && chapter.chapterNo == chapterNo && chapter;
   return (
     <AppContainer>
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />

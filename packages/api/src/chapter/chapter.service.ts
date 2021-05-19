@@ -59,8 +59,8 @@ export class ChapterService {
       take: pagination.limit,
       skip: pagination.page * pagination.limit,
       select: includesContent
-        ? ["id", "chapterNo", "created", "updated", "uploadBy", "updatedBy", "published", "title", "content"]
-        : ["id", "chapterNo", "created", "updated", "uploadBy", "updatedBy", "published", "title"],
+        ? ["id", "storyId", "chapterNo", "created", "updated", "uploadBy", "updatedBy", "published", "title", "content"]
+        : ["id", "storyId", "chapterNo", "created", "updated", "uploadBy", "updatedBy", "published", "title"],
     });
 
     return {
