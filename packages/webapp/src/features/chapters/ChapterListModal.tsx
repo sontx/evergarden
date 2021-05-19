@@ -25,6 +25,7 @@ import { FormattedMessage } from "react-intl";
 import { GetChapterDto } from "@evergarden/shared";
 import classNames from "classnames";
 import { useDebouncedCallback } from "use-debounce";
+import { useHistory } from "react-router-dom";
 
 export function ChapterListModal(props: {
   show?: boolean;
@@ -71,7 +72,7 @@ export function ChapterListModal(props: {
         setShowChapters([...originalChapters].sort(sort));
       }
 
-      const equalChapterNos: (GetChapterDto & {bestMatch?: boolean})[] = [];
+      const equalChapterNos: (GetChapterDto & { bestMatch?: boolean })[] = [];
       const containsChapterNos: GetChapterDto[] = [];
       const containsChapterTitles: GetChapterDto[] = [];
       for (const chapter of originalChapters) {
@@ -116,6 +117,22 @@ export function ChapterListModal(props: {
       handleSearch(element.value, chapters, isDesc);
     }
   }, [isDesc, chapters, handleSearch]);
+
+  const history = useHistory();
+  const handleChapterClick = useCallback(
+    (clickedChapter: GetChapterDto) => {
+      const isClickedOnCurrentChapter =
+        chapter && chapter.id === clickedChapter.id;
+      if (isClickedOnCurrentChapter) {
+        if (onClose) {
+          onClose();
+        }
+      } else if (story) {
+        history.push(`/reading/${story.url}/${clickedChapter.chapterNo}`);
+      }
+    },
+    [chapter, history, onClose, story],
+  );
 
   return (
     <Modal
@@ -170,7 +187,10 @@ export function ChapterListModal(props: {
                     : moment(data.updated).fromNow();
                   return (
                     data && (
-                      <List.Item style={itemProps.style}>
+                      <List.Item
+                        style={itemProps.style}
+                        onClick={() => handleChapterClick(data)}
+                      >
                         <div>
                           <div
                             className={classNames({
@@ -182,7 +202,9 @@ export function ChapterListModal(props: {
                               id="chapterTitle"
                               values={{ chapterNo: data.chapterNo }}
                             />
-                            {data.bestMatch && <Icon icon="star" className="best-match"/>}
+                            {data.bestMatch && (
+                              <Icon icon="star" className="best-match" />
+                            )}
                           </div>
                           <div className="chapter-sub" title={sub}>
                             {sub}
