@@ -73,7 +73,7 @@ export function Reading() {
       <AppFooter />
       <Helmet>
         <link
-          href={`https://fonts.googleapis.com/css?family=${readingFont.name}`}
+          href={`https://fonts.googleapis.com/css?family=${readingFont}`}
           rel="stylesheet"
         />
       </Helmet>

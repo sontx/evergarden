@@ -21,8 +21,10 @@ import {
 } from "./ReadingNavigationTop";
 import { useAppSelector } from "../../app/hooks";
 import {
+  getFont,
   selectReadingFont,
-  selectReadingFontSize, selectReadingLineSpacing,
+  selectReadingFontSize,
+  selectReadingLineSpacing,
 } from "../settings/settingsSlice";
 
 const ReadingFooter = forwardRef(
@@ -96,11 +98,13 @@ export function ReadingMobile(props: {
     setShowNavigation((prevState) => !prevState);
   }, []);
 
+  const font = getFont(readingFont);
+
   return (
     <>
       <Panel
         className="reading-container"
-        style={{ fontFamily: readingFont.family }}
+        style={{ fontFamily: font.family }}
         header={
           story && chapter ? (
             <div style={{ textAlign: "center" }}>
