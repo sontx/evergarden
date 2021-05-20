@@ -61,14 +61,14 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
           </div>
         </Panel>
       </Panel>
-      <Divider style={{ marginTop: 0, marginBottom: "20px" }} />
+      <Divider style={{ marginTop: "10px", marginBottom: "20px" }} />
       <StoryDetail story={story} />
       <ButtonGroup
         style={{
-          paddingLeft: "20px",
-          paddingRight: "20px",
+          paddingLeft: "10px",
+          paddingRight: "10px",
           marginTop: "20px",
-          marginBottom: "12px",
+          marginBottom: "15px",
         }}
         justified
       >
