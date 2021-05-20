@@ -1,39 +1,29 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import {
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Icon,
-  Panel,
-  Placeholder,
-} from "rsuite";
-import { IntlShape, useIntl } from "react-intl";
-import { Link, useParams } from "react-router-dom";
+import { Panel, Placeholder } from "rsuite";
+import { useIntl } from "react-intl";
+import { Link } from "react-router-dom";
 
 import "./readingMobile.less";
-import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import moment from "moment";
 import { ReadingPanel } from "../../components/ReadingPanel";
-import { useHistory } from "react-router";
-import classNames from "classnames";
+import { ReadingNavigationBottom } from "./ReadingNavigationBottom";
+import {
+  getChapterDisplayName,
+  ReadingNavigationTop,
+} from "./ReadingNavigationTop";
 import { useAppSelector } from "../../app/hooks";
-import { selectStatus } from "./chapterSlice";
-import { ChapterListModal } from "../chapters/ChapterListModal";
-
-function getChapterDisplayName(
-  chapter: GetChapterDto,
-  intl: IntlShape,
-): string {
-  return chapter.title
-    ? `${intl.formatMessage(
-        { id: "chapterTitle" },
-        { chapterNo: chapter.chapterNo },
-      )}: ${chapter.title}`
-    : intl.formatMessage(
-        { id: "chapterTitle" },
-        { chapterNo: chapter.chapterNo },
-      );
-}
+import {
+  selectReadingFont,
+  selectReadingFontSize, selectReadingLineSpacing,
+} from "../settings/settingsSlice";
 
 const ReadingFooter = forwardRef(
   (props: { chapter: GetChapterDto }, ref: any) => {
@@ -48,131 +38,6 @@ const ReadingFooter = forwardRef(
   },
 );
 
-function ReadingNavigationTop(props: {
-  story: GetStoryDto;
-  chapter: GetChapterDto;
-}) {
-  const { story, chapter } = props;
-  const history = useHistory();
-  const { url } = useParams() as any;
-  const [showMore, setShowMore] = useState(false);
-  const intl = useIntl();
-
-  const handleClickBack = useCallback(() => {
-    history.push(`/story/${url}`);
-  }, [url, history]);
-
-  const handleClickMore = useCallback(() => {
-    setShowMore(prevState => !prevState);
-  }, []);
-
-  const handleClickComment = useCallback(() => {
-    history.push(`/story/${url}`, { focusTo: "comment" });
-  }, [history, url]);
-
-  return (
-    <div className="reading-navigation reading-navigation--top">
-      <div className="reading-navigation-top-header">
-        <Button onClick={handleClickBack} appearance="subtle">
-          <Icon size="lg" icon="chevron-left" />
-        </Button>
-        <div className="reading-navigation-title">
-          <div
-            className={classNames({
-              "reading-navigation-title--more": showMore,
-            })}
-          >
-            {story.title}
-          </div>
-          {showMore && (
-            <div className="reading-navigation-title--sub">
-              {getChapterDisplayName(chapter, intl)}
-            </div>
-          )}
-        </div>
-        <Button onClick={handleClickMore} appearance="subtle">
-          <Icon size="lg" icon="more" />
-        </Button>
-      </div>
-      {showMore && (
-        <ButtonToolbar>
-          <ButtonGroup justified>
-            <Button>
-              <Icon icon="download" />
-            </Button>
-            <Button onClick={handleClickComment}>
-              <Icon icon="commenting" />
-            </Button>
-            <Button>
-              <Icon icon="heart" />
-            </Button>
-            <Button>
-              <Icon icon="bug" />
-            </Button>
-          </ButtonGroup>
-        </ButtonToolbar>
-      )}
-    </div>
-  );
-}
-
-function ReadingNavigationBottom(props: {
-  story: GetStoryDto;
-  chapter: GetChapterDto;
-}) {
-  const { story, chapter } = props;
-  const history = useHistory();
-  const status = useAppSelector(selectStatus);
-  const [showChapterList, setShowChapterList] = useState(false);
-
-  const handleNext = useCallback(() => {
-    history.push(`/reading/${story.url}/${chapter.chapterNo + 1}`);
-  }, [chapter, history, story]);
-
-  const handleBack = useCallback(() => {
-    history.push(`/reading/${story.url}/${chapter.chapterNo - 1}`);
-  }, [chapter, history, story]);
-
-  const handleShowChapters = useCallback(() => {
-    setShowChapterList(true);
-  }, []);
-  const handleHideChapters = useCallback(() => {
-    setShowChapterList(false);
-  }, []);
-
-  const handleShowSettings = useCallback(() => {}, []);
-
-  return (
-    <div className="reading-navigation reading-navigation--bottom">
-      <ButtonToolbar>
-        <ButtonGroup justified>
-          <Button
-            onClick={handleBack}
-            disabled={status === "processing" || chapter.chapterNo <= 1}
-          >
-            <Icon size="lg" icon="arrow-circle-o-left" />
-          </Button>
-          <Button
-            onClick={handleNext}
-            disabled={
-              status === "processing" || chapter.chapterNo >= story.lastChapter
-            }
-          >
-            <Icon size="lg" icon="arrow-circle-right" />
-          </Button>
-          <Button onClick={handleShowChapters}>
-            <Icon size="lg" icon="list-ol" />
-          </Button>
-          <Button onClick={handleShowSettings}>
-            <Icon size="lg" icon="font" />
-          </Button>
-        </ButtonGroup>
-      </ButtonToolbar>
-      <ChapterListModal show={showChapterList} onClose={handleHideChapters}/>
-    </div>
-  );
-}
-
 export function ReadingMobile(props: {
   chapter?: GetChapterDto | false;
   story?: GetStoryDto | false;
@@ -181,6 +46,27 @@ export function ReadingMobile(props: {
   const intl = useIntl();
   const footerRef = useRef<HTMLDivElement>(null);
   const [showNavigation, setShowNavigation] = useState(false);
+  const readingFont = useAppSelector(selectReadingFont);
+  const readingFontSize = useAppSelector(selectReadingFontSize);
+  const readingLineSpacing = useAppSelector(selectReadingLineSpacing);
+  const fontSize = useMemo(() => {
+    const config = {
+      S: "0.75em",
+      M: "1em",
+      L: "1.25em",
+      XL: "1.75em",
+    };
+    return config[readingFontSize] || "1em";
+  }, [readingFontSize]);
+  const lineSpacingClass = useMemo(() => {
+    const config = {
+      S: "line-spacing--s",
+      M: "line-spacing--m",
+      L: "line-spacing--l",
+      XL: "line-spacing--xl",
+    };
+    return config[readingLineSpacing] || "1em";
+  }, [readingLineSpacing]);
 
   useEffect(() => {
     const getCurrentScrollTop = () =>
@@ -207,21 +93,22 @@ export function ReadingMobile(props: {
   }, [chapter]);
 
   const handleClick = useCallback(() => {
-    setShowNavigation(prevState => !prevState);
+    setShowNavigation((prevState) => !prevState);
   }, []);
 
   return (
     <>
       <Panel
         className="reading-container"
+        style={{ fontFamily: readingFont.family }}
         header={
           story && chapter ? (
-            <>
+            <div style={{ textAlign: "center" }}>
               <h5>
                 <span
                   style={{
                     textTransform: "uppercase",
-                    color: !chapter.title ? "unset" : "rgb(164 169 179 / 50%)",
+                    color: !chapter.title ? "unset" : "#a4a9b3",
                   }}
                 >
                   {intl.formatMessage(
@@ -231,7 +118,12 @@ export function ReadingMobile(props: {
                   {chapter.title && ":"}
                 </span>
                 {chapter.title && (
-                  <span style={{ marginLeft: "5px", lineHeight: "1.5em" }}>
+                  <span
+                    style={{
+                      marginLeft: "5px",
+                      lineHeight: "calc(1ex / 0.32)",
+                    }}
+                  >
                     {chapter.title}
                   </span>
                 )}
@@ -253,7 +145,7 @@ export function ReadingMobile(props: {
                     )
                   : moment(chapter.updated).fromNow()}
               </span>
-            </>
+            </div>
           ) : (
             <Placeholder.Graph active height={35} />
           )
@@ -261,6 +153,8 @@ export function ReadingMobile(props: {
       >
         {chapter ? (
           <ReadingPanel
+            style={{ fontSize: fontSize }}
+            className={lineSpacingClass}
             minHeightConfig={{
               selectors: [".rs-panel-heading", ".rs-footer"],
               containerVertPadding: 30,

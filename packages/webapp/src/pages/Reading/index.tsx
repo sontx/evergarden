@@ -17,12 +17,15 @@ import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
+import {Helmet} from "react-helmet";
+import {selectReadingFont} from "../../features/settings/settingsSlice";
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
   const dispatch = useAppDispatch();
   const location = useLocation();
   const intl = useIntl();
+  const readingFont = useAppSelector(selectReadingFont);
 
   const cachedStory = useMemo(() => (location.state || ({} as any)).story, [
     location.state,
@@ -61,13 +64,19 @@ export function Reading() {
   }, [url, chapterNo]);
 
   return (
-    <AppContainer>
+    <AppContainer className="reading-theme--dark1">
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppHeader />
       <Content>
         <ReadingMobile story={showStory} chapter={showChapter} />
       </Content>
       <AppFooter />
+      <Helmet>
+        <link
+          href={`https://fonts.googleapis.com/css?family=${readingFont.name}`}
+          rel="stylesheet"
+        />
+      </Helmet>
     </AppContainer>
   );
 }
