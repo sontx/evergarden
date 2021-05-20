@@ -96,6 +96,10 @@ export class ChapterController {
       throw new NotFoundException("Story was not found");
     }
 
+    if (story.status === "full") {
+      throw new BadRequestException("Story's status is full, so you cann't add more chapters");
+    }
+
     const { id: userId, role } = req.user || {};
     const isOwner = story.uploadBy === userId;
     const isAdmin = role === "admin";
