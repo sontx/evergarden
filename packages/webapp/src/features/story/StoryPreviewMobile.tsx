@@ -6,7 +6,7 @@ import {
   Panel,
   Placeholder,
 } from "rsuite";
-import { GetStoryDto } from "@evergarden/shared";
+import { GetStoryDto, GetStoryHistoryDto } from "@evergarden/shared";
 // @ts-ignore
 import ShowMoreText from "react-show-more-text";
 import "./storyPreviewMobile.less";
@@ -21,8 +21,11 @@ import { useHistory } from "react-router";
 
 const { Paragraph } = Placeholder;
 
-export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
-  const { story } = props;
+export function StoryPreviewMobile(props: {
+  story?: GetStoryDto;
+  storyHistory?: GetStoryHistoryDto;
+}) {
+  const { story, storyHistory } = props;
   const intl = useIntl();
   const { state = {} } = useLocation() as any;
 
@@ -46,11 +49,20 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   }, [handleExpandPanel, state.focusTo]);
 
   const history = useHistory();
+
   const handleRead = useCallback(() => {
     if (story) {
       history.push(`/reading/${story.url}/1`, { story });
     }
   }, [history, story]);
+
+  const handleContinue = useCallback(() => {
+    if (story && storyHistory) {
+      history.push(`/reading/${story.url}/${storyHistory.currentChapterNo}`, {
+        story,
+      });
+    }
+  }, [history, story, storyHistory]);
 
   return story ? (
     <div className="story-preview-mobile-container">
@@ -89,15 +101,18 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         >
           Read
         </IconButton>
-        <IconButton
-          placement="right"
-          icon={<Icon icon="angle-double-right" />}
-          style={{ fontSize: "small" }}
-          size="sm"
-          appearance="primary"
-        >
-          Continue (112)
-        </IconButton>
+        {storyHistory && (
+          <IconButton
+            onClick={handleContinue}
+            placement="right"
+            icon={<Icon icon="angle-double-right" />}
+            style={{ fontSize: "small" }}
+            size="sm"
+            appearance="primary"
+          >
+            {`Continue (${storyHistory.currentChapterNo})`}
+          </IconButton>
+        )}
       </ButtonGroup>
       <Panel
         onEntered={handleExpandPanel}

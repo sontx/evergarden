@@ -56,7 +56,7 @@ export function Story() {
       <SEO title={intl.formatMessage({ id: "pageTitleStory" })} />
       <AppHeader />
       <Content>
-        <StoryPreviewMobile story={showStory} />
+        <StoryPreviewMobile story={showStory} storyHistory={storyHistory}/>
       </Content>
       <AppFooter />
     </AppContainer>

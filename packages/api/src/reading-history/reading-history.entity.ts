@@ -8,6 +8,6 @@ export class ReadingHistory {
   @ObjectIdColumn()
   id: IdType;
 
-  @Column((type) => StoryHistory)
-  storyHistories: {[x: string]: StoryHistory};
+  @Column({ name: "storyHistories" })
+  storyHistories: { [x: string]: StoryHistory };
 }

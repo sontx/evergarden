@@ -1,4 +1,4 @@
-import {forwardRef, Inject, Injectable, Logger} from "@nestjs/common";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ReadingHistory } from "./reading-history.entity";
@@ -7,6 +7,7 @@ import { GetStoryHistoryDto, IdType, UpdateStoryHistoryDto } from "@evergarden/s
 import { User } from "../user/user.entity";
 import { StoryService } from "../story/story.service";
 import { StoryHistory } from "./story-history.entity";
+import { ObjectID } from "mongodb";
 
 @Injectable()
 export class ReadingHistoryService {
@@ -104,13 +105,14 @@ export class ReadingHistoryService {
   }
 
   async getReadingHistory(historyId: IdType): Promise<ReadingHistory> {
-    return this.readingHistoryRepository.findOne(historyId);
+    return await this.readingHistoryRepository.findOne(historyId);
   }
 
   async getStoryHistory(historyId: IdType, storyId: IdType): Promise<GetStoryHistoryDto | null> {
     const history = await this.getReadingHistory(historyId);
+    console.log(JSON.stringify(history));
     if (history) {
-      return (history.storyHistories || {} as any)[storyId];
+      return (history.storyHistories || ({} as any))[storyId];
     }
     return null;
   }
