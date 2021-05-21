@@ -17,8 +17,10 @@ import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
-import {Helmet} from "react-helmet";
-import {selectReadingFont} from "../../features/settings/settingsSlice";
+import { Helmet } from "react-helmet";
+import { selectReadingFont } from "../../features/settings/settingsSlice";
+import { updateStoryHistoryAsync } from "../../features/history/historySlice";
+import { useDebouncedCallback } from "use-debounce";
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
@@ -62,6 +64,54 @@ export function Reading() {
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [url, chapterNo]);
+
+  useEffect(() => {
+    if (story && chapter && story.id === chapter.storyId) {
+      dispatch(
+        updateStoryHistoryAsync({
+          storyId: story.id,
+          currentChapterNo: chapter.chapterNo,
+        }),
+      );
+    }
+  }, [chapter, dispatch, story]);
+
+  const updateScrollStateDebounce = useDebouncedCallback(
+    (dispatch, story, chapter, position) => {
+      dispatch(
+        updateStoryHistoryAsync({
+          storyId: story.id,
+          currentChapterNo: chapter.chapterNo,
+          currentReadingPosition: position,
+        }),
+      );
+    },
+    5000,
+    { trailing: true },
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (story && chapter && story.id === chapter.storyId) {
+        updateScrollStateDebounce(
+          dispatch,
+          story,
+          chapter,
+          window.scrollY / document.documentElement.scrollHeight,
+        );
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [chapter, dispatch, story, updateScrollStateDebounce]);
+
+  useEffect(() => {
+    return () => {
+      if (updateScrollStateDebounce.isPending()) {
+        updateScrollStateDebounce.flush();
+      }
+    };
+  }, [updateScrollStateDebounce]);
 
   return (
     <AppContainer className="reading-theme--dark1">

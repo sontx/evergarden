@@ -1,13 +1,18 @@
 import { GetUserDto, IdType } from "@evergarden/shared";
-import { Injectable } from "@nestjs/common";
+import {forwardRef, Inject, Injectable} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { Repository } from "typeorm";
 import { User } from "./user.entity";
+import { ReadingHistoryService } from "../reading-history/reading-history.service";
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @Inject(forwardRef(() => ReadingHistoryService))
+    private readingHistoryService: ReadingHistoryService,
+  ) {}
 
   async getByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({ email });
@@ -28,7 +33,14 @@ export class UserService {
 
   async addUser(user: Partial<User>): Promise<User> {
     const newUser = await this.userRepository.create(user);
+    const history = await this.readingHistoryService.createEmptyReadingHistory();
+    try {
+      newUser.historyId = history.id;
+    } finally {
+      await this.readingHistoryService.deleteReadingHistory(history.id);
+    }
     await this.userRepository.save(newUser);
+
     return newUser;
   }
 

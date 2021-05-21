@@ -13,6 +13,11 @@ import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
+import {
+  fetchStoryHistoryAsync,
+  selectStoryHistory
+} from "../../features/history/historySlice";
+import {selectUser} from "../../features/auth/authSlice";
 
 export function Story() {
   const { url } = useParams() as any;
@@ -25,6 +30,9 @@ export function Story() {
     (locationStory || {}).url === url ? locationStory : undefined,
   );
 
+  const storyHistory = useAppSelector(selectStoryHistory)
+  const user = useAppSelector(selectUser)
+
   useEffect(() => {
     dispatch(fetchStoryByUrlAsync(url));
   }, [url, dispatch]);
@@ -34,6 +42,14 @@ export function Story() {
       setShowStory(story);
     }
   }, [story, url]);
+
+  useEffect(() => {
+    if (story && user && user.historyId) {
+      if (!storyHistory || story.id !== storyHistory.storyId) {
+        dispatch(fetchStoryHistoryAsync({storyId: story.id, historyId: user.historyId}))
+      }
+    }
+  }, [storyHistory, story, user, dispatch])
 
   return (
     <AppContainer>

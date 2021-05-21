@@ -1,9 +1,11 @@
 import {
   IsBoolean,
+  IsMongoId,
   IsOptional,
   IsString,
   Matches,
-  MinLength
+  Min,
+  MinLength,
 } from 'class-validator';
 
 export interface AuthUser {
@@ -11,6 +13,7 @@ export interface AuthUser {
   email: string;
   fullName: string;
   photoUrl: string;
+  historyId?: IdType;
   settings: GetUserSettingsDto;
 }
 
@@ -21,7 +24,7 @@ export interface GetUserDto {
   photoUrl?: string;
 }
 
-export type SizeType = "S" | "M" | "L" | "XL";
+export type SizeType = 'S' | 'M' | 'L' | 'XL';
 
 export interface GetUserSettingsDto {
   readingFontSize: SizeType;
@@ -94,10 +97,10 @@ export class CreateStoryDto {
   @Matches(/ongoing|full/s)
   status: StoryStatus;
 
-  @MinLength(3, {each: true})
+  @MinLength(3, { each: true })
   authors: string[];
 
-  @MinLength(3, {each: true})
+  @MinLength(3, { each: true })
   genres: string[];
 
   @IsOptional()
@@ -105,7 +108,7 @@ export class CreateStoryDto {
   published?: boolean;
 }
 
-export type UpdateStoryDto = Omit<CreateStoryDto, "url">;
+export type UpdateStoryDto = Omit<CreateStoryDto, 'url'>;
 
 export class GetChapterDto {
   id: IdType;
@@ -152,4 +155,33 @@ export interface PaginationResult<T> {
   };
 }
 
-export type StoryCategory = "updated" | "hot";
+export type StoryCategory = 'updated' | 'hot';
+export type VoteType = 'upvote' | 'downvote';
+
+export interface GetStoryHistoryDto {
+  id: IdType;
+  storyId: IdType;
+  currentChapterNo: number;
+  started: Date;
+  lastVisit: Date;
+  currentReadingPosition?: number;
+  vote?: VoteType;
+}
+
+export class UpdateStoryHistoryDto {
+  @IsString()
+  @IsMongoId()
+  storyId: IdType;
+
+  @Min(0)
+  currentChapterNo: number;
+
+  @Min(0)
+  @IsOptional()
+  currentReadingPosition?: number;
+
+  @IsString()
+  @IsOptional()
+  @Matches(/upvote|downvote/s)
+  vote?: VoteType;
+}

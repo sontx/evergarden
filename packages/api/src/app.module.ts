@@ -9,6 +9,7 @@ import configuration from "./configuration";
 import { UserModule } from "./user/user.module";
 import { StoryModule } from './story/story.module';
 import { ChapterModule } from './chapter/chapter.module';
+import { ReadingHistoryModule } from './reading-history/reading-history.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ChapterModule } from './chapter/chapter.module';
     UserModule,
     StoryModule,
     ChapterModule,
+    ReadingHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

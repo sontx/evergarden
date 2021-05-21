@@ -7,7 +7,7 @@ import {
   NotFoundException,
   Param,
   Put, Req, UnauthorizedException,
-  UseGuards,
+  UseGuards, UsePipes, ValidationPipe,
 } from "@nestjs/common";
 import { GetUserDto, UpdateUserSettingsDto } from "@evergarden/shared";
 import { UserService } from "./user.service";
@@ -38,6 +38,7 @@ export class UserController {
   @UseGuards(JwtGuard, RolesGuard)
   @Role("user")
   @Put("current/settings")
+  @UsePipes(new ValidationPipe({ transform: true }))
   async updateUserSettings(@Req() req, @Body() settings: UpdateUserSettingsDto) {
     const {id} = req.user || {};
     if (!id) {

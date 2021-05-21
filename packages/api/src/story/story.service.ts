@@ -1,7 +1,7 @@
-import {BadRequestException, Injectable, Logger} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
-import {FindManyOptions, Repository} from "typeorm";
-import {Story} from "./story.entity";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { FindManyOptions, Repository } from "typeorm";
+import { Story } from "./story.entity";
 import {
   AuthUser,
   CreateStoryDto,
@@ -12,7 +12,9 @@ import {
   randomNumberString,
   stringToSlug,
   UpdateStoryDto,
+  VoteType,
 } from "@evergarden/shared";
+import { ObjectID } from "mongodb";
 
 @Injectable()
 export class StoryService {
@@ -121,7 +123,7 @@ export class StoryService {
         updated: now,
         uploadBy: user.id,
         updatedBy: user.id,
-        lastChapter: 0
+        lastChapter: 0,
       });
       return this.toDto(savedStory);
     } catch (e) {
@@ -177,6 +179,27 @@ export class StoryService {
     } catch (e) {
       this.logger.warn(`Error while updating story: ${story.id}`, e);
       return false;
+    }
+  }
+
+  async changeRating(storyId: IdType, oldVote?: VoteType, newVote?: VoteType) {
+    if (oldVote === newVote) {
+      return;
+    }
+
+    switch (newVote) {
+      case "upvote":
+        await this.storyRepository.increment({ id: storyId }, "rating", oldVote === "downvote" ? 2 : 1);
+        break;
+      case "downvote":
+        await this.storyRepository.decrement({ id: storyId }, "rating", oldVote === "upvote" ? 2 : 1);
+        break;
+      default:
+        if (oldVote === "upvote") {
+          await this.storyRepository.decrement({ id: storyId }, "rating", 1);
+        } else {
+          await this.storyRepository.increment({ id: storyId }, "rating", 1);
+        }
     }
   }
 }
