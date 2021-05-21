@@ -17,6 +17,7 @@ import { ChapterList } from "../chapters/ChapterList";
 import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
 import { useLocation } from "react-router-dom";
+import { useHistory } from "react-router";
 
 const { Paragraph } = Placeholder;
 
@@ -42,7 +43,14 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         handleExpandPanel(commentPanel);
       }
     }
-  }, [handleExpandPanel, state.focusOn]);
+  }, [handleExpandPanel, state.focusTo]);
+
+  const history = useHistory();
+  const handleRead = useCallback(() => {
+    if (story) {
+      history.push(`/reading/${story.url}/1`, { story });
+    }
+  }, [history, story]);
 
   return story ? (
     <div className="story-preview-mobile-container">
@@ -77,6 +85,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
           icon={<Icon icon="angle-right" />}
           style={{ fontSize: "small" }}
           size="sm"
+          onClick={handleRead}
         >
           Read
         </IconButton>

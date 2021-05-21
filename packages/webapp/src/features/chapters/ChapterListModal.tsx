@@ -1,16 +1,7 @@
-import {
-  Icon,
-  IconButton,
-  Input,
-  InputGroup,
-  List,
-  Loader,
-  Message,
-  Modal,
-} from "rsuite";
+import { Icon, Input, InputGroup, List, Loader, Message, Modal } from "rsuite";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import "./chapterListModel.less";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
