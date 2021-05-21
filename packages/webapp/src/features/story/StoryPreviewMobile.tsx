@@ -125,6 +125,7 @@ export function StoryPreviewMobile(props: {
       <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
       <Panel
         id="comment-panel"
+        className="story-preview-mobile-comment"
         onEntered={handleExpandPanel}
         defaultExpanded
         collapsible
