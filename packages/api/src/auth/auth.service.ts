@@ -42,6 +42,7 @@ export class AuthService {
         email: user.email,
         fullName: user.fullName,
         photoUrl: user.photoUrl,
+        settings: user.settings
       }
     );
   }

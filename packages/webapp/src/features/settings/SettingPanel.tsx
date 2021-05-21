@@ -9,9 +9,12 @@ import {
   setReadingFont,
   setReadingFontSize,
   setReadingLineSpacing,
+  updateSettingsAsync,
 } from "./settingsSlice";
 import { SelectPicker } from "rsuite";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import { UpdateUserSettingsDto } from "@evergarden/shared";
 
 const SIZES = ["S", "M", "L", "XL"];
 
@@ -21,6 +24,40 @@ export function SettingPanel() {
   const readingLineSpacing = useAppSelector(selectReadingLineSpacing);
   const dispatch = useAppDispatch();
   const font = getFont(readingFont);
+
+  const syncSettingsDebounce = useDebouncedCallback(
+    (settings: UpdateUserSettingsDto, dispatch: any) => {
+      dispatch(updateSettingsAsync(settings));
+    },
+    5000,
+    { trailing: true },
+  );
+
+  useEffect(() => {
+    syncSettingsDebounce(
+      {
+        readingFont: readingFont,
+        readingFontSize: readingFontSize,
+        readingLineSpacing: readingLineSpacing,
+      },
+      dispatch,
+    );
+  }, [
+    dispatch,
+    readingFont,
+    readingFontSize,
+    readingLineSpacing,
+    syncSettingsDebounce,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      if (syncSettingsDebounce.isPending()) {
+        syncSettingsDebounce.flush();
+      }
+    };
+  }, [syncSettingsDebounce]);
+
   const handleFontChange = useCallback(
     (value) => {
       dispatch(setReadingFont(value.name));

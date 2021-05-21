@@ -1,4 +1,4 @@
-import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
+import {GetChapterDto, GetStoryDto, SizeType} from "@evergarden/shared";
 import { Panel, Placeholder } from "rsuite";
 import { useIntl } from "react-intl";
 import { Link } from "react-router-dom";
@@ -52,7 +52,7 @@ export function ReadingMobile(props: {
   const readingFontSize = useAppSelector(selectReadingFontSize);
   const readingLineSpacing = useAppSelector(selectReadingLineSpacing);
   const fontSize = useMemo(() => {
-    const config = {
+    const config: {[x in SizeType]: string} = {
       S: "0.75em",
       M: "1em",
       L: "1.25em",
@@ -61,7 +61,7 @@ export function ReadingMobile(props: {
     return config[readingFontSize] || "1em";
   }, [readingFontSize]);
   const lineSpacingClass = useMemo(() => {
-    const config = {
+    const config: {[x in SizeType]: string} = {
       S: "line-spacing--s",
       M: "line-spacing--m",
       L: "line-spacing--l",

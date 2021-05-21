@@ -1,6 +1,7 @@
 import { Exclude } from "class-transformer";
 import { Entity, ObjectIdColumn, Column, PrimaryGeneratedColumn } from "typeorm";
 import { IdType, Role } from "@evergarden/shared";
+import { UserSettings } from "./user-settings.entity";
 
 @Entity("users")
 export class User {
@@ -25,9 +26,12 @@ export class User {
   @Exclude()
   refreshToken?: string;
 
-  @Column({nullable: true, type: "string"})
+  @Column({ nullable: true, type: "string" })
   role?: Role;
 
-  @Column({nullable: true, type: "string"})
+  @Column({ nullable: true, type: "string" })
   photoUrl?: string;
+
+  @Column((type) => UserSettings)
+  settings: UserSettings;
 }

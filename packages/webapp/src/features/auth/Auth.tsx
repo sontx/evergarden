@@ -3,10 +3,17 @@ import { FormattedMessage, useIntl } from "react-intl";
 
 import "./auth.less";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { loginGoogleAsync, selectLoginError, selectLoginType, selectStatus } from "./authSlice";
+import {
+  loginGoogleAsync,
+  selectLoginError,
+  selectLoginType,
+  selectStatus,
+  selectUser,
+} from "./authSlice";
 import { useCallback, useEffect } from "react";
-import { useHistory } from 'react-router-dom';
-import {isMobile} from "react-device-detect";
+import { useHistory } from "react-router-dom";
+import { isMobile } from "react-device-detect";
+import { setUserSettings } from "../settings/settingsSlice";
 
 export function Auth() {
   const intl = useIntl();
@@ -14,6 +21,7 @@ export function Auth() {
   const status = useAppSelector(selectStatus);
   const loginType = useAppSelector(selectLoginType);
   const loginError = useAppSelector(selectLoginError);
+  const user = useAppSelector(selectUser);
 
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -24,17 +32,23 @@ export function Auth() {
 
   useEffect(() => {
     if (status === "error") {
-      Alert.error(loginError || intl.formatMessage({ id: "loginFailedMessage" }), 5000);
+      Alert.error(
+        loginError || intl.formatMessage({ id: "loginFailedMessage" }),
+        5000,
+      );
     } else if (status === "success") {
+      if (user) {
+        dispatch(setUserSettings(user.settings));
+      }
       history.push("/");
     }
-  }, [loginError, status]);
+  }, [dispatch, history, intl, loginError, status, user]);
 
   return (
     <div className="login-container">
       <Panel
         className="login-panel"
-        style={isMobile ? {border: "unset"} : {}}
+        style={isMobile ? { border: "unset" } : {}}
         bordered
         header={
           <div>
@@ -63,7 +77,8 @@ export function Auth() {
             block
             onClick={handleLoginGoogle}
           >
-            <Icon icon="google-plus" /> <FormattedMessage id="loginWithGoogle" />
+            <Icon icon="google-plus" />{" "}
+            <FormattedMessage id="loginWithGoogle" />
           </Button>
         </div>
       </Panel>

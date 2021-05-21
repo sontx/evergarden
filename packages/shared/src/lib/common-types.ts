@@ -11,6 +11,7 @@ export interface AuthUser {
   email: string;
   fullName: string;
   photoUrl: string;
+  settings: GetUserSettingsDto;
 }
 
 export interface GetUserDto {
@@ -18,6 +19,27 @@ export interface GetUserDto {
   email?: string;
   fullName: string;
   photoUrl?: string;
+}
+
+export type SizeType = "S" | "M" | "L" | "XL";
+
+export interface GetUserSettingsDto {
+  readingFontSize: SizeType;
+  readingFont: string;
+  readingLineSpacing: SizeType;
+}
+
+export class UpdateUserSettingsDto {
+  @IsString()
+  @Matches(/S|M|L|XL/s)
+  readingFontSize: string;
+
+  @IsString()
+  readingFont: string;
+
+  @IsString()
+  @Matches(/S|M|L|XL/s)
+  readingLineSpacing: string;
 }
 
 export interface JwtPayload {

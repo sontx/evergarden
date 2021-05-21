@@ -55,4 +55,8 @@ export class UserService {
       refreshToken: null,
     });
   }
+
+  updateUser(user: User) {
+    return this.userRepository.update(user.id, user);
+  }
 }

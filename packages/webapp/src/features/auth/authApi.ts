@@ -14,8 +14,8 @@ export async function logout() {
   }
 }
 
-async function authenticate(token: string): Promise<AuthUser> {
-  const response = await api.get<AuthUser>("/api/auth", {
+async function verifyAuthenticationToken(token: string): Promise<AuthUser> {
+  const response = await api.post<AuthUser>("/api/auth/verify-token", {}, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -54,7 +54,7 @@ export function loginWithGoogle(): Promise<AuthUser | null> {
 
         const { token } = message.data || {};
         try {
-          const authenticatedUser = await authenticate(token);
+          const authenticatedUser = await verifyAuthenticationToken(token);
           resolve(authenticatedUser);
         } catch (e) {
           Logger.error(e);
@@ -65,4 +65,10 @@ export function loginWithGoogle(): Promise<AuthUser | null> {
     };
     window.addEventListener("message", listener);
   });
+}
+
+export async function fetchAuthenticatedUser(
+) {
+  const response = await api.get(`/api/auth`);
+  return response.data;
 }

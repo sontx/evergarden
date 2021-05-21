@@ -1,6 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { ReactNode } from "react";
+import {
+  GetUserSettingsDto,
+  SizeType,
+  UpdateUserSettingsDto,
+} from "@evergarden/shared";
+import { updateSettings } from "./settingsAPI";
+import { ProcessingStatus } from "../../utils/types";
 
 interface Font {
   family: string;
@@ -67,7 +74,7 @@ export const FONTS: { value: Font; label: ReactNode }[] = [
 ];
 
 export function getFont(name: string): Font {
-  return (FONTS.find(font => font.value.name === name) || FONTS[0]).value;
+  return (FONTS.find((font) => font.value.name === name) || FONTS[0]).value;
 }
 
 export interface SettingsSliceState {
@@ -75,8 +82,9 @@ export interface SettingsSliceState {
   currentNavTab: "updated" | "hot" | "following" | "collection";
   limitCountPerPage: number;
   readingFont: string;
-  readingFontSize: "S" | "M" | "L" | "XL";
-  readingLineSpacing: "S" | "M" | "L" | "XL";
+  readingFontSize: SizeType;
+  readingLineSpacing: SizeType;
+  status: ProcessingStatus;
 }
 
 const initialState: SettingsSliceState = {
@@ -86,7 +94,16 @@ const initialState: SettingsSliceState = {
   readingFont: "Roboto",
   readingFontSize: "M",
   readingLineSpacing: "M",
+  status: "none",
 };
+
+export const updateSettingsAsync = createAsyncThunk(
+  "settings/update",
+  async (settings: UpdateUserSettingsDto) => {
+    await updateSettings(settings);
+    return settings;
+  },
+);
 
 export const settingsSlice = createSlice({
   name: "settings",
@@ -98,6 +115,14 @@ export const settingsSlice = createSlice({
     setCurrentTab: (state, { payload }) => {
       state.currentNavTab = payload;
     },
+    setUserSettings: (state, { payload }) => {
+      const settings = payload || ({} as GetUserSettingsDto);
+      state.readingFont = settings.readingFont || initialState.readingFont;
+      state.readingFontSize =
+        settings.readingFontSize || initialState.readingFontSize;
+      state.readingLineSpacing =
+        settings.readingLineSpacing || initialState.readingLineSpacing;
+    },
     setReadingFont: (state, { payload }) => {
       state.readingFont = payload;
     },
@@ -106,6 +131,17 @@ export const settingsSlice = createSlice({
     },
     setReadingLineSpacing: (state, { payload }) => {
       state.readingLineSpacing = payload;
+    },
+  },
+  extraReducers: {
+    [`${updateSettingsAsync.pending}`]: (state) => {
+      state.status = "processing";
+    },
+    [`${updateSettingsAsync.fulfilled}`]: (state, { payload }) => {
+      state.status = "success";
+    },
+    [`${updateSettingsAsync.rejected}`]: (state, { payload }) => {
+      state.status = "error";
     },
   },
 });
@@ -129,6 +165,7 @@ export const {
   setReadingFont,
   setReadingFontSize,
   setReadingLineSpacing,
+  setUserSettings,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

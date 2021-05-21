@@ -1,20 +1,11 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Logger,
-  Post,
-  Req,
-  Res, UnauthorizedException,
-  UseGuards
-} from "@nestjs/common";
+import { Controller, Get, Logger, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Response } from "express";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import GoogleGuard from "./google/google.guard";
 import JwtRefreshGuard from "./jwt-refresh/jwt-refresh.guard";
 import JwtGuard from "./jwt/jwt.guard";
-import {ExtractJwt} from "passport-jwt";
+import { ExtractJwt } from "passport-jwt";
 
 @Controller("auth")
 export class AuthController {
@@ -61,12 +52,12 @@ export class AuthController {
     const accessToken = this.authService.getAccessToken(user);
     const accessTokenCookie = this.authService.getAccessTokenCookie(accessToken);
     res.setHeader("Set-Cookie", accessTokenCookie);
-    res.send(this.authService.getAuthenticatedUser(req.user))
+    res.send(this.authService.getAuthenticatedUser(req.user));
   }
 
-  @Get()
+  @Post("verify-token")
   @UseGuards(JwtGuard)
-  async authenticate(@Req() req, @Res() res: Response) {
+  async authenticateBearerToken(@Req() req, @Res() res: Response) {
     const id = req.user.id;
     const hasAuthCookie = !!req.headers["Authentication"];
     if (!id || hasAuthCookie) {
@@ -75,7 +66,7 @@ export class AuthController {
 
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     const accessTokenCookie = this.authService.getAccessTokenCookie(token);
-    const {cookie: refreshTokenCookie, token: refreshToken} = this.authService.getCookieWithJwtRefreshToken(id);
+    const { cookie: refreshTokenCookie, token: refreshToken } = this.authService.getCookieWithJwtRefreshToken(id);
 
     await this.userService.setCurrentRefreshToken(refreshToken, id);
 
@@ -83,6 +74,17 @@ export class AuthController {
 
     const user = await this.userService.getById(id);
     res.send(this.authService.getAuthenticatedUser(user));
+  }
+
+  @Get()
+  @UseGuards(JwtGuard)
+  async getAuthenticatedUser(@Req() req) {
+    const id = req.user.id;
+    if (!id) {
+      throw new UnauthorizedException();
+    }
+    const user = await this.userService.getById(id);
+    return this.authService.getAuthenticatedUser(user);
   }
 
   @Post("logout")
