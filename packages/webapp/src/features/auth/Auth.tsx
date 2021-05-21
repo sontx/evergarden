@@ -39,8 +39,8 @@ export function Auth() {
     } else if (status === "success") {
       if (user) {
         dispatch(setUserSettings(user.settings));
+        history.push("/");
       }
-      history.push("/");
     }
   }, [dispatch, history, intl, loginError, status, user]);
 

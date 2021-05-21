@@ -15,6 +15,7 @@ import { SelectPicker } from "rsuite";
 import { useCallback, useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { UpdateUserSettingsDto } from "@evergarden/shared";
+import { selectUser } from "../auth/authSlice";
 
 const SIZES = ["S", "M", "L", "XL"];
 
@@ -22,33 +23,42 @@ export function SettingPanel() {
   const readingFont = useAppSelector(selectReadingFont);
   const readingFontSize = useAppSelector(selectReadingFontSize);
   const readingLineSpacing = useAppSelector(selectReadingLineSpacing);
+  const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const font = getFont(readingFont);
 
   const syncSettingsDebounce = useDebouncedCallback(
-    (settings: UpdateUserSettingsDto, dispatch: any) => {
-      dispatch(updateSettingsAsync(settings));
+    (settings: UpdateUserSettingsDto, dispatch: any, user: any) => {
+      if (user) {
+        dispatch(updateSettingsAsync(settings));
+      }
     },
     5000,
     { trailing: true },
   );
 
-  useEffect(() => {
-    syncSettingsDebounce(
-      {
-        readingFont: readingFont,
-        readingFontSize: readingFontSize,
-        readingLineSpacing: readingLineSpacing,
-      },
+  const triggerSyncSettings = useCallback(
+    (settings: Partial<UpdateUserSettingsDto>) => {
+      syncSettingsDebounce(
+        {
+          readingFont: readingFont,
+          readingFontSize: readingFontSize,
+          readingLineSpacing: readingLineSpacing,
+          ...settings,
+        },
+        dispatch,
+        user,
+      );
+    },
+    [
       dispatch,
-    );
-  }, [
-    dispatch,
-    readingFont,
-    readingFontSize,
-    readingLineSpacing,
-    syncSettingsDebounce,
-  ]);
+      readingFont,
+      readingFontSize,
+      readingLineSpacing,
+      syncSettingsDebounce,
+      user,
+    ],
+  );
 
   useEffect(() => {
     return () => {
@@ -61,20 +71,23 @@ export function SettingPanel() {
   const handleFontChange = useCallback(
     (value) => {
       dispatch(setReadingFont(value.name));
+      triggerSyncSettings({ readingFont: value });
     },
-    [dispatch],
+    [dispatch, triggerSyncSettings],
   );
   const handleSizeChange = useCallback(
     (value: string) => {
       dispatch(setReadingFontSize(value));
+      triggerSyncSettings({ readingFontSize: value });
     },
-    [dispatch],
+    [dispatch, triggerSyncSettings],
   );
   const handleLineSpacingChange = useCallback(
     (value: string) => {
       dispatch(setReadingLineSpacing(value));
+      triggerSyncSettings({ readingLineSpacing: value });
     },
-    [dispatch],
+    [dispatch, triggerSyncSettings],
   );
 
   return (
