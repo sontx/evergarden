@@ -116,7 +116,6 @@ export class ReadingHistoryService {
 
   async getStoryHistory(historyId: IdType, storyId: IdType): Promise<GetStoryHistoryDto | null> {
     const history = await this.getReadingHistory(historyId);
-    console.log(JSON.stringify(history));
     if (history) {
       return (history.storyHistories || ({} as any))[storyId];
     }

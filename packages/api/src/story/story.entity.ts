@@ -1,5 +1,7 @@
-import {Column, Entity, ObjectIdColumn, PrimaryGeneratedColumn} from "typeorm";
-import {IdType, StoryStatus} from "@evergarden/shared";
+import { Column, Entity, ObjectIdColumn, PrimaryGeneratedColumn } from "typeorm";
+import { IdType, StoryStatus } from "@evergarden/shared";
+import { Author } from "./author.entity";
+import { Genre } from "./genre.entity";
 
 @Entity("stories")
 export class Story {
@@ -22,11 +24,11 @@ export class Story {
   @Column({ type: "string", nullable: false })
   status: StoryStatus;
 
-  @Column({ type: "simple-array", nullable: true })
-  authors: string[];
+  @Column({ name: "authors" })
+  authors?: Author[];
 
-  @Column({ type: "simple-array", nullable: true })
-  genres: string[];
+  @Column({ name: "genres" })
+  genres?: Genre[];
 
   @Column({ type: "datetime", nullable: false })
   created: Date;
@@ -49,9 +51,9 @@ export class Story {
   @Column({ type: "number", nullable: true })
   published?: boolean;
 
-  @Column({type: "string", nullable: false})
+  @Column({ type: "string", nullable: false })
   uploadBy: IdType;
 
-  @Column({type: "string", nullable: false})
+  @Column({ type: "string", nullable: false })
   updatedBy: IdType;
 }

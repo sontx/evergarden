@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsMongoId,
   IsOptional,
@@ -57,6 +58,16 @@ export type Role = 'guest' | 'user' | 'mod' | 'admin';
 
 export type StoryStatus = 'ongoing' | 'full';
 
+export interface Author {
+  id: string;
+  name: string;
+}
+
+export interface Genre {
+  id: string;
+  name: string;
+}
+
 export interface GetStoryDto {
   id: IdType;
   url: string;
@@ -64,8 +75,8 @@ export interface GetStoryDto {
   description: string;
   thumbnail?: string;
   status: StoryStatus;
-  authors: string[];
-  genres: string[];
+  authors?: Author[];
+  genres?: Genre[];
   created: Date;
   updated: Date;
   view: number;
@@ -98,11 +109,13 @@ export class CreateStoryDto {
   @Matches(/ongoing|full/s)
   status: StoryStatus;
 
-  @MinLength(3, { each: true })
-  authors: string[];
+  @IsArray({ each: true })
+  @IsOptional()
+  authors?: Author[];
 
-  @MinLength(3, { each: true })
-  genres: string[];
+  @IsArray({ each: true })
+  @IsOptional()
+  genres?: Author[];
 
   @IsOptional()
   @IsBoolean()

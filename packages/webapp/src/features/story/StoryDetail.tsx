@@ -49,14 +49,13 @@ export function StoryDetail(props: { story: GetStoryDto }) {
           <label>Author(s)</label>
           <span>
             {(story.authors || []).map((author) => (
-              <Tag key={author}>
+              <Tag key={author.id}>
                 <Link
                   to={{
-                    pathname: "/author",
-                    search: `?name=${encodeURIComponent(author)}`,
+                    pathname: `/author/${author.id}`,
                   }}
                 >
-                  {author}
+                  {author.name}
                 </Link>
               </Tag>
             ))}
@@ -69,14 +68,13 @@ export function StoryDetail(props: { story: GetStoryDto }) {
           <label>Genre(s)</label>
           <span>
             {(story.genres || []).map((genre) => (
-              <Tag key={genre}>
+              <Tag key={genre.id}>
                 <Link
                   to={{
-                    pathname: "/genre",
-                    search: `?name=${encodeURIComponent(genre)}`,
+                    pathname: `/genre/${genre.id}`,
                   }}
                 >
-                  {genre}
+                  {genre.name}
                 </Link>
               </Tag>
             ))}
