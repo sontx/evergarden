@@ -13,7 +13,7 @@ export interface AuthUser {
   email: string;
   fullName: string;
   photoUrl: string;
-  historyId?: IdType;
+  historyId: IdType;
   settings: GetUserSettingsDto;
 }
 
@@ -69,7 +69,8 @@ export interface GetStoryDto {
   created: Date;
   updated: Date;
   view: number;
-  rating?: number;
+  upvote: number;
+  downvote: number;
   lastChapter: number;
   published?: boolean;
   uploadBy: IdType;
@@ -174,7 +175,8 @@ export class UpdateStoryHistoryDto {
   storyId: IdType;
 
   @Min(0)
-  currentChapterNo: number;
+  @IsOptional()
+  currentChapterNo?: number;
 
   @Min(0)
   @IsOptional()

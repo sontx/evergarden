@@ -18,6 +18,7 @@ import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
 import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router";
+import { Reaction } from "../../components/Reaction";
 
 const { Paragraph } = Placeholder;
 
@@ -52,14 +53,15 @@ export function StoryPreviewMobile(props: {
 
   const handleRead = useCallback(() => {
     if (story) {
-      history.push(`/reading/${story.url}/1`, { story });
+      history.push(`/reading/${story.url}/1`, { story, storyHistory });
     }
-  }, [history, story]);
+  }, [history, story, storyHistory]);
 
   const handleContinue = useCallback(() => {
     if (story && storyHistory) {
       history.push(`/reading/${story.url}/${storyHistory.currentChapterNo}`, {
         story,
+        storyHistory
       });
     }
   }, [history, story, storyHistory]);
@@ -69,6 +71,14 @@ export function StoryPreviewMobile(props: {
       <Panel bodyFill>
         <img src={story.thumbnail} alt={story.title} />
         <Panel header={story.title}>
+          <div className="sub-header">
+            <span>
+              {intl.formatNumber(story.view)} readings |{" "}
+              {intl.formatDate(story.created)}
+            </span>
+            <Reaction />
+          </div>
+          <Divider style={{margin: "10px 0 15px 0"}}/>
           <div className="story-preview-mobile-description">
             <ShowMoreText
               more={intl.formatMessage({ id: "showMore" })}
@@ -81,7 +91,6 @@ export function StoryPreviewMobile(props: {
           </div>
         </Panel>
       </Panel>
-      <Divider style={{ marginTop: "10px", marginBottom: "20px" }} />
       <StoryDetail story={story} />
       <ButtonGroup
         style={{
@@ -120,7 +129,7 @@ export function StoryPreviewMobile(props: {
         header="Chapters"
         collapsible
       >
-        <ChapterList story={story} />
+        <ChapterList story={story} storyHistory={storyHistory}/>
       </Panel>
       <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
       <Panel

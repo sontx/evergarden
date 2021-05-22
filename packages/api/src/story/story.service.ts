@@ -86,7 +86,8 @@ export class StoryService {
       description: story.description,
       genres: story.genres,
       published: story.published,
-      rating: story.rating,
+      upvote: story.upvote,
+      downvote: story.downvote,
       status: story.status,
       url: story.url,
       thumbnail: story.thumbnail,
@@ -124,6 +125,8 @@ export class StoryService {
         uploadBy: user.id,
         updatedBy: user.id,
         lastChapter: 0,
+        upvote: 0,
+        downvote: 0
       });
       return this.toDto(savedStory);
     } catch (e) {
@@ -197,17 +200,27 @@ export class StoryService {
 
     switch (newVote) {
       case "upvote":
-        await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { rating: oldVote === "downvote" ? 2 : 1 } });
+        if (oldVote === "downvote") {
+          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { upvote: 1, downvote: -1 } });
+        } else {
+          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { upvote: 1 } });
+        }
         break;
       case "downvote":
-        await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { rating: oldVote === "upvote" ? -2 : -1 } });
+        if (oldVote === "upvote") {
+          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { upvote: -1, downvote: 1 } });
+        } else {
+          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { downvote: 1 } });
+        }
         break;
       default:
-        if (oldVote === "upvote") {
-          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { rating: -1} });
-          await this.storyRepository.decrement({ id: storyId }, "rating", 1);
-        } else {
-          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { rating: 1} });
+        switch (oldVote) {
+          case "upvote":
+            await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { upvote: -1 } });
+            break
+          case "downvote":
+            await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { downvote: -1 } });
+            break
         }
     }
   }

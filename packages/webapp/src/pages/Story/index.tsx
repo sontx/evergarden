@@ -45,11 +45,9 @@ export function Story() {
 
   useEffect(() => {
     if (story && user && user.historyId) {
-      if (!storyHistory || story.id !== storyHistory.storyId) {
-        dispatch(fetchStoryHistoryAsync({storyId: story.id, historyId: user.historyId}))
-      }
+      dispatch(fetchStoryHistoryAsync({storyId: story.id, historyId: user.historyId}))
     }
-  }, [storyHistory, story, user, dispatch])
+  }, [story, user, dispatch])
 
   return (
     <AppContainer>

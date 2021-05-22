@@ -126,16 +126,6 @@ export function StoryDetail(props: { story: GetStoryDto }) {
           </span>
         </>
       )}
-
-      {story.rating && (
-        <>
-          <label>Vote</label>
-          <span className="story-preview-detail-vote">
-            {story.rating}
-            <Icon style={{ color: "red", marginLeft: "5px" }} icon="heart" />
-          </span>
-        </>
-      )}
     </div>
   );
 }

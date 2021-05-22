@@ -1,5 +1,5 @@
 import { Loader, Message, Pagination, Placeholder } from "rsuite";
-import { GetStoryDto } from "@evergarden/shared";
+import { GetStoryDto, GetStoryHistoryDto } from "@evergarden/shared";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -16,8 +16,11 @@ import "./chapterList.less";
 import { useIntl } from "react-intl";
 import { isEmpty } from "../../utils/types";
 
-export function ChapterList(props: { story: GetStoryDto }) {
-  const { story } = props;
+export function ChapterList(props: {
+  story: GetStoryDto;
+  storyHistory?: GetStoryHistoryDto;
+}) {
+  const { story, storyHistory } = props;
   const status = useAppSelector(selectStatus);
   const errorMessage = useAppSelector(selectErrorMessage);
   const chapters = useAppSelector(selectChapters);
@@ -52,7 +55,10 @@ export function ChapterList(props: { story: GetStoryDto }) {
             {(chapters || []).map((chapter) => (
               <Link
                 key={chapter.id}
-                to={{ pathname: `/reading/${story.url}/${chapter.chapterNo}` }}
+                to={{
+                  pathname: `/reading/${story.url}/${chapter.chapterNo}`,
+                  state: { storyHistory },
+                }}
               >
                 {intl.formatMessage(
                   { id: "chapterTitle" },

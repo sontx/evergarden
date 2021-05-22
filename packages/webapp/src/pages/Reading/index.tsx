@@ -1,7 +1,7 @@
-import {ReadingMobile} from "../../features/chapter/ReadingMobile";
-import {useLocation, useParams} from "react-router-dom";
-import React, {useEffect, useMemo} from "react";
-import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import { ReadingMobile } from "../../features/chapter/ReadingMobile";
+import { useLocation, useParams } from "react-router-dom";
+import React, { useEffect, useMemo } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   fetchStoryByUrlAsync,
   selectStory,
@@ -11,16 +11,15 @@ import {
   fetchChapterAsync,
   selectChapter,
 } from "../../features/chapter/chapterSlice";
-import {AppHeader} from "../../components/AppHeader";
-import {Content} from "rsuite";
-import {AppFooter} from "../../components/AppFooter";
-import {SEO} from "../../components/SEO";
-import {useIntl} from "react-intl";
-import {AppContainer} from "../../components/AppContainer";
-import {Helmet} from "react-helmet";
-import {selectReadingFont} from "../../features/settings/settingsSlice";
-import {updateStoryHistoryAsync} from "../../features/history/historySlice";
-import {useDebouncedCallback} from "use-debounce";
+import { AppHeader } from "../../components/AppHeader";
+import { Content } from "rsuite";
+import { AppFooter } from "../../components/AppFooter";
+import { SEO } from "../../components/SEO";
+import { useIntl } from "react-intl";
+import { AppContainer } from "../../components/AppContainer";
+import { Helmet } from "react-helmet";
+import { selectReadingFont } from "../../features/settings/settingsSlice";
+import { ReadingSync } from "./ReadingSync";
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
@@ -61,84 +60,14 @@ export function Reading() {
     }
   }, [chapterNo, dispatch, story, url, showChapter]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [url, chapterNo]);
-
-  useEffect(() => {
-    if (story && chapter && story.id === chapter.storyId) {
-      dispatch(
-        updateStoryHistoryAsync({
-          history: { storyId: story.id, currentChapterNo: chapter.chapterNo },
-          startReading: false,
-        }),
-      );
-    }
-  }, [chapter, dispatch, story]);
-
-  const updateScrollStateDebounce = useDebouncedCallback(
-    (dispatch, story, chapter, position) => {
-      dispatch(
-        updateStoryHistoryAsync({
-          history: {
-            storyId: story.id,
-            currentChapterNo: chapter.chapterNo,
-            currentReadingPosition: position,
-          },
-          startReading: false,
-        }),
-      );
-    },
-    5000,
-    { trailing: true },
-  );
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (story && chapter && story.id === chapter.storyId) {
-        updateScrollStateDebounce(
-          dispatch,
-          story,
-          chapter,
-          window.scrollY / document.documentElement.scrollHeight,
-        );
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [chapter, dispatch, story, updateScrollStateDebounce]);
-
-  useEffect(() => {
-    return () => {
-      if (updateScrollStateDebounce.isPending()) {
-        updateScrollStateDebounce.flush();
-      }
-    };
-  }, [updateScrollStateDebounce]);
-
-  useEffect(() => {
-    if (story && chapter) {
-      const timeoutId = window.setTimeout(() => {
-        dispatch(
-          updateStoryHistoryAsync({
-            history: {
-              storyId: story.id,
-              currentChapterNo: chapter.chapterNo,
-            },
-            startReading: true,
-          }),
-        );
-      }, 5000);
-      return () => window.clearTimeout(timeoutId);
-    }
-  }, [chapter, dispatch, story]);
-
   return (
     <AppContainer className="reading-theme--dark1">
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppHeader />
       <Content>
-        <ReadingMobile story={showStory} chapter={showChapter} />
+        <ReadingSync>
+          <ReadingMobile story={showStory} chapter={showChapter} />
+        </ReadingSync>
       </Content>
       <AppFooter />
       <Helmet>

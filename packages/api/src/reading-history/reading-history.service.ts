@@ -81,6 +81,7 @@ export class ReadingHistoryService {
         storyHistories[storyHistory.storyId] = {
           ...storyHistory,
           currentReadingPosition: storyHistory.currentReadingPosition || 0,
+          currentChapterNo: storyHistory.currentChapterNo || 0,
           started: new Date(),
           lastVisit: new Date(),
         };

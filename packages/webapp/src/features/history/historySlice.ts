@@ -36,10 +36,7 @@ export const updateStoryHistoryAsync = createAsyncThunk(
 
 export const fetchStoryHistoryAsync = createAsyncThunk(
   "histories/fetch",
-  async (
-    { storyId, historyId }: { storyId: IdType; historyId: IdType },
-    thunkAPI,
-  ) => {
+  async ({ storyId, historyId }: { storyId: IdType; historyId: IdType }) => {
     if (historyId) {
       return await fetchStoryHistory(historyId, storyId);
     }
@@ -49,7 +46,12 @@ export const fetchStoryHistoryAsync = createAsyncThunk(
 export const historySlice = createSlice({
   name: "history",
   initialState,
-  reducers: {},
+  reducers: {
+    mergeStoryHistory: (state, { payload }) => {
+      const oldHistory = state.storyHistory || {};
+      state.storyHistory = { ...oldHistory, ...payload };
+    },
+  },
   extraReducers: {
     [`${fetchStoryHistoryAsync.pending}`]: (state) => {
       state.status = "processing";
@@ -63,6 +65,8 @@ export const historySlice = createSlice({
     },
   },
 });
+
+export const { mergeStoryHistory } = historySlice.actions;
 
 export const selectStoryHistory = (state: RootState) =>
   state.history.storyHistory;

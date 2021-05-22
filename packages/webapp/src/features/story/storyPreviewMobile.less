@@ -1,4 +1,4 @@
-@import '~rsuite/lib/styles/themes/dark/index.less';
+@import "~rsuite/lib/styles/themes/dark/index.less";
 
 .story-preview-mobile-description {
   font-size: @font-size-base - 1;
@@ -9,10 +9,18 @@
   border-radius: 0 !important;
 }
 .story-preview-mobile-container .rs-panel-heading {
-  padding: 15px 10px;
+  padding: 15px 10px 2px;
 }
 .story-preview-mobile-container .rs-panel-body:not(.rs-panel-body-fill) {
   padding: 0 10px 10px !important;
+}
+
+.story-preview-mobile-container .sub-header {
+  font-size: @font-size-base;
+  color: #a4a9b3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .story-preview-mobile-container img {
@@ -42,8 +50,10 @@
 
 .story-preview-mobile-chapters .rs-panel-heading::before {
   top: 8px !important;
+  right: 10px !important;
 }
 
 .story-preview-mobile-comment .rs-panel-heading::before {
   top: 16px !important;
+  right: 10px !important;
 }

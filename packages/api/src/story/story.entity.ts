@@ -37,8 +37,11 @@ export class Story {
   @Column({ type: "number", nullable: false, default: 0 })
   view: number;
 
-  @Column({ type: "number", nullable: true })
-  rating?: number;
+  @Column({ type: "number", nullable: false })
+  upvote: number;
+
+  @Column({ type: "number", nullable: false })
+  downvote: number;
 
   @Column({ type: "number", nullable: true })
   lastChapter?: number;
