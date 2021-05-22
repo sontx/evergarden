@@ -157,7 +157,7 @@ export interface PaginationResult<T> {
 }
 
 export type StoryCategory = 'updated' | 'hot';
-export type VoteType = 'upvote' | 'downvote';
+export type VoteType = 'upvote' | 'downvote' | 'none';
 
 export interface GetStoryHistoryDto {
   id: IdType;
@@ -166,7 +166,7 @@ export interface GetStoryHistoryDto {
   started: Date;
   lastVisit: Date;
   currentReadingPosition?: number;
-  vote?: VoteType;
+  vote: VoteType;
 }
 
 export class UpdateStoryHistoryDto {
@@ -184,6 +184,6 @@ export class UpdateStoryHistoryDto {
 
   @IsString()
   @IsOptional()
-  @Matches(/upvote|downvote/s)
+  @Matches(/upvote|downvote|none/s)
   vote?: VoteType;
 }

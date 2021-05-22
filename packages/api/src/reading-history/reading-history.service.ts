@@ -7,7 +7,6 @@ import { GetStoryHistoryDto, IdType, UpdateStoryHistoryDto } from "@evergarden/s
 import { User } from "../user/user.entity";
 import { StoryService } from "../story/story.service";
 import { StoryHistory } from "./story-history.entity";
-import { ObjectID } from "mongodb";
 
 @Injectable()
 export class ReadingHistoryService {
@@ -49,15 +48,12 @@ export class ReadingHistoryService {
 
     // damn!! still didn't found that shit! let create a new one and update it to the current user
     if (!history) {
-      await this.updateRatingIfNeeded(null, storyHistory);
+      const normalizedHistory = this.normalizeStoryHistory(storyHistory, null);
+      await this.updateRatingIfNeeded(null, normalizedHistory);
 
       history = await this.readingHistoryRepository.create({
         storyHistories: {
-          [storyHistory.storyId]: {
-            ...storyHistory,
-            started: new Date(),
-            lastVisit: new Date(),
-          },
+          [normalizedHistory.storyId]: normalizedHistory,
         },
       });
       history = await this.readingHistoryRepository.save(history);
@@ -69,27 +65,36 @@ export class ReadingHistoryService {
     } else {
       const storyHistories = history.storyHistories || {};
 
-      await this.updateRatingIfNeeded(storyHistories[storyHistory.storyId], storyHistory);
+      const oldStoryHistory = storyHistories[storyHistory.storyId];
+      const normalizedHistory = this.normalizeStoryHistory(storyHistory, oldStoryHistory);
 
-      if (storyHistories[storyHistory.storyId]) {
-        storyHistories[storyHistory.storyId] = {
-          ...storyHistories[storyHistory.storyId],
-          ...storyHistory,
-          lastVisit: new Date(),
-        };
-      } else {
-        storyHistories[storyHistory.storyId] = {
-          ...storyHistory,
-          currentReadingPosition: storyHistory.currentReadingPosition || 0,
-          currentChapterNo: storyHistory.currentChapterNo || 0,
-          started: new Date(),
-          lastVisit: new Date(),
-        };
-      }
-
+      storyHistories[normalizedHistory.storyId] = normalizedHistory;
       history.storyHistories = storyHistories;
+
+      await this.updateRatingIfNeeded(oldStoryHistory, normalizedHistory);
       await this.readingHistoryRepository.update(history.id, history);
     }
+  }
+
+  private normalizeStoryHistory(
+    storyHistory: UpdateStoryHistoryDto,
+    currentStoryHistory: StoryHistory | null,
+  ): StoryHistory {
+    const current: Partial<StoryHistory> = currentStoryHistory || {};
+    const now = new Date();
+    return {
+      ...current,
+      ...storyHistory,
+      currentChapterNo:
+        storyHistory.currentChapterNo !== undefined ? storyHistory.currentChapterNo : current.currentChapterNo || 0,
+      currentReadingPosition:
+        storyHistory.currentReadingPosition !== undefined
+          ? storyHistory.currentReadingPosition
+          : current.currentReadingPosition || 0,
+      vote: storyHistory.vote !== undefined ? storyHistory.vote : current.vote || "none",
+      started: current.started || now,
+      lastVisit: now,
+    };
   }
 
   private async updateRatingIfNeeded(oldStoryHistory: StoryHistory, newStoryHistory: UpdateStoryHistoryDto) {

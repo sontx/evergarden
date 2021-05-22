@@ -1,4 +1,9 @@
-import {GetStoryDto, VoteType} from "@evergarden/shared";
+import {
+  calculateVoteCount,
+  GetStoryDto,
+  GetStoryHistoryDto,
+  VoteType,
+} from "@evergarden/shared";
 
 import upvoteImg from "../../images/sweet_kiss.png";
 import downvoteImg from "../../images/beat_brick.png";
@@ -8,11 +13,14 @@ import { IconButton } from "rsuite";
 import "./index.less";
 import classNames from "classnames";
 import { abbreviateNumber } from "../../utils/types";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectStory } from "../../features/story/storySlice";
-import { selectStoryHistory } from "../../features/history/historySlice";
-import {useDebouncedCallback} from "use-debounce";
-import {useCallback, useEffect} from "react";
+import {
+  selectStoryHistory,
+  updateStoryHistoryAsync,
+} from "../../features/history/historySlice";
+import { useDebouncedCallback } from "use-debounce";
+import { useCallback, useEffect, useState } from "react";
 
 function VoteButton({
   imgSrc,
@@ -45,11 +53,39 @@ function VoteButton({
 }
 
 export function Reaction() {
-  const story = useAppSelector(selectStory);
-  const storyHistory = useAppSelector(selectStoryHistory);
-  const changeVoteDebounce = useDebouncedCallback((vote?: VoteType) => {
+  const fetchedStory = useAppSelector(selectStory);
+  const fetchedStoryHistory = useAppSelector(selectStoryHistory);
+  const dispatch = useAppDispatch();
 
-  }, 3000);
+  const [story, setStory] = useState(fetchedStory);
+  const [storyHistory, setStoryHistory] = useState(fetchedStoryHistory);
+
+  useEffect(() => {
+    if (fetchedStoryHistory) {
+      setStoryHistory(fetchedStoryHistory);
+    }
+  }, [fetchedStoryHistory]);
+
+  useEffect(() => {
+    if (fetchedStory) {
+      setStory(fetchedStory);
+    }
+  }, [fetchedStory]);
+
+  const changeVoteDebounce = useDebouncedCallback(
+    (story: GetStoryDto, vote?: VoteType) => {
+      dispatch(
+        updateStoryHistoryAsync({
+          history: {
+            storyId: story.id,
+            vote,
+          },
+          startReading: false,
+        }),
+      );
+    },
+    500,
+  );
 
   useEffect(() => {
     if (changeVoteDebounce.isPending()) {
@@ -57,17 +93,42 @@ export function Reaction() {
     }
   }, [changeVoteDebounce]);
 
+  const updateVote = useCallback(
+    (
+      story: GetStoryDto,
+      storyHistory: GetStoryHistoryDto,
+      newVote: VoteType,
+    ) => {
+      const result = calculateVoteCount(storyHistory.vote, newVote);
+      if (result) {
+        setStoryHistory({
+          ...storyHistory,
+          vote: newVote,
+        });
+        setStory({
+          ...story,
+          upvote: (story.upvote || 0) + result.upvote,
+          downvote: (story.downvote || 0) + result.downvote,
+        });
+        changeVoteDebounce(story, newVote);
+      }
+    },
+    [changeVoteDebounce],
+  );
+
   const handleUpvote = useCallback(() => {
-    if (storyHistory) {
-      changeVoteDebounce(storyHistory.vote === "upvote" ? undefined : "upvote");
+    if (storyHistory && story) {
+      const newVote = storyHistory.vote === "upvote" ? "none" : "upvote";
+      updateVote(story, storyHistory, newVote);
     }
-  }, [changeVoteDebounce, storyHistory]);
+  }, [story, storyHistory, updateVote]);
 
   const handleDownvote = useCallback(() => {
-    if (storyHistory) {
-      changeVoteDebounce(storyHistory.vote === "downvote" ? undefined : "downvote");
+    if (storyHistory && story) {
+      const newVote = storyHistory.vote === "downvote" ? "none" : "downvote";
+      updateVote(story, storyHistory, newVote);
     }
-  }, [changeVoteDebounce, storyHistory]);
+  }, [story, storyHistory, updateVote]);
 
   return (
     <>

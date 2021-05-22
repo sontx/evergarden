@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindManyOptions, MongoRepository, Repository } from "typeorm";
+import { FindManyOptions, MongoRepository } from "typeorm";
 import { Story } from "./story.entity";
 import {
   AuthUser,
+  calculateVoteCount,
   CreateStoryDto,
   GetStoryDto,
   IdType,
@@ -126,7 +127,7 @@ export class StoryService {
         updatedBy: user.id,
         lastChapter: 0,
         upvote: 0,
-        downvote: 0
+        downvote: 0,
       });
       return this.toDto(savedStory);
     } catch (e) {
@@ -194,34 +195,9 @@ export class StoryService {
   }
 
   async changeRating(storyId: IdType, oldVote?: VoteType, newVote?: VoteType) {
-    if (oldVote === newVote) {
-      return;
-    }
-
-    switch (newVote) {
-      case "upvote":
-        if (oldVote === "downvote") {
-          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { upvote: 1, downvote: -1 } });
-        } else {
-          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { upvote: 1 } });
-        }
-        break;
-      case "downvote":
-        if (oldVote === "upvote") {
-          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { upvote: -1, downvote: 1 } });
-        } else {
-          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { downvote: 1 } });
-        }
-        break;
-      default:
-        switch (oldVote) {
-          case "upvote":
-            await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { upvote: -1 } });
-            break
-          case "downvote":
-            await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { downvote: -1 } });
-            break
-        }
+    const result = calculateVoteCount(oldVote, newVote);
+    if (result) {
+      await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: result });
     }
   }
 }

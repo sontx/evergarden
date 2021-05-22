@@ -18,5 +18,5 @@ export class StoryHistory {
   currentReadingPosition: number;
 
   @Column({ type: "string", nullable: true })
-  vote?: VoteType;
+  vote: VoteType;
 }
