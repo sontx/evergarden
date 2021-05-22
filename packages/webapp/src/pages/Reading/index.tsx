@@ -1,7 +1,7 @@
-import { ReadingMobile } from "../../features/chapter/ReadingMobile";
-import { useLocation, useParams } from "react-router-dom";
-import React, { useEffect, useMemo } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {ReadingMobile} from "../../features/chapter/ReadingMobile";
+import {useLocation, useParams} from "react-router-dom";
+import React, {useEffect, useMemo} from "react";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {
   fetchStoryByUrlAsync,
   selectStory,
@@ -11,16 +11,16 @@ import {
   fetchChapterAsync,
   selectChapter,
 } from "../../features/chapter/chapterSlice";
-import { AppHeader } from "../../components/AppHeader";
-import { Content } from "rsuite";
-import { AppFooter } from "../../components/AppFooter";
-import { SEO } from "../../components/SEO";
-import { useIntl } from "react-intl";
-import { AppContainer } from "../../components/AppContainer";
-import { Helmet } from "react-helmet";
-import { selectReadingFont } from "../../features/settings/settingsSlice";
-import { updateStoryHistoryAsync } from "../../features/history/historySlice";
-import { useDebouncedCallback } from "use-debounce";
+import {AppHeader} from "../../components/AppHeader";
+import {Content} from "rsuite";
+import {AppFooter} from "../../components/AppFooter";
+import {SEO} from "../../components/SEO";
+import {useIntl} from "react-intl";
+import {AppContainer} from "../../components/AppContainer";
+import {Helmet} from "react-helmet";
+import {selectReadingFont} from "../../features/settings/settingsSlice";
+import {updateStoryHistoryAsync} from "../../features/history/historySlice";
+import {useDebouncedCallback} from "use-debounce";
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
@@ -69,8 +69,8 @@ export function Reading() {
     if (story && chapter && story.id === chapter.storyId) {
       dispatch(
         updateStoryHistoryAsync({
-          storyId: story.id,
-          currentChapterNo: chapter.chapterNo,
+          history: { storyId: story.id, currentChapterNo: chapter.chapterNo },
+          startReading: false,
         }),
       );
     }
@@ -80,9 +80,12 @@ export function Reading() {
     (dispatch, story, chapter, position) => {
       dispatch(
         updateStoryHistoryAsync({
-          storyId: story.id,
-          currentChapterNo: chapter.chapterNo,
-          currentReadingPosition: position,
+          history: {
+            storyId: story.id,
+            currentChapterNo: chapter.chapterNo,
+            currentReadingPosition: position,
+          },
+          startReading: false,
         }),
       );
     },
@@ -112,6 +115,23 @@ export function Reading() {
       }
     };
   }, [updateScrollStateDebounce]);
+
+  useEffect(() => {
+    if (story && chapter) {
+      const timeoutId = window.setTimeout(() => {
+        dispatch(
+          updateStoryHistoryAsync({
+            history: {
+              storyId: story.id,
+              currentChapterNo: chapter.chapterNo,
+            },
+            startReading: true,
+          }),
+        );
+      }, 5000);
+      return () => window.clearTimeout(timeoutId);
+    }
+  }, [chapter, dispatch, story]);
 
   return (
     <AppContainer className="reading-theme--dark1">

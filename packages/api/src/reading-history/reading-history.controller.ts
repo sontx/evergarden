@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseBoolPipe,
   Put,
   Query,
   Req,
@@ -17,10 +18,11 @@ import { IdType, UpdateStoryHistoryDto } from "@evergarden/shared";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
 import { Role } from "../auth/role/roles.decorator";
+import { StoryService } from "../story/story.service";
 
 @Controller("histories")
 export class ReadingHistoryController {
-  constructor(private readingHistoryService: ReadingHistoryService) {}
+  constructor(private readingHistoryService: ReadingHistoryService, private storyService: StoryService) {}
 
   @Get(":historyId/:storyId")
   @UseGuards(JwtGuard, RolesGuard)
@@ -42,14 +44,18 @@ export class ReadingHistoryController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async updateStoryHistory(
     @Query("historyId") historyId: IdType,
+    @Query("startReading", ParseBoolPipe) startReading: boolean,
     @Req() req,
     @Body() storyHistory: UpdateStoryHistoryDto,
   ) {
-    const { id } = (req.user || {});
+    const { id } = req.user || {};
     if (!id) {
       throw new UnauthorizedException();
     }
 
     await this.readingHistoryService.updateStoryHistory(id, historyId || "", storyHistory);
+    if (startReading) {
+      await this.storyService.increaseCount(storyHistory.storyId);
+    }
   }
 }

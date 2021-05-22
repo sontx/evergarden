@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindManyOptions, Repository } from "typeorm";
+import { FindManyOptions, MongoRepository, Repository } from "typeorm";
 import { Story } from "./story.entity";
 import {
   AuthUser,
@@ -20,7 +20,7 @@ import { ObjectID } from "mongodb";
 export class StoryService {
   private readonly logger = new Logger(StoryService.name);
 
-  constructor(@InjectRepository(Story) private storyRepository: Repository<Story>) {}
+  constructor(@InjectRepository(Story) private storyRepository: MongoRepository<Story>) {}
 
   async getStories(
     options: PaginationOptions,
@@ -182,6 +182,14 @@ export class StoryService {
     }
   }
 
+  async increaseCount(storyId: IdType) {
+    try {
+      await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { view: 1 } });
+    } catch (e) {
+      this.logger.warn(`Error while increase view count: ${storyId}`, e);
+    }
+  }
+
   async changeRating(storyId: IdType, oldVote?: VoteType, newVote?: VoteType) {
     if (oldVote === newVote) {
       return;
@@ -189,16 +197,17 @@ export class StoryService {
 
     switch (newVote) {
       case "upvote":
-        await this.storyRepository.increment({ id: storyId }, "rating", oldVote === "downvote" ? 2 : 1);
+        await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { rating: oldVote === "downvote" ? 2 : 1 } });
         break;
       case "downvote":
-        await this.storyRepository.decrement({ id: storyId }, "rating", oldVote === "upvote" ? 2 : 1);
+        await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { rating: oldVote === "upvote" ? -2 : -1 } });
         break;
       default:
         if (oldVote === "upvote") {
+          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { rating: -1} });
           await this.storyRepository.decrement({ id: storyId }, "rating", 1);
         } else {
-          await this.storyRepository.increment({ id: storyId }, "rating", 1);
+          await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { rating: 1} });
         }
     }
   }

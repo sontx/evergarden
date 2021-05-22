@@ -19,10 +19,17 @@ const initialState: HistoryState = {
 
 export const updateStoryHistoryAsync = createAsyncThunk(
   "histories/update",
-  async (history: UpdateStoryHistoryDto, thunkAPI) => {
-    const historyId = (thunkAPI.getState() as RootState)?.login?.user?.historyId;
+  async (
+    {
+      history,
+      startReading,
+    }: { history: UpdateStoryHistoryDto; startReading: boolean },
+    thunkAPI,
+  ) => {
+    const historyId = (thunkAPI.getState() as RootState)?.login?.user
+      ?.historyId;
     if (historyId) {
-      await updateStoryHistory(historyId, history);
+      await updateStoryHistory(historyId, history, startReading);
     }
   },
 );
