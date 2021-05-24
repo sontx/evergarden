@@ -16,6 +16,7 @@ export class ReadingHistoryService {
     @InjectRepository(ReadingHistory) private readingHistoryRepository: Repository<ReadingHistory>,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
+    @Inject(forwardRef(() => StoryService))
     private storyService: StoryService,
   ) {}
 

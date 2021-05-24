@@ -1,32 +1,51 @@
-import { FlexboxGrid, Icon, IconButton } from "rsuite";
+import { Divider, FlexboxGrid, Icon, IconButton } from "rsuite";
 import { GetStoryDto } from "@evergarden/shared";
 import moment from "moment";
 
 import "./index.less";
+import { useIntl } from "react-intl";
+import classNames from "classnames";
+import {abbreviateNumber} from "../../utils/types";
 
 export interface StoryItemProps {
-  story: GetStoryDto & { isFollowing?: boolean };
+  story: GetStoryDto;
 }
 
 export function StoryItemMobile(props: StoryItemProps) {
   const { story } = props;
+  const intl = useIntl();
+
   return (
-    <FlexboxGrid>
-      <FlexboxGrid.Item colspan={16}>
-        <div>{story.title}</div>
-        {story.updated !== undefined && <span className="story-item-sub">{moment(story.updated).fromNow()}</span>}
-      </FlexboxGrid.Item>
-      <FlexboxGrid.Item className="story-item-action" colspan={8}>
-        <IconButton
-          appearance={story.isFollowing ? "default" : "subtle"}
-          size="sm"
-          icon={<Icon icon="arrow-right" />}
-          placement="right"
-        >
-          Chapter {story.lastChapter || 0}
-        </IconButton>
-      </FlexboxGrid.Item>
-    </FlexboxGrid>
+    <div className="story-item-container">
+      <div className="story-item-main">
+        <div>
+          {story.title} {story.history && <Icon className="flowing-story" icon="star" />}
+        </div>
+        <span className="story-item-sub">
+        {story.updated !== undefined && moment(story.updated).fromNow()}
+          {story.lastChapter && (
+            <>
+              <Divider vertical={true} />
+              <span
+                className={classNames({
+                  "new-unread-chapter":
+                    story.history &&
+                    story.lastChapter > story.history.currentChapterNo,
+                })}
+              >
+              {intl.formatMessage(
+                { id: "chapterTitle" },
+                { chapterNo: story.lastChapter },
+              )}
+            </span>
+            </>
+          )}
+      </span>
+      </div>
+      <span className="story-item-sub">
+        {abbreviateNumber(story.view)} views
+      </span>
+    </div>
   );
 }
 

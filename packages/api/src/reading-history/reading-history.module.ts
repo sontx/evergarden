@@ -7,7 +7,7 @@ import { StoryModule } from "../story/story.module";
 import { UserModule } from "../user/user.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ReadingHistory]), StoryModule, forwardRef(() => UserModule)],
+  imports: [TypeOrmModule.forFeature([ReadingHistory]), forwardRef(() => StoryModule), forwardRef(() => UserModule)],
   providers: [ReadingHistoryService],
   controllers: [ReadingHistoryController],
   exports: [ReadingHistoryService],

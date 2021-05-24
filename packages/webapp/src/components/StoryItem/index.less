@@ -1,15 +1,33 @@
 @import '~rsuite/lib/styles/themes/dark/index.less';
 
-.story-item-sub {
+.story-item-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.story-item-container .story-item-main {
+  flex: 1;
+}
+
+.story-item-container .story-item-sub {
   color: rgba(255,255,255,0.45);
   font-size: @font-size-base - 2;
 }
 
-.story-item-action {
+.story-item-container .story-item-action {
   align-self: center;
   text-align: right;
 }
 
-.story-item-action button {
+.story-item-container .story-item-action button {
   font-size: @font-size-base - 1;
+}
+
+.story-item-container .new-unread-chapter {
+  color: @rate-selected-color;
+}
+
+.story-item-container .flowing-story {
+  color: @rate-selected-color;
 }

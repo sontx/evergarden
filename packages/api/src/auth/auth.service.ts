@@ -43,13 +43,18 @@ export class AuthService {
         fullName: user.fullName,
         photoUrl: user.photoUrl,
         settings: user.settings,
-        historyId: user.historyId
+        historyId: user.historyId,
       }
     );
   }
 
   getAccessToken(user: User): string {
-    const payload: JwtPayload = { email: user.email, id: user.id, role: user.role || "guest" };
+    const payload: JwtPayload = {
+      email: user.email,
+      id: user.id,
+      role: user.role || "guest",
+      historyId: user.historyId
+    };
     const expires = `${this.configService.get("jwt.auth.expires")}`;
     return this.jwtService.sign(payload, {
       secret: this.configService.get("jwt.auth.secret"),
@@ -78,8 +83,10 @@ export class AuthService {
 
   getCookiesForLogOut(): string[] {
     return [
-      "Authentication=; HttpOnly; Path=/; Max-Age=0", "Refresh=; HttpOnly; Path=/; Max-Age=0",
-      "Refresh=; HttpOnly; Path=/; Max-Age=0", "Refresh=; HttpOnly; Path=/; Max-Age=0"
+      "Authentication=; HttpOnly; Path=/; Max-Age=0",
+      "Refresh=; HttpOnly; Path=/; Max-Age=0",
+      "Refresh=; HttpOnly; Path=/; Max-Age=0",
+      "Refresh=; HttpOnly; Path=/; Max-Age=0",
     ];
   }
 }

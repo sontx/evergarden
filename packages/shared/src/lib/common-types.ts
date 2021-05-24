@@ -50,6 +50,7 @@ export interface JwtPayload {
   id: IdType;
   email: string;
   role: Role;
+  historyId: IdType;
 }
 
 export type IdType = string | number;
@@ -86,6 +87,8 @@ export interface GetStoryDto {
   published?: boolean;
   uploadBy: IdType;
   updatedBy: IdType;
+
+  history?: GetStoryHistoryDto;
 }
 
 export class CreateStoryDto {

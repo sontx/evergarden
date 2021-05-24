@@ -2,9 +2,12 @@ import {
   Body,
   Controller,
   ForbiddenException,
+  forwardRef,
   Get,
+  Inject,
   NotFoundException,
-  Param, ParseBoolPipe,
+  Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Post,
   Put,
@@ -19,16 +22,24 @@ import { CreateStoryDto, GetStoryDto, PaginationResult, StoryCategory, UpdateSto
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { Role } from "../auth/role/roles.decorator";
 import { RolesGuard } from "../auth/role/roles.guard";
+import { ReadingHistoryService } from "../reading-history/reading-history.service";
+import {JwtConfig} from "../auth/jwt/jwt-config.decorator";
 
 @Controller("stories")
 export class StoryController {
-  constructor(private readonly storyService: StoryService) {}
+  constructor(
+    private readonly storyService: StoryService,
+    @Inject(forwardRef(() => ReadingHistoryService)) private readingHistoryService: ReadingHistoryService,
+  ) {}
 
   @Get()
+  @UseGuards(JwtGuard)
+  @JwtConfig({anonymous: true})
   async getStories(
     @Query("page", ParseIntPipe) page = 1,
     @Query("limit", ParseIntPipe) limit = 10,
     @Query("category") category: StoryCategory = "updated",
+    @Req() req,
   ): Promise<PaginationResult<GetStoryDto>> {
     await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
 
@@ -36,13 +47,28 @@ export class StoryController {
       page,
       limit: limit > 100 ? 100 : limit,
     };
+    let stories: PaginationResult<GetStoryDto>;
     if (category === "updated") {
-      return await this.storyService.getLastUpdatedStories(pagination, false);
+      stories = await this.storyService.getLastUpdatedStories(pagination, false);
     } else if (category === "hot") {
-      return await this.storyService.getHotStories(pagination, false);
+      stories = await this.storyService.getHotStories(pagination, false);
+    } else {
+      stories = await this.storyService.getStories(pagination, undefined, false);
     }
 
-    return this.storyService.getStories(pagination, undefined, false);
+    if (stories && req.user && req.user.historyId) {
+      const history = await this.readingHistoryService.getReadingHistory(req.user.historyId);
+      if (history) {
+        const histories = history.storyHistories || {}
+        for (const story of stories.items) {
+          if (histories[story.id]) {
+            story.history = histories[story.id] as any;
+          }
+        }
+      }
+    }
+
+    return stories;
   }
 
   @Get(":id")

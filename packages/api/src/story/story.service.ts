@@ -71,7 +71,7 @@ export class StoryService {
     return this.getStories(
       options,
       {
-        order: { view: "DESC" },
+        order: { view: "DESC", upvote: "DESC" },
       },
       includeUnpublished,
     );
@@ -125,6 +125,7 @@ export class StoryService {
         updated: now,
         uploadBy: user.id,
         updatedBy: user.id,
+        view: 0,
         lastChapter: 0,
         upvote: 0,
         downvote: 0,
