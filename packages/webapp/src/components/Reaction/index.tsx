@@ -21,6 +21,7 @@ import {
 } from "../../features/history/historySlice";
 import { useDebouncedCallback } from "use-debounce";
 import { useCallback, useEffect, useState } from "react";
+import {selectUser} from "../../features/auth/authSlice";
 
 function VoteButton({
   imgSrc,
@@ -130,11 +131,14 @@ export function Reaction() {
     }
   }, [story, storyHistory, updateVote]);
 
+  const user = useAppSelector(selectUser);
+
   return (
     <>
       {story && (
         <div className="reaction-container">
           <VoteButton
+            disabled={!user}
             onClick={handleUpvote}
             selected={!!storyHistory && storyHistory.vote === "upvote"}
             imgSrc={upvoteImg}
@@ -142,6 +146,7 @@ export function Reaction() {
             count={abbreviateNumber(story.upvote || 0)}
           />
           <VoteButton
+            disabled={!user}
             onClick={handleDownvote}
             selected={!!storyHistory && storyHistory.vote === "downvote"}
             imgSrc={downvoteImg}
