@@ -1,17 +1,19 @@
 import { InfiniteList, InfiniteListProps } from "../../components/InfiniteList";
 import { useCallback } from "react";
 import { GetStoryDto } from "@evergarden/shared";
-import { useHistory } from "react-router-dom";
 import { Notification } from "rsuite";
+import { useAppDispatch } from "../../app/hooks";
+import {openStory} from "../story/storySlice";
+import {useHistory} from "react-router-dom";
 
 export function StoryList(props: InfiniteListProps) {
+  const dispatch = useAppDispatch();
   const history = useHistory();
+
   const handleClick = useCallback(
     (story: GetStoryDto) => {
       if (story.url) {
-        history.push(`/story/${story.url}`, {
-          story
-        });
+        dispatch(openStory(history, story));
       } else {
         Notification.error({
           title: story.title,
@@ -20,7 +22,7 @@ export function StoryList(props: InfiniteListProps) {
         });
       }
     },
-    [history],
+    [dispatch, history],
   );
   return <InfiniteList {...props} onItemClick={handleClick} />;
 }

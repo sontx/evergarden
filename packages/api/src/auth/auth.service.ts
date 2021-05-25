@@ -2,7 +2,7 @@ import { AuthUser, IdType, JwtPayload } from "@evergarden/shared";
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { UserService } from "./../user/user.service";
+import { UserService } from "../user/user.service";
 import ms = require("ms");
 import { User } from "src/user/user.entity";
 

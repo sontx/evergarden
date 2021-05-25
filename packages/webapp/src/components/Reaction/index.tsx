@@ -1,9 +1,4 @@
-import {
-  calculateVoteCount,
-  GetStoryDto,
-  GetStoryHistoryDto,
-  VoteType,
-} from "@evergarden/shared";
+import { calculateVoteCount, GetStoryDto, VoteType } from "@evergarden/shared";
 
 import upvoteImg from "../../images/sweet_kiss.png";
 import downvoteImg from "../../images/beat_brick.png";
@@ -14,14 +9,11 @@ import "./index.less";
 import classNames from "classnames";
 import { abbreviateNumber } from "../../utils/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectStory } from "../../features/story/storySlice";
-import {
-  selectStoryHistory,
-  updateStoryHistoryAsync,
-} from "../../features/history/historySlice";
+import { selectStory, setStory } from "../../features/story/storySlice";
+import { updateStoryHistoryAsync } from "../../features/history/historySlice";
 import { useDebouncedCallback } from "use-debounce";
-import { useCallback, useEffect, useState } from "react";
-import {selectUser} from "../../features/auth/authSlice";
+import { useCallback, useEffect } from "react";
+import { selectUser } from "../../features/auth/authSlice";
 
 function VoteButton({
   imgSrc,
@@ -54,24 +46,8 @@ function VoteButton({
 }
 
 export function Reaction() {
-  const fetchedStory = useAppSelector(selectStory);
-  const fetchedStoryHistory = useAppSelector(selectStoryHistory);
+  const story = useAppSelector(selectStory);
   const dispatch = useAppDispatch();
-
-  const [story, setStory] = useState(fetchedStory);
-  const [storyHistory, setStoryHistory] = useState(fetchedStoryHistory);
-
-  useEffect(() => {
-    if (fetchedStoryHistory) {
-      setStoryHistory(fetchedStoryHistory);
-    }
-  }, [fetchedStoryHistory]);
-
-  useEffect(() => {
-    if (fetchedStory) {
-      setStory(fetchedStory);
-    }
-  }, [fetchedStory]);
 
   const changeVoteDebounce = useDebouncedCallback(
     (story: GetStoryDto, vote?: VoteType) => {
@@ -95,60 +71,61 @@ export function Reaction() {
   }, [changeVoteDebounce]);
 
   const updateVote = useCallback(
-    (
-      story: GetStoryDto,
-      storyHistory: GetStoryHistoryDto,
-      newVote: VoteType,
-    ) => {
-      const result = calculateVoteCount(storyHistory.vote, newVote);
+    (story: GetStoryDto, oldVote: VoteType, newVote: VoteType) => {
+      const result = calculateVoteCount(oldVote, newVote);
       if (result) {
-        setStoryHistory({
-          ...storyHistory,
-          vote: newVote,
-        });
-        setStory({
-          ...story,
-          upvote: (story.upvote || 0) + result.upvote,
-          downvote: (story.downvote || 0) + result.downvote,
-        });
+        dispatch(
+          setStory({
+            ...story,
+            upvote: (story.upvote || 0) + result.upvote,
+            downvote: (story.downvote || 0) + result.downvote,
+            history: {
+              ...(story.history || {}),
+              vote: newVote,
+            },
+          }),
+        );
         changeVoteDebounce(story, newVote);
       }
     },
-    [changeVoteDebounce],
+    [changeVoteDebounce, dispatch],
   );
 
   const handleUpvote = useCallback(() => {
-    if (storyHistory && story) {
-      const newVote = storyHistory.vote === "upvote" ? "none" : "upvote";
-      updateVote(story, storyHistory, newVote);
+    if (story) {
+      const oldVote = story.history ? story.history.vote : "none";
+      const newVote = oldVote === "upvote" ? "none" : "upvote";
+      updateVote(story, oldVote, newVote);
     }
-  }, [story, storyHistory, updateVote]);
+  }, [story, updateVote]);
 
   const handleDownvote = useCallback(() => {
-    if (storyHistory && story) {
-      const newVote = storyHistory.vote === "downvote" ? "none" : "downvote";
-      updateVote(story, storyHistory, newVote);
+    if (story) {
+      const oldVote = story.history ? story.history.vote : "none";
+      const newVote = oldVote === "downvote" ? "none" : "downvote";
+      updateVote(story, oldVote, newVote);
     }
-  }, [story, storyHistory, updateVote]);
+  }, [story, updateVote]);
 
-  const user = useAppSelector(selectUser);
+  const isLogged = !!useAppSelector(selectUser);
+  const vote = story && story.history ? story.history.vote : "none";
 
   return (
     <>
       {story && (
         <div className="reaction-container">
           <VoteButton
-            disabled={!user}
+            disabled={!isLogged}
             onClick={handleUpvote}
-            selected={!!storyHistory && storyHistory.vote === "upvote"}
+            selected={vote === "upvote"}
             imgSrc={upvoteImg}
             tooltip="Damn good"
             count={abbreviateNumber(story.upvote || 0)}
           />
           <VoteButton
-            disabled={!user}
+            disabled={!isLogged}
             onClick={handleDownvote}
-            selected={!!storyHistory && storyHistory.vote === "downvote"}
+            selected={vote === "downvote"}
             imgSrc={downvoteImg}
             tooltip="Like a shit"
             count={abbreviateNumber(story.downvote || 0)}

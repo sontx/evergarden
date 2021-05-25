@@ -16,24 +16,15 @@ const initialState: ChapterState = {
 
 export const fetchChapterAsync = createAsyncThunk(
   "chapter/fetch",
-  async (option: {
-    storyId: IdType;
-    chapterNo: number;
-    searchById: boolean;
-  }) => {
-    return await fetchChapter(
-      option.storyId,
-      option.chapterNo,
-      option.searchById,
-    );
+  async (option: { storyId: IdType; chapterNo: number }) => {
+    return await fetchChapter(option.storyId, option.chapterNo);
   },
 );
 
 export const chapterSlice = createSlice({
   name: "chapter",
   initialState,
-  reducers: {
-  },
+  reducers: {},
   extraReducers: {
     [`${fetchChapterAsync.pending}`]: (state, action) => {
       state.errorMessage = undefined;

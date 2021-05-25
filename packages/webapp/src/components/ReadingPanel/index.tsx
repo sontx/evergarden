@@ -9,7 +9,7 @@ import {StandardProps} from "rsuite/es/@types/common";
 import classNames from "classnames";
 
 export function ReadingPanel(props: {
-  children: string;
+  children: string | undefined;
   onClick?: MouseEventHandler;
   minHeightConfig?: {
     selectors: string[];
@@ -44,7 +44,7 @@ export function ReadingPanel(props: {
       className={classNames("reading-panel", className)}
       onClick={onClick}
     >
-      <ReactMarkdown linkTarget="_blank">{children}</ReactMarkdown>
+      <ReactMarkdown linkTarget="_blank">{children || ""}</ReactMarkdown>
     </div>
   );
 }

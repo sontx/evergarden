@@ -25,27 +25,20 @@ export class ChapterService {
     private userService: UserService,
   ) {}
 
-  async getChapterByNo(storyId: IdType, chapterNo: number, searchById: boolean): Promise<GetChapterDto | null> {
-    if (!searchById) {
-      const url = storyId as string;
-      const story = await this.storyService.getStoryByUrl(url);
-      if (!story) {
-        return null;
-      }
-      storyId = story.id;
-    }
-
+  async getChapterByNo(storyId: IdType, chapterNo: number): Promise<GetChapterDto | null> {
     const chapter = await this.chapterRepository.findOne({
       where: { chapterNo, storyId: new ObjectID(storyId) },
     });
 
     const updatedBy = await this.userService.getById(chapter.updatedBy);
     const uploadBy = await this.userService.getById(chapter.uploadBy);
-    return chapter && {
-      ...chapter,
-      updatedBy: updatedBy ? this.userService.toDto(updatedBy) : chapter.updatedBy,
-      uploadBy: uploadBy ? this.userService.toDto(uploadBy) : chapter.uploadBy,
-    };
+    return (
+      chapter && {
+        ...chapter,
+        updatedBy: updatedBy ? this.userService.toDto(updatedBy) : chapter.updatedBy,
+        uploadBy: uploadBy ? this.userService.toDto(uploadBy) : chapter.uploadBy,
+      }
+    );
   }
 
   async getChapters(

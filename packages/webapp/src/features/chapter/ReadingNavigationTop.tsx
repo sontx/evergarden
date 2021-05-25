@@ -1,15 +1,19 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import { useHistory } from "react-router";
-import { useParams } from "react-router-dom";
 import { useCallback, useState } from "react";
 import { IntlShape, useIntl } from "react-intl";
 import { Button, ButtonGroup, ButtonToolbar, Icon } from "rsuite";
 import classNames from "classnames";
+import { useAppDispatch } from "../../app/hooks";
+import { openStory } from "../story/storySlice";
+import { useHistory } from "react-router-dom";
 
 export function getChapterDisplayName(
-  chapter: GetChapterDto,
+  chapter: GetChapterDto | undefined,
   intl: IntlShape,
 ): string {
+  if (!chapter) {
+    return "";
+  }
   return chapter.title
     ? `${intl.formatMessage(
         { id: "chapterTitle" },
@@ -22,26 +26,30 @@ export function getChapterDisplayName(
 }
 
 export function ReadingNavigationTop(props: {
-  story: GetStoryDto;
-  chapter: GetChapterDto;
+  story: GetStoryDto | undefined;
+  chapter: GetChapterDto | undefined;
 }) {
   const { story, chapter } = props;
-  const history = useHistory();
-  const { url } = useParams() as any;
   const [showMore, setShowMore] = useState(false);
   const intl = useIntl();
+  const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const handleClickBack = useCallback(() => {
-    history.push(`/story/${url}`);
-  }, [url, history]);
+    if (story) {
+      dispatch(openStory(history, story));
+    }
+  }, [dispatch, history, story]);
 
   const handleClickMore = useCallback(() => {
     setShowMore((prevState) => !prevState);
   }, []);
 
   const handleClickComment = useCallback(() => {
-    history.push(`/story/${url}`, { focusTo: "comment" });
-  }, [history, url]);
+    if (story) {
+      dispatch(openStory(history, story, { focusTo: "comment" }));
+    }
+  }, [dispatch, history, story]);
 
   return (
     <div className="reading-navigation reading-navigation--top">
@@ -55,7 +63,7 @@ export function ReadingNavigationTop(props: {
               "reading-navigation-title--more": showMore,
             })}
           >
-            {story.title}
+            {story?.title}
           </div>
           {showMore && (
             <div className="reading-navigation-title--sub">

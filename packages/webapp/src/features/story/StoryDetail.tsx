@@ -1,12 +1,13 @@
 import { GetStoryDto, GetUserDto, IdType } from "@evergarden/shared";
-import { Icon, IconButton, Rate, Tag } from "rsuite";
-import { Link } from "react-router-dom";
+import { Icon, Tag } from "rsuite";
+import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
 import { isEmpty } from "../../utils/types";
 
 import "./storyDetail.less";
-import { useEffect, useState } from "react";
-import { pingUser } from "../user/userAPI";
+import { useCallback } from "react";
+import { useAppDispatch } from "../../app/hooks";
+import { openReading } from "./storySlice";
 
 function Ongoing() {
   return <span className="story-preview-detail-status--ongoing">Ongoing</span>;
@@ -16,31 +17,30 @@ function Full() {
   return <span className="story-preview-detail-status--full">Full</span>;
 }
 
-function UploadBy(props: { userId: IdType }) {
-  const { userId } = props;
-  const [user, setUser] = useState<GetUserDto | null>(null);
-  useEffect(() => {
-    pingUser(userId).then((responseUser: GetUserDto | null) => {
-      setUser(responseUser);
-    });
-  }, [userId]);
+function UploadBy({ user }: { user: IdType | GetUserDto }) {
+  const showUser =
+    typeof user === "object"
+      ? { id: user.id, name: user.fullName }
+      : { id: user, name: user };
   return (
-    <span>
-      {user && (
-        <Link
-          to={{
-            pathname: `/user/${user.id}`,
-          }}
-        >
-          {user.fullName}
-        </Link>
-      )}
-    </span>
+    <Link
+      to={{
+        pathname: `/user/${showUser.id}`,
+      }}
+    >
+      {showUser.name}
+    </Link>
   );
 }
 
 export function StoryDetail(props: { story: GetStoryDto }) {
   const { story } = props;
+
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+  const handleLastChapterClick = useCallback(() => {
+    dispatch(openReading(history, story, story.lastChapter));
+  }, [dispatch, history, story]);
 
   return (
     <div className="story-preview-detail">
@@ -99,7 +99,7 @@ export function StoryDetail(props: { story: GetStoryDto }) {
       {story.uploadBy && (
         <>
           <label>Upload by</label>
-          <UploadBy userId={story.uploadBy} />
+          <UploadBy user={story.uploadBy} />
         </>
       )}
 
@@ -114,13 +114,9 @@ export function StoryDetail(props: { story: GetStoryDto }) {
         <>
           <label>Last chapter</label>
           <span>
-            <Link
-              to={{
-                pathname: `/reading/${story.url}/chapter-${story.lastChapter}`,
-              }}
-            >
+            <a onClick={handleLastChapterClick}>
               {story.lastChapter} <Icon icon="arrow-right-line" />
-            </Link>
+            </a>
           </span>
         </>
       )}

@@ -1,6 +1,5 @@
 import { Loader, Message, Pagination, Placeholder } from "rsuite";
-import { GetStoryDto, GetStoryHistoryDto } from "@evergarden/shared";
-import { Link } from "react-router-dom";
+import { GetStoryDto } from "@evergarden/shared";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   fetchChaptersAsync,
@@ -15,12 +14,11 @@ import { useCallback, useEffect, useState } from "react";
 import "./chapterList.less";
 import { useIntl } from "react-intl";
 import { isEmpty } from "../../utils/types";
+import { openReading } from "../story/storySlice";
+import { useHistory } from "react-router-dom";
 
-export function ChapterList(props: {
-  story: GetStoryDto;
-  storyHistory?: GetStoryHistoryDto;
-}) {
-  const { story, storyHistory } = props;
+export function ChapterList(props: { story: GetStoryDto }) {
+  const { story } = props;
   const status = useAppSelector(selectStatus);
   const errorMessage = useAppSelector(selectErrorMessage);
   const chapters = useAppSelector(selectChapters);
@@ -28,6 +26,7 @@ export function ChapterList(props: {
   const dispatch = useAppDispatch();
   const [page, setPage] = useState(0);
   const intl = useIntl();
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(resetChapters());
@@ -47,25 +46,26 @@ export function ChapterList(props: {
     setPage(gotoPage - 1);
   }, []);
 
+  const handleChapterClick = useCallback(
+    (chapter) => {
+      dispatch(openReading(history, story, chapter.chapterNo));
+    },
+    [dispatch, history, story],
+  );
+
   return (
     <>
       {(status === "success" || !isEmpty(chapters)) && (
         <div style={{ position: "relative" }}>
           <div className="chapter-list-container">
             {(chapters || []).map((chapter) => (
-              <Link
-                key={chapter.id}
-                to={{
-                  pathname: `/reading/${story.url}/${chapter.chapterNo}`,
-                  state: { storyHistory },
-                }}
-              >
+              <a key={chapter.id} onClick={() => handleChapterClick(chapter)}>
                 {intl.formatMessage(
                   { id: "chapterTitle" },
                   { chapterNo: chapter.chapterNo },
                 )}
                 {chapter.title && `: ${chapter.title}`}
-              </Link>
+              </a>
             ))}
           </div>
           <div style={{ marginTop: "14px", textAlign: "center" }}>

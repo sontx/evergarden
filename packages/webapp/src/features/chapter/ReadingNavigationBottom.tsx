@@ -1,7 +1,6 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import { useHistory } from "react-router";
-import { useAppSelector } from "../../app/hooks";
-import { selectStatus } from "./chapterSlice";
+import { useHistory } from "react-router-dom";
+import { useAppDispatch } from "../../app/hooks";
 import { useCallback, useState } from "react";
 import {
   Animation,
@@ -13,23 +12,28 @@ import {
 } from "rsuite";
 import { ChapterListModal } from "../chapters/ChapterListModal";
 import { SettingPanel } from "../settings/SettingPanel";
+import { openReading } from "../story/storySlice";
 
 export function ReadingNavigationBottom(props: {
-  story: GetStoryDto;
-  chapter: GetChapterDto;
+  story: GetStoryDto | undefined;
+  chapter: GetChapterDto | undefined;
 }) {
   const { story, chapter } = props;
   const history = useHistory();
-  const status = useAppSelector(selectStatus);
   const [showChapterList, setShowChapterList] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleNext = useCallback(() => {
-    history.push(`/reading/${story.url}/${chapter.chapterNo + 1}`);
-  }, [chapter, history, story]);
+    if (story && chapter) {
+      dispatch(openReading(history, story, chapter.chapterNo + 1));
+    }
+  }, [chapter, dispatch, history, story]);
 
   const handleBack = useCallback(() => {
-    history.push(`/reading/${story.url}/${chapter.chapterNo - 1}`);
-  }, [chapter, history, story]);
+    if (story && chapter) {
+      dispatch(openReading(history, story, chapter.chapterNo - 1));
+    }
+  }, [chapter, dispatch, history, story]);
 
   const handleShowChapters = useCallback(() => {
     setShowChapterList(true);
@@ -59,14 +63,14 @@ export function ReadingNavigationBottom(props: {
         <ButtonGroup justified>
           <Button
             onClick={handleBack}
-            disabled={status === "processing" || chapter.chapterNo <= 1}
+            disabled={!chapter || chapter.chapterNo <= 1}
           >
             <Icon size="lg" icon="arrow-circle-o-left" />
           </Button>
           <Button
             onClick={handleNext}
             disabled={
-              status === "processing" || chapter.chapterNo >= story.lastChapter
+              !chapter || !story || chapter.chapterNo >= story.lastChapter
             }
           >
             <Icon size="lg" icon="arrow-circle-right" />

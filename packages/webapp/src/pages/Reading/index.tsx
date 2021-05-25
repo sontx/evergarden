@@ -1,11 +1,10 @@
 import { ReadingMobile } from "../../features/chapter/ReadingMobile";
-import { useLocation, useParams } from "react-router-dom";
-import React, { useEffect, useMemo } from "react";
+import { useParams } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   fetchStoryByUrlAsync,
   selectStory,
-  setStory,
 } from "../../features/story/storySlice";
 import {
   fetchChapterAsync,
@@ -24,41 +23,29 @@ import { ReadingSync } from "./ReadingSync";
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
   const dispatch = useAppDispatch();
-  const location = useLocation();
   const intl = useIntl();
   const readingFont = useAppSelector(selectReadingFont);
-
-  const cachedStory = useMemo(() => (location.state || ({} as any)).story, [
-    location.state,
-  ]);
-
-  useEffect(() => {
-    if (cachedStory && cachedStory.url === url) {
-      dispatch(setStory(cachedStory));
-    }
-  }, [cachedStory, dispatch, url]);
 
   const chapter = useAppSelector(selectChapter);
   const story = useAppSelector(selectStory);
 
-  const showChapter = chapter && chapter.chapterNo == chapterNo && chapter;
-  const showStory = story && story.url === url && story;
-
   useEffect(() => {
-    if (!showChapter) {
-      dispatch(
-        fetchChapterAsync({
-          storyId: story ? story.id : url,
-          chapterNo,
-          searchById: !!story,
-        }),
-      );
-    }
-
-    if (!story) {
+    if (!story || story.url !== url) {
       dispatch(fetchStoryByUrlAsync(url));
     }
-  }, [chapterNo, dispatch, story, url, showChapter]);
+  }, [dispatch, story, url]);
+
+  const showStory = story && story.url === url ? story : undefined;
+  const showChapter =
+    chapter && showStory && chapter.storyId === showStory.id
+      ? chapter
+      : undefined;
+
+  useEffect(() => {
+    if (showStory) {
+      dispatch(fetchChapterAsync({storyId: showStory.id, chapterNo}))
+    }
+  }, [chapterNo, dispatch, showStory])
 
   return (
     <AppContainer className="reading-theme--dark1">

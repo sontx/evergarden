@@ -1,54 +1,23 @@
 import { ReactElement, useEffect, useState } from "react";
-import {
-  fetchStoryHistoryAsync,
-  selectStoryHistory,
-  updateStoryHistoryAsync,
-} from "../../features/history/historySlice";
+import { updateStoryHistoryAsync } from "../../features/history/historySlice";
 import { useDebouncedCallback } from "use-debounce";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectChapter } from "../../features/chapter/chapterSlice";
 import { selectStory } from "../../features/story/storySlice";
-import { useLocation, useParams } from "react-router-dom";
-import { selectUser } from "../../features/auth/authSlice";
-import { GetStoryHistoryDto } from "@evergarden/shared";
+import { useParams } from "react-router-dom";
 
 export function ReadingSync({ children }: { children: ReactElement }) {
   const dispatch = useAppDispatch();
   const chapter = useAppSelector(selectChapter);
   const story = useAppSelector(selectStory);
-  const location = useLocation();
-  const user = useAppSelector(selectUser);
-  const { storyHistory: cachedStoryHistory } = location.state || ({} as any);
-  const fetchedStoryHistory = useAppSelector(selectStoryHistory);
 
-  const [storyHistory, setStoryHistory] = useState<
-    Partial<GetStoryHistoryDto> & { dontNeedScroll?: boolean }
-  >(cachedStoryHistory);
+  const [storyHistory, setStoryHistory] = useState<any>(story && story.history);
 
   // scroll to top
   const { url, chapterNo } = useParams() as any;
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [url, chapterNo]);
-
-  // fetch story history on the first load
-  useEffect(() => {
-    if (story && user && !storyHistory) {
-      dispatch(
-        fetchStoryHistoryAsync({
-          storyId: story.id,
-          historyId: user.historyId,
-        }),
-      );
-    }
-  }, [dispatch, story, storyHistory, user]);
-
-  // update fetched story history to current local state
-  useEffect(() => {
-    if (fetchedStoryHistory) {
-      setStoryHistory(fetchedStoryHistory);
-    }
-  }, [fetchedStoryHistory]);
 
   // scroll to previous scroll position
   useEffect(() => {
@@ -133,6 +102,8 @@ export function ReadingSync({ children }: { children: ReactElement }) {
   // update story's view count, after 5s if the user is still reading in this page we'll count it as a view
   useEffect(() => {
     if (story) {
+      setStoryHistory(story.history);
+
       const timeoutId = window.setTimeout(() => {
         dispatch(
           updateStoryHistoryAsync({

@@ -1,4 +1,4 @@
-import {GetChapterDto, GetStoryDto, SizeType} from "@evergarden/shared";
+import { GetChapterDto, GetStoryDto, SizeType } from "@evergarden/shared";
 import { Panel, Placeholder } from "rsuite";
 import { useIntl } from "react-intl";
 import { Link } from "react-router-dom";
@@ -26,9 +26,11 @@ import {
   selectReadingFontSize,
   selectReadingLineSpacing,
 } from "../settings/settingsSlice";
+import { selectStatus as selectChapterStatus } from "./chapterSlice";
+import { selectStatus as selectStoryStatus } from "../story/storySlice";
 
 const ReadingFooter = forwardRef(
-  (props: { chapter: GetChapterDto }, ref: any) => {
+  (props: { chapter: GetChapterDto | undefined }, ref: any) => {
     const intl = useIntl();
     const { chapter } = props;
     const content = getChapterDisplayName(chapter, intl);
@@ -41,18 +43,22 @@ const ReadingFooter = forwardRef(
 );
 
 export function ReadingMobile(props: {
-  chapter?: GetChapterDto | false;
-  story?: GetStoryDto | false;
+  chapter?: GetChapterDto;
+  story?: GetStoryDto;
 }) {
   const { story, chapter } = props;
+
   const intl = useIntl();
   const footerRef = useRef<HTMLDivElement>(null);
   const [showNavigation, setShowNavigation] = useState(false);
   const readingFont = useAppSelector(selectReadingFont);
   const readingFontSize = useAppSelector(selectReadingFontSize);
   const readingLineSpacing = useAppSelector(selectReadingLineSpacing);
+  const fetchChapterStatus = useAppSelector(selectChapterStatus);
+  const fetchStoryStatus = useAppSelector(selectStoryStatus);
+
   const fontSize = useMemo(() => {
-    const config: {[x in SizeType]: string} = {
+    const config: { [x in SizeType]: string } = {
       S: "0.75em",
       M: "1em",
       L: "1.25em",
@@ -60,8 +66,9 @@ export function ReadingMobile(props: {
     };
     return config[readingFontSize] || "1em";
   }, [readingFontSize]);
+
   const lineSpacingClass = useMemo(() => {
-    const config: {[x in SizeType]: string} = {
+    const config: { [x in SizeType]: string } = {
       S: "line-spacing--s",
       M: "line-spacing--m",
       L: "line-spacing--l",
@@ -99,6 +106,10 @@ export function ReadingMobile(props: {
   }, []);
 
   const font = getFont(readingFont);
+  const isFetchingStory = fetchStoryStatus === "processing";
+  const isFetchingChapter = fetchChapterStatus === "processing";
+  const isStoryReady = !isFetchingStory && story;
+  const isChapterReady = !isFetchingChapter && chapter;
 
   return (
     <>
@@ -106,22 +117,22 @@ export function ReadingMobile(props: {
         className="reading-container"
         style={{ fontFamily: font.family }}
         header={
-          story && chapter ? (
+          isStoryReady && isChapterReady ? (
             <div style={{ textAlign: "center" }}>
               <h5>
                 <span
                   style={{
                     textTransform: "uppercase",
-                    color: !chapter.title ? "unset" : "#a4a9b3",
+                    color: !chapter?.title ? "unset" : "#a4a9b3",
                   }}
                 >
                   {intl.formatMessage(
                     { id: "chapterTitle" },
-                    { chapterNo: chapter.chapterNo },
+                    { chapterNo: chapter?.chapterNo },
                   )}
-                  {chapter.title && ":"}
+                  {chapter?.title && ":"}
                 </span>
-                {chapter.title && (
+                {chapter?.title && (
                   <span
                     style={{
                       marginLeft: "5px",
@@ -133,7 +144,7 @@ export function ReadingMobile(props: {
                 )}
               </h5>
               <span className="reading-subtitle">
-                {typeof chapter.uploadBy === "object"
+                {typeof chapter?.uploadBy === "object"
                   ? intl.formatMessage(
                       { id: "readingSubtitle" },
                       {
@@ -147,7 +158,7 @@ export function ReadingMobile(props: {
                         ),
                       },
                     )
-                  : moment(chapter.updated).fromNow()}
+                  : moment(chapter?.updated).fromNow()}
               </span>
             </div>
           ) : (
@@ -155,7 +166,7 @@ export function ReadingMobile(props: {
           )
         }
       >
-        {chapter ? (
+        {isChapterReady ? (
           <ReadingPanel
             style={{ fontSize: fontSize }}
             className={lineSpacingClass}
@@ -165,19 +176,19 @@ export function ReadingMobile(props: {
             }}
             onClick={handleClick}
           >
-            {chapter.content}
+            {chapter?.content}
           </ReadingPanel>
         ) : (
           <Placeholder.Paragraph rows={15} active />
         )}
       </Panel>
-      {!showNavigation && chapter && window.scrollY > 0 && (
+      {!showNavigation && isChapterReady && window.scrollY > 0 && (
         <ReadingFooter chapter={chapter} ref={footerRef} />
       )}
-      {showNavigation && story && chapter && (
+      {showNavigation && isStoryReady && isChapterReady && (
         <>
           <ReadingNavigationTop chapter={chapter} story={story} />
-          <ReadingNavigationBottom story={story} chapter={chapter} />
+          <ReadingNavigationBottom chapter={chapter} story={story} />
         </>
       )}
     </>

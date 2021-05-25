@@ -4,7 +4,7 @@ import { Avatar, Badge, Button, Divider, Drawer, Icon, Input, InputGroup, Nav } 
 import "./index.less";
 import { useCallback, useState } from "react";
 import { isDesktop } from "react-device-detect";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import { logoutAsync, selectUser } from "../../features/auth/authSlice";
 

@@ -29,7 +29,7 @@ const persistConfig: PersistConfig<any> = {
   key: "root",
   storage,
   debug: process.env.NODE_ENV === "development",
-  blacklist: ["chapters", "chapter", "history"],
+  blacklist: ["chapters", "chapter", "history", "story"],
   migrate: (state: any) => {
     state = state || {};
     if (state.lastUpdatedStories) {

@@ -25,7 +25,7 @@ export class UserService {
   }
 
   toDto(user: User): GetUserDto {
-    return {
+    return user && {
       id: user.id,
       fullName: user.fullName,
     };

@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindManyOptions, MongoRepository } from "typeorm";
-import { Story } from "./story.entity";
+import {BadRequestException, Injectable, Logger} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {FindManyOptions, MongoRepository} from "typeorm";
+import {Story} from "./story.entity";
 import {
   AuthUser,
   calculateVoteCount,
@@ -15,7 +15,7 @@ import {
   UpdateStoryDto,
   VoteType,
 } from "@evergarden/shared";
-import { ObjectID } from "mongodb";
+import {ObjectID} from "mongodb";
 
 @Injectable()
 export class StoryService {
@@ -77,7 +77,7 @@ export class StoryService {
     );
   }
 
-  private toDto(story: Story): GetStoryDto {
+  toDto(story: Story): GetStoryDto {
     return {
       id: story.id,
       created: story.created,
@@ -137,29 +137,27 @@ export class StoryService {
     }
   }
 
-  async getStoryByUrl(url: string): Promise<GetStoryDto | null> {
+  async getStoryByUrl(url: string): Promise<Story | null> {
     try {
-      const story = await this.storyRepository.findOne({
-        where: { url },
+      return await this.storyRepository.findOne({
+        where: {url},
       });
-      return story ? this.toDto(story) : null;
     } catch (e) {
       this.logger.warn(`Error while querying story: ${url}`, e);
       throw new BadRequestException();
     }
   }
 
-  async getStory(id: IdType): Promise<GetStoryDto | null> {
+  async getStory(id: IdType): Promise<Story | null> {
     try {
-      const story = await this.storyRepository.findOne(id);
-      return story ? this.toDto(story) : null;
+      return await this.storyRepository.findOne(id);
     } catch (e) {
       this.logger.warn(`Error while querying story: ${id}`, e);
       throw new BadRequestException();
     }
   }
 
-  async updateStory(id: IdType, story: UpdateStoryDto, user: AuthUser): Promise<GetStoryDto> {
+  async updateStory(id: IdType, story: UpdateStoryDto, user: AuthUser): Promise<Story> {
     try {
       await this.storyRepository.update(id, {
         ...story,

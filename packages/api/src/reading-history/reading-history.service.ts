@@ -122,4 +122,8 @@ export class ReadingHistoryService {
     }
     return null;
   }
+
+  toDto(storyHistory: StoryHistory): GetStoryHistoryDto {
+    return storyHistory as any;
+  }
 }

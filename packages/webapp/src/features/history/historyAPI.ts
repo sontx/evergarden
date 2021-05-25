@@ -18,7 +18,7 @@ export async function updateStoryHistory(
   });
 }
 
-export async function fetchStoryHistory(
+export async function fetchStoryHistory1(
   historyId: IdType,
   storyId: IdType,
 ): Promise<GetStoryHistoryDto> {

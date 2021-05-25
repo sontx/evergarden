@@ -6,7 +6,7 @@ import {
   Panel,
   Placeholder,
 } from "rsuite";
-import { GetStoryDto, GetStoryHistoryDto } from "@evergarden/shared";
+import { GetStoryDto } from "@evergarden/shared";
 // @ts-ignore
 import ShowMoreText from "react-show-more-text";
 import "./storyPreviewMobile.less";
@@ -17,18 +17,18 @@ import { ChapterList } from "../chapters/ChapterList";
 import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
 import { useLocation } from "react-router-dom";
-import { useHistory } from "react-router";
 import { Reaction } from "../../components/Reaction";
+import { useAppDispatch } from "../../app/hooks";
+import { openReading } from "./storySlice";
+import {useHistory} from "react-router-dom";
 
 const { Paragraph } = Placeholder;
 
-export function StoryPreviewMobile(props: {
-  story?: GetStoryDto;
-  storyHistory?: GetStoryHistoryDto;
-}) {
-  const { story, storyHistory } = props;
+export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
+  const { story } = props;
   const intl = useIntl();
   const { state = {} } = useLocation() as any;
+  const history = useHistory();
 
   const handleExpandPanel = useCallback((element) => {
     if (element) {
@@ -49,22 +49,19 @@ export function StoryPreviewMobile(props: {
     }
   }, [handleExpandPanel, state.focusTo]);
 
-  const history = useHistory();
+  const dispatch = useAppDispatch();
 
   const handleRead = useCallback(() => {
     if (story) {
-      history.push(`/reading/${story.url}/1`, { story, storyHistory });
+      dispatch(openReading(history, story, 1));
     }
-  }, [history, story, storyHistory]);
+  }, [dispatch, history, story]);
 
   const handleContinue = useCallback(() => {
-    if (story && storyHistory) {
-      history.push(`/reading/${story.url}/${storyHistory.currentChapterNo}`, {
-        story,
-        storyHistory
-      });
+    if (story && story.history) {
+      dispatch(openReading(history, story, story.history.currentChapterNo));
     }
-  }, [history, story, storyHistory]);
+  }, [dispatch, history, story]);
 
   return story ? (
     <div className="story-preview-mobile-container">
@@ -78,7 +75,7 @@ export function StoryPreviewMobile(props: {
             </span>
             <Reaction />
           </div>
-          <Divider style={{margin: "10px 0 15px 0"}}/>
+          <Divider style={{ margin: "10px 0 15px 0" }} />
           <div className="story-preview-mobile-description">
             <ShowMoreText
               more={intl.formatMessage({ id: "showMore" })}
@@ -110,7 +107,7 @@ export function StoryPreviewMobile(props: {
         >
           Read
         </IconButton>
-        {storyHistory && (
+        {story && story.history && (
           <IconButton
             onClick={handleContinue}
             placement="right"
@@ -119,7 +116,7 @@ export function StoryPreviewMobile(props: {
             size="sm"
             appearance="primary"
           >
-            {`Continue (${storyHistory.currentChapterNo})`}
+            {`Continue (${story.history.currentChapterNo})`}
           </IconButton>
         )}
       </ButtonGroup>
@@ -129,7 +126,7 @@ export function StoryPreviewMobile(props: {
         header="Chapters"
         collapsible
       >
-        <ChapterList story={story} storyHistory={storyHistory}/>
+        <ChapterList story={story} />
       </Panel>
       <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
       <Panel

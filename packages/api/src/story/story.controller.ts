@@ -17,19 +17,27 @@ import {
   UsePipes,
   ValidationPipe,
 } from "@nestjs/common";
-import { StoryService } from "./story.service";
-import { CreateStoryDto, GetStoryDto, PaginationResult, StoryCategory, UpdateStoryDto } from "@evergarden/shared";
+import {StoryService} from "./story.service";
+import {
+  CreateStoryDto,
+  GetStoryDto,
+  PaginationResult,
+  StoryCategory,
+  UpdateStoryDto
+} from "@evergarden/shared";
 import JwtGuard from "../auth/jwt/jwt.guard";
-import { Role } from "../auth/role/roles.decorator";
-import { RolesGuard } from "../auth/role/roles.guard";
-import { ReadingHistoryService } from "../reading-history/reading-history.service";
+import {Role} from "../auth/role/roles.decorator";
+import {RolesGuard} from "../auth/role/roles.guard";
+import {ReadingHistoryService} from "../reading-history/reading-history.service";
 import {JwtConfig} from "../auth/jwt/jwt-config.decorator";
+import {UserService} from "../user/user.service";
 
 @Controller("stories")
 export class StoryController {
   constructor(
     private readonly storyService: StoryService,
     @Inject(forwardRef(() => ReadingHistoryService)) private readingHistoryService: ReadingHistoryService,
+    @Inject(forwardRef(() => UserService)) private userService: UserService
   ) {}
 
   @Get()
@@ -62,7 +70,7 @@ export class StoryController {
         const histories = history.storyHistories || {}
         for (const story of stories.items) {
           if (histories[story.id]) {
-            story.history = histories[story.id] as any;
+            story.history = this.readingHistoryService.toDto(histories[story.id]);
           }
         }
       }
@@ -72,9 +80,19 @@ export class StoryController {
   }
 
   @Get(":id")
-  async getStory(@Param("id") id: string, @Query("url", ParseBoolPipe) url = false): Promise<GetStoryDto> {
-    const story = url ? await this.storyService.getStoryByUrl(id) : await this.storyService.getStory(id);
+  @UseGuards(JwtGuard)
+  @JwtConfig({anonymous: true})
+  async getStory(@Param("id") id: string, @Query("url", ParseBoolPipe) url = false, @Req() req): Promise<GetStoryDto> {
+    const storyData = url ? await this.storyService.getStoryByUrl(id) : await this.storyService.getStory(id);
+    const story = this.storyService.toDto(storyData);
     if (story) {
+      if (req.user && req.user.historyId) {
+        story.history = await this.readingHistoryService.getStoryHistory(req.user.historyId, story.id);
+      }
+      const uploader = await this.userService.getById(story.uploadBy as string)
+      const updater = await this.userService.getById(story.updatedBy as string);
+      story.uploadBy = this.userService.toDto(uploader);
+      story.updatedBy = this.userService.toDto(updater);
       return story;
     }
     throw new NotFoundException();
@@ -98,7 +116,8 @@ export class StoryController {
       const isUploader = req.user.id === currentStory.uploadBy;
       const isAdminOrMod = req.user.role === "admin" || req.user.role === "mod";
       if (isUploader || isAdminOrMod) {
-        return this.storyService.updateStory(id, story, req.user);
+        const storyData = await this.storyService.updateStory(id, story, req.user);
+        return this.storyService.toDto(storyData)
       }
       throw new ForbiddenException();
     } else {

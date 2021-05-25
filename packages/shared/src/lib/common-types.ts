@@ -85,8 +85,8 @@ export interface GetStoryDto {
   downvote: number;
   lastChapter: number;
   published?: boolean;
-  uploadBy: IdType;
-  updatedBy: IdType;
+  uploadBy: IdType | GetUserDto;
+  updatedBy: IdType | GetUserDto;
 
   history?: GetStoryHistoryDto;
 }

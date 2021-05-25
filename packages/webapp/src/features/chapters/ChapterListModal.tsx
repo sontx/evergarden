@@ -9,14 +9,14 @@ import {
   selectChapters,
   selectErrorMessage,
 } from "./chaptersSlice";
-import { selectStory } from "../story/storySlice";
+import { openReading, selectStory } from "../story/storySlice";
 import { selectChapter, selectStatus } from "../chapter/chapterSlice";
 import moment from "moment";
 import { FormattedMessage } from "react-intl";
 import { GetChapterDto } from "@evergarden/shared";
 import classNames from "classnames";
 import { useDebouncedCallback } from "use-debounce";
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 export function ChapterListModal(props: {
   show?: boolean;
@@ -30,6 +30,7 @@ export function ChapterListModal(props: {
   const errorMessage = useAppSelector(selectErrorMessage);
   const chapter = useAppSelector(selectChapter);
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     const dontMatchId =
@@ -109,7 +110,6 @@ export function ChapterListModal(props: {
     }
   }, [isDesc, chapters, handleSearch]);
 
-  const history = useHistory();
   const handleChapterClick = useCallback(
     (clickedChapter: GetChapterDto) => {
       const isClickedOnCurrentChapter =
@@ -119,10 +119,10 @@ export function ChapterListModal(props: {
           onClose();
         }
       } else if (story) {
-        history.push(`/reading/${story.url}/${clickedChapter.chapterNo}`);
+        dispatch(openReading(history, story, clickedChapter.chapterNo));
       }
     },
-    [chapter, history, onClose, story],
+    [chapter, dispatch, history, onClose, story],
   );
 
   return (
