@@ -5,7 +5,7 @@ import moment from "moment";
 import "./index.less";
 import { useIntl } from "react-intl";
 import classNames from "classnames";
-import {abbreviateNumber} from "../../utils/types";
+import { abbreviateNumber } from "../../utils/types";
 
 export interface StoryItemProps {
   story: GetStoryDto;
@@ -19,10 +19,13 @@ export function StoryItemMobile(props: StoryItemProps) {
     <div className="story-item-container">
       <div className="story-item-main">
         <div>
-          {story.title} {story.history && <Icon className="flowing-story" icon="star" />}
+          {story.title}{" "}
+          {story.history && story.history.isFollowing && (
+            <Icon className="flowing-story" icon="heart" />
+          )}
         </div>
         <span className="story-item-sub">
-        {story.updated !== undefined && moment(story.updated).fromNow()}
+          {story.updated !== undefined && moment(story.updated).fromNow()}
           {story.lastChapter && (
             <>
               <Divider vertical={true} />
@@ -30,17 +33,18 @@ export function StoryItemMobile(props: StoryItemProps) {
                 className={classNames({
                   "new-unread-chapter":
                     story.history &&
+                    story.history.isFollowing &&
                     story.lastChapter > story.history.currentChapterNo,
                 })}
               >
-              {intl.formatMessage(
-                { id: "chapterTitle" },
-                { chapterNo: story.lastChapter },
-              )}
-            </span>
+                {intl.formatMessage(
+                  { id: "chapterTitle" },
+                  { chapterNo: story.lastChapter },
+                )}
+              </span>
             </>
           )}
-      </span>
+        </span>
       </div>
       <span className="story-item-sub">
         {abbreviateNumber(story.view)} views
