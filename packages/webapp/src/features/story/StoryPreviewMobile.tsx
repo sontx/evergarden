@@ -161,6 +161,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         className="story-preview-mobile-comment"
         onEntered={handleExpandPanel}
         collapsible
+        defaultExpanded={state.focusTo === "comment"}
         header={<CommentCount story={story} />}
       >
         <Comment onReady={handleCommentReady} story={story} />
