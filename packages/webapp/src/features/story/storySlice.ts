@@ -1,9 +1,11 @@
 import { ProcessingStatus } from "../../utils/types";
-import { GetStoryDto, IdType } from "@evergarden/shared";
+import { GetStoryDto } from "@evergarden/shared";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchStory, fetchStoryByUrl } from "./storyAPI";
+import { fetchStoryByUrl } from "./storyAPI";
 import { AppThunk, RootState } from "../../app/store";
-import * as H from 'history';
+import * as H from "history";
+import { setChapter } from "../chapter/chapterSlice";
+import { setHistory } from "../history/historySlice";
 
 export interface StoryState {
   status: ProcessingStatus;
@@ -14,17 +16,16 @@ const initialState: StoryState = {
   status: "none",
 };
 
-export const fetchStoryAsync = createAsyncThunk(
-  "story/fetch",
-  async (id: IdType) => {
-    return await fetchStory(id);
-  },
-);
+function extractHistory(story: GetStoryDto) {
+  return story ? { ...(story.history || {}), storyId: story.id } : undefined;
+}
 
 export const fetchStoryByUrlAsync = createAsyncThunk(
   "story/fetchByUrl",
-  async (url: string) => {
-    return await fetchStoryByUrl(url);
+  async (url: string, thunkAPI) => {
+    const story = await fetchStoryByUrl(url);
+    thunkAPI.dispatch(setHistory(extractHistory(story)));
+    return story;
   },
 );
 
@@ -40,16 +41,6 @@ export const storySlice = createSlice({
     },
   },
   extraReducers: {
-    [`${fetchStoryAsync.pending}`]: (state) => {
-      state.status = "processing";
-    },
-    [`${fetchStoryAsync.fulfilled}`]: (state, { payload }) => {
-      state.status = "success";
-      state.story = payload;
-    },
-    [`${fetchStoryAsync.rejected}`]: (state, { payload }) => {
-      state.status = "error";
-    },
     [`${fetchStoryByUrlAsync.pending}`]: (state) => {
       state.status = "processing";
     },
@@ -72,8 +63,13 @@ export const openReading = (
   history: H.History<unknown>,
   story: GetStoryDto,
   chapterNo: number,
-): AppThunk => (dispatch) => {
-  dispatch(setStory(story));
+): AppThunk => (dispatch, getState) => {
+  const current = getState().story.story;
+  if (current !== story) {
+    dispatch(setStory(story));
+    dispatch(setHistory(extractHistory(story)));
+  }
+  dispatch(setChapter(undefined));
   history.push(`/reading/${story.url}/${chapterNo}`);
 };
 
@@ -81,9 +77,12 @@ export const openStory = (
   history: H.History<unknown>,
   story: GetStoryDto,
   option?: any,
-): AppThunk => (dispatch, getState, extraArgument) => {
-  dispatch(setStory(story));
-  console.log(extraArgument);
+): AppThunk => (dispatch, getState) => {
+  const current = getState().story.story;
+  if (current !== story) {
+    dispatch(setStory(story));
+    dispatch(setHistory(extractHistory(story)));
+  }
   history.push(`/story/${story.url}`, option);
 };
 

@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { useAppDispatch } from "../../app/hooks";
 import { openStory } from "../story/storySlice";
 import { useHistory } from "react-router-dom";
-import { withFollowSync } from "../story/FollowStorySync";
+import { withFollowSync } from "../story/withFollowSync";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (

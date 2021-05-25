@@ -18,9 +18,10 @@ import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
 import { useHistory, useLocation } from "react-router-dom";
 import { Reaction } from "../../components/Reaction";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { openReading } from "./storySlice";
-import { withFollowSync } from "./FollowStorySync";
+import { withFollowSync } from "./withFollowSync";
+import { selectHistory } from "../history/historySlice";
 
 const { Paragraph } = Placeholder;
 
@@ -51,6 +52,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   const intl = useIntl();
   const { state = {} } = useLocation() as any;
   const history = useHistory();
+  const storyHistory = useAppSelector(selectHistory);
 
   const handleExpandPanel = useCallback((element) => {
     if (element) {
@@ -80,10 +82,10 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   }, [dispatch, history, story]);
 
   const handleContinue = useCallback(() => {
-    if (story && story.history) {
-      dispatch(openReading(history, story, story.history.currentChapterNo));
+    if (story && storyHistory) {
+      dispatch(openReading(history, story, storyHistory.currentChapterNo));
     }
-  }, [dispatch, history, story]);
+  }, [dispatch, history, story, storyHistory]);
 
   return story ? (
     <div className="story-preview-mobile-container">
@@ -121,7 +123,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         justified
       >
         <FollowButtonWrapper />
-        {story && !story.history && (
+        {story && !storyHistory && (
           <IconButton
             placement="right"
             icon={<Icon icon="angle-right" />}
@@ -132,7 +134,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
             Read
           </IconButton>
         )}
-        {story && story.history && (
+        {story && storyHistory && (
           <IconButton
             onClick={handleContinue}
             placement="right"
@@ -141,7 +143,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
             size="sm"
             appearance="primary"
           >
-            {`Continue (${story.history.currentChapterNo})`}
+            {`Continue (${storyHistory.currentChapterNo})`}
           </IconButton>
         )}
       </ButtonGroup>
@@ -158,7 +160,6 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         id="comment-panel"
         className="story-preview-mobile-comment"
         onEntered={handleExpandPanel}
-        defaultExpanded
         collapsible
         header={<CommentCount story={story} />}
       >

@@ -18,7 +18,13 @@ import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
 import { Helmet } from "react-helmet";
 import { selectReadingFont } from "../../features/settings/settingsSlice";
-import { ReadingSync } from "./ReadingSync";
+import { withScrollSync } from "./withScrollSync";
+import { withChapterNoSync } from "./withChapterNoSync";
+import { withViewCountSync } from "./withViewCountSync";
+
+const ReadingWrapper = withViewCountSync(
+  withScrollSync(withChapterNoSync(ReadingMobile)),
+);
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
@@ -43,18 +49,16 @@ export function Reading() {
 
   useEffect(() => {
     if (showStory) {
-      dispatch(fetchChapterAsync({storyId: showStory.id, chapterNo}))
+      dispatch(fetchChapterAsync({ storyId: showStory.id, chapterNo }));
     }
-  }, [chapterNo, dispatch, showStory])
+  }, [chapterNo, dispatch, showStory]);
 
   return (
     <AppContainer className="reading-theme--dark1">
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppHeader />
       <Content>
-        <ReadingSync>
-          <ReadingMobile story={showStory} chapter={showChapter} />
-        </ReadingSync>
+        <ReadingWrapper story={showStory} chapter={showChapter} />
       </Content>
       <AppFooter />
       <Helmet>

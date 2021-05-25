@@ -24,7 +24,11 @@ export const fetchChapterAsync = createAsyncThunk(
 export const chapterSlice = createSlice({
   name: "chapter",
   initialState,
-  reducers: {},
+  reducers: {
+    setChapter: (state, { payload }) => {
+      state.chapter = payload;
+    },
+  },
   extraReducers: {
     [`${fetchChapterAsync.pending}`]: (state, action) => {
       state.errorMessage = undefined;
@@ -40,6 +44,8 @@ export const chapterSlice = createSlice({
     },
   },
 });
+
+export const { setChapter } = chapterSlice.actions;
 
 export const selectChapter = (state: RootState) => state.chapter.chapter;
 export const selectStatus = (state: RootState) => state.chapter.status;

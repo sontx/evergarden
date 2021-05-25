@@ -1,21 +1,25 @@
-import React, {ReactElement, useCallback, useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectStory } from "./storySlice";
 import { useDebouncedCallback } from "use-debounce";
-import { updateStoryHistoryAsync } from "../history/historySlice";
+import {
+  selectHistory,
+  updateStoryHistoryAsync,
+} from "../history/historySlice";
 
 export function withFollowSync(Component: React.ElementType) {
   return function (props: any) {
     const story = useAppSelector(selectStory);
+    const storyHistory = useAppSelector(selectHistory);
     const dispatch = useAppDispatch();
 
     const [isFollowing, setFollowing] = useState<boolean>(
-      !!(story && story.history && story.history.isFollowing),
+      !!(storyHistory && storyHistory.isFollowing),
     );
 
     useEffect(() => {
-      setFollowing(!!(story && story.history && story.history.isFollowing));
-    }, [story]);
+      setFollowing(!!(storyHistory && storyHistory.isFollowing));
+    }, [story, storyHistory]);
 
     const updateFollowDebounce = useDebouncedCallback(
       (isFollowing, story, dispatch) => {
