@@ -1,9 +1,6 @@
 import { calculateVoteCount, GetStoryDto, VoteType } from "@evergarden/shared";
-
-import upvoteImg from "../../images/sweet_kiss.png";
-import downvoteImg from "../../images/beat_brick.png";
 import { StandardProps } from "rsuite/es/@types/common";
-import { IconButton } from "rsuite";
+import { Icon, IconButton } from "rsuite";
 
 import "./index.less";
 import classNames from "classnames";
@@ -12,18 +9,16 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectStory, setStory } from "../../features/story/storySlice";
 import { updateStoryHistoryAsync } from "../../features/history/historySlice";
 import { useDebouncedCallback } from "use-debounce";
-import { useCallback, useEffect } from "react";
+import { ReactElement, useCallback, useEffect } from "react";
 import { selectUser } from "../../features/auth/authSlice";
 
 function VoteButton({
-  imgSrc,
-  tooltip,
+  icon,
   count,
   selected,
   ...rest
 }: {
-  imgSrc: string;
-  tooltip: string;
+  icon: ReactElement;
   count: string;
   selected: boolean;
 } & StandardProps) {
@@ -33,13 +28,7 @@ function VoteButton({
         "vote-button--selected": selected,
       })}
     >
-      <IconButton
-        {...rest}
-        appearance="subtle"
-        size="sm"
-        circle
-        icon={<img src={imgSrc} alt={tooltip} title={tooltip} />}
-      />
+      <IconButton {...rest} appearance="subtle" size="sm" circle icon={icon} />
       {count}
     </span>
   );
@@ -118,16 +107,14 @@ export function Reaction() {
             disabled={!isLogged}
             onClick={handleUpvote}
             selected={vote === "upvote"}
-            imgSrc={upvoteImg}
-            tooltip="Damn good"
+            icon={<Icon icon="thumbs-up" />}
             count={abbreviateNumber(story.upvote || 0)}
           />
           <VoteButton
             disabled={!isLogged}
             onClick={handleDownvote}
             selected={vote === "downvote"}
-            imgSrc={downvoteImg}
-            tooltip="Like a shit"
+            icon={<Icon icon="thumbs-down" />}
             count={abbreviateNumber(story.downvote || 0)}
           />
         </div>
