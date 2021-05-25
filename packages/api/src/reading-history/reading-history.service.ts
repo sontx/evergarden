@@ -77,22 +77,20 @@ export class ReadingHistoryService {
     }
   }
 
-  private normalizeStoryHistory(
-    storyHistory: UpdateStoryHistoryDto,
-    currentStoryHistory: StoryHistory | null,
-  ): StoryHistory {
-    const current: Partial<StoryHistory> = currentStoryHistory || {};
+  private normalizeStoryHistory(newHistory: UpdateStoryHistoryDto, oldHistory: StoryHistory | null): StoryHistory {
+    const current: Partial<StoryHistory> = oldHistory || {};
     const now = new Date();
     return {
       ...current,
-      ...storyHistory,
+      ...newHistory,
       currentChapterNo:
-        storyHistory.currentChapterNo !== undefined ? storyHistory.currentChapterNo : current.currentChapterNo || 0,
+        newHistory.currentChapterNo !== undefined ? newHistory.currentChapterNo : current.currentChapterNo || 0,
       currentReadingPosition:
-        storyHistory.currentReadingPosition !== undefined
-          ? storyHistory.currentReadingPosition
+        newHistory.currentReadingPosition !== undefined
+          ? newHistory.currentReadingPosition
           : current.currentReadingPosition || 0,
-      vote: storyHistory.vote !== undefined ? storyHistory.vote : current.vote || "none",
+      vote: newHistory.vote !== undefined ? newHistory.vote : current.vote || "none",
+      isFollowing: newHistory.isFollowing !== undefined ? newHistory.isFollowing : oldHistory.isFollowing || false,
       started: current.started || now,
       lastVisit: now,
     };

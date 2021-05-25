@@ -6,6 +6,17 @@ import classNames from "classnames";
 import { useAppDispatch } from "../../app/hooks";
 import { openStory } from "../story/storySlice";
 import { useHistory } from "react-router-dom";
+import { withFollowSync } from "../story/FollowStorySync";
+
+function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
+  return (
+    <Button {...rest}>
+      <Icon style={isFollowing ? { color: "red" } : {}} icon="heart" />
+    </Button>
+  );
+}
+
+const FollowButtonWrapper = withFollowSync(FollowButton);
 
 export function getChapterDisplayName(
   chapter: GetChapterDto | undefined,
@@ -84,9 +95,7 @@ export function ReadingNavigationTop(props: {
             <Button onClick={handleClickComment}>
               <Icon icon="commenting" />
             </Button>
-            <Button>
-              <Icon icon="heart" />
-            </Button>
+            <FollowButtonWrapper />
             <Button>
               <Icon icon="bug" />
             </Button>

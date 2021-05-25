@@ -19,4 +19,7 @@ export class StoryHistory {
 
   @Column({ type: "string", nullable: true })
   vote: VoteType;
+
+  @Column({type: "boolean", default: false})
+  isFollowing: boolean;
 }

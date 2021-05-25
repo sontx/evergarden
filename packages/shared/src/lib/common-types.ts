@@ -183,6 +183,7 @@ export interface GetStoryHistoryDto {
   lastVisit: Date;
   currentReadingPosition?: number;
   vote: VoteType;
+  isFollowing: boolean;
 }
 
 export class UpdateStoryHistoryDto {
@@ -202,4 +203,8 @@ export class UpdateStoryHistoryDto {
   @IsOptional()
   @Matches(/upvote|downvote|none/s)
   vote?: VoteType;
+
+  @IsOptional()
+  @IsBoolean()
+  isFollowing?: boolean;
 }

@@ -16,13 +16,35 @@ import { useCallback } from "react";
 import { ChapterList } from "../chapters/ChapterList";
 import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Reaction } from "../../components/Reaction";
 import { useAppDispatch } from "../../app/hooks";
 import { openReading } from "./storySlice";
-import {useHistory} from "react-router-dom";
+import { withFollowSync } from "./FollowStorySync";
 
 const { Paragraph } = Placeholder;
+
+function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
+  return (
+    <IconButton
+      placement="right"
+      icon={
+        isFollowing ? (
+          <Icon style={{ color: "red" }} icon="heart" />
+        ) : (
+          <Icon icon="heart-o" />
+        )
+      }
+      style={{ fontSize: "small" }}
+      size="sm"
+      {...rest}
+    >
+      {isFollowing ? "Unfollow" : "Follow"}
+    </IconButton>
+  );
+}
+
+const FollowButtonWrapper = withFollowSync(FollowButton);
 
 export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   const { story } = props;
@@ -98,15 +120,18 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         }}
         justified
       >
-        <IconButton
-          placement="right"
-          icon={<Icon icon="angle-right" />}
-          style={{ fontSize: "small" }}
-          size="sm"
-          onClick={handleRead}
-        >
-          Read
-        </IconButton>
+        <FollowButtonWrapper />
+        {story && !story.history && (
+          <IconButton
+            placement="right"
+            icon={<Icon icon="angle-right" />}
+            style={{ fontSize: "small" }}
+            size="sm"
+            onClick={handleRead}
+          >
+            Read
+          </IconButton>
+        )}
         {story && story.history && (
           <IconButton
             onClick={handleContinue}
