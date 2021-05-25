@@ -20,6 +20,7 @@ export function Story() {
   const story = useAppSelector(selectStory);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     dispatch(fetchStoryByUrlAsync(url));
   }, [url, dispatch]);
 
