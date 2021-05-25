@@ -10,6 +10,7 @@ import { updateStoryHistory } from "./historyAPI";
 export interface HistoryState {
   history?: GetStoryHistoryDto & {
     keepLocalReadingPosition?: boolean;
+    keepLocalFollowing?: boolean;
     storyId: IdType;
   };
 }
@@ -41,28 +42,48 @@ export const historySlice = createSlice({
       if (
         payload &&
         state.history &&
-        state.history.keepLocalReadingPosition &&
         state.history.currentChapterNo === payload.currentChapterNo
       ) {
-        state.history = {
-          ...payload,
-          currentReadingPosition: state.history.currentReadingPosition,
-        };
-      } else {
-        state.history = payload;
+        const {
+          currentReadingPosition,
+          isFollowing,
+          keepLocalReadingPosition,
+          keepLocalFollowing,
+        } = state.history;
+
+        const history = payload ;
+
+        if (keepLocalReadingPosition) {
+          history.currentReadingPosition = currentReadingPosition;
+        }
+        if (keepLocalFollowing) {
+          history.isFollowing = isFollowing;
+        }
+
+        state.history = history;
+        return;
       }
+
+      state.history = payload;
     },
     setReadingPosition: (state, { payload }) => {
       state.history = {
         ...(state.history || {}),
         currentReadingPosition: payload,
-        keepLocalReadingPosition: true
+        keepLocalReadingPosition: true,
       } as any;
     },
     setCurrentChapterNo: (state, { payload }) => {
       state.history = {
         ...(state.history || {}),
         currentChapterNo: payload,
+      } as any;
+    },
+    setFollowingStory: (state, { payload }) => {
+      state.history = {
+        ...(state.history || {}),
+        isFollowing: !!payload,
+        keepLocalFollowing: true,
       } as any;
     },
   },
@@ -73,6 +94,7 @@ export const {
   setCurrentChapterNo,
   setHistory,
   setReadingPosition,
+  setFollowingStory,
 } = historySlice.actions;
 
 export const selectHistory = (state: RootState) => state.history.history;

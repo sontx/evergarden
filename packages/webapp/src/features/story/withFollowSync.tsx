@@ -4,6 +4,7 @@ import { selectStory } from "./storySlice";
 import { useDebouncedCallback } from "use-debounce";
 import {
   selectHistory,
+  setFollowingStory,
   updateStoryHistoryAsync,
 } from "../history/historySlice";
 
@@ -33,14 +34,24 @@ export function withFollowSync(Component: React.ElementType) {
           }),
         );
       },
-      1000,
+      500,
     );
     const handleFollow = useCallback(() => {
       setFollowing((prevState) => {
-        updateFollowDebounce(!prevState, story, dispatch);
-        return !prevState;
+        const follow = !prevState;
+        dispatch(setFollowingStory(follow));
+        updateFollowDebounce(follow, story, dispatch);
+        return follow;
       });
     }, [dispatch, story, updateFollowDebounce]);
+
+    useEffect(() => {
+      return () => {
+        if (updateFollowDebounce.isPending()) {
+          updateFollowDebounce.flush();
+        }
+      };
+    }, [updateFollowDebounce]);
 
     return (
       <Component {...props} onClick={handleFollow} isFollowing={isFollowing} />
