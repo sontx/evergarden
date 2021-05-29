@@ -1,7 +1,7 @@
-import {BadRequestException, Injectable, Logger} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
-import {FindManyOptions, MongoRepository} from "typeorm";
-import {Story} from "./story.entity";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { FindManyOptions, MongoRepository } from "typeorm";
+import { Story } from "./story.entity";
 import {
   AuthUser,
   calculateVoteCount,
@@ -15,13 +15,18 @@ import {
   UpdateStoryDto,
   VoteType,
 } from "@evergarden/shared";
-import {ObjectID} from "mongodb";
+import { ObjectID } from "mongodb";
 
 @Injectable()
 export class StoryService {
   private readonly logger = new Logger(StoryService.name);
 
   constructor(@InjectRepository(Story) private storyRepository: MongoRepository<Story>) {}
+
+  async getStoriesByIds(ids: IdType[]): Promise<GetStoryDto[]> {
+    const stories = await this.storyRepository.findByIds(ids.map(id => new ObjectID(id)));
+    return stories.map(this.toDto);
+  }
 
   async getStories(
     options: PaginationOptions,
@@ -140,7 +145,7 @@ export class StoryService {
   async getStoryByUrl(url: string): Promise<Story | null> {
     try {
       return await this.storyRepository.findOne({
-        where: {url},
+        where: { url },
       });
     } catch (e) {
       this.logger.warn(`Error while querying story: ${url}`, e);

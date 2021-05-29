@@ -31,9 +31,6 @@ export function AppNav() {
           <FormattedMessage id="userMenuFollowing" />
         </ResponsiveNav.Item>
       )}
-      <ResponsiveNav.Item eventKey="collection" icon={<Icon icon="th-list" />}>
-        <FormattedMessage id="homeNavCollection" />
-      </ResponsiveNav.Item>
     </ResponsiveNav>
   );
 }

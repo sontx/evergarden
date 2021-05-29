@@ -172,7 +172,7 @@ export interface PaginationResult<T> {
   };
 }
 
-export type StoryCategory = 'updated' | 'hot';
+export type StoryCategory = 'updated' | 'hot' | 'following';
 export type VoteType = 'upvote' | 'downvote' | 'none';
 
 export interface GetStoryHistoryDto {

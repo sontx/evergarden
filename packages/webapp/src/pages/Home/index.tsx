@@ -10,6 +10,7 @@ import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
+import { FollowingStories } from "../../features/following/FollowingStories";
 
 export function Home() {
   const currentTab = useAppSelector(selectCurrentTab);
@@ -23,8 +24,7 @@ export function Home() {
         <AppNav />
         {currentTab === "updated" && <LastUpdatedStories />}
         {currentTab === "hot" && <HotStories />}
-        {currentTab === "following" && <div>Following will coming soon</div>}
-        {currentTab === "collection" && <div>Collection will coming soon</div>}
+        {currentTab === "following" && <FollowingStories />}
       </Content>
       <AppFooter />
     </AppContainer>
