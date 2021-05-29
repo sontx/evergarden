@@ -24,7 +24,7 @@ export class StoryService {
   constructor(@InjectRepository(Story) private storyRepository: MongoRepository<Story>) {}
 
   async getStoriesByIds(ids: IdType[]): Promise<GetStoryDto[]> {
-    const stories = await this.storyRepository.findByIds(ids.map(id => new ObjectID(id)));
+    const stories = await this.storyRepository.findByIds(ids.map((id) => new ObjectID(id)));
     return stories.map(this.toDto);
   }
 
@@ -73,13 +73,8 @@ export class StoryService {
     options: PaginationOptions,
     includeUnpublished?: boolean,
   ): Promise<PaginationResult<GetStoryDto>> {
-    return this.getStories(
-      options,
-      {
-        order: { view: "DESC", upvote: "DESC" },
-      },
-      includeUnpublished,
-    );
+    // TODO: implement later
+    return this.getLastUpdatedStories(options, includeUnpublished);
   }
 
   toDto(story: Story): GetStoryDto {

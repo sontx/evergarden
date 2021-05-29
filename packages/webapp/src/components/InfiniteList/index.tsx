@@ -1,4 +1,4 @@
-import { List, Loader } from "rsuite";
+import { Animation, List, Loader } from "rsuite";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Selector } from "react-redux";
@@ -15,7 +15,7 @@ export interface InfiniteListProps {
   itemsSelector: Selector<any, ItemType>;
   totalItemsSelector: Selector<any, number>;
   statusSelector: Selector<any, ProcessingStatus>;
-  onItemClick?:(item: ItemType) => void;
+  onItemClick?: (item: ItemType) => void;
   fetchFunc: AsyncThunk<
     PaginationResult<ItemType>,
     { page: number; limit: number },
@@ -31,7 +31,7 @@ export function InfiniteList(props: InfiniteListProps) {
     totalItemsSelector,
     fetchFunc,
     statusSelector,
-    onItemClick
+    onItemClick,
   } = props;
 
   const items = useAppSelector(itemsSelector);
@@ -64,34 +64,50 @@ export function InfiniteList(props: InfiniteListProps) {
     setMounted(true);
   }, [fetchMore, isMounted, isStartLoading]);
 
-  const handleItemClick = useCallback((item: ItemType) => {
-    if (onItemClick) {
-      onItemClick(item);
-    }
-  }, [onItemClick]);
+  const handleItemClick = useCallback(
+    (item: ItemType) => {
+      if (onItemClick) {
+        onItemClick(item);
+      }
+    },
+    [onItemClick],
+  );
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <List hover>
-        <InfiniteScroll
-          loadMore={fetchMore}
-          hasMore={
-            status === "none" ||
-            (items.length < totalItems && status !== "processing")
-          }
+    <Animation.Slide in={true}>
+      {(animationProps, ref) => (
+        <div
+          style={{ display: "flex", flexDirection: "column" }}
+          {...animationProps}
+          ref={ref}
         >
-          {items.map((item: any, index: any) => (
-            <List.Item key={item.id || index} onClick={() => handleItemClick(item)}>
-              {renderItem(item, index)}
-            </List.Item>
-          ))}
-        </InfiniteScroll>
-      </List>
-      {status === "processing" && (
-        <div style={{ height: "40px", position: "relative", marginTop: "8px" }}>
-          <Loader center />
+          <List hover>
+            <InfiniteScroll
+              loadMore={fetchMore}
+              hasMore={
+                status === "none" ||
+                (items.length < totalItems && status !== "processing")
+              }
+            >
+              {items.map((item: any, index: any) => (
+                <List.Item
+                  key={item.id || index}
+                  onClick={() => handleItemClick(item)}
+                >
+                  {renderItem(item, index)}
+                </List.Item>
+              ))}
+            </InfiniteScroll>
+          </List>
+          {status === "processing" && (
+            <div
+              style={{ height: "40px", position: "relative", marginTop: "8px" }}
+            >
+              <Loader center />
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </Animation.Slide>
   );
 }
