@@ -72,7 +72,7 @@ export function InfiniteList(props: InfiniteListProps) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <List hover size="sm">
+      <List hover>
         <InfiniteScroll
           loadMore={fetchMore}
           hasMore={
