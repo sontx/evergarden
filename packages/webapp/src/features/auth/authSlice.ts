@@ -73,5 +73,6 @@ export const selectStatus = (state: RootState) => state.login.status;
 export const selectLoginType = (state: RootState) => state.login.loginType;
 export const selectLoginError = (state: RootState) => state.login.loginError;
 export const selectUser = (state: RootState) => state.login.user;
+export const selectIsLoggedIn = (state: RootState) => !!state.login.user;
 
 export default authSlice.reducer;

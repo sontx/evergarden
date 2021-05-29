@@ -3,10 +3,12 @@ import { useCallback, useState } from "react";
 import { IntlShape, useIntl } from "react-intl";
 import { Button, ButtonGroup, ButtonToolbar, Icon } from "rsuite";
 import classNames from "classnames";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { openStory } from "../story/storySlice";
 import { useHistory } from "react-router-dom";
 import { withFollowSync } from "../story/withFollowSync";
+import { selectHistory } from "../history/historySlice";
+import { hasHistory } from "../../utils/types";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -45,6 +47,7 @@ export function ReadingNavigationTop(props: {
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const storyHistory = useAppSelector(selectHistory);
 
   const handleClickBack = useCallback(() => {
     if (story) {
@@ -95,7 +98,7 @@ export function ReadingNavigationTop(props: {
             <Button onClick={handleClickComment}>
               <Icon icon="commenting" />
             </Button>
-            <FollowButtonWrapper />
+            {hasHistory(storyHistory) && <FollowButtonWrapper />}
             <Button>
               <Icon icon="bug" />
             </Button>

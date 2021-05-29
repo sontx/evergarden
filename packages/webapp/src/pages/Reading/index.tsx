@@ -21,6 +21,7 @@ import { selectReadingFont } from "../../features/settings/settingsSlice";
 import { withScrollSync } from "./withScrollSync";
 import { withChapterNoSync } from "./withChapterNoSync";
 import { withViewCountSync } from "./withViewCountSync";
+import { selectIsLoggedIn, selectUser } from "../../features/auth/authSlice";
 
 const ReadingWrapper = withViewCountSync(
   withScrollSync(withChapterNoSync(ReadingMobile)),
@@ -30,6 +31,7 @@ export function Reading() {
   const { url, chapterNo } = useParams() as any;
   const dispatch = useAppDispatch();
   const intl = useIntl();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const readingFont = useAppSelector(selectReadingFont);
 
   const chapter = useAppSelector(selectChapter);
@@ -58,7 +60,11 @@ export function Reading() {
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppHeader />
       <Content>
-        <ReadingWrapper story={showStory} chapter={showChapter} />
+        {isLoggedIn ? (
+          <ReadingWrapper story={showStory} chapter={showChapter} />
+        ) : (
+          <ReadingMobile story={showStory} chapter={showChapter} />
+        )}
       </Content>
       <AppFooter />
       <Helmet>

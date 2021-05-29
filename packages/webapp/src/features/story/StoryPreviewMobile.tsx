@@ -22,6 +22,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { openReading } from "./storySlice";
 import { withFollowSync } from "./withFollowSync";
 import { selectHistory } from "../history/historySlice";
+import {hasHistory} from "../../utils/types";
 
 const { Paragraph } = Placeholder;
 
@@ -82,7 +83,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   }, [dispatch, history, story]);
 
   const handleContinue = useCallback(() => {
-    if (story && storyHistory) {
+    if (story && hasHistory(storyHistory)) {
       dispatch(openReading(history, story, storyHistory.currentChapterNo));
     }
   }, [dispatch, history, story, storyHistory]);
@@ -122,8 +123,8 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         }}
         justified
       >
-        <FollowButtonWrapper />
-        {story && !storyHistory && (
+        {story && hasHistory(storyHistory) &&<FollowButtonWrapper />}
+        {story && !hasHistory(storyHistory) && (
           <IconButton
             placement="right"
             icon={<Icon icon="angle-right" />}
@@ -134,7 +135,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
             Read
           </IconButton>
         )}
-        {story && storyHistory && (
+        {story && hasHistory(storyHistory) && (
           <IconButton
             onClick={handleContinue}
             placement="right"
