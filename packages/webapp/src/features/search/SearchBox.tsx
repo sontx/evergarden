@@ -67,6 +67,8 @@ export function SearchBox({
     DOMHelper.removeClass(document.body, "noscroll");
   }, []);
 
+  console.log(stories)
+
   return (
     <div
       style={{
@@ -82,6 +84,7 @@ export function SearchBox({
           menuClassName="searchbox-menu"
           onChange={handleChange}
           onSelect={handleSelect}
+          filterBy={() => true}
           data={stories.map((story) => ({
             label: story.title,
             value: story.title,
