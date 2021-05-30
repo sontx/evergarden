@@ -9,6 +9,11 @@ import {
   MinLength,
 } from 'class-validator';
 
+export class Auth2Body {
+  @IsString()
+  token: string;
+}
+
 export interface AuthUser {
   id: IdType;
   email: string;

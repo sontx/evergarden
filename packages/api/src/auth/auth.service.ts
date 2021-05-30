@@ -1,23 +1,30 @@
 import { AuthUser, IdType, JwtPayload } from "@evergarden/shared";
-import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
-import ms = require("ms");
 import { User } from "src/user/user.entity";
+import { GoogleAuthService } from "./google/google-auth.service";
+import ms = require("ms");
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  constructor(private userService: UserService, private jwtService: JwtService, private configService: ConfigService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+    private googleAuthService: GoogleAuthService,
+  ) {}
 
-  async googleLogin(req: any): Promise<User> {
-    if (!req.user) {
-      throw new UnauthorizedException();
+  async loginGoogle(token: string): Promise<User | null> {
+    const authUser = await this.googleAuthService.getUserFromToken(token);
+    if (!authUser) {
+      return null;
     }
 
-    const { email, fullName, picture } = req.user || {};
+    const { email, fullName, photoUrl } = authUser;
     this.logger.debug(`Lookup ${email} in database...`);
     let found = await this.userService.getByEmail(email);
     this.logger.debug(`${found ? "Found" : "Not found"} ${email} in database!`);
@@ -28,7 +35,7 @@ export class AuthService {
         fullName,
         role: "user",
         provider: "google",
-        photoUrl: picture,
+        photoUrl: photoUrl,
       });
       this.logger.debug(`Created a new user for ${email} with id ${found.id}`);
     }
@@ -48,12 +55,12 @@ export class AuthService {
     );
   }
 
-  getAccessToken(user: User): string {
+  private getAccessToken(user: User): string {
     const payload: JwtPayload = {
       email: user.email,
       id: user.id,
       role: user.role || "guest",
-      historyId: user.historyId
+      historyId: user.historyId,
     };
     const expires = `${this.configService.get("jwt.auth.expires")}`;
     return this.jwtService.sign(payload, {
@@ -62,7 +69,8 @@ export class AuthService {
     });
   }
 
-  getAccessTokenCookie(token: string): string {
+  getAccessTokenCookie(user: User): string {
+    const token = this.getAccessToken(user);
     const expires = `${this.configService.get("jwt.auth.expires")}`;
     return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${ms(expires) / 1000}`;
   }

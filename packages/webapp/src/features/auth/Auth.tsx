@@ -14,6 +14,18 @@ import { useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { setUserSettings } from "../settings/settingsSlice";
+import GoogleLogin, {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
+
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
+
+function isGoogleLoginResponse(
+  response: GoogleLoginResponse | GoogleLoginResponseOffline,
+): response is GoogleLoginResponse {
+  return !!(response as any).accessToken;
+}
 
 export function Auth() {
   const intl = useIntl();
@@ -26,9 +38,21 @@ export function Auth() {
   const history = useHistory();
   const dispatch = useAppDispatch();
 
-  const handleLoginGoogle = useCallback(() => {
-    dispatch(loginGoogleAsync());
-  }, [dispatch]);
+  const handleLoginGoogleSuccess = useCallback(
+    (data: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+      if (isGoogleLoginResponse(data)) {
+        dispatch(loginGoogleAsync(data.tokenId));
+      }
+    },
+    [dispatch],
+  );
+
+  const handleLoginGoogleFailure = useCallback((error) => {
+    if (process.env.NODE_ENV === "development") {
+      console.log(error)
+      Alert.error(error.detail, 5000);
+    }
+  }, []);
 
   useEffect(() => {
     if (status === "error") {
@@ -70,16 +94,24 @@ export function Auth() {
           >
             <Icon icon="facebook" /> <FormattedMessage id="loginWithFacebook" />
           </Button>
-          <Button
-            disabled={status === "processing"}
-            loading={loginType === "google" && status === "processing"}
-            color="red"
-            block
-            onClick={handleLoginGoogle}
-          >
-            <Icon icon="google-plus" />{" "}
-            <FormattedMessage id="loginWithGoogle" />
-          </Button>
+          <GoogleLogin
+            clientId={GOOGLE_CLIENT_ID}
+            render={(renderProps) => (
+              <Button
+                disabled={renderProps.disabled}
+                loading={loginType === "google" && status === "processing"}
+                color="red"
+                block
+                onClick={renderProps.onClick}
+              >
+                <Icon icon="google-plus" />{" "}
+                <FormattedMessage id="loginWithGoogle" />
+              </Button>
+            )}
+            onSuccess={handleLoginGoogleSuccess}
+            onFailure={handleLoginGoogleFailure}
+            cookiePolicy={"single_host_origin"}
+          />
         </div>
       </Panel>
     </div>

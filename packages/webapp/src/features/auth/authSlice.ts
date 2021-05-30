@@ -1,8 +1,8 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {RootState} from "../../app/store";
-import {fetchAuthenticatedUser, loginWithGoogle, logout} from "./authApi";
-import {AuthUser} from "@evergarden/shared";
-import {ProcessingStatus} from "../../utils/types";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
+import { fetchAuthenticatedUser, loginGoogle, logout } from "./authApi";
+import { AuthUser } from "@evergarden/shared";
+import { ProcessingStatus } from "../../utils/types";
 
 export interface LoginState {
   status: ProcessingStatus;
@@ -16,17 +16,23 @@ const initialState: LoginState = {
   loginType: "none",
 };
 
-export const loginGoogleAsync = createAsyncThunk("auth/google", async () => {
-  return await loginWithGoogle();
-});
+export const loginGoogleAsync = createAsyncThunk(
+  "auth/google",
+  async (token: string) => {
+    return await loginGoogle(token);
+  },
+);
 
 export const logoutAsync = createAsyncThunk("auth/logout", async () => {
   await logout();
 });
 
-export const fetchAuthenticatedUserAsync = createAsyncThunk("auth/fetch", async () => {
-  return await fetchAuthenticatedUser();
-});
+export const fetchAuthenticatedUserAsync = createAsyncThunk(
+  "auth/fetch",
+  async () => {
+    return await fetchAuthenticatedUser();
+  },
+);
 
 export const authSlice = createSlice({
   name: "auth",
