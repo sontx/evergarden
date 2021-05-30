@@ -21,5 +21,12 @@ export default () => ({
       secret: "now you know",
       expires: "180 days"
     }
+  },
+  search: {
+    elastic: {
+      url: "http://localhost:9200",
+      username: "elastic",
+      password: "admin"
+    }
   }
 });

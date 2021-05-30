@@ -5,11 +5,18 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Story } from "./story.entity";
 import { ReadingHistoryModule } from "../reading-history/reading-history.module";
 import { UserModule } from "../user/user.module";
+import StorySearchService from "./story-search.service";
+import { SearchModule } from "../search/search.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Story]), forwardRef(() => ReadingHistoryModule), forwardRef(() => UserModule)],
+  imports: [
+    TypeOrmModule.forFeature([Story]),
+    SearchModule,
+    forwardRef(() => ReadingHistoryModule),
+    forwardRef(() => UserModule),
+  ],
   controllers: [StoryController],
-  providers: [StoryService],
+  providers: [StoryService, StorySearchService],
   exports: [StoryService],
 })
 export class StoryModule {}

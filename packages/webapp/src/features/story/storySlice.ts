@@ -73,6 +73,20 @@ export const openReading = (
   history.push(`/reading/${story.url}/${chapterNo}`);
 };
 
+export const openStoryByUrl = (
+  history: H.History<unknown>,
+  url: string,
+  option?: any,
+): AppThunk => (dispatch, getState) => {
+  const current = getState().story.story;
+  if (current && current.url === url) {
+    return;
+  }
+  dispatch(resetStory());
+  dispatch(setHistory(null));
+  history.push(`/story/${url}`, option);
+};
+
 export const openStory = (
   history: H.History<unknown>,
   story: GetStoryDto,

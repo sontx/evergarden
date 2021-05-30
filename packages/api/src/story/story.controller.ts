@@ -8,7 +8,6 @@ import {
   NotFoundException,
   Param,
   ParseBoolPipe,
-  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -18,7 +17,15 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { StoryService } from "./story.service";
-import { CreateStoryDto, GetStoryDto, PaginationResult, StoryCategory, UpdateStoryDto } from "@evergarden/shared";
+import {
+  CreateStoryDto,
+  GetStoryDto,
+  PaginationResult,
+  StoryCategory,
+  StorySearchBody,
+  toInt,
+  UpdateStoryDto,
+} from "@evergarden/shared";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { Role } from "../auth/role/roles.decorator";
 import { RolesGuard } from "../auth/role/roles.guard";
@@ -38,12 +45,15 @@ export class StoryController {
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
   async getStories(
-    @Query("page", ParseIntPipe) page = 1,
-    @Query("limit", ParseIntPipe) limit = 10,
-    @Query("category") category: StoryCategory = "updated",
+    @Query("page") page = 1,
+    @Query("limit") limit = 10,
+    @Query("category") category: StoryCategory,
+    @Query("search") search,
     @Req() req,
-  ): Promise<PaginationResult<GetStoryDto>> {
+  ): Promise<PaginationResult<GetStoryDto> | StorySearchBody[]> {
     await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
+    page = toInt(page);
+    limit = toInt(limit);
 
     const pagination = {
       page,
@@ -68,6 +78,8 @@ export class StoryController {
           currentPage: 1,
         },
       };
+    } else if (search) {
+      return await this.storyService.search(search);
     }
 
     return stories;

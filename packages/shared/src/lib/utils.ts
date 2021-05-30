@@ -44,3 +44,14 @@ export function calculateVoteCount(
 
   return null;
 }
+
+export function toInt(st: any): number {
+  if (typeof st === "string" && st) {
+    const num = parseInt(st);
+    if (isNaN(num)) {
+      throw new Error(`${st} is not a valid number`);
+    }
+    return num;
+  }
+  return st;
+}

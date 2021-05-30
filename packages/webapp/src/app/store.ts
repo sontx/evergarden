@@ -1,10 +1,22 @@
-import { Action, configureStore, getDefaultMiddleware, ThunkAction } from "@reduxjs/toolkit";
+import {
+  Action,
+  configureStore,
+  getDefaultMiddleware,
+  ThunkAction,
+} from "@reduxjs/toolkit";
 import { PersistConfig, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
 import counterReducer from "../features/counter/counterSlice";
 import authReducer from "../features/auth/authSlice";
-import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from "redux-persist/es/constants";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist/es/constants";
 import lastUpdatedStoriesReducer from "../features/stories/lastUpdatedStoriesSlice";
 import hotStoriesReducer from "../features/stories/hotStoriesSlice";
 import settingsReducer from "../features/settings/settingsSlice";
@@ -13,25 +25,27 @@ import chaptersReducer from "../features/chapters/chaptersSlice";
 import chapterReducer from "../features/chapter/chapterSlice";
 import historyReducer from "../features/history/historySlice";
 import followingReducer from "../features/following/followingSlice";
+import searchReducer from "../features/search/searchSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
   lastUpdatedStories: lastUpdatedStoriesReducer,
   hotStories: hotStoriesReducer,
-  followingStories : followingReducer,
+  followingStories: followingReducer,
   story: storyReducer,
   chapters: chaptersReducer,
   chapter: chapterReducer,
   login: authReducer,
   settings: settingsReducer,
-  history: historyReducer
+  history: historyReducer,
+  search: searchReducer,
 });
 
 const persistConfig: PersistConfig<any> = {
   key: "root",
   storage,
   debug: process.env.NODE_ENV === "development",
-  blacklist: ["chapters", "chapter", "history", "story"],
+  blacklist: ["chapters", "chapter", "history", "story", "search"],
   migrate: (state: any) => {
     state = state || {};
     if (state.lastUpdatedStories) {
@@ -54,4 +68,9 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof reducers>;
-export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;

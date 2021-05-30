@@ -1,25 +1,15 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Avatar, Badge, Dropdown, Icon, Input, InputGroup, Nav } from "rsuite";
+import { Avatar, Badge, Dropdown, Icon, Nav } from "rsuite";
 
 import "./index.less";
 import { useCallback, useState } from "react";
 import { isDesktop } from "react-device-detect";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import { logoutAsync, selectUser } from "../../features/auth/authSlice";
-
-function SearchBox(props: { fillWidth?: boolean }) {
-  return (
-    <div style={{ display: "inline-block", padding: "10px 12px", width: props.fillWidth ? "100%" : "unset" }}>
-      <InputGroup inside>
-        <Input />
-        <InputGroup.Button>
-          <Icon icon="search" />
-        </InputGroup.Button>
-      </InputGroup>
-    </div>
-  );
-}
+import { SearchBox } from "../../features/search/SearchBox";
+import { StorySearchBody } from "@evergarden/shared";
+import { openStoryByUrl } from "../../features/story/storySlice";
 
 export function UserToolbar() {
   const [showSearch, setShowSearch] = useState(false);
@@ -39,13 +29,25 @@ export function UserToolbar() {
     dispatch(logoutAsync());
   }, [dispatch]);
 
+  const handleSelectSearchResult = useCallback(
+    (story: StorySearchBody) => {
+      setShowSearch(false);
+      dispatch(openStoryByUrl(history, story.url));
+    },
+    [dispatch, history],
+  );
+
   return (
     <>
       <Nav pullRight>
         {isDesktop ? (
-          <SearchBox />
+          <SearchBox onSelectStory={handleSelectSearchResult} />
         ) : (
-          <Nav.Item active={showSearch} className="user-toolbar-icon" onSelect={handleShowSearch}>
+          <Nav.Item
+            active={showSearch}
+            className="user-toolbar-icon"
+            onSelect={handleShowSearch}
+          >
             <Icon size="lg" icon={showSearch ? "compress" : "search"} />
           </Nav.Item>
         )}
@@ -88,7 +90,8 @@ export function UserToolbar() {
               </Dropdown.Item>
               <Dropdown.Item divider />
               <Dropdown.Item onSelect={handleLogout}>
-                <Icon icon="sign-out" /> <FormattedMessage id="userMenuLogout" />
+                <Icon icon="sign-out" />{" "}
+                <FormattedMessage id="userMenuLogout" />
               </Dropdown.Item>
             </Dropdown>
           </>
@@ -100,7 +103,9 @@ export function UserToolbar() {
           </>
         )}
       </Nav>
-      {showSearch && <SearchBox fillWidth />}
+      {showSearch && (
+        <SearchBox onSelectStory={handleSelectSearchResult} fillWidth />
+      )}
     </>
   );
 }

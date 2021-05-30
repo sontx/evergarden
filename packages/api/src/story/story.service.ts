@@ -11,17 +11,35 @@ import {
   PaginationOptions,
   PaginationResult,
   randomNumberString,
+  StorySearchBody,
   stringToSlug,
   UpdateStoryDto,
   VoteType,
 } from "@evergarden/shared";
 import { ObjectID } from "mongodb";
+import StorySearchService from "./story-search.service";
 
 @Injectable()
 export class StoryService {
   private readonly logger = new Logger(StoryService.name);
 
-  constructor(@InjectRepository(Story) private storyRepository: MongoRepository<Story>) {}
+  constructor(
+    @InjectRepository(Story) private storyRepository: MongoRepository<Story>,
+    private storySearchService: StorySearchService,
+  ) {
+    this.initializeSearchEngine()
+      .then(() => {
+        this.logger.debug("Initializing search engine...");
+      })
+      .finally(() => {
+        this.logger.debug("Initialized search engine!");
+      });
+  }
+
+  private async initializeSearchEngine() {
+    const stories = await this.storyRepository.find();
+    await this.storySearchService.createIndex(stories);
+  }
 
   async getStoriesByIds(ids: IdType[]): Promise<GetStoryDto[]> {
     const stories = await this.storyRepository.findByIds(ids.map((id) => new ObjectID(id)));
@@ -40,20 +58,24 @@ export class StoryService {
         take: options.limit,
         skip: options.page * options.limit,
       });
-      return {
-        items: result[0].map(this.toDto),
-        meta: {
-          currentPage: options.page,
-          itemsPerPage: options.limit,
-          totalItems: result[1],
-          itemCount: result[0].length,
-          totalPages: Math.ceil(result[1] / options.limit),
-        },
-      };
+      return this.toPaginationResult(options, result);
     } catch (e) {
       this.logger.warn("Error while querying stories", e);
       throw new BadRequestException();
     }
+  }
+
+  private toPaginationResult(options: PaginationOptions, result: [Story[], number]): PaginationResult<GetStoryDto> {
+    return {
+      items: result[0].map(this.toDto),
+      meta: {
+        currentPage: options.page,
+        itemsPerPage: options.limit,
+        totalItems: result[1],
+        itemCount: result[0].length,
+        totalPages: Math.ceil(result[1] / options.limit),
+      },
+    };
   }
 
   async getLastUpdatedStories(
@@ -75,6 +97,10 @@ export class StoryService {
   ): Promise<PaginationResult<GetStoryDto>> {
     // TODO: implement later
     return this.getLastUpdatedStories(options, includeUnpublished);
+  }
+
+  async search(text: string): Promise<StorySearchBody[]> {
+    return await this.storySearchService.search(text);
   }
 
   toDto(story: Story): GetStoryDto {
@@ -130,6 +156,7 @@ export class StoryService {
         upvote: 0,
         downvote: 0,
       });
+      await this.storySearchService.add(savedStory);
       return this.toDto(savedStory);
     } catch (e) {
       this.logger.warn("Error while adding new story", e);
@@ -164,7 +191,9 @@ export class StoryService {
         updated: new Date(),
         updatedBy: user.id,
       });
-      return this.getStory(id);
+      const savedStory = await this.getStory(id);
+      await this.storySearchService.update(savedStory);
+      return savedStory;
     } catch (e) {
       this.logger.warn(`Error while updating story: ${id}`, e);
       throw new BadRequestException();

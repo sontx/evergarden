@@ -208,3 +208,20 @@ export class UpdateStoryHistoryDto {
   @IsBoolean()
   isFollowing?: boolean;
 }
+
+export interface StorySearchBody {
+  id: IdType;
+  title: string;
+  url: string;
+  description?: string;
+  thumbnail: string;
+}
+
+export interface StorySearchResult {
+  hits: {
+    total: number;
+    hits: Array<{
+      _source: StorySearchBody;
+    }>;
+  };
+}

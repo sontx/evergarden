@@ -45,3 +45,10 @@ export function abbreviateNumber(value: number): string {
   }
   return newValue;
 }
+
+export function trimText(text: string): string {
+  if (text) {
+    return text.trim();
+  }
+  return text;
+}

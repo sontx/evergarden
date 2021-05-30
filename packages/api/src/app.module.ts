@@ -7,9 +7,10 @@ import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
 import configuration from "./configuration";
 import { UserModule } from "./user/user.module";
-import { StoryModule } from './story/story.module';
-import { ChapterModule } from './chapter/chapter.module';
-import { ReadingHistoryModule } from './reading-history/reading-history.module';
+import { StoryModule } from "./story/story.module";
+import { ChapterModule } from "./chapter/chapter.module";
+import { ReadingHistoryModule } from "./reading-history/reading-history.module";
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ReadingHistoryModule } from './reading-history/reading-history.module';
           useUnifiedTopology: true,
           useNewUrlParser: true,
           isGlobal: true,
+          synchronize: true,
         };
       },
     }),
@@ -40,6 +42,7 @@ import { ReadingHistoryModule } from './reading-history/reading-history.module';
     StoryModule,
     ChapterModule,
     ReadingHistoryModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
