@@ -67,17 +67,7 @@ export function SearchBox({
   }, []);
 
   return (
-    <div
-      style={{
-        display: "inline-block",
-        padding: "10px 10px",
-        width: fillWidth ? "100%" : "unset",
-        position: "absolute",
-        zIndex: 1000,
-        top: "58px",
-        left: 0,
-      }}
-    >
+    <div className="searchbox-container">
       <InputGroup inside>
         <AutoComplete
           onExit={handleHide}

@@ -1,7 +1,18 @@
 @import "~rsuite/lib/styles/themes/dark/index.less";
 
+.searchbox-container {
+  display: inline-block;
+  padding: 10px;
+  width: 100%;
+  position: absolute;
+  z-index: 100;
+  top: 56px;
+  background: #0f131a;
+  left: 0;
+}
 .searchbox-menu {
   width: calc(100% - 20px);
+  z-index: 101 !important;
 }
 
 .searchbox-menu ul {
