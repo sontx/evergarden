@@ -1,8 +1,8 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useHistory } from "react-router-dom";
-import { useCallback, useEffect } from "react";
-import { GetStoryDto, StoryCategory } from "@evergarden/shared";
-import { Animation, List, Placeholder } from "rsuite";
+import { useCallback, useEffect, useRef } from "react";
+import { GetStoryDto } from "@evergarden/shared";
+import { Animation, List } from "rsuite";
 import InfiniteLoader from "react-window-infinite-loader";
 import {
   selectCategory,
@@ -20,13 +20,27 @@ import { openStory } from "../story/storySlice";
 
 import "./storyList.less";
 
+function Loading() {
+  return (
+    <div className="rs-placeholder rs-placeholder-paragraph">
+      <div className="rs-placeholder-paragraph-graph rs-placeholder-paragraph-graph-square">
+        <span className="rs-placeholder-paragraph-graph-inner" />
+      </div>
+      <div className="rs-placeholder-paragraph-rows">
+        <p style={{ width: "64.4229%", height: "10px", marginTop: "5px" }} />
+        <p style={{ width: "47.1585%", height: "10px", marginTop: "10px" }} />
+      </div>
+    </div>
+  );
+}
+
 const ITEM_HEIGHT = 66;
 let SHOW_STORIES: GetStoryDto[] = [];
 
 export function StoryList() {
   const dispatch = useAppDispatch();
   const history = useHistory();
-
+  const infiniteLoaderRef = useRef<InfiniteLoader | null>(null);
   const stories = useAppSelector(selectStories);
   const totalItems = useAppSelector(selectTotalItems) || 10;
   const limitCountPerPage = useAppSelector(selectLimitCountPerPage);
@@ -35,7 +49,6 @@ export function StoryList() {
   const fetchMore = async (
     startIndex: number,
     stopIndex: number,
-    category: StoryCategory,
   ): Promise<any> => {
     const result = await fetchStories(
       startIndex,
@@ -55,6 +68,9 @@ export function StoryList() {
 
   useEffect(() => {
     SHOW_STORIES = [...stories];
+    if (infiniteLoaderRef.current) {
+      infiniteLoaderRef.current.resetloadMoreItemsCache();
+    }
     return () => {
       const firstSequenceStories = [];
       for (const story of SHOW_STORIES) {
@@ -82,10 +98,9 @@ export function StoryList() {
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
           <InfiniteLoader
+            ref={infiniteLoaderRef}
             isItemLoaded={(index) => !!SHOW_STORIES[index]}
-            loadMoreItems={(startIndex, stopIndex) =>
-              fetchMore(startIndex, stopIndex, category)
-            }
+            loadMoreItems={fetchMore}
             minimumBatchSize={limitCountPerPage}
             itemCount={totalItems}
           >
@@ -118,11 +133,7 @@ export function StoryList() {
                           )}
                         </Animation.Bounce>
                       ) : (
-                        <Placeholder.Paragraph
-                          active
-                          graph="square"
-                          rowMargin={10}
-                        />
+                        <Loading />
                       )}
                     </List.Item>
                   );
