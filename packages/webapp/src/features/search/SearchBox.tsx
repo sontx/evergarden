@@ -67,8 +67,6 @@ export function SearchBox({
     DOMHelper.removeClass(document.body, "noscroll");
   }, []);
 
-  console.log(stories)
-
   return (
     <div
       style={{

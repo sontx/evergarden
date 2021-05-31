@@ -17,10 +17,9 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist/es/constants";
-import lastUpdatedStoriesReducer from "../features/stories/lastUpdatedStoriesSlice";
-import hotStoriesReducer from "../features/stories/hotStoriesSlice";
 import settingsReducer from "../features/settings/settingsSlice";
 import storyReducer from "../features/story/storySlice";
+import storiesReducer from "../features/stories/storiesSlice";
 import chaptersReducer from "../features/chapters/chaptersSlice";
 import chapterReducer from "../features/chapter/chapterSlice";
 import historyReducer from "../features/history/historySlice";
@@ -29,10 +28,9 @@ import searchReducer from "../features/search/searchSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
-  lastUpdatedStories: lastUpdatedStoriesReducer,
-  hotStories: hotStoriesReducer,
   followingStories: followingReducer,
   story: storyReducer,
+  stories: storiesReducer,
   chapters: chaptersReducer,
   chapter: chapterReducer,
   login: authReducer,

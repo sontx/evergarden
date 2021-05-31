@@ -1,43 +1,29 @@
-import { Animation, List, Loader } from "rsuite";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Selector } from "react-redux";
-import { PaginationResult } from "@evergarden/shared";
+import { useHistory } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { GetStoryDto } from "@evergarden/shared";
+import { openStory } from "../story/storySlice";
+import { Animation, List, Loader, Notification } from "rsuite";
+import {
+  fetchStoriesAsync,
+  selectCategory,
+  selectStatus,
+  selectStories,
+  selectTotalItems,
+} from "./storiesSlice";
+import { selectLimitCountPerPage } from "../settings/settingsSlice";
 import InfiniteScroll from "react-infinite-scroller";
-import { AsyncThunk } from "@reduxjs/toolkit";
-import { selectLimitCountPerPage } from "../../features/settings/settingsSlice";
-import { ProcessingStatus } from "../../utils/types";
+import { StoryItem } from "../../components/StoryItem";
 
-type ItemType = any;
-
-export interface InfiniteListProps {
-  renderItem: (item: ItemType, index: number) => ReactNode;
-  itemsSelector: Selector<any, ItemType>;
-  totalItemsSelector: Selector<any, number>;
-  statusSelector: Selector<any, ProcessingStatus>;
-  onItemClick?: (item: ItemType) => void;
-  fetchFunc: AsyncThunk<
-    PaginationResult<ItemType>,
-    { page: number; limit: number },
-    {}
-  >;
-}
-
-export function InfiniteList(props: InfiniteListProps) {
+export function StoryList() {
   const dispatch = useAppDispatch();
-  const {
-    renderItem,
-    itemsSelector,
-    totalItemsSelector,
-    fetchFunc,
-    statusSelector,
-    onItemClick,
-  } = props;
+  const history = useHistory();
 
-  const items = useAppSelector(itemsSelector);
-  const totalItems = useAppSelector(totalItemsSelector);
+  const items = useAppSelector(selectStories);
+  const totalItems = useAppSelector(selectTotalItems);
   const limitCountPerPage = useAppSelector(selectLimitCountPerPage);
-  const status = useAppSelector(statusSelector);
+  const status = useAppSelector(selectStatus);
+  const category = useAppSelector(selectCategory);
 
   // Workaround: InfiniteScroll won't start fetching data if the cached items in the list is big
   const [isStartLoading, setStartLoading] = useState(false);
@@ -48,10 +34,14 @@ export function InfiniteList(props: InfiniteListProps) {
     (page: number) => {
       setStartLoading(true);
       dispatch(
-        fetchFunc({ page: page - pageOffset, limit: limitCountPerPage }),
+        fetchStoriesAsync({
+          page: page - pageOffset,
+          limit: limitCountPerPage,
+          category: category,
+        }),
       );
     },
-    [dispatch, fetchFunc, limitCountPerPage, pageOffset],
+    [category, dispatch, limitCountPerPage, pageOffset],
   );
 
   useEffect(() => {
@@ -65,12 +55,18 @@ export function InfiniteList(props: InfiniteListProps) {
   }, [fetchMore, isMounted, isStartLoading]);
 
   const handleItemClick = useCallback(
-    (item: ItemType) => {
-      if (onItemClick) {
-        onItemClick(item);
+    (story: GetStoryDto) => {
+      if (story.url) {
+        dispatch(openStory(history, story));
+      } else {
+        Notification.error({
+          title: story.title,
+          description: `Damn god, the story's url is missing. Please report this shitty issue to the admin.`,
+          duration: 5000,
+        });
       }
     },
-    [onItemClick],
+    [dispatch, history],
   );
 
   return (
@@ -89,12 +85,12 @@ export function InfiniteList(props: InfiniteListProps) {
                 (items.length < totalItems && status !== "processing")
               }
             >
-              {items.map((item: any, index: any) => (
+              {items.map((story) => (
                 <List.Item
-                  key={item.id || index}
-                  onClick={() => handleItemClick(item)}
+                  key={story.id}
+                  onClick={() => handleItemClick(story)}
                 >
-                  {renderItem(item, index)}
+                  <StoryItem story={story} />
                 </List.Item>
               ))}
             </InfiniteScroll>
