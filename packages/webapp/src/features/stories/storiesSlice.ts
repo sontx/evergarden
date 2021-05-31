@@ -1,46 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
-import { GetStoryDto, StoryCategory } from "@evergarden/shared";
 
-interface LastUpdatedStoriesState {
-  stories: GetStoryDto[];
-  totalItems: number;
-  category: StoryCategory;
-}
+interface LastUpdatedStoriesState {}
 
-const initialState: LastUpdatedStoriesState = {
-  stories: [],
-  totalItems: 0,
-  category: "updated",
-};
+const initialState: LastUpdatedStoriesState = {};
 
 export const storiesSlice = createSlice({
   name: "stories",
   initialState,
-  reducers: {
-    setStories: (state, { payload }) => {
-      const data = payload || [];
-      if (!(state.stories.length === 0 && data.length === 0)) {
-        state.stories = data;
-      }
-    },
-    setCategory: (state, { payload }) => {
-      if (state.category !== payload) {
-        state.category = payload || "updated";
-        state.stories = [];
-      }
-    },
-    setTotalItems: (state, { payload }) => {
-      state.totalItems = payload || 0;
-    },
-  },
+  reducers: {},
   extraReducers: {},
 });
-
-export const { setCategory, setTotalItems, setStories } = storiesSlice.actions;
-
-export const selectStories = (state: RootState) => state.stories.stories;
-export const selectTotalItems = (state: RootState) => state.stories.totalItems;
-export const selectCategory = (state: RootState) => state.stories.category;
 
 export default storiesSlice.reducer;

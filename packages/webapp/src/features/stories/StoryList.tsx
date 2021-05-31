@@ -1,17 +1,9 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import { useHistory } from "react-router-dom";
-import { useCallback, useEffect, useRef } from "react";
-import { GetStoryDto } from "@evergarden/shared";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { GetStoryDto, StoryCategory } from "@evergarden/shared";
 import { Animation, List } from "rsuite";
 import InfiniteLoader from "react-window-infinite-loader";
-import {
-  selectCategory,
-  selectStories,
-  selectTotalItems,
-  setStories,
-  setTotalItems,
-} from "./storiesSlice";
-import { selectLimitCountPerPage } from "../settings/settingsSlice";
 import { StoryItem } from "../../components/StoryItem";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -35,55 +27,46 @@ function Loading() {
 }
 
 const ITEM_HEIGHT = 66;
-let SHOW_STORIES: GetStoryDto[] = [];
+let SHOW_STORIES: (GetStoryDto | false | undefined)[] = [];
 
-export function StoryList() {
+const isItemLoaded = (index: number) => SHOW_STORIES[index] !== undefined;
+
+export function StoryList({ category }: { category: StoryCategory }) {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const infiniteLoaderRef = useRef<InfiniteLoader | null>(null);
-  const stories = useAppSelector(selectStories);
-  const totalItems = useAppSelector(selectTotalItems) || 10;
-  const limitCountPerPage = useAppSelector(selectLimitCountPerPage);
-  const category = useAppSelector(selectCategory);
+  const [totalItems, setTotalItems] = useState(100);
 
   const fetchMore = async (
     startIndex: number,
     stopIndex: number,
   ): Promise<any> => {
+    for (let i = startIndex; i <= stopIndex; i++) {
+      SHOW_STORIES[i] = false;
+    }
+
     const result = await fetchStories(
       startIndex,
       stopIndex - startIndex + 1,
       category,
     );
+
     const items = result.items;
-    const actualStopIndex = Math.min(stopIndex, items.length + startIndex - 1);
-    for (let i = startIndex; i <= actualStopIndex; i++) {
+    for (let i = startIndex; i <= stopIndex; i++) {
       SHOW_STORIES[i] = items[i - startIndex];
     }
 
     if (totalItems !== result.meta.totalItems) {
-      dispatch(setTotalItems(result.meta.totalItems));
+      setTotalItems(result.meta.totalItems);
     }
   };
 
   useEffect(() => {
-    SHOW_STORIES = [...stories];
+    SHOW_STORIES = [];
     if (infiniteLoaderRef.current) {
       infiniteLoaderRef.current.resetloadMoreItemsCache();
     }
-    return () => {
-      const firstSequenceStories = [];
-      for (const story of SHOW_STORIES) {
-        if (story) {
-          firstSequenceStories.push(story);
-        } else {
-          break;
-        }
-      }
-
-      dispatch(setStories(firstSequenceStories));
-    };
-  }, [dispatch, stories]);
+  }, [category]);
 
   const handleClick = useCallback(
     (story: GetStoryDto) => {
@@ -100,9 +83,9 @@ export function StoryList() {
         {({ height, width }: { height: number; width: number }) => (
           <InfiniteLoader
             ref={infiniteLoaderRef}
-            isItemLoaded={(index) => !!SHOW_STORIES[index]}
+            isItemLoaded={isItemLoaded}
             loadMoreItems={fetchMore}
-            minimumBatchSize={limitCountPerPage}
+            minimumBatchSize={10}
             itemCount={totalItems}
           >
             {({ onItemsRendered, ref }) => (
@@ -111,13 +94,13 @@ export function StoryList() {
                 itemCount={totalItems}
                 itemSize={ITEM_HEIGHT}
                 onItemsRendered={onItemsRendered}
-                direction="vertical"
+                layout="vertical"
                 ref={ref}
                 width={width}
                 innerElementType={(listProps) => <List {...listProps} hover />}
               >
                 {(itemProps: ListChildComponentProps<GetStoryDto[]>) => {
-                  const data = SHOW_STORIES[itemProps.index];
+                  const data = SHOW_STORIES[itemProps.index] as any;
                   return (
                     <List.Item
                       className="story-list-item--loading"
@@ -125,7 +108,7 @@ export function StoryList() {
                       style={itemProps.style}
                       onClick={() => handleClick(data)}
                     >
-                      {data ? (
+                      {isItemLoaded(itemProps.index) ? (
                         <Animation.Bounce in={true}>
                           {(animationProps, ref) => (
                             <div {...animationProps} ref={ref}>
