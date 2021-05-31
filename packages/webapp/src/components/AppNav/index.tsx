@@ -23,6 +23,9 @@ export function AppNav() {
       <ResponsiveNav.Item eventKey="updated" icon={<Icon icon="creative" />}>
         <FormattedMessage id="homeNavUpdated" />
       </ResponsiveNav.Item>
+      <ResponsiveNav.Item eventKey="hot" icon={<Icon icon="trend" />}>
+        <FormattedMessage id="homeNavHot" />
+      </ResponsiveNav.Item>
       {currentUser && (
         <ResponsiveNav.Item eventKey="following" icon={<Icon icon="star" />}>
           <FormattedMessage id="userMenuFollowing" />

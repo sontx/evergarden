@@ -80,6 +80,7 @@ export function StoryList() {
           break;
         }
       }
+
       dispatch(setStories(firstSequenceStories));
     };
   }, [dispatch, stories]);

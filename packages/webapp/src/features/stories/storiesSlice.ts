@@ -19,11 +19,16 @@ export const storiesSlice = createSlice({
   initialState,
   reducers: {
     setStories: (state, { payload }) => {
-      state.stories = payload || [];
+      const data = payload || [];
+      if (!(state.stories.length === 0 && data.length === 0)) {
+        state.stories = data;
+      }
     },
     setCategory: (state, { payload }) => {
-      state.category = payload || "updated";
-      state.stories = [];
+      if (state.category !== payload) {
+        state.category = payload || "updated";
+        state.stories = [];
+      }
     },
     setTotalItems: (state, { payload }) => {
       state.totalItems = payload || 0;
