@@ -89,7 +89,7 @@ export function StoryDetail(props: { story: GetStoryDto }) {
         </>
       )}
 
-      {story.view && (
+      {story.view >= 0 && (
         <>
           <label>View</label>
           <span>{story.view} </span>
