@@ -22,7 +22,9 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { openReading } from "./storySlice";
 import { withFollowSync } from "./withFollowSync";
 import { selectHistory } from "../history/historySlice";
-import {hasHistory} from "../../utils/types";
+import { hasHistory } from "../../utils/types";
+
+import defaultThumbnail from "../../images/violet-evergarden.jpg";
 
 const { Paragraph } = Placeholder;
 
@@ -91,7 +93,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   return story ? (
     <div className="story-preview-mobile-container">
       <Panel bodyFill>
-        <img src={story.thumbnail} alt={story.title} />
+        <img src={story.thumbnail || defaultThumbnail} alt={story.title} />
         <Panel header={story.title}>
           <div className="sub-header">
             <span>
@@ -123,7 +125,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         }}
         justified
       >
-        {story && hasHistory(storyHistory) &&<FollowButtonWrapper />}
+        {story && hasHistory(storyHistory) && <FollowButtonWrapper />}
         {story && !hasHistory(storyHistory) && (
           <IconButton
             placement="right"
