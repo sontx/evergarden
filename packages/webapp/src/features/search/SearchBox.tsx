@@ -13,7 +13,6 @@ import BarLoader from "react-bar-loader";
 import { trimText } from "../../utils/types";
 
 import "./searchBox.less";
-import { ItemDataType } from "rsuite/lib/@types/common";
 
 import defaultThumbnail from "../../images/logo.png";
 import { StorySearchBody } from "@evergarden/shared";
@@ -73,6 +72,10 @@ export function SearchBox({
         display: "inline-block",
         padding: "10px 10px",
         width: fillWidth ? "100%" : "unset",
+        position: "absolute",
+        zIndex: 1000,
+        top: "58px",
+        left: 0,
       }}
     >
       <InputGroup inside>
