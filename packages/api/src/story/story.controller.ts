@@ -45,8 +45,9 @@ export class StoryController {
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
   async getStories(
-    @Query("page") page = 1,
-    @Query("limit") limit = 10,
+    @Query("page") page,
+    @Query("skip") skip,
+    @Query("limit") limit,
     @Query("category") category: StoryCategory,
     @Query("search") search,
     @Req() req,
@@ -54,9 +55,11 @@ export class StoryController {
     await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
     page = toInt(page);
     limit = toInt(limit);
+    skip = toInt(skip)
 
     const pagination = {
       page,
+      skip,
       limit: limit > 100 ? 100 : limit,
     };
     let stories: PaginationResult<GetStoryDto>;

@@ -1,4 +1,4 @@
-import { Divider, Icon } from "rsuite";
+import { Divider } from "rsuite";
 import { GetStoryDto } from "@evergarden/shared";
 import moment from "moment";
 
@@ -23,9 +23,7 @@ export function StoryItemMobile(props: StoryItemProps) {
           <img src={story.thumbnail || defaultThumbnail} />
         </div>
         <div>
-          <div>
-            {story.title}
-          </div>
+          <div className="story-item-title">{story.title}</div>
           <span className="story-item-sub">
             {story.updated !== undefined && moment(story.updated).fromNow()}
             {story.lastChapter && (

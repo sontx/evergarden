@@ -1,109 +1,137 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useHistory } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
-import { GetStoryDto } from "@evergarden/shared";
-import { openStory } from "../story/storySlice";
-import { Animation, List, Loader, Notification } from "rsuite";
+import { useCallback, useEffect } from "react";
+import { GetStoryDto, StoryCategory } from "@evergarden/shared";
+import { Animation, List, Placeholder } from "rsuite";
+import InfiniteLoader from "react-window-infinite-loader";
 import {
-  fetchStoriesAsync,
   selectCategory,
-  selectStatus,
   selectStories,
   selectTotalItems,
+  setStories,
+  setTotalItems,
 } from "./storiesSlice";
 import { selectLimitCountPerPage } from "../settings/settingsSlice";
-import InfiniteScroll from "react-infinite-scroller";
 import { StoryItem } from "../../components/StoryItem";
+import { FixedSizeList, ListChildComponentProps } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { fetchStories } from "./storiesAPI";
+import { openStory } from "../story/storySlice";
+
+import "./storyList.less";
+
+const ITEM_HEIGHT = 66;
+let SHOW_STORIES: GetStoryDto[] = [];
 
 export function StoryList() {
   const dispatch = useAppDispatch();
   const history = useHistory();
 
-  const items = useAppSelector(selectStories);
-  const totalItems = useAppSelector(selectTotalItems);
+  const stories = useAppSelector(selectStories);
+  const totalItems = useAppSelector(selectTotalItems) || 10;
   const limitCountPerPage = useAppSelector(selectLimitCountPerPage);
-  const status = useAppSelector(selectStatus);
   const category = useAppSelector(selectCategory);
 
-  // Workaround: InfiniteScroll won't start fetching data if the cached items in the list is big
-  const [isStartLoading, setStartLoading] = useState(false);
-  const [isMounted, setMounted] = useState(false);
-  const [pageOffset, setPageOffset] = useState(1);
+  const fetchMore = async (
+    startIndex: number,
+    stopIndex: number,
+    category: StoryCategory,
+  ): Promise<any> => {
+    const result = await fetchStories(
+      startIndex,
+      stopIndex - startIndex + 1,
+      category,
+    );
+    const items = result.items;
+    const actualStopIndex = Math.min(stopIndex, items.length + startIndex - 1);
+    for (let i = startIndex; i <= actualStopIndex; i++) {
+      SHOW_STORIES[i] = items[i - startIndex];
+    }
 
-  const fetchMore = useCallback(
-    (page: number) => {
-      setStartLoading(true);
-      dispatch(
-        fetchStoriesAsync({
-          page: page - pageOffset,
-          limit: limitCountPerPage,
-          category: category,
-        }),
-      );
-    },
-    [category, dispatch, limitCountPerPage, pageOffset],
-  );
+    if (totalItems !== result.meta.totalItems) {
+      dispatch(setTotalItems(result.meta.totalItems));
+    }
+  };
 
   useEffect(() => {
-    if (isMounted) {
-      if (!isStartLoading) {
-        setPageOffset(0);
-        fetchMore(1);
+    SHOW_STORIES = [...stories];
+    return () => {
+      const firstSequenceStories = [];
+      for (const story of SHOW_STORIES) {
+        if (story) {
+          firstSequenceStories.push(story);
+        } else {
+          break;
+        }
       }
-    }
-    setMounted(true);
-  }, [fetchMore, isMounted, isStartLoading]);
+      dispatch(setStories(firstSequenceStories));
+    };
+  }, [dispatch, stories]);
 
-  const handleItemClick = useCallback(
+  const handleClick = useCallback(
     (story: GetStoryDto) => {
-      if (story.url) {
+      if (story) {
         dispatch(openStory(history, story));
-      } else {
-        Notification.error({
-          title: story.title,
-          description: `Damn god, the story's url is missing. Please report this shitty issue to the admin.`,
-          duration: 5000,
-        });
       }
     },
     [dispatch, history],
   );
 
   return (
-    <Animation.Slide in={true}>
-      {(animationProps, ref) => (
-        <div
-          style={{ display: "flex", flexDirection: "column" }}
-          {...animationProps}
-          ref={ref}
-        >
-          <List hover>
-            <InfiniteScroll
-              loadMore={fetchMore}
-              hasMore={
-                status === "none" ||
-                (items.length < totalItems && status !== "processing")
-              }
-            >
-              {items.map((story) => (
-                <List.Item
-                  key={story.id}
-                  onClick={() => handleItemClick(story)}
-                >
-                  <StoryItem story={story} />
-                </List.Item>
-              ))}
-            </InfiniteScroll>
-          </List>
-          {status === "processing" && (
-            <div
-              style={{ height: "40px", position: "relative", marginTop: "8px" }}
-            >
-              <Loader center />
-            </div>
-          )}
-        </div>
-      )}
-    </Animation.Slide>
+    <div style={{ flex: "1" }}>
+      <AutoSizer>
+        {({ height, width }: { height: number; width: number }) => (
+          <InfiniteLoader
+            isItemLoaded={(index) => !!SHOW_STORIES[index]}
+            loadMoreItems={(startIndex, stopIndex) =>
+              fetchMore(startIndex, stopIndex, category)
+            }
+            minimumBatchSize={limitCountPerPage}
+            itemCount={totalItems}
+          >
+            {({ onItemsRendered, ref }) => (
+              <FixedSizeList
+                height={height}
+                itemCount={totalItems}
+                itemSize={ITEM_HEIGHT}
+                onItemsRendered={onItemsRendered}
+                direction="vertical"
+                ref={ref}
+                width={width}
+                innerElementType={(listProps) => <List {...listProps} hover />}
+              >
+                {(itemProps: ListChildComponentProps<GetStoryDto[]>) => {
+                  const data = SHOW_STORIES[itemProps.index];
+                  return (
+                    <List.Item
+                      className="story-list-item--loading"
+                      key={itemProps.index}
+                      style={itemProps.style}
+                      onClick={() => handleClick(data)}
+                    >
+                      {data ? (
+                        <Animation.Bounce in={true}>
+                          {(animationProps, ref) => (
+                            <div {...animationProps} ref={ref}>
+                              <StoryItem story={data} />
+                            </div>
+                          )}
+                        </Animation.Bounce>
+                      ) : (
+                        <Placeholder.Paragraph
+                          active
+                          graph="square"
+                          rowMargin={10}
+                        />
+                      )}
+                    </List.Item>
+                  );
+                }}
+              </FixedSizeList>
+            )}
+          </InfiniteLoader>
+        )}
+      </AutoSizer>
+    </div>
   );
 }

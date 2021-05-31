@@ -163,6 +163,7 @@ export type UpdateChapterDto = CreateChapterDto;
 
 export interface PaginationOptions {
   page: number;
+  skip?: number;
   limit: number;
 }
 

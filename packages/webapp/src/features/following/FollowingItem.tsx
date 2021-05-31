@@ -66,8 +66,13 @@ export function FollowingItem({ story }: { story: GetStoryDto }) {
   }, [dispatch, story]);
 
   useEffect(() => {
-    if (actionRef.current) {
-      actionRef.current.style.right = `${-actionRef.current.offsetWidth}px`;
+    const ref = actionRef.current;
+    if (ref) {
+      const timeoutId = window.setTimeout(() => {
+        ref.style.display = "flex";
+        ref.style.right = `${-ref.offsetWidth}px`;
+      }, 400);
+      return () => window.clearTimeout(timeoutId);
     }
   }, [actionRef, actionRef.current]);
 
@@ -116,7 +121,7 @@ export function FollowingItem({ story }: { story: GetStoryDto }) {
   });
 
   return (
-    <Animation.Slide in={show} onExited={handleExitedAnimation}>
+    <Animation.Bounce in={show} onExited={handleExitedAnimation}>
       {(props, ref) => (
         <div {...props} ref={ref}>
           <div
@@ -169,6 +174,6 @@ export function FollowingItem({ story }: { story: GetStoryDto }) {
           </div>
         </div>
       )}
-    </Animation.Slide>
+    </Animation.Bounce>
   );
 }

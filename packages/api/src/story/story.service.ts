@@ -56,7 +56,7 @@ export class StoryService {
         ...(findOption || {}),
         where: includeUnpublished ? undefined : { published: true },
         take: options.limit,
-        skip: options.page * options.limit,
+        skip: isFinite(options.skip) ? options.skip : options.page * options.limit,
       });
       return this.toPaginationResult(options, result);
     } catch (e) {

@@ -19,7 +19,9 @@ export function Home() {
     <AppContainer>
       <SEO title={intl.formatMessage({ id: "pageTitleHome" })} />
       <AppHeader />
-      <Content style={{ padding: "10px" }}>
+      <Content
+        style={{ padding: "10px", display: "flex", flexDirection: "column" }}
+      >
         <AppNav />
         {currentTab === "updated" && <StoryList />}
         {currentTab === "following" && <FollowingStories />}

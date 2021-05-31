@@ -9,13 +9,24 @@
 .story-item-container .story-item-main {
   flex: 1;
   display: flex;
+  overflow: hidden;
 }
 
-.story-item-main img {
+.story-item-container .story-item-main div:nth-child(2) {
+  min-width: 0;
+}
+
+.story-item-container .story-item-main img {
   width: 30px;
   height: 40px;
   margin-right: 8px;
   object-fit: cover;
+}
+
+.story-item-container .story-item-title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .story-item-container .story-item-sub {
