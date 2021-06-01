@@ -37,6 +37,10 @@ export function UserToolbar() {
     [dispatch, history],
   );
 
+  const handleShowFollowing = useCallback(() => {
+    history.push("/following");
+  }, [history]);
+
   return (
     <>
       <Nav pullRight>
@@ -72,7 +76,7 @@ export function UserToolbar() {
                 <span className="user-toolbar-drawer-subtle">{user.email}</span>
               </Dropdown.Item>
               <Dropdown.Item divider />
-              <Dropdown.Item>
+              <Dropdown.Item onSelect={handleShowFollowing}>
                 <Icon icon="star" />
                 <FormattedMessage id="userMenuFollowing" />
               </Dropdown.Item>
