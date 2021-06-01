@@ -30,13 +30,17 @@ export class ChapterService {
       where: { chapterNo, storyId: new ObjectID(storyId) },
     });
 
-    const updatedBy = await this.userService.getById(chapter.updatedBy);
-    const uploadBy = await this.userService.getById(chapter.uploadBy);
+    if (!chapter) {
+      return null;
+    }
+
+    const updatedBy = chapter.updatedBy && await this.userService.getById(chapter.updatedBy);
+    const uploadBy = chapter.uploadBy && await this.userService.getById(chapter.uploadBy);
     return (
       chapter && {
         ...chapter,
-        updatedBy: updatedBy ? this.userService.toDto(updatedBy) : chapter.updatedBy,
-        uploadBy: uploadBy ? this.userService.toDto(uploadBy) : chapter.uploadBy,
+        updatedBy: updatedBy && this.userService.toDto(updatedBy),
+        uploadBy: uploadBy && this.userService.toDto(uploadBy),
       }
     );
   }

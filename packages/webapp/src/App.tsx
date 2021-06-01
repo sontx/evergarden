@@ -10,6 +10,8 @@ import { Reading } from "./pages/Reading";
 import { Login } from "./pages/Login";
 import { AuthSync } from "./features/auth/AuthSync";
 import { SettingsSync } from "./features/settings/SettingsSync";
+import { HttpError } from "./components/HttpError";
+import { ErrorPage } from "./pages/ErrorPage";
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
@@ -17,6 +19,7 @@ const App = () => (
       <AuthSync>
         <SettingsSync>
           <Router>
+            <HttpError/>
             <Switch>
               <Route path="/login">
                 <Login />
@@ -29,6 +32,12 @@ const App = () => (
               </Route>
               <Route path="/reading/:url/:chapterNo">
                 <Reading />
+              </Route>
+              <Route path="/404">
+                <ErrorPage code="404"/>
+              </Route>
+              <Route path="/500">
+                <ErrorPage code="500"/>
               </Route>
             </Switch>
           </Router>

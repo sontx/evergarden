@@ -1,7 +1,7 @@
 export default {
   id: 'en-US',
-  error404: 'Page not found',
-  error500: 'Server error',
+  error404: 'What you’re looking for may have been misplaced in Long Term Memory.',
+  error500: 'Sadly, the website had a bad day.',
   description: "The next story reading generation",
   pageTitleHome: "Home",
   pageTitleLogin: "Login",

@@ -55,7 +55,7 @@ export class StoryController {
     await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
     page = toInt(page);
     limit = toInt(limit);
-    skip = toInt(skip)
+    skip = toInt(skip);
 
     const pagination = {
       page,
