@@ -1,4 +1,4 @@
-import { AutoComplete, DOMHelper, Icon, InputGroup } from "rsuite";
+import { AutoComplete, DOMHelper, Icon, InputGroup, Animation } from "rsuite";
 import { useDebouncedCallback } from "use-debounce";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -16,6 +16,7 @@ import "./searchBox.less";
 
 import defaultThumbnail from "../../images/logo.png";
 import { StorySearchBody } from "@evergarden/shared";
+import classNames from "classnames";
 
 export function SearchBox({
   fillWidth,
@@ -67,42 +68,50 @@ export function SearchBox({
   }, []);
 
   return (
-    <div className="searchbox-container">
-      <InputGroup inside>
-        <AutoComplete
-          onExit={handleHide}
-          onEnter={handleShow}
-          menuClassName="searchbox-menu"
-          onChange={handleChange}
-          onSelect={handleSelect}
-          filterBy={() => true}
-          data={stories.map((story) => ({
-            label: story.title,
-            value: story.title,
-            origin: story,
-          }))}
-          renderItem={(item) => {
-            const data = item as any;
-            return (
-              <div className="searchbox-menu-item">
-                <div>
-                  <img src={data.origin.thumbnail || defaultThumbnail} />
-                </div>
-                <div>
-                  <div>{data.origin.title}</div>
-                  <div className="searchbox-menu-item--sub">
-                    {data.origin.description || "Coming soon ;)"}
+    <Animation.Bounce in={true}>
+      {({ className, ...rest }, ref) => (
+        <div
+          className={classNames("searchbox-container", className)}
+          {...rest}
+          ref={ref}
+        >
+          <InputGroup inside>
+            <AutoComplete
+              onExit={handleHide}
+              onEnter={handleShow}
+              menuClassName="searchbox-menu"
+              onChange={handleChange}
+              onSelect={handleSelect}
+              filterBy={() => true}
+              data={stories.map((story) => ({
+                label: story.title,
+                value: story.title,
+                origin: story,
+              }))}
+              renderItem={(item) => {
+                const data = item as any;
+                return (
+                  <div className="searchbox-menu-item">
+                    <div>
+                      <img src={data.origin.thumbnail || defaultThumbnail} />
+                    </div>
+                    <div>
+                      <div>{data.origin.title}</div>
+                      <div className="searchbox-menu-item--sub">
+                        {data.origin.description || "Coming soon ;)"}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          }}
-        />
-        <InputGroup.Button>
-          <Icon icon="search" />
-        </InputGroup.Button>
-      </InputGroup>
-      {status === "processing" && <BarLoader color="#169de0" height="1" />}
-    </div>
+                );
+              }}
+            />
+            <InputGroup.Button>
+              <Icon icon="search" />
+            </InputGroup.Button>
+          </InputGroup>
+          {status === "processing" && <BarLoader color="#169de0" height="1" />}
+        </div>
+      )}
+    </Animation.Bounce>
   );
 }
