@@ -77,6 +77,7 @@ export function SearchBox({
         >
           <InputGroup inside>
             <AutoComplete
+              placeholder="Search story..."
               onExit={handleHide}
               onEnter={handleShow}
               menuClassName="searchbox-menu"
