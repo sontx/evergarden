@@ -79,7 +79,7 @@ export function withAction(Component: ElementType) {
     });
 
     return (
-      <Component {...rest} story={story} {...handlers}>
+      <Component {...rest} story={story} {...handlers} additionPadding>
         <div onClick={onActionClick} className="action" ref={actionRef}>
           {action}
         </div>

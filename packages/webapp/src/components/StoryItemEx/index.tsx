@@ -4,7 +4,7 @@ import moment from "moment";
 import { Divider } from "rsuite";
 import classNames from "classnames";
 import { StandardProps } from "rsuite/es/@types/common";
-import { forwardRef, ReactNode, useCallback } from "react";
+import { ElementType, forwardRef, ReactNode, useCallback } from "react";
 import { openReading } from "../../features/story/storySlice";
 import { useAppDispatch } from "../../app/hooks";
 import { useHistory } from "react-router-dom";
@@ -15,10 +15,23 @@ import "./index.less";
 export interface StoryItemExProps extends StandardProps {
   story: GetStoryDto;
   children?: ReactNode;
+  Sub?: ElementType<{ story: GetStoryDto }>;
+  mainNoWrap?: boolean;
+  additionPadding?: boolean;
 }
 
 export const StoryItemEx = forwardRef(
-  ({ story, children, ...rest }: StoryItemExProps, ref: any) => {
+  (
+    {
+      story,
+      children,
+      Sub,
+      mainNoWrap,
+      additionPadding,
+      ...rest
+    }: StoryItemExProps,
+    ref: any,
+  ) => {
     const dispatch = useAppDispatch();
     const history = useHistory();
     const intl = useIntl();
@@ -36,12 +49,17 @@ export const StoryItemEx = forwardRef(
         {...rest}
         ref={ref}
       >
-        <div className="main">
+        <div
+          className={classNames("main", {
+            "main--padding": additionPadding,
+            "main--nowrap": mainNoWrap,
+          })}
+        >
           <div>
             <img src={story.thumbnail || defaultThumbnail} alt={story.title} />
           </div>
           <div>
-            <div>{story.title}</div>
+            <div className="title">{story.title}</div>
             <span className="sub">
               {story.updated !== undefined && moment(story.updated).fromNow()}
               {story.lastChapter && (
@@ -65,10 +83,17 @@ export const StoryItemEx = forwardRef(
             </span>
           </div>
         </div>
-        {story.history && story.history.currentChapterNo > 0 && (
-          <span className="sub">
-            {`Continue ${story.history.currentChapterNo}`}
-          </span>
+        {Sub ? (
+          <div className="sub">
+            <Sub story={story} />
+          </div>
+        ) : (
+          story.history &&
+          story.history.currentChapterNo > 0 && (
+            <span className="sub">
+              {`Continue ${story.history.currentChapterNo}`}
+            </span>
+          )
         )}
         {children}
       </div>

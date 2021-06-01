@@ -4,13 +4,21 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { GetStoryDto, StoryCategory } from "@evergarden/shared";
 import { Animation, List } from "rsuite";
 import InfiniteLoader from "react-window-infinite-loader";
-import { StoryItem } from "../../components/StoryItem";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { fetchStories } from "./storiesAPI";
 import { openStory } from "../story/storySlice";
 
 import "./storyList.less";
+import { withAnimation } from "../../components/StoryItemEx/withAnimation";
+import { StoryItemEx } from "../../components/StoryItemEx";
+import { abbreviateNumber } from "../../utils/types";
+
+const StoryItemWrapper = withAnimation(StoryItemEx);
+
+function ViewCountSub({ story }: { story: GetStoryDto }) {
+  return <span>{abbreviateNumber(story.view)} views</span>;
+}
 
 function Loading() {
   return (
@@ -111,7 +119,11 @@ export function StoryList({ category }: { category: StoryCategory }) {
                         <Animation.Bounce in={true}>
                           {(animationProps, ref) => (
                             <div {...animationProps} ref={ref}>
-                              <StoryItem story={data} />
+                              <StoryItemWrapper
+                                story={data}
+                                mainNoWrap
+                                Sub={ViewCountSub}
+                              />
                             </div>
                           )}
                         </Animation.Bounce>

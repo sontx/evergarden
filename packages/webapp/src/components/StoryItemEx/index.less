@@ -1,4 +1,4 @@
-@import '~rsuite/lib/styles/themes/dark/index.less';
+@import "~rsuite/lib/styles/themes/dark/index.less";
 
 .story-item-ex-container {
   display: flex;
@@ -9,8 +9,7 @@
   .main {
     flex: 1;
     display: flex;
-    padding-top: 13px;
-    padding-bottom: 13px;
+    overflow: hidden;
 
     img {
       width: 30px;
@@ -20,10 +19,25 @@
     }
   }
 
+  .main--padding {
+    padding-top: 13px;
+    padding-bottom: 13px;
+  }
+
+  .main--nowrap {
+    div:nth-child(2) {
+      min-width: 0;
+    }
+    .title {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
   .sub {
-    color: rgba(255,255,255,0.45);
+    color: rgba(255, 255, 255, 0.45);
     font-size: @font-size-base - 2;
-    margin-left: 10px;
   }
 
   .new-chapter {
