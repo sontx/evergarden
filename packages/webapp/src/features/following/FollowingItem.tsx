@@ -69,7 +69,6 @@ export function FollowingItem({ story }: { story: GetStoryDto }) {
     const ref = actionRef.current;
     if (ref) {
       const timeoutId = window.setTimeout(() => {
-        ref.style.display = "flex";
         ref.style.right = `${-ref.offsetWidth}px`;
       }, 400);
       return () => window.clearTimeout(timeoutId);
@@ -86,6 +85,7 @@ export function FollowingItem({ story }: { story: GetStoryDto }) {
     onSwipeStart: () => {
       const actionElement = actionRef.current;
       if (actionElement) {
+        actionElement.style.opacity = "1";
         actionPosRef.current = parseInt(actionElement.style.right);
       }
     },
@@ -113,6 +113,7 @@ export function FollowingItem({ story }: { story: GetStoryDto }) {
           dispatch(setShowingAction(story));
         } else {
           actionElement.style.right = `${-actionElement.offsetWidth}px`;
+          actionElement.style.opacity = "0";
         }
       }
     },
