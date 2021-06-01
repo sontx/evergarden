@@ -14,7 +14,7 @@ import "./storyList.less";
 
 function Loading() {
   return (
-    <div className="rs-placeholder rs-placeholder-paragraph">
+    <div className="story-list-item--loading rs-placeholder rs-placeholder-paragraph">
       <div className="rs-placeholder-paragraph-graph rs-placeholder-paragraph-graph-square">
         <span className="rs-placeholder-paragraph-graph-inner" />
       </div>
@@ -103,7 +103,6 @@ export function StoryList({ category }: { category: StoryCategory }) {
                   const data = SHOW_STORIES[itemProps.index] as any;
                   return (
                     <List.Item
-                      className="story-list-item--loading"
                       key={itemProps.index}
                       style={itemProps.style}
                       onClick={() => handleClick(data)}

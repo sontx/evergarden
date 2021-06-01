@@ -28,5 +28,8 @@ export default () => ({
       username: "elastic",
       password: "admin"
     }
+  },
+  settings: {
+    maxHistoryCount: 15
   }
 });

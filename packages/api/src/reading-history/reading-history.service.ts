@@ -1,12 +1,13 @@
 import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ReadingHistory } from "./reading-history.entity";
+import { ReadingHistory, StoryHistories } from "./reading-history.entity";
 import { UserService } from "../user/user.service";
 import { GetStoryHistoryDto, IdType, UpdateStoryHistoryDto } from "@evergarden/shared";
 import { User } from "../user/user.entity";
 import { StoryService } from "../story/story.service";
 import { StoryHistory } from "./story-history.entity";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class ReadingHistoryService {
@@ -18,6 +19,7 @@ export class ReadingHistoryService {
     private userService: UserService,
     @Inject(forwardRef(() => StoryService))
     private storyService: StoryService,
+    private configService: ConfigService,
   ) {}
 
   async createEmptyReadingHistory(): Promise<ReadingHistory> {
@@ -70,11 +72,41 @@ export class ReadingHistoryService {
       const normalizedHistory = this.normalizeStoryHistory(storyHistory, oldStoryHistory);
 
       storyHistories[normalizedHistory.storyId] = normalizedHistory;
-      history.storyHistories = storyHistories;
+      const isAddNew = !oldStoryHistory;
+      history.storyHistories = isAddNew ? this.removeOldHistories(storyHistories) : storyHistories;
 
       await this.updateRatingIfNeeded(oldStoryHistory, normalizedHistory);
       await this.readingHistoryRepository.update(history.id, history);
     }
+  }
+
+  private removeOldHistories(histories: StoryHistories): StoryHistories {
+    const keys = Object.keys(histories);
+    const maxHistoryCount = this.configService.get("settings.maxHistoryCount") || 10;
+
+    const historyArray = keys.map((key) => histories[key]);
+    const notFollowingStories = historyArray.filter((item) => !item.isFollowing);
+
+    if (notFollowingStories.length > maxHistoryCount) {
+      const followingStories = historyArray.filter((item) => item.isFollowing);
+      const rebuildHistories = {};
+      for (const item of followingStories) {
+        rebuildHistories[item.storyId] = item;
+      }
+
+      const sortedNotFollowStories = notFollowingStories.sort((val1, val2) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return val1.lastVisit - val2.lastVisit;
+      });
+      const offset = notFollowingStories.length - maxHistoryCount;
+      for (let i = 0; i < maxHistoryCount; i++) {
+        const history = sortedNotFollowStories[i + offset];
+        rebuildHistories[history.storyId] = history;
+      }
+      return rebuildHistories;
+    }
+    return histories;
   }
 
   private normalizeStoryHistory(newHistory: UpdateStoryHistoryDto, oldHistory: StoryHistory | null): StoryHistory {
@@ -90,7 +122,7 @@ export class ReadingHistoryService {
           ? newHistory.currentReadingPosition
           : current.currentReadingPosition || 0,
       vote: newHistory.vote !== undefined ? newHistory.vote : current.vote || "none",
-      isFollowing: newHistory.isFollowing !== undefined ? newHistory.isFollowing : oldHistory.isFollowing || false,
+      isFollowing: newHistory.isFollowing !== undefined ? newHistory.isFollowing : current.isFollowing || false,
       started: current.started || now,
       lastVisit: now,
     };
