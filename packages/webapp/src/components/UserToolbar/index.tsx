@@ -88,10 +88,6 @@ export function UserToolbar() {
                 <Icon icon="address-book" />
                 <FormattedMessage id="userMenuMyStories" />
               </Dropdown.Item>
-              <Dropdown.Item>
-                <Icon icon="th-list" />
-                <FormattedMessage id="userMenuMyCollection" />
-              </Dropdown.Item>
               <Dropdown.Item divider />
               <Dropdown.Item onSelect={handleLogout}>
                 <Icon icon="sign-out" />{" "}

@@ -1,4 +1,4 @@
-import {GetStoryDto, IdType} from "@evergarden/shared";
+import { GetStoryDto } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchFollowingStories } from "./followingAPI";
@@ -32,7 +32,9 @@ export const followingSlice = createSlice({
     },
     removeStory: (state, { payload }) => {
       if (payload) {
-        state.stories = state.stories.filter((story) => story.id !== payload.id);
+        state.stories = state.stories.filter(
+          (story) => story.id !== payload.id,
+        );
       }
     },
   },

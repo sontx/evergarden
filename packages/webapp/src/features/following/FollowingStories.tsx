@@ -8,9 +8,12 @@ import { List, Loader, Message } from "rsuite";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useEffect, useState } from "react";
 import { isEmpty } from "../../utils/types";
-import { FollowingItem } from "./FollowingItem";
 import { UserListItemsChildrenProps } from "../../components/UserListItemsPage";
 import { GetStoryDto } from "@evergarden/shared";
+import { withDeleteAction } from "./withDeleteAction";
+import { StoryItemEx } from "../../components/StoryItemEx";
+
+const FollowingItemWrapper = withDeleteAction(StoryItemEx);
 
 function sortNew(item1: GetStoryDto, item2: GetStoryDto) {
   // @ts-ignore
@@ -92,7 +95,7 @@ export function FollowingStories({ filter, sort }: UserListItemsChildrenProps) {
               key={story.id}
               style={{ paddingTop: 0, paddingBottom: 0 }}
             >
-              <FollowingItem story={story} />
+              <FollowingItemWrapper story={story} />
             </List.Item>
           ))}
         </List>
