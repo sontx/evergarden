@@ -1,16 +1,16 @@
 import { Alert, Button, Icon, Panel } from "rsuite";
 import { FormattedMessage, useIntl } from "react-intl";
-
+// @ts-ignore
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import "./auth.less";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  loginGoogleAsync,
+  loginOAuth2Async,
   selectLoginError,
-  selectLoginType,
   selectStatus,
   selectUser,
 } from "./authSlice";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { setUserSettings } from "../settings/settingsSlice";
@@ -20,6 +20,7 @@ import GoogleLogin, {
 } from "react-google-login";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
+const FACEBOOK_CLIENT_ID = process.env.REACT_APP_FACEBOOK_CLIENT_ID || "";
 
 function isGoogleLoginResponse(
   response: GoogleLoginResponse | GoogleLoginResponseOffline,
@@ -31,7 +32,6 @@ export function Auth() {
   const intl = useIntl();
 
   const status = useAppSelector(selectStatus);
-  const loginType = useAppSelector(selectLoginType);
   const loginError = useAppSelector(selectLoginError);
   const user = useAppSelector(selectUser);
   const location = useLocation();
@@ -41,7 +41,7 @@ export function Auth() {
   const handleLoginGoogleSuccess = useCallback(
     (data: GoogleLoginResponse | GoogleLoginResponseOffline) => {
       if (isGoogleLoginResponse(data)) {
-        dispatch(loginGoogleAsync(data.tokenId));
+        dispatch(loginOAuth2Async({ token: data.tokenId, provider: "google" }));
       }
     },
     [dispatch],
@@ -50,9 +50,20 @@ export function Auth() {
   const handleLoginGoogleFailure = useCallback((error) => {
     if (process.env.NODE_ENV === "development") {
       console.log(error);
-      Alert.error(error.detail, 5000);
+      Alert.error(error.details, 5000);
     }
   }, []);
+
+  const handleLoginFacebook = useCallback(
+    (data) => {
+      if (data.accessToken) {
+        dispatch(
+          loginOAuth2Async({ token: data.accessToken, provider: "facebook" }),
+        );
+      }
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     if (status === "error") {
@@ -69,6 +80,15 @@ export function Auth() {
       }
     }
   }, [dispatch, history, intl, loginError, status, user, location]);
+
+  const isFacebookApp = useMemo(() => {
+    const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
+    return (
+      ua.indexOf("FBAN") > -1 ||
+      ua.indexOf("FBAV") > -1 ||
+      ua.indexOf("Instagram") > -1
+    );
+  }, []);
 
   return (
     <div className="login-container">
@@ -88,20 +108,30 @@ export function Auth() {
         }
       >
         <div className="button-container">
-          <Button
-            disabled={status === "processing"}
-            loading={loginType === "facebook" && status === "processing"}
-            color="blue"
-            block
-          >
-            <Icon icon="facebook" /> <FormattedMessage id="loginWithFacebook" />
-          </Button>
+          <FacebookLogin
+            appId={FACEBOOK_CLIENT_ID}
+            fields="name,email,picture"
+            callback={handleLoginFacebook}
+            autoLoad={isFacebookApp}
+            disableMobileRedirect={!isFacebookApp}
+            render={(renderProps: any) => (
+              <Button
+                onClick={renderProps.onClick}
+                disabled={renderProps.isDisabled}
+                loading={renderProps.isProcessing}
+                color="blue"
+                block
+              >
+                <Icon icon="facebook" />{" "}
+                <FormattedMessage id="loginWithFacebook" />
+              </Button>
+            )}
+          />
           <GoogleLogin
             clientId={GOOGLE_CLIENT_ID}
             render={(renderProps) => (
               <Button
                 disabled={renderProps.disabled}
-                loading={loginType === "google" && status === "processing"}
                 color="red"
                 block
                 onClick={renderProps.onClick}

@@ -1,4 +1,4 @@
-import { AuthUser, IdType, JwtPayload } from "@evergarden/shared";
+import {AuthUser, IdType, JwtPayload, OAuth2Provider} from "@evergarden/shared";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -6,6 +6,7 @@ import { UserService } from "../user/user.service";
 import { User } from "src/user/user.entity";
 import { GoogleAuthService } from "./google/google-auth.service";
 import ms = require("ms");
+import {FacebookAuthService} from "./facebook/facebook-auth.service";
 
 @Injectable()
 export class AuthService {
@@ -16,10 +17,20 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private googleAuthService: GoogleAuthService,
+    private facebookAuthService: FacebookAuthService,
   ) {}
+
+  async loginFacebook(token: string): Promise<User | null> {
+    const authUser = await this.facebookAuthService.getUserFromToken(token);
+    return this.doLogin(authUser, "facebook");
+  }
 
   async loginGoogle(token: string): Promise<User | null> {
     const authUser = await this.googleAuthService.getUserFromToken(token);
+    return this.doLogin(authUser, "google");
+  }
+
+  private async doLogin(authUser: Partial<AuthUser>, provider: OAuth2Provider): Promise<User> {
     if (!authUser) {
       return null;
     }
@@ -34,7 +45,7 @@ export class AuthService {
         email,
         fullName,
         role: "user",
-        provider: "google",
+        provider,
         photoUrl: photoUrl,
       });
       this.logger.debug(`Created a new user for ${email} with id ${found.id}`);

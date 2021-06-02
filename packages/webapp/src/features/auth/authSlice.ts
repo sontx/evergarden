@@ -1,25 +1,23 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { fetchAuthenticatedUser, loginGoogle, logout } from "./authApi";
 import { AuthUser } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
+import { fetchAuthenticatedUser, loginOAuth2, logout } from "./authApi";
 
 export interface LoginState {
   status: ProcessingStatus;
-  loginType: "none" | "userpass" | "google" | "facebook";
   loginError?: string;
   user?: AuthUser;
 }
 
 const initialState: LoginState = {
   status: "none",
-  loginType: "none",
 };
 
-export const loginGoogleAsync = createAsyncThunk(
-  "auth/google",
-  async (token: string) => {
-    return await loginGoogle(token);
+export const loginOAuth2Async = createAsyncThunk(
+  "auth/loginOAuth2",
+  async (data: { token: string; provider: string }) => {
+    return await loginOAuth2(data.token, data.provider);
   },
 );
 
@@ -40,24 +38,21 @@ export const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [`${loginGoogleAsync.pending}`]: (state) => {
+    [`${loginOAuth2Async.pending}`]: (state) => {
       state.loginError = undefined;
       state.status = "processing";
-      state.loginType = "google";
     },
-    [`${loginGoogleAsync.fulfilled}`]: (state, { payload }) => {
+    [`${loginOAuth2Async.fulfilled}`]: (state, { payload }) => {
       if (payload) {
         state.status = "success";
         state.user = payload;
       } else {
         state.status = "none";
       }
-      state.loginType = "none";
     },
-    [`${loginGoogleAsync.rejected}`]: (state, { payload }) => {
+    [`${loginOAuth2Async.rejected}`]: (state, { payload }) => {
       state.status = "error";
       state.loginError = payload;
-      state.loginType = "none";
     },
     [`${logoutAsync.fulfilled}`]: (state) => {
       state.user = undefined;
@@ -77,7 +72,6 @@ export const authSlice = createSlice({
 });
 
 export const selectStatus = (state: RootState) => state.login.status;
-export const selectLoginType = (state: RootState) => state.login.loginType;
 export const selectLoginError = (state: RootState) => state.login.loginError;
 export const selectUser = (state: RootState) => state.login.user;
 export const selectIsLoggedIn = (state: RootState) => !!state.login.user;

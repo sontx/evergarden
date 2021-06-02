@@ -1,24 +1,47 @@
 import { useEffect } from "react";
 import api from "../../utils/api";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import createAuthRefreshInterceptor from "axios-auth-refresh";
+import { useAppSelector } from "../../app/hooks";
+import { selectIsLoggedIn } from "../../features/auth/authSlice";
 
 export function HttpError() {
   const history = useHistory();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+
   useEffect(() => {
-    const id = api.interceptors.response.use(
-      (response) => {
-        return response;
-      },
-      (error) => {
-        if (error.response.status === 404) {
-          history.push("/404");
-        } else if (error.response.status === 500) {
-          history.push("/500");
-        }
-        return Promise.reject(error);
-      },
-    );
-    return () => api.interceptors.response.eject(id);
-  }, [history]);
+    if (isLoggedIn) {
+      const errorInterceptorId = api.interceptors.response.use(
+        (response) => {
+          return response;
+        },
+        (error) => {
+          if (error.response.status === 404) {
+            history.push("/404");
+          } else if (error.response.status === 500) {
+            history.push("/500");
+          }
+          return Promise.reject(error);
+        },
+      );
+
+      const refreshInterceptorId = createAuthRefreshInterceptor(
+        api,
+        (failedRequest: any) =>
+          axios.get("/api/auth/refresh").then((response) => {
+            return Promise.resolve();
+          }),
+        {
+          pauseInstanceWhileRefreshing: true,
+        },
+      );
+
+      return () => {
+        api.interceptors.response.eject(errorInterceptorId);
+        api.interceptors.response.eject(refreshInterceptorId);
+      };
+    }
+  }, [history, isLoggedIn]);
   return <></>;
 }

@@ -24,11 +24,19 @@ export class AuthController {
 
   constructor(private authService: AuthService, private userService: UserService) {}
 
-  @Post("google")
+  @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  async loginGoogle(@Body() auth: Auth2Body, @Res() res: Response) {
+  async loginOAuth2(@Body() auth: Auth2Body, @Res() res: Response) {
     const token = auth.token;
-    const user = await this.authService.loginGoogle(token);
+    let user;
+    switch (auth.provider) {
+      case "google":
+        user = await this.authService.loginGoogle(token);
+        break;
+      case "facebook":
+        user = await this.authService.loginFacebook(token);
+        break;
+    }
     if (user) {
       const { cookie: refreshTokenCookie, token: refreshToken } = this.authService.getCookieWithJwtRefreshToken(
         user.id,

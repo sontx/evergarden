@@ -19,9 +19,10 @@ export async function fetchAuthenticatedUser() {
   return response.data;
 }
 
-export async function loginGoogle(token: string): Promise<AuthUser> {
-  const response = await api.post("/api/auth/google", {
+export async function loginOAuth2(token: string, provider: string): Promise<AuthUser> {
+  const response = await api.post("/api/auth", {
     token,
+    provider
   });
   return response.data;
 }

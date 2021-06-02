@@ -9,9 +9,15 @@ import {
   MinLength,
 } from 'class-validator';
 
+export type OAuth2Provider = "google" | "facebook";
+
 export class Auth2Body {
   @IsString()
   token: string;
+
+  @IsString()
+  @Matches(/google|facebook/s)
+  provider: OAuth2Provider;
 }
 
 export interface AuthUser {

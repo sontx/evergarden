@@ -1,6 +1,6 @@
 import { Exclude } from "class-transformer";
 import { Entity, ObjectIdColumn, Column, PrimaryGeneratedColumn } from "typeorm";
-import { IdType, Role } from "@evergarden/shared";
+import {IdType, OAuth2Provider, Role} from "@evergarden/shared";
 import { UserSettings } from "./user-settings.entity";
 
 @Entity("users")
@@ -17,7 +17,7 @@ export class User {
   password: string;
 
   @Column({ nullable: true, type: "string" })
-  provider: "google" | "facebook" | null;
+  provider: OAuth2Provider | null;
 
   @Column({ nullable: true, type: "string" })
   fullName: string;
