@@ -24,11 +24,13 @@ import chaptersReducer from "../features/chapters/chaptersSlice";
 import chapterReducer from "../features/chapter/chapterSlice";
 import historyReducer from "../features/history/historySlice";
 import followingReducer from "../features/following/followingSlice";
+import recentReducer from "../features/recent/recentSlice";
 import searchReducer from "../features/search/searchSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
   followingStories: followingReducer,
+  recentStories: recentReducer,
   story: storyReducer,
   stories: storiesReducer,
   chapters: chaptersReducer,

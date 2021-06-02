@@ -11,7 +11,7 @@ import {
   Post,
   Put,
   Query,
-  Req,
+  Req, UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -32,6 +32,7 @@ import { RolesGuard } from "../auth/role/roles.guard";
 import { ReadingHistoryService } from "../reading-history/reading-history.service";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
+import { StoryHistory } from "../reading-history/story-history.entity";
 
 @Controller("stories")
 export class StoryController {
@@ -53,6 +54,7 @@ export class StoryController {
     @Req() req,
   ): Promise<PaginationResult<GetStoryDto> | StorySearchBody[]> {
     await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
+
     page = toInt(page);
     limit = toInt(limit);
     skip = toInt(skip);
@@ -62,27 +64,40 @@ export class StoryController {
       skip,
       limit: limit > 100 ? 100 : limit,
     };
+
     let stories: PaginationResult<GetStoryDto>;
-    if (category === "updated") {
-      stories = await this.storyService.getLastUpdatedStories(pagination, false);
-      await this.mergeWithHistories(stories, req);
-    } else if (category === "hot") {
-      stories = await this.storyService.getHotStories(pagination, false);
-      await this.mergeWithHistories(stories, req);
-    } else if (category === "following") {
-      const followingStories = await this.getFollowingStories(req);
-      stories = {
-        items: followingStories,
-        meta: {
-          totalItems: followingStories.length,
-          totalPages: 1,
-          itemCount: followingStories.length,
-          itemsPerPage: followingStories.length,
-          currentPage: 1,
-        },
-      };
-    } else if (search) {
-      return await this.storyService.search(search);
+
+    switch (category) {
+      case "updated":
+        stories = await this.storyService.getLastUpdatedStories(pagination, false);
+        await this.mergeWithHistories(stories, req);
+        break;
+      case "hot":
+        stories = await this.storyService.getHotStories(pagination, false);
+        await this.mergeWithHistories(stories, req);
+        break;
+      case "following":
+      case "history":
+        if (!req.user) {
+          throw new UnauthorizedException();
+        }
+        const filter = category === "following" ? (story) => story.isFollowing : () => true;
+        const historyStories = await this.getHistoryStories(req, filter);
+        stories = {
+          items: historyStories,
+          meta: {
+            totalItems: historyStories.length,
+            totalPages: 1,
+            itemCount: historyStories.length,
+            itemsPerPage: historyStories.length,
+            currentPage: 1,
+          },
+        };
+        break;
+      default:
+        if (search) {
+          return await this.storyService.search(search);
+        }
     }
 
     return stories;
@@ -102,24 +117,24 @@ export class StoryController {
     }
   }
 
-  private async getFollowingStories(@Req() req): Promise<GetStoryDto[]> {
+  private async getHistoryStories(@Req() req, filter: (story: StoryHistory) => boolean): Promise<GetStoryDto[]> {
     const { historyId } = req.user;
 
     const history = await this.readingHistoryService.getReadingHistory(historyId);
-    const stories = history.storyHistories || {};
+    const storyHistories = history.storyHistories || {};
 
-    const keys = Object.keys(stories);
-    const followingStoryIds = keys.filter((key) => {
-      const storyHistory = stories[key];
-      return storyHistory.isFollowing;
+    const keys = Object.keys(storyHistories);
+    const filterIds = keys.filter((key) => {
+      const storyHistory = storyHistories[key];
+      return filter(storyHistory);
     });
 
-    const followingStories = await this.storyService.getStoriesByIds(followingStoryIds);
-    for (const story of followingStories) {
-      story.history = this.readingHistoryService.toDto(stories[story.id]);
+    const stories = await this.storyService.getStoriesByIds(filterIds);
+    for (const story of stories) {
+      story.history = this.readingHistoryService.toDto(storyHistories[story.id]);
     }
 
-    return followingStories;
+    return stories;
   }
 
   @Get(":id")

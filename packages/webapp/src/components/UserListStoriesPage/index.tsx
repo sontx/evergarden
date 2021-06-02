@@ -21,7 +21,7 @@ export interface UserListItemsChildrenProps {
   sort?: SortType;
 }
 
-export function UserListItemsPage({
+export function UserListStoriesPage({
   children: Children,
   title,
 }: {
@@ -41,8 +41,8 @@ export function UserListItemsPage({
       <SEO title={intl.formatMessage({ id: "pageTitleHome" })} />
       <AppHeader />
       <Content style={{ padding: "10px" }}>
-        <h5 className="user-list-items-page-title">{title}</h5>
-        <div className="user-list-items-page-toolbar">
+        <h5 className="user-list-stories-page-title">{title}</h5>
+        <div className="user-list-stories-page-toolbar">
           <ButtonGroup>
             <IconButton
               appearance={sort === "new" ? "primary" : "default"}

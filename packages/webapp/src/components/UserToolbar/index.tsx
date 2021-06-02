@@ -41,6 +41,10 @@ export function UserToolbar() {
     history.push("/following");
   }, [history]);
 
+  const handleShowHistory = useCallback(() => {
+    history.push("/history");
+  }, [history]);
+
   return (
     <>
       <Nav pullRight>
@@ -80,7 +84,7 @@ export function UserToolbar() {
                 <Icon icon="star" />
                 <FormattedMessage id="userMenuFollowing" />
               </Dropdown.Item>
-              <Dropdown.Item>
+              <Dropdown.Item onSelect={handleShowHistory}>
                 <Icon icon="history" />
                 <FormattedMessage id="userMenuHistory" />
               </Dropdown.Item>

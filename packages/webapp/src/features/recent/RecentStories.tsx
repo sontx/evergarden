@@ -1,27 +1,26 @@
-import { fetchFollowingStoriesAsync, selectStories } from "./followingSlice";
+import { fetchRecentStoriesAsync, selectStories } from "./recentSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useEffect } from "react";
 import { UserListItemsChildrenProps } from "../../components/UserListStoriesPage";
-import { withDeleteAction } from "./withDeleteAction";
 import { StoryItemEx } from "../../components/StoryItemEx";
+import { withAnimation } from "../../components/StoryItemEx/withAnimation";
 import { UserListStories } from "../../components/UserListStories";
 
-const FollowingItemWrapper = withDeleteAction(StoryItemEx);
+const StoryItemWrapper = withAnimation(StoryItemEx);
 
-export function FollowingStories(props: UserListItemsChildrenProps) {
+export function RecentStories(props: UserListItemsChildrenProps) {
   const dispatch = useAppDispatch();
   const stories = useAppSelector(selectStories);
 
   useEffect(() => {
-    dispatch(fetchFollowingStoriesAsync());
+    dispatch(fetchRecentStoriesAsync());
   }, [dispatch]);
 
   return (
     <UserListStories
       {...props}
-      hasAction
       stories={stories}
-      StoryItem={FollowingItemWrapper}
+      StoryItem={StoryItemWrapper}
     />
   );
 }
