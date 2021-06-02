@@ -80,9 +80,9 @@ export function UserListStoriesPage({
                 <Icon icon="close" style={{ color: "red" }} />
               </InputGroup.Button>
             ) : (
-              <InputGroup.Button>
+              <InputGroup.Addon>
                 <Icon icon="filter" />
-              </InputGroup.Button>
+              </InputGroup.Addon>
             )}
           </InputGroup>
         </div>

@@ -1,4 +1,4 @@
-import { AutoComplete, DOMHelper, Icon, InputGroup, Animation } from "rsuite";
+import { Animation, AutoComplete, DOMHelper, Icon, InputGroup } from "rsuite";
 import { useDebouncedCallback } from "use-debounce";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -7,7 +7,7 @@ import {
   selectStatus,
   selectStories,
 } from "./searchSlice";
-import { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 // @ts-ignore
 import BarLoader from "react-bar-loader";
 import { trimText } from "../../utils/types";
@@ -28,6 +28,7 @@ export function SearchBox({
   const dispatch = useAppDispatch();
   const stories = useAppSelector(selectStories);
   const status = useAppSelector(selectStatus);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     dispatch(clear());
@@ -42,6 +43,7 @@ export function SearchBox({
 
   const handleChange = useCallback(
     (text) => {
+      setSearchText(text);
       const searchText = trimText(text);
       if (searchText) {
         callSearchDebounce(searchText);
@@ -67,6 +69,11 @@ export function SearchBox({
     DOMHelper.removeClass(document.body, "noscroll");
   }, []);
 
+  const handleClearSearchText = useCallback(() => {
+    setSearchText("");
+    dispatch(clear());
+  }, [dispatch]);
+
   return (
     <Animation.Bounce in={true}>
       {({ className, ...rest }, ref) => (
@@ -77,6 +84,7 @@ export function SearchBox({
         >
           <InputGroup inside>
             <AutoComplete
+              value={searchText}
               placeholder="Search story..."
               onExit={handleHide}
               onEnter={handleShow}
@@ -106,9 +114,15 @@ export function SearchBox({
                 );
               }}
             />
-            <InputGroup.Button>
-              <Icon icon="search" />
-            </InputGroup.Button>
+            {searchText ? (
+              <InputGroup.Button onClick={handleClearSearchText}>
+                <Icon icon="close" style={{ color: "red" }} />
+              </InputGroup.Button>
+            ) : (
+              <InputGroup.Addon>
+                <Icon icon="search" />
+              </InputGroup.Addon>
+            )}
           </InputGroup>
           {status === "processing" && <BarLoader color="#169de0" height="1" />}
         </div>
