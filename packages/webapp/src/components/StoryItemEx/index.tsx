@@ -84,13 +84,13 @@ export const StoryItemEx = forwardRef(
           </div>
         </div>
         {Sub ? (
-          <div className="sub">
+          <div className="sub sub--left">
             <Sub story={story} />
           </div>
         ) : (
           story.history &&
           story.history.currentChapterNo > 0 && (
-            <span className="sub">
+            <span className="sub sub--left">
               {`Continue ${story.history.currentChapterNo}`}
             </span>
           )
