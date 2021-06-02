@@ -19,10 +19,10 @@ import { StorySearchBody } from "@evergarden/shared";
 import classNames from "classnames";
 
 export function SearchBox({
-  fillWidth,
   onSelectStory,
+  onClose,
 }: {
-  fillWidth?: boolean;
+  onClose?: () => void;
   onSelectStory: (story: StorySearchBody) => void;
 }) {
   const dispatch = useAppDispatch();
@@ -84,6 +84,7 @@ export function SearchBox({
         >
           <InputGroup inside>
             <AutoComplete
+              autoFocus
               value={searchText}
               placeholder="Search story..."
               onExit={handleHide}
@@ -125,6 +126,7 @@ export function SearchBox({
             )}
           </InputGroup>
           {status === "processing" && <BarLoader color="#169de0" height="1" />}
+          <div onClick={onClose} className="rs-modal-backdrop backdrop" />
         </div>
       )}
     </Animation.Bounce>

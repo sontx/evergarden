@@ -9,6 +9,11 @@
   top: 56px;
   background: #0f131a;
   left: 0;
+
+  .backdrop {
+    height: calc(100vh - 56px);
+    opacity: 0.8;
+  }
 }
 .searchbox-menu {
   width: calc(100% - 20px);
@@ -16,7 +21,7 @@
 }
 
 .searchbox-menu ul {
-  max-height: 40vh;
+  max-height: calc(100vh - 114px);
   overflow-y: scroll;
 }
 

@@ -47,13 +47,13 @@ export function UserToolbar() {
 
   return (
     <>
-      <Nav pullRight>
+      <Nav pullRight className="user-toolbar-container">
         {isDesktop ? (
           <SearchBox onSelectStory={handleSelectSearchResult} />
         ) : (
           <Nav.Item
             active={showSearch}
-            className="user-toolbar-icon"
+            className="nav-icon"
             onSelect={handleShowSearch}
           >
             <Icon size="lg" icon={showSearch ? "compress" : "search"} />
@@ -61,23 +61,24 @@ export function UserToolbar() {
         )}
         {user ? (
           <>
-            <Nav.Item className="user-toolbar-icon">
+            <Nav.Item disabled={showSearch} className="nav-icon">
               <Badge content={false}>
                 <Icon size="lg" icon="bell" />
               </Badge>
             </Nav.Item>
             <Dropdown
+              disabled={showSearch}
               menuStyle={{ minWidth: "200px" }}
               placement="bottomEnd"
               renderTitle={() => (
-                <Nav.Item className="user-toolbar-avatar">
+                <Nav.Item className="user-avatar">
                   <Avatar src={user.photoUrl} circle />
                 </Nav.Item>
               )}
             >
               <Dropdown.Item>
                 <div>{user.fullName}</div>
-                <span className="user-toolbar-drawer-subtle">{user.email}</span>
+                <span className="nav-sub">{user.email}</span>
               </Dropdown.Item>
               <Dropdown.Item divider />
               <Dropdown.Item onSelect={handleShowFollowing}>
@@ -101,14 +102,21 @@ export function UserToolbar() {
           </>
         ) : (
           <>
-            <Nav.Item className="user-toolbar-icon" onSelect={handleLogin}>
+            <Nav.Item
+              disabled={showSearch}
+              className="nav-icon"
+              onSelect={handleLogin}
+            >
               <Icon icon="sign-in" />
             </Nav.Item>
           </>
         )}
       </Nav>
       {showSearch && (
-        <SearchBox onSelectStory={handleSelectSearchResult} fillWidth />
+        <SearchBox
+          onSelectStory={handleSelectSearchResult}
+          onClose={handleShowSearch}
+        />
       )}
     </>
   );
