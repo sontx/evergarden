@@ -6,7 +6,7 @@ import { Genre } from "./genre.entity";
 @Entity("stories")
 export class Story {
   @PrimaryGeneratedColumn()
-  @ObjectIdColumn()
+  @ObjectIdColumn({name: "_id"})
   id: IdType;
 
   @Column({ type: "string", nullable: false, unique: true })

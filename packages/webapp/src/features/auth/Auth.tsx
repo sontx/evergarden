@@ -11,7 +11,7 @@ import {
   selectUser,
 } from "./authSlice";
 import { useCallback, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { setUserSettings } from "../settings/settingsSlice";
 import GoogleLogin, {
@@ -34,7 +34,7 @@ export function Auth() {
   const loginType = useAppSelector(selectLoginType);
   const loginError = useAppSelector(selectLoginError);
   const user = useAppSelector(selectUser);
-
+  const location = useLocation();
   const history = useHistory();
   const dispatch = useAppDispatch();
 
@@ -49,7 +49,7 @@ export function Auth() {
 
   const handleLoginGoogleFailure = useCallback((error) => {
     if (process.env.NODE_ENV === "development") {
-      console.log(error)
+      console.log(error);
       Alert.error(error.detail, 5000);
     }
   }, []);
@@ -63,10 +63,12 @@ export function Auth() {
     } else if (status === "success") {
       if (user) {
         dispatch(setUserSettings(user.settings));
-        history.push("/");
+        const prevPath =
+          (location.state && (location.state as any).prevPathName) || "/";
+        history.push(prevPath === "/login" ? "/" : prevPath);
       }
     }
-  }, [dispatch, history, intl, loginError, status, user]);
+  }, [dispatch, history, intl, loginError, status, user, location]);
 
   return (
     <div className="login-container">

@@ -14,6 +14,7 @@ import { HttpError } from "./components/HttpError";
 import { ErrorPage } from "./pages/ErrorPage";
 import { Following } from "./pages/Following";
 import { History } from "./pages/History";
+import { AuthRequired } from "./components/AuthRequired";
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
@@ -36,10 +37,14 @@ const App = () => (
                 <Reading />
               </Route>
               <Route path="/following">
-                <Following />
+                <AuthRequired>
+                  <Following />
+                </AuthRequired>
               </Route>
               <Route path="/history">
-                <History />
+                <AuthRequired>
+                  <History />
+                </AuthRequired>
               </Route>
               <Route path="/404">
                 <ErrorPage code="404" />

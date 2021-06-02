@@ -25,6 +25,7 @@ export const loginGoogleAsync = createAsyncThunk(
 
 export const logoutAsync = createAsyncThunk("auth/logout", async () => {
   await logout();
+  window.location.reload();
 });
 
 export const fetchAuthenticatedUserAsync = createAsyncThunk(

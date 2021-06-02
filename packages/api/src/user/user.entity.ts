@@ -6,7 +6,7 @@ import { UserSettings } from "./user-settings.entity";
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
-  @ObjectIdColumn()
+  @ObjectIdColumn({name: "_id"})
   id: IdType;
 
   @Column({ type: "string", nullable: false })

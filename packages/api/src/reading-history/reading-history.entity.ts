@@ -7,7 +7,7 @@ export type StoryHistories = { [x: string]: StoryHistory };
 @Entity("histories")
 export class ReadingHistory {
   @PrimaryGeneratedColumn()
-  @ObjectIdColumn()
+  @ObjectIdColumn({name: "_id"})
   id: IdType;
 
   @Column({ name: "storyHistories" })

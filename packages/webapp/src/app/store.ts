@@ -48,8 +48,8 @@ const persistConfig: PersistConfig<any> = {
   blacklist: ["stories", "chapters", "chapter", "history", "story", "search"],
   migrate: (state: any) => {
     state = state || {};
-    if (state.lastUpdatedStories) {
-      state.lastUpdatedStories.status = "none";
+    if (state.login) {
+      state.login.status = "none";
     }
     return Promise.resolve(state);
   },
