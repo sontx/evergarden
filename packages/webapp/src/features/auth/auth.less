@@ -4,6 +4,24 @@
   align-items: center;
   height: 100vh;
   user-select: none;
+
+  .panel {
+    padding: 20px;
+
+    .title {
+      text-align: center;
+      .sub {
+        color: rgb(255 255 255 / 75%);
+      }
+    }
+  }
+
+  .button-container {
+    > button {
+      margin-top: 15px !important;
+      text-align: left;
+    }
+  }
 }
 
 .login-container::before {
@@ -17,23 +35,8 @@
   width: 100%;
   height: 100%;
 
-  filter: blur(10px);
+  filter: blur(3px);
   background-size: cover;
   background-position: center;
-  background-image: url("https://images.pexels.com/photos/949587/pexels-photo-949587.jpeg?cs=srgb&dl=pexels-rovenimagescom-949587.jpg&fm=jpg");
-}
-
-.login-panel {
-  background: #00000012;
-  padding: 20px;
-}
-
-.login-button-container {
-  margin-top: 70px;
-  margin-bottom: 50px;
-}
-
-.login-button-container > button {
-  margin-top: 15px !important;
-  text-align: left;
+  background-image: url("https://fsb.zobj.net/crop.php?r=g9lP9UAZCV4lRZF64ulfWYRkjXO-2nW0bOEr5kvyhqwOdx4y0d-CL3wyaaEYsftydznr0TFI7EsCztm0AwA5yktT-rVytOIp6-YLgVG4dJp8f6WGzCIbdS7nfgwVVMm_Q2qo7J-UuLTV4UOe");
 }

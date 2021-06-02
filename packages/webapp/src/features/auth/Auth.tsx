@@ -73,21 +73,21 @@ export function Auth() {
   return (
     <div className="login-container">
       <Panel
-        className="login-panel"
+        className="panel"
         style={isMobile ? { border: "unset" } : {}}
         bordered
         header={
-          <div>
-            <h2>
+          <div className="title">
+            <h3>
               <FormattedMessage id="loginWelcome" />
-            </h2>
-            <div>
+            </h3>
+            <span className="sub">
               <FormattedMessage id="loginSlogan" />
-            </div>
+            </span>
           </div>
         }
       >
-        <div className="login-button-container">
+        <div className="button-container">
           <Button
             disabled={status === "processing"}
             loading={loginType === "facebook" && status === "processing"}

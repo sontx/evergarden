@@ -1,10 +1,13 @@
 import { Footer, Icon } from "rsuite";
 
 import "./index.less";
+import classNames from "classnames";
 
-export function AppFooter() {
+export function AppFooter({ float }: { float?: boolean }) {
   return (
-    <Footer className="app-footer">
+    <Footer
+      className={classNames("app-footer", { "app-footer--float": float })}
+    >
       Made with{" "}
       <Icon
         icon="heart"
