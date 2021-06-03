@@ -1,20 +1,15 @@
 import { StoryEditor } from "../../features/story-editor/StoryEditor";
-import { SEO } from "../../components/SEO";
-import { AppHeader } from "../../components/AppHeader";
-import { Content } from "rsuite";
-import { AppFooter } from "../../components/AppFooter";
-import { AppContainer } from "../../components/AppContainer";
 import React from "react";
+import { UserPage } from "../../components/UserPage";
+import { useAppSelector } from "../../app/hooks";
+import { selectStory } from "../../features/story-editor/storyEditorSlice";
 
 export function StoryEditorPage() {
+  const story = useAppSelector(selectStory);
+
   return (
-    <AppContainer>
-      <SEO title="New story" />
-      <AppHeader />
-      <Content style={{ padding: "10px" }}>
-        <StoryEditor />
-      </Content>
-      <AppFooter />
-    </AppContainer>
+    <UserPage title={story ? "Update story" : "New story"}>
+      <StoryEditor />
+    </UserPage>
   );
 }

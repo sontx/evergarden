@@ -11,7 +11,6 @@ import {
   Form,
   FormControl,
   FormGroup,
-  HelpBlock,
   Icon,
   Loader,
   Notification,
@@ -144,12 +143,10 @@ export function StoryEditor() {
         <FormGroup>
           <ControlLabel>Url slug</ControlLabel>
           <FormControl name="url" accepter={UrlBox} value={value.title} />
-          <HelpBlock>Generated</HelpBlock>
         </FormGroup>
         <FormGroup>
           <ControlLabel>Title</ControlLabel>
           <FormControl name="title" />
-          <HelpBlock>Required</HelpBlock>
         </FormGroup>
         <FormGroup>
           <ControlLabel>Authors</ControlLabel>
