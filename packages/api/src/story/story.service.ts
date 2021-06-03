@@ -53,9 +53,10 @@ export class StoryService {
     includeUnpublished?: boolean,
   ): Promise<PaginationResult<GetStoryDto>> {
     try {
+      const { where = {}, ...rest } = findOption || ({} as any);
       const result = await this.storyRepository.findAndCount({
-        ...(findOption || {}),
-        where: includeUnpublished ? undefined : { published: true },
+        ...rest,
+        where: includeUnpublished ? where : { published: true, ...where },
         take: options.limit,
         skip: isFinite(options.skip) ? options.skip : options.page * options.limit,
       });
@@ -98,6 +99,17 @@ export class StoryService {
   ): Promise<PaginationResult<GetStoryDto>> {
     // TODO: implement later
     return this.getLastUpdatedStories(options, includeUnpublished);
+  }
+
+  async getUserStories(userId: IdType): Promise<PaginationResult<GetStoryDto>> {
+    return this.getStories(
+      { page: 0, skip: 0, limit: 99999990 },
+      {
+        where: { uploadBy: userId },
+        order: { updated: "DESC" },
+      },
+      true,
+    );
   }
 
   async search(text: string): Promise<StorySearchBody[]> {

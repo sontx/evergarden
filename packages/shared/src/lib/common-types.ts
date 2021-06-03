@@ -184,7 +184,7 @@ export interface PaginationResult<T> {
   };
 }
 
-export type StoryCategory = 'updated' | 'hot' | 'following' | 'history';
+export type StoryCategory = 'updated' | 'hot' | 'following' | 'history' | "user";
 export type VoteType = 'upvote' | 'downvote' | 'none';
 
 export interface GetStoryHistoryDto {

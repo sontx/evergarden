@@ -98,6 +98,10 @@ export class StoryController {
           },
         };
         break;
+      case "user":
+        stories = await this.storyService.getUserStories(req.user.id);
+        await this.mergeWithHistories(stories, req);
+        break;
       default:
         if (search) {
           return await this.storyService.search(search);
