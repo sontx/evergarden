@@ -15,6 +15,7 @@ import { ErrorPage } from "./pages/ErrorPage";
 import { Following } from "./pages/Following";
 import { History } from "./pages/History";
 import { AuthRequired } from "./components/AuthRequired";
+import {StoryEditorPage} from "./pages/StoryEditor";
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
@@ -24,33 +25,38 @@ const App = () => (
           <Router>
             <HttpError />
             <Switch>
-              <Route path="/login">
+              <Route exact path="/login">
                 <Login />
               </Route>
               <Route path="/" exact>
                 <Home />
               </Route>
-              <Route path="/story/:url">
+              <Route exact path="/story/:url">
                 <Story />
               </Route>
-              <Route path="/reading/:url/:chapterNo">
+              <Route exact path="/reading/:url/:chapterNo">
                 <Reading />
               </Route>
-              <Route path="/following">
+              <Route exact path="/following">
                 <AuthRequired>
                   <Following />
                 </AuthRequired>
               </Route>
-              <Route path="/history">
+              <Route exact path="/history">
                 <AuthRequired>
                   <History />
                 </AuthRequired>
               </Route>
-              <Route path="/404">
-                <ErrorPage code="404" />
+              <Route exact path="/new-story">
+                <AuthRequired>
+                  <StoryEditorPage />
+                </AuthRequired>
               </Route>
               <Route path="/500">
                 <ErrorPage code="500" />
+              </Route>
+              <Route>
+                <ErrorPage code="404" />
               </Route>
             </Switch>
           </Router>

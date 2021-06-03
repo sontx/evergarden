@@ -17,9 +17,7 @@ export function HttpError() {
           return response;
         },
         (error) => {
-          if (error.response.status === 404) {
-            history.push("/404");
-          } else if (error.response.status === 500) {
+          if (error.response.status === 500) {
             history.push("/500");
           }
           return Promise.reject(error);

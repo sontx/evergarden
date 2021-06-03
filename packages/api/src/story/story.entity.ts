@@ -1,12 +1,12 @@
 import { Column, Entity, ObjectIdColumn, PrimaryGeneratedColumn } from "typeorm";
 import { IdType, StoryStatus } from "@evergarden/shared";
-import { Author } from "./author.entity";
-import { Genre } from "./genre.entity";
+import { Author } from "../author/author.entity";
+import { Genre } from "../genre/genre.entity";
 
 @Entity("stories")
 export class Story {
   @PrimaryGeneratedColumn()
-  @ObjectIdColumn({name: "_id"})
+  @ObjectIdColumn({ name: "_id" })
   id: IdType;
 
   @Column({ type: "string", nullable: false, unique: true })

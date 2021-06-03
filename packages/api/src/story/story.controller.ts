@@ -11,7 +11,8 @@ import {
   Post,
   Put,
   Query,
-  Req, UnauthorizedException,
+  Req,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -33,6 +34,7 @@ import { ReadingHistoryService } from "../reading-history/reading-history.servic
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
 import { StoryHistory } from "../reading-history/story-history.entity";
+import { delay, isDevelopment } from "../utils";
 
 @Controller("stories")
 export class StoryController {
@@ -53,7 +55,9 @@ export class StoryController {
     @Query("search") search,
     @Req() req,
   ): Promise<PaginationResult<GetStoryDto> | StorySearchBody[]> {
-    await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
+    if (isDevelopment()) {
+      await delay(2000);
+    }
 
     page = toInt(page);
     limit = toInt(limit);
@@ -140,8 +144,16 @@ export class StoryController {
   @Get(":id")
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
-  async getStory(@Param("id") id: string, @Query("url", ParseBoolPipe) url = false, @Req() req): Promise<GetStoryDto> {
+  async getStory(
+    @Param("id") id: string,
+    @Query("url", ParseBoolPipe) url = false,
+    @Query("check", ParseBoolPipe) check: boolean,
+    @Req() req,
+  ): Promise<GetStoryDto | boolean> {
     const storyData = url ? await this.storyService.getStoryByUrl(id) : await this.storyService.getStory(id);
+    if (check) {
+      return !!storyData;
+    }
     const story = this.storyService.toDto(storyData);
     if (story) {
       if (req.user && req.user.historyId) {
@@ -160,8 +172,11 @@ export class StoryController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
-  addStory(@Body() story: CreateStoryDto, @Req() req): Promise<GetStoryDto> {
-    return this.storyService.addStory(story, req.user);
+  async addStory(@Body() story: CreateStoryDto, @Req() req): Promise<GetStoryDto> {
+    if (isDevelopment()) {
+      await delay(2000);
+    }
+    return await this.storyService.addStory(story, req.user);
   }
 
   @Put(":id")
@@ -169,6 +184,10 @@ export class StoryController {
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   async updateStory(@Param("id") id: string, @Body() story: UpdateStoryDto, @Req() req): Promise<GetStoryDto> {
+    if (isDevelopment()) {
+      await delay(2000);
+    }
+
     const currentStory = await this.storyService.getStory(id);
     if (currentStory) {
       const isUploader = req.user.id === currentStory.uploadBy;

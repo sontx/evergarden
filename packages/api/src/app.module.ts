@@ -10,7 +10,15 @@ import { UserModule } from "./user/user.module";
 import { StoryModule } from "./story/story.module";
 import { ChapterModule } from "./chapter/chapter.module";
 import { ReadingHistoryModule } from "./reading-history/reading-history.module";
-import { SearchModule } from './search/search.module';
+import { SearchModule } from "./search/search.module";
+import { AuthorModule } from "./author/author.module";
+import { GenreModule } from "./genre/genre.module";
+import { User } from "./user/user.entity";
+import { Story } from "./story/story.entity";
+import { Chapter } from "./chapter/chapter.entity";
+import { Author } from "./author/author.entity";
+import { Genre } from "./genre/genre.entity";
+import { ReadingHistory } from "./reading-history/reading-history.entity";
 
 @Module({
   imports: [
@@ -28,12 +36,12 @@ import { SearchModule } from './search/search.module';
           type: "mongodb",
           url: configService.get("database.mongodb.connectionString"),
           database: configService.get("database.mongodb.databaseName"),
-          entities: [__dirname + "/**/*.entity{.ts,.js}"],
           ssl: true,
           useUnifiedTopology: true,
           useNewUrlParser: true,
           isGlobal: true,
           synchronize: true,
+          entities: [User, Story, Chapter, Author, Genre, ReadingHistory],
         };
       },
     }),
@@ -43,6 +51,8 @@ import { SearchModule } from './search/search.module';
     ChapterModule,
     ReadingHistoryModule,
     SearchModule,
+    AuthorModule,
+    GenreModule,
   ],
   controllers: [AppController],
   providers: [AppService],

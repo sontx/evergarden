@@ -70,13 +70,13 @@ export type Role = 'guest' | 'user' | 'mod' | 'admin';
 
 export type StoryStatus = 'ongoing' | 'full';
 
-export interface Author {
-  id: string;
+export interface GetAuthorDto {
+  id: IdType;
   name: string;
 }
 
-export interface Genre {
-  id: string;
+export interface GetGenreDto {
+  id: IdType;
   name: string;
 }
 
@@ -87,8 +87,8 @@ export interface GetStoryDto {
   description: string;
   thumbnail?: string;
   status: StoryStatus;
-  authors?: Author[];
-  genres?: Genre[];
+  authors?: GetAuthorDto[];
+  genres?: GetGenreDto[];
   created: Date;
   updated: Date;
   view: number;
@@ -123,13 +123,13 @@ export class CreateStoryDto {
   @Matches(/ongoing|full/s)
   status: StoryStatus;
 
-  @IsArray({ each: true })
+  @IsArray()
   @IsOptional()
-  authors?: Author[];
+  authors?: GetAuthorDto[];
 
-  @IsArray({ each: true })
+  @IsArray()
   @IsOptional()
-  genres?: Author[];
+  genres?: GetGenreDto[];
 
   @IsOptional()
   @IsBoolean()

@@ -18,6 +18,8 @@ import {
 } from "@evergarden/shared";
 import { ObjectID } from "mongodb";
 import StorySearchService from "./story-search.service";
+import { AuthorService } from "../author/author.service";
+import { GenreService } from "../genre/genre.service";
 
 @Injectable()
 export class StoryService {
@@ -26,14 +28,13 @@ export class StoryService {
   constructor(
     @InjectRepository(Story) private storyRepository: MongoRepository<Story>,
     private storySearchService: StorySearchService,
+    private authorService: AuthorService,
+    private genreService: GenreService,
   ) {
-    this.initializeSearchEngine()
-      .then(() => {
-        this.logger.debug("Initializing search engine...");
-      })
-      .finally(() => {
-        this.logger.debug("Initialized search engine!");
-      });
+    this.logger.debug("Initializing search engine...");
+    this.initializeSearchEngine().then(() => {
+      this.logger.debug("Initialized search engine!");
+    });
   }
 
   private async initializeSearchEngine() {
@@ -104,25 +105,27 @@ export class StoryService {
   }
 
   toDto(story: Story): GetStoryDto {
-    return {
-      id: story.id,
-      created: story.created,
-      updated: story.updated,
-      authors: story.authors,
-      lastChapter: story.lastChapter,
-      description: story.description,
-      genres: story.genres,
-      published: story.published,
-      upvote: story.upvote,
-      downvote: story.downvote,
-      status: story.status,
-      url: story.url,
-      thumbnail: story.thumbnail,
-      title: story.title,
-      view: story.view,
-      uploadBy: story.uploadBy,
-      updatedBy: story.updatedBy,
-    };
+    return (
+      story && {
+        id: story.id,
+        created: story.created,
+        updated: story.updated,
+        authors: story.authors,
+        lastChapter: story.lastChapter,
+        description: story.description,
+        genres: story.genres,
+        published: story.published,
+        upvote: story.upvote,
+        downvote: story.downvote,
+        status: story.status,
+        url: story.url,
+        thumbnail: story.thumbnail,
+        title: story.title,
+        view: story.view,
+        uploadBy: story.uploadBy,
+        updatedBy: story.updatedBy,
+      }
+    );
   }
 
   async addStory(story: CreateStoryDto, user: AuthUser): Promise<GetStoryDto> {
@@ -142,6 +145,9 @@ export class StoryService {
         } catch (e) {}
         story.url = newUrl;
       }
+
+      story.authors = await this.authorService.syncAuthors(story.authors || []);
+      story.genres = await this.genreService.getValidGenres(story.genres || []);
 
       const newStory = await this.storyRepository.create(story);
       const now = new Date();
@@ -186,8 +192,12 @@ export class StoryService {
 
   async updateStory(id: IdType, story: UpdateStoryDto, user: AuthUser): Promise<Story> {
     try {
+      const authors = await this.authorService.syncAuthors(story.authors || []);
+      const genres = await this.genreService.getValidGenres(story.genres || []);
       await this.storyRepository.update(id, {
         ...story,
+        authors,
+        genres,
         updated: new Date(),
         updatedBy: user.id,
       });

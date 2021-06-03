@@ -10,7 +10,7 @@ export async function fetchStory(id: IdType): Promise<GetStoryDto> {
 
 export async function fetchStoryByUrl(url: string): Promise<GetStoryDto> {
   const response = await api.get(`/api/stories/${url}`, {
-    params: { url: true },
+    params: { url: true, check: false },
   });
   return response.data;
 }

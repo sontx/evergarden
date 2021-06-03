@@ -26,6 +26,9 @@ import historyReducer from "../features/history/historySlice";
 import followingReducer from "../features/following/followingSlice";
 import recentReducer from "../features/recent/recentSlice";
 import searchReducer from "../features/search/searchSlice";
+import storyEditorReducer from "../features/story-editor/storyEditorSlice";
+import authorsReducer from "../features/authors/authorsSlice";
+import genresReducer from "../features/genres/genresSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
@@ -39,13 +42,25 @@ const reducers = combineReducers({
   settings: settingsReducer,
   history: historyReducer,
   search: searchReducer,
+  storyEditor: storyEditorReducer,
+  authors: authorsReducer,
+  genres: genresReducer
 });
 
 const persistConfig: PersistConfig<any> = {
   key: "root",
   storage,
   debug: process.env.NODE_ENV === "development",
-  blacklist: ["stories", "chapters", "chapter", "history", "story", "search"],
+  blacklist: [
+    "stories",
+    "chapters",
+    "chapter",
+    "history",
+    "story",
+    "search",
+    "storyEditor",
+    "authors"
+  ],
   migrate: (state: any) => {
     state = state || {};
     if (state.login) {

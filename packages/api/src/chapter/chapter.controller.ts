@@ -23,6 +23,7 @@ import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
 import { StoryService } from "../story/story.service";
 import { UserService } from "../user/user.service";
+import {delay, isDevelopment} from "../utils";
 
 @Controller()
 export class ChapterController {
@@ -39,7 +40,9 @@ export class ChapterController {
     @Param("storyId") storyId: string,
     @Param("chapterNo", ParseIntPipe) chapterNo: number,
   ): Promise<GetChapterDto> {
-    await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
+    if (isDevelopment()) {
+      await delay(2000);
+    }
 
     let chapter: GetChapterDto;
     if (storyId && chapterNo >= 0) {
@@ -65,7 +68,10 @@ export class ChapterController {
     @Query("limit", ParseIntPipe) limit = 10,
     @Query("includesContent", ParseBoolPipe) includesContent = false,
   ): Promise<PaginationResult<GetChapterDto>> {
-    await new Promise((resolve) => setTimeout(() => resolve(null), 2000));
+    if (isDevelopment()) {
+      await delay(2000);
+    }
+
     try {
       return await this.chapterService.getChapters(
         storyId,
