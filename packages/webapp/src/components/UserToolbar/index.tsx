@@ -10,16 +10,20 @@ import { logoutAsync, selectUser } from "../../features/auth/authSlice";
 import { SearchBox } from "../../features/search/SearchBox";
 import { StorySearchBody } from "@evergarden/shared";
 import { openStoryByUrl } from "../../features/story/storySlice";
+import {
+  selectShowSearchBox,
+  setShowSearchBox,
+} from "../../features/settings/settingsSlice";
 
 export function UserToolbar() {
-  const [showSearch, setShowSearch] = useState(false);
+  const showSearch = useAppSelector(selectShowSearchBox);
   const user = useAppSelector(selectUser);
   const history = useHistory();
   const dispatch = useAppDispatch();
 
   const handleShowSearch = useCallback(() => {
-    setShowSearch((prevState) => !prevState);
-  }, []);
+    dispatch(setShowSearchBox(!showSearch));
+  }, [dispatch, showSearch]);
 
   const handleLogin = useCallback(() => {
     history.push("/login");
@@ -31,7 +35,7 @@ export function UserToolbar() {
 
   const handleSelectSearchResult = useCallback(
     (story: StorySearchBody) => {
-      setShowSearch(false);
+      setShowSearchBox(false);
       dispatch(openStoryByUrl(history, story.url));
     },
     [dispatch, history],

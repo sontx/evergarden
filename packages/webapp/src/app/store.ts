@@ -66,6 +66,9 @@ const persistConfig: PersistConfig<any> = {
     if (state.login) {
       state.login.status = "none";
     }
+    if (state.settings) {
+      state.settings.showSearchBox = false;
+    }
     return Promise.resolve(state);
   },
 };

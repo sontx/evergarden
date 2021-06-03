@@ -26,6 +26,7 @@ import "./storyEditor.less";
 import { CreateStoryDto, mergeObjects } from "@evergarden/shared";
 import { isValidUrl, UrlBox } from "./UrlBox";
 import { Fab } from "react-tiny-fab";
+import { selectShowSearchBox } from "../settings/settingsSlice";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 
@@ -53,6 +54,7 @@ export function StoryEditor() {
   const saveModeRef = useRef(true);
   const story = useAppSelector(selectStory);
   const savingStatus = useAppSelector(selectStatus);
+  const showSearchBox = useAppSelector(selectShowSearchBox);
   const dispatch = useAppDispatch();
   const [value, setValue] = useState<CreateStoryDto>({
     url: "",
@@ -129,8 +131,6 @@ export function StoryEditor() {
     }
   }
 
-  console.log(value);
-
   return (
     <>
       <Form
@@ -173,17 +173,19 @@ export function StoryEditor() {
         </FormGroup>
       </Form>
 
-      <Fab
-        event="click"
-        onClick={isValid ? handleSave : undefined}
-        mainButtonStyles={{
-          width: "60px",
-          height: "60px",
-          background: isValid ? "#34c3ff" : "#a4a9b3",
-        }}
-        style={{ bottom: "40px", right: "20px", margin: 0 }}
-        icon={<Icon icon="save" />}
-      />
+      {!showSearchBox && (
+        <Fab
+          event="click"
+          onClick={isValid ? handleSave : undefined}
+          mainButtonStyles={{
+            width: "60px",
+            height: "60px",
+            background: isValid ? "#34c3ff" : "#a4a9b3",
+          }}
+          style={{ bottom: "40px", right: "20px", margin: 0 }}
+          icon={<Icon icon="save" />}
+        />
+      )}
 
       {savingStatus === "processing" && (
         <div>

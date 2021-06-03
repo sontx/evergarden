@@ -85,6 +85,7 @@ export interface SettingsSliceState {
   readingFontSize: SizeType;
   readingLineSpacing: SizeType;
   status: ProcessingStatus;
+  showSearchBox?: boolean;
 }
 
 const initialState: SettingsSliceState = {
@@ -111,6 +112,9 @@ export const settingsSlice = createSlice({
   reducers: {
     setFixedHeader: (state, { payload }) => {
       state.fixedHeader = payload;
+    },
+    setShowSearchBox: (state, {payload}) => {
+      state.showSearchBox = !!payload;
     },
     setCurrentTab: (state, { payload }) => {
       state.currentNavTab = payload;
@@ -148,6 +152,8 @@ export const settingsSlice = createSlice({
 
 export const selectFixedHeader = (state: RootState) =>
   state.settings.fixedHeader;
+export const selectShowSearchBox = (state: RootState) =>
+  state.settings.showSearchBox;
 export const selectCurrentTab = (state: RootState) =>
   state.settings.currentNavTab;
 export const selectLimitCountPerPage = (state: RootState) =>
@@ -161,6 +167,7 @@ export const selectReadingLineSpacing = (state: RootState) =>
 
 export const {
   setFixedHeader,
+  setShowSearchBox,
   setCurrentTab,
   setReadingFont,
   setReadingFontSize,
