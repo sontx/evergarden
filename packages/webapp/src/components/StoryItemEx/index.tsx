@@ -62,7 +62,7 @@ export const StoryItemEx = forwardRef(
             <div className="title">{story.title}</div>
             <span className="sub">
               {story.updated !== undefined && moment(story.updated).fromNow()}
-              {story.lastChapter && (
+              {story.lastChapter > 0 && (
                 <>
                   <Divider vertical={true} />
                   <span
