@@ -1,4 +1,4 @@
-import React, { ElementType, useCallback, useState } from "react";
+import React, { ElementType, ReactNode, useCallback, useState } from "react";
 import { ButtonGroup, Icon, IconButton, Input, InputGroup } from "rsuite";
 
 import "./index.less";
@@ -13,9 +13,11 @@ export interface UserListItemsChildrenProps {
 export function UserListStoriesPage({
   children: Children,
   title,
+  action,
 }: {
   children: ElementType<UserListItemsChildrenProps>;
   title: string;
+  action?: ReactNode;
 }) {
   const [filter, setFilter] = useState("");
   const [sort, setSort] = useState<SortType>("none");
@@ -25,7 +27,7 @@ export function UserListStoriesPage({
   }, []);
 
   return (
-    <UserPage title={title}>
+    <UserPage title={title} action={action}>
       <div className="user-list-stories-page-toolbar">
         <ButtonGroup>
           <IconButton

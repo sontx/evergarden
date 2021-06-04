@@ -10,16 +10,21 @@ import "./index.less";
 export function UserPage({
   children,
   title,
+  action,
 }: {
   children: ReactNode;
   title: string;
+  action?: ReactNode;
 }) {
   return (
     <AppContainer className="user-page-container">
       <SEO title={title} />
       <AppHeader />
       <Content style={{ padding: "10px" }}>
-        <h5 className="page-title">{title}</h5>
+        <div className="page-header">
+          <h5 className="page-title">{title}</h5>
+          {action && <div className="page-action">{action}</div>}
+        </div>
         {children}
       </Content>
       <AppFooter />

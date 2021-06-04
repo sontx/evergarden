@@ -1,11 +1,17 @@
 @import "~rsuite/lib/styles/themes/dark/index.less";
 
 .user-page-container {
-  .page-title {
-    display: inline-block;
-    border-bottom: 2px solid @link-color;
+  .page-header {
     margin-bottom: 20px;
-    color: #a4a9b3;
-    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    .page-title {
+      display: inline-block;
+      border-bottom: 2px solid @link-color;
+      color: #a4a9b3;
+      font-weight: 500;
+    }
   }
 }

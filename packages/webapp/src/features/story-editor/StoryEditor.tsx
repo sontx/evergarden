@@ -27,6 +27,7 @@ import { CreateStoryDto, mergeObjects } from "@evergarden/shared";
 import { isValidUrl, UrlBox } from "./UrlBox";
 import { Fab } from "react-tiny-fab";
 import { selectShowSearchBox } from "../settings/settingsSlice";
+import { useHistory } from "react-router-dom";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 
@@ -63,6 +64,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   const savingStatus = useAppSelector(selectStatus);
   const showSearchBox = useAppSelector(selectShowSearchBox);
   const dispatch = useAppDispatch();
+  const history = useHistory();
   const [value, setValue] = useState<CreateStoryDto>({
     url: "",
     title: "",
@@ -75,19 +77,15 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   });
 
   useEffect(() => {
-    if (story) {
+    if (story && mode === "create") {
       setValue((prevState) => mergeObjects(story, prevState));
     }
-  }, [story]);
+  }, [story, mode]);
 
   useEffect(() => {
     if (savingStatus === "success") {
       if (story) {
-        Notification.success({
-          title:
-            mode === "create" ? "Saved successfully" : "Updated successfully",
-          description: story.title,
-        });
+        history.push(`/user/story/${story.url}`);
       }
     } else if (savingStatus === "error") {
       Notification.error({
@@ -95,7 +93,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
         description: "May be some fields were invalid, please check again.",
       });
     }
-  }, [mode, savingStatus, story]);
+  }, [history, mode, savingStatus, story]);
 
   const handleChange = useCallback((newValue) => {
     setValue(newValue);
