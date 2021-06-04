@@ -3,17 +3,16 @@ import { searchAuthorAsync, selectAuthors, selectStatus } from "./authorsSlice";
 import { TagPicker } from "rsuite";
 // @ts-ignore
 import BarLoader from "react-bar-loader";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 
 import "./authorsPicker.less";
 import { GetAuthorDto } from "@evergarden/shared";
 import { useDebouncedCallback } from "use-debounce";
 
-export function AuthorsPicker({ onChange, ...rest }: any) {
+export function AuthorsPicker({ onChange, value: value, ...rest }: any) {
   const status = useAppSelector(selectStatus);
   const authors = useAppSelector(selectAuthors);
   const dispatch = useAppDispatch();
-  const [value, setValue] = useState<string[]>([]);
 
   const searchDebounce = useDebouncedCallback(
     (word: string) => {
@@ -32,21 +31,24 @@ export function AuthorsPicker({ onChange, ...rest }: any) {
     [searchDebounce],
   );
 
-  const handleChange = useCallback((newValue) => {
-    if (onChange) {
-      onChange(newValue);
-    }
-    setValue(newValue);
-  }, []);
+  const handleChange = useCallback(
+    (newValue) => {
+      if (onChange) {
+        onChange(newValue);
+      }
+    },
+    [onChange],
+  );
 
-  const handleClean = useCallback(() => {
-    setValue([]);
-  }, []);
+  const mergedAuthors: GetAuthorDto[] = (value as any[]).map((item) =>
+    typeof item !== "object"
+      ? {
+          name: item,
+          id: "",
+        }
+      : item,
+  );
 
-  const mergedAuthors: GetAuthorDto[] = value.map((item) => ({
-    name: item,
-    id: "",
-  }));
   for (const author of authors) {
     const found = mergedAuthors.find((item) => item.name === author.name);
     if (!found) {
@@ -60,9 +62,10 @@ export function AuthorsPicker({ onChange, ...rest }: any) {
         {...rest}
         placement="auto"
         onChange={handleChange}
-        onClean={handleClean}
         creatable
-        value={value}
+        value={((value || []) as any[]).map((item) =>
+          typeof item === "object" ? item.name : item,
+        )}
         placeholder="Authors..."
         menuClassName="authors-picker-menu"
         style={{ width: "100%" }}

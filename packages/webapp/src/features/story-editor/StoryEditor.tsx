@@ -33,7 +33,11 @@ const { StringType, ArrayType, BooleanType } = Schema.Types;
 const REQUIRED_FIELD = "This field is required";
 
 function wrapItems(keyName: string, items?: any[]): any {
-  return items ? items.map((item) => ({ [keyName]: item })) : [];
+  return items
+    ? items.map((item) => ({
+        [keyName]: typeof item === "object" ? item[keyName] : item,
+      }))
+    : [];
 }
 
 const model = Schema.Model({
