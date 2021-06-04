@@ -32,8 +32,8 @@ const { StringType, ArrayType, BooleanType } = Schema.Types;
 
 const REQUIRED_FIELD = "This field is required";
 
-function wrapItems(items?: any[]): any {
-  return items ? items.map((item) => ({ name: item })) : [];
+function wrapItems(keyName: string, items?: any[]): any {
+  return items ? items.map((item) => ({ [keyName]: item })) : [];
 }
 
 const model = Schema.Model({
@@ -106,8 +106,8 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   function handleSave() {
     const temp: CreateStoryDto = {
       ...value,
-      authors: wrapItems(value.authors),
-      genres: wrapItems(value.genres),
+      authors: wrapItems("name", value.authors),
+      genres: wrapItems("id", value.genres),
     };
     if (mode === "update") {
       if (story) {

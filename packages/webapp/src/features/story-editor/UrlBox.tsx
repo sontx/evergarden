@@ -60,8 +60,6 @@ export function UrlBox({ onChange, disabled, ...rest }: any) {
     showStatus = "error";
   }
 
-  console.log(rest);
-
   return (
     <div className="url-box-container">
       <InputGroup>

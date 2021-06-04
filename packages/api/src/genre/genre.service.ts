@@ -54,7 +54,7 @@ export class GenreService {
   async getValidGenres(genres: GetGenreDto[]): Promise<Genre[]> {
     const temp = [];
     for (const genre of genres) {
-      const found = await this.getByName(genre.name);
+      const found = await this.genreRepository.findOne(genre.id);
       if (found) {
         temp.push(found);
       }
