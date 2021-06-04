@@ -86,6 +86,7 @@ export interface GetStoryDto {
   title: string;
   description: string;
   thumbnail?: string;
+  cover?: string;
   status: StoryStatus;
   authors?: GetAuthorDto[];
   genres?: GetGenreDto[];
@@ -118,6 +119,9 @@ export class CreateStoryDto {
 
   @IsOptional()
   thumbnail?: string;
+
+  @IsOptional()
+  cover?: string;
 
   @IsString()
   @Matches(/ongoing|full/s)
@@ -236,4 +240,8 @@ export interface StorySearchResult {
       _source: StorySearchBody;
     }>;
   };
+}
+
+export interface ThumbnailUploadResponse {
+  tempFileName: string;
 }

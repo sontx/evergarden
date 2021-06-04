@@ -21,6 +21,9 @@ export class Story {
   @Column({ type: "string", nullable: true })
   thumbnail?: string;
 
+  @Column({ type: "string", nullable: true })
+  cover?: string;
+
   @Column({ type: "string", nullable: false })
   status: StoryStatus;
 
