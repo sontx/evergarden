@@ -2,21 +2,31 @@ import {
   CreateStoryDto,
   GetStoryDto,
   IdType,
-  UpdateStoryDto
+  UpdateStoryDto,
 } from "@evergarden/shared";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ProcessingStatus } from "../../utils/types";
 import { createStory, updateStory } from "./storyEditorAPI";
 import { RootState } from "../../app/store";
+import { fetchStoryByUrl } from "../story/storyAPI";
 
 interface StoryEditorState {
   story?: GetStoryDto;
   status: ProcessingStatus;
+  fetchingStatus: ProcessingStatus;
 }
 
 const initialState: StoryEditorState = {
   status: "none",
+  fetchingStatus: "none",
 };
+
+export const fetchUserStoryAsync = createAsyncThunk(
+  "storyEditor/fetch",
+  async (url: string) => {
+    return await fetchStoryByUrl(url);
+  },
+);
 
 export const createStoryAsync = createAsyncThunk(
   "storyEditor/create",
@@ -60,6 +70,16 @@ export const storyEditorSlice = createSlice({
     },
     [`${updateStoryAsync.rejected}`]: (state, { payload }) => {
       state.status = "error";
+    },
+    [`${fetchUserStoryAsync.pending}`]: (state) => {
+      state.fetchingStatus = "processing";
+    },
+    [`${fetchUserStoryAsync.fulfilled}`]: (state, { payload }) => {
+      state.fetchingStatus = "success";
+      state.story = payload;
+    },
+    [`${fetchUserStoryAsync.rejected}`]: (state, { payload }) => {
+      state.fetchingStatus = "error";
     },
   },
 });

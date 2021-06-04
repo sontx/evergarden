@@ -5,8 +5,9 @@ import { UserListItemsChildrenProps } from "../../components/UserListStoriesPage
 import { StoryItemEx } from "../../components/StoryItemEx";
 import { withAnimation } from "../../components/StoryItemEx/withAnimation";
 import { UserListStories } from "../../components/UserListStories";
+import { withContinueReading } from "../../components/StoryItemEx/withContinueReading";
 
-const StoryItemWrapper = withAnimation(StoryItemEx);
+const StoryItemWrapper = withContinueReading(withAnimation(StoryItemEx));
 
 export function RecentStories(props: UserListItemsChildrenProps) {
   const dispatch = useAppDispatch();

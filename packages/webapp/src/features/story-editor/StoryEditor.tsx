@@ -5,7 +5,7 @@ import {
   selectStory,
   updateStoryAsync,
 } from "./storyEditorSlice";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ControlLabel,
   Form,
@@ -50,8 +50,7 @@ const model = Schema.Model({
   published: BooleanType(),
 });
 
-export function StoryEditor() {
-  const saveModeRef = useRef(true);
+export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   const story = useAppSelector(selectStory);
   const savingStatus = useAppSelector(selectStatus);
   const showSearchBox = useAppSelector(selectShowSearchBox);
@@ -69,7 +68,6 @@ export function StoryEditor() {
 
   useEffect(() => {
     if (story) {
-      saveModeRef.current = false;
       setValue((prevState) => mergeObjects(story, prevState));
     }
   }, [story]);
@@ -78,19 +76,18 @@ export function StoryEditor() {
     if (savingStatus === "success") {
       if (story) {
         Notification.success({
-          title: saveModeRef.current
-            ? "Saved successfully"
-            : "Updated successfully",
+          title:
+            mode === "create" ? "Saved successfully" : "Updated successfully",
           description: story.title,
         });
       }
     } else if (savingStatus === "error") {
       Notification.error({
-        title: saveModeRef.current ? "Save failed" : "Update failed",
+        title: mode === "create" ? "Save failed" : "Update failed",
         description: "May be some fields were invalid, please check again.",
       });
     }
-  }, [savingStatus, story]);
+  }, [mode, savingStatus, story]);
 
   const handleChange = useCallback((newValue) => {
     setValue(newValue);
@@ -112,7 +109,7 @@ export function StoryEditor() {
       authors: wrapItems(value.authors),
       genres: wrapItems(value.genres),
     };
-    if (!saveModeRef.current) {
+    if (mode === "update") {
       if (story) {
         dispatch(
           updateStoryAsync({
@@ -142,7 +139,12 @@ export function StoryEditor() {
       >
         <FormGroup>
           <ControlLabel>Url slug</ControlLabel>
-          <FormControl name="url" accepter={UrlBox} value={value.title} />
+          <FormControl
+            name="url"
+            disabled={mode === "update"}
+            accepter={UrlBox}
+            value={mode === "update" ? value.url : value.title}
+          />
         </FormGroup>
         <FormGroup>
           <ControlLabel>Title</ControlLabel>

@@ -5,8 +5,9 @@ import { UserListItemsChildrenProps } from "../../components/UserListStoriesPage
 import { withDeleteAction } from "./withDeleteAction";
 import { StoryItemEx } from "../../components/StoryItemEx";
 import { UserListStories } from "../../components/UserListStories";
+import { withContinueReading } from "../../components/StoryItemEx/withContinueReading";
 
-const FollowingItemWrapper = withDeleteAction(StoryItemEx);
+const FollowingItemWrapper = withContinueReading(withDeleteAction(StoryItemEx));
 
 export function FollowingStories(props: UserListItemsChildrenProps) {
   const dispatch = useAppDispatch();

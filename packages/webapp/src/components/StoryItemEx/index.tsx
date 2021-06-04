@@ -5,9 +5,6 @@ import { Divider } from "rsuite";
 import classNames from "classnames";
 import { StandardProps } from "rsuite/es/@types/common";
 import { ElementType, forwardRef, ReactNode, useCallback } from "react";
-import { openReading } from "../../features/story/storySlice";
-import { useAppDispatch } from "../../app/hooks";
-import { useHistory } from "react-router-dom";
 import { useIntl } from "react-intl";
 
 import "./index.less";
@@ -19,6 +16,7 @@ export interface StoryItemExProps extends StandardProps {
   BottomSub?: ElementType<{ story: GetStoryDto }>;
   mainNoWrap?: boolean;
   additionPadding?: boolean;
+  onClick?: (story: GetStoryDto) => void;
 }
 
 export const StoryItemEx = forwardRef(
@@ -30,19 +28,18 @@ export const StoryItemEx = forwardRef(
       BottomSub,
       mainNoWrap,
       additionPadding,
+      onClick,
       ...rest
     }: StoryItemExProps,
     ref: any,
   ) => {
-    const dispatch = useAppDispatch();
-    const history = useHistory();
     const intl = useIntl();
 
     const handleClick = useCallback(() => {
-      if (story.history) {
-        dispatch(openReading(history, story, story.history.currentChapterNo));
+      if (onClick) {
+        onClick(story);
       }
-    }, [dispatch, history, story]);
+    }, [onClick, story]);
 
     return (
       <div

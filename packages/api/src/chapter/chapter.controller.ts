@@ -23,7 +23,7 @@ import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
 import { StoryService } from "../story/story.service";
 import { UserService } from "../user/user.service";
-import {delay, isDevelopment} from "../utils";
+import { delay, isDevelopment, isOwnerOrGod } from "../utils";
 
 @Controller()
 export class ChapterController {
@@ -105,10 +105,7 @@ export class ChapterController {
       throw new BadRequestException("Story's status is full, so you cann't add more chapters");
     }
 
-    const { id: userId, role } = req.user || {};
-    const isOwner = story.uploadBy === userId;
-    const isAdmin = role === "admin";
-    if (!isOwner && !isAdmin) {
+    if (!isOwnerOrGod(req, story)) {
       throw new ForbiddenException();
     }
 

@@ -13,7 +13,7 @@ export function isValidUrl(st: string): boolean {
   return !!(st && st.length >= 4) && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(st);
 }
 
-export function UrlBox({ onChange, ...rest }: any) {
+export function UrlBox({ onChange, disabled, ...rest }: any) {
   const touchedRef = useRef(false);
   const renderValueRef = useRef("");
   const [value, setValue] = useState("");
@@ -51,7 +51,7 @@ export function UrlBox({ onChange, ...rest }: any) {
   );
 
   const isValid = isValidUrl(renderValueRef.current);
-  if (prevRenderValue !== renderValueRef.current && isValid) {
+  if (!disabled && prevRenderValue !== renderValueRef.current && isValid) {
     checkUrlIsExisting(renderValueRef.current);
   }
 
@@ -60,30 +60,37 @@ export function UrlBox({ onChange, ...rest }: any) {
     showStatus = "error";
   }
 
+  console.log(rest);
+
   return (
     <div className="url-box-container">
       <InputGroup>
         <Input
           {...rest}
+          disabled={disabled}
           value={renderValueRef.current}
-          onChange={handleChange}
+          onChange={!disabled ? handleChange : undefined}
           style={touchedRef.current ? {} : { color: "#a4a9b3" }}
         />
-        <InputGroup.Button
-          onClick={() => checkUrlIsExisting(renderValueRef.current)}
-        >
-          {(showStatus === "none" || showStatus === "processing") && (
-            <Icon icon="check" />
-          )}
-          {showStatus === "success" && (
-            <Icon icon="check" style={{ color: "green" }} />
-          )}
-          {showStatus === "error" && (
-            <Icon icon="check" style={{ color: "red" }} />
-          )}
-        </InputGroup.Button>
+        {!disabled && (
+          <InputGroup.Button
+            onClick={() => checkUrlIsExisting(renderValueRef.current)}
+          >
+            {(showStatus === "none" || showStatus === "processing") && (
+              <Icon icon="check" />
+            )}
+            {showStatus === "success" && (
+              <Icon icon="check" style={{ color: "green" }} />
+            )}
+            {showStatus === "error" && (
+              <Icon icon="check" style={{ color: "red" }} />
+            )}
+          </InputGroup.Button>
+        )}
       </InputGroup>
-      {status === "processing" && <BarLoader color="#169de0" height="1" />}
+      {!disabled && status === "processing" && (
+        <BarLoader color="#169de0" height="1" />
+      )}
     </div>
   );
 }

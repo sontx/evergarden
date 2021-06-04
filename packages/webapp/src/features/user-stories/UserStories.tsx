@@ -4,10 +4,13 @@ import { UserListItemsChildrenProps } from "../../components/UserListStoriesPage
 import { StoryItemEx } from "../../components/StoryItemEx";
 import { UserListStories } from "../../components/UserListStories";
 import { fetchUserStoriesAsync, selectStories } from "./userStoriesSlice";
-import {withDeleteAction} from "./withDeleteAction";
-import {withCustomizedItem} from "./withCustomizedItem";
+import { withDeleteAction } from "./withDeleteAction";
+import { withCustomizedItem } from "./withCustomizedItem";
+import { withEditUserStory } from "./withEditUserStory";
 
-const StoryItemWrapper = withCustomizedItem(withDeleteAction(StoryItemEx));
+const StoryItemWrapper = withEditUserStory(
+  withCustomizedItem(withDeleteAction(StoryItemEx)),
+);
 
 export function UserStories(props: UserListItemsChildrenProps) {
   const dispatch = useAppDispatch();

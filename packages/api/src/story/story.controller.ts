@@ -1,6 +1,7 @@
 import {
   Body,
-  Controller, Delete,
+  Controller,
+  Delete,
   ForbiddenException,
   forwardRef,
   Get,
@@ -34,7 +35,7 @@ import { ReadingHistoryService } from "../reading-history/reading-history.servic
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
 import { StoryHistory } from "../reading-history/story-history.entity";
-import { delay, isDevelopment } from "../utils";
+import { delay, isDevelopment, isOwnerOrGod } from "../utils";
 
 @Controller("stories")
 export class StoryController {
@@ -158,6 +159,11 @@ export class StoryController {
     if (check) {
       return !!storyData;
     }
+
+    if (storyData && !isOwnerOrGod(req, storyData) && !storyData.published) {
+      throw new ForbiddenException();
+    }
+
     const story = this.storyService.toDto(storyData);
     if (story) {
       if (req.user && req.user.historyId) {
@@ -194,9 +200,7 @@ export class StoryController {
 
     const currentStory = await this.storyService.getStory(id);
     if (currentStory) {
-      const isUploader = req.user.id === currentStory.uploadBy;
-      const isAdminOrMod = req.user.role === "admin" || req.user.role === "mod";
-      if (isUploader || isAdminOrMod) {
+      if (isOwnerOrGod(req, currentStory)) {
         const storyData = await this.storyService.updateStory(id, story, req.user);
         return this.storyService.toDto(storyData);
       }
@@ -219,9 +223,7 @@ export class StoryController {
       throw new NotFoundException();
     }
 
-    const isUploader = req.user.id === story.uploadBy;
-    const isAdminOrMod = req.user.role === "admin" || req.user.role === "mod";
-    if (!isUploader && !isAdminOrMod) {
+    if (!isOwnerOrGod(req, story)) {
       throw new ForbiddenException();
     }
 

@@ -48,14 +48,19 @@ const App = () => (
                   <History />
                 </AuthRequired>
               </Route>
-              <Route exact path="/user/new-story">
+              <Route exact path="/user/stories">
+                <AuthRequired>
+                  <UserStoriesPage />
+                </AuthRequired>
+              </Route>
+              <Route exact path="/user/stories/new">
                 <AuthRequired>
                   <StoryEditorPage />
                 </AuthRequired>
               </Route>
-              <Route exact path="/user/stories">
+              <Route exact path="/user/stories/:url">
                 <AuthRequired>
-                  <UserStoriesPage />
+                  <StoryEditorPage />
                 </AuthRequired>
               </Route>
               <Route path="/500">

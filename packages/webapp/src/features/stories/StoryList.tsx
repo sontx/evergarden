@@ -113,7 +113,6 @@ export function StoryList({ category }: { category: StoryCategory }) {
                     <List.Item
                       key={itemProps.index}
                       style={itemProps.style}
-                      onClick={() => handleClick(data)}
                     >
                       {isItemLoaded(itemProps.index) ? (
                         <Animation.Bounce in={true}>
@@ -122,6 +121,7 @@ export function StoryList({ category }: { category: StoryCategory }) {
                               <StoryItemWrapper
                                 story={data}
                                 mainNoWrap
+                                onClick={handleClick}
                                 RightSub={ViewCountSub}
                               />
                             </div>
