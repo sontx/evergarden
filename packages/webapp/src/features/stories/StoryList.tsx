@@ -122,7 +122,7 @@ export function StoryList({ category }: { category: StoryCategory }) {
                               <StoryItemWrapper
                                 story={data}
                                 mainNoWrap
-                                Sub={ViewCountSub}
+                                RightSub={ViewCountSub}
                               />
                             </div>
                           )}

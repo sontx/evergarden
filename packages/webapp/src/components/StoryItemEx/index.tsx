@@ -15,7 +15,8 @@ import "./index.less";
 export interface StoryItemExProps extends StandardProps {
   story: GetStoryDto;
   children?: ReactNode;
-  Sub?: ElementType<{ story: GetStoryDto }>;
+  RightSub?: ElementType<{ story: GetStoryDto }>;
+  BottomSub?: ElementType<{ story: GetStoryDto }>;
   mainNoWrap?: boolean;
   additionPadding?: boolean;
 }
@@ -25,7 +26,8 @@ export const StoryItemEx = forwardRef(
     {
       story,
       children,
-      Sub,
+      RightSub,
+      BottomSub,
       mainNoWrap,
       additionPadding,
       ...rest
@@ -60,32 +62,38 @@ export const StoryItemEx = forwardRef(
           </div>
           <div>
             <div className="title">{story.title}</div>
-            <span className="sub">
-              {story.updated !== undefined && moment(story.updated).fromNow()}
-              {story.lastChapter > 0 && (
-                <>
-                  <Divider vertical={true} />
-                  <span
-                    className={classNames({
-                      "new-chapter":
-                        story.history &&
-                        story.history.isFollowing &&
-                        story.lastChapter > story.history.currentChapterNo,
-                    })}
-                  >
-                    {intl.formatMessage(
-                      { id: "chapterTitle" },
-                      { chapterNo: story.lastChapter },
-                    )}
-                  </span>
-                </>
-              )}
-            </span>
+            {BottomSub ? (
+              <div className="sub">
+                <BottomSub story={story} />
+              </div>
+            ) : (
+              <span className="sub">
+                {story.updated !== undefined && moment(story.updated).fromNow()}
+                {story.lastChapter > 0 && (
+                  <>
+                    <Divider vertical={true} />
+                    <span
+                      className={classNames({
+                        "new-chapter":
+                          story.history &&
+                          story.history.isFollowing &&
+                          story.lastChapter > story.history.currentChapterNo,
+                      })}
+                    >
+                      {intl.formatMessage(
+                        { id: "chapterTitle" },
+                        { chapterNo: story.lastChapter },
+                      )}
+                    </span>
+                  </>
+                )}
+              </span>
+            )}
           </div>
         </div>
-        {Sub ? (
+        {RightSub ? (
           <div className="sub sub--left">
-            <Sub story={story} />
+            <RightSub story={story} />
           </div>
         ) : (
           story.history &&

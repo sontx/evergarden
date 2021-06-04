@@ -5,9 +5,9 @@ import { StoryItemEx } from "../../components/StoryItemEx";
 import { UserListStories } from "../../components/UserListStories";
 import { fetchUserStoriesAsync, selectStories } from "./userStoriesSlice";
 import {withDeleteAction} from "./withDeleteAction";
-import {withPublishedSub} from "./withPublishedSub";
+import {withCustomizedItem} from "./withCustomizedItem";
 
-const StoryItemWrapper = withPublishedSub(withDeleteAction(StoryItemEx));
+const StoryItemWrapper = withCustomizedItem(withDeleteAction(StoryItemEx));
 
 export function UserStories(props: UserListItemsChildrenProps) {
   const dispatch = useAppDispatch();
