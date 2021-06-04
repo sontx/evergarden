@@ -27,7 +27,7 @@ export function GenresPicker({ value, ...rest }: any) {
           typeof item === "object" ? item.id : item,
         )}
         creatable={false}
-        placeholder="Genres..."
+        placeholder="Genres"
         menuClassName="genres-picker-menu"
         style={{ width: "100%" }}
         data={genres as any}

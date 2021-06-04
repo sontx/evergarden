@@ -65,6 +65,7 @@ export function UrlBox({ onChange, disabled, ...rest }: any) {
       <InputGroup>
         <Input
           {...rest}
+          placeholder="Url slug"
           disabled={disabled}
           value={renderValueRef.current}
           onChange={!disabled ? handleChange : undefined}

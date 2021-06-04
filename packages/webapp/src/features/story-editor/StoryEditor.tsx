@@ -33,8 +33,36 @@ const { StringType, ArrayType, BooleanType } = Schema.Types;
 
 const REQUIRED_FIELD = "This field is required";
 
-function ToggleWrapper({ value, ...rest }: any) {
-  return <Toggle {...rest} checked={!!value} />;
+function PublishedFormControl({ value, ...rest }: any) {
+  return (
+    <Toggle
+      {...rest}
+      checked={!!value}
+      checkedChildren={<span>Published</span>}
+      unCheckedChildren={<span>Unpublished</span>}
+    />
+  );
+}
+
+function StatusFormControl({ value, onChange, ...rest }: any) {
+  const handleChange = useCallback(
+    (checked) => {
+      if (onChange) {
+        onChange(checked ? "full" : "ongoing");
+      }
+    },
+    [onChange],
+  );
+
+  return (
+    <Toggle
+      {...rest}
+      onChange={handleChange}
+      checked={value === "full"}
+      checkedChildren={<span>Full</span>}
+      unCheckedChildren={<span>Ongoing</span>}
+    />
+  );
 }
 
 function wrapItems(keyName: string, items?: any[]): any {
@@ -77,7 +105,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   });
 
   useEffect(() => {
-    if (story && mode === "create") {
+    if (story && mode === "update") {
       setValue((prevState) => mergeObjects(story, prevState));
     }
   }, [story, mode]);
@@ -144,7 +172,6 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
         onChange={handleChange}
       >
         <FormGroup>
-          <ControlLabel>Url slug</ControlLabel>
           <FormControl
             name="url"
             disabled={mode === "update"}
@@ -153,31 +180,25 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
           />
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Title</ControlLabel>
-          <FormControl name="title" />
+          <FormControl name="title" placeholder="Title" />
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Authors</ControlLabel>
           <FormControl name="authors" accepter={AuthorsPicker} />
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Genres</ControlLabel>
           <FormControl name="genres" accepter={GenresPicker} />
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Description</ControlLabel>
-          <FormControl name="description" rows={5} componentClass="textarea" />
+          <FormControl
+            name="description"
+            rows={5}
+            componentClass="textarea"
+            placeholder="Description"
+          />
         </FormGroup>
-        <FormGroup className="group-inline">
-          <ControlLabel>Status</ControlLabel>
-          <FormControl name="status" accepter={RadioGroup} inline>
-            <Radio value={"ongoing"}>Ongoing</Radio>
-            <Radio value={"full"}>Full</Radio>
-          </FormControl>
-        </FormGroup>
-        <FormGroup className="group-inline">
-          <ControlLabel>Published</ControlLabel>
-          <FormControl name="published" accepter={ToggleWrapper} />
+        <FormGroup className="form-group-inline">
+          <FormControl name="status" accepter={StatusFormControl} />
+          <FormControl name="published" accepter={PublishedFormControl} />
         </FormGroup>
       </Form>
 

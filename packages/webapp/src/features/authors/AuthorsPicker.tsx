@@ -66,7 +66,7 @@ export function AuthorsPicker({ onChange, value: value, ...rest }: any) {
         value={((value || []) as any[]).map((item) =>
           typeof item === "object" ? item.name : item,
         )}
-        placeholder="Authors..."
+        placeholder="Authors"
         menuClassName="authors-picker-menu"
         style={{ width: "100%" }}
         data={mergedAuthors}
