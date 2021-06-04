@@ -12,7 +12,7 @@ export function withEditUserStory(Component: ElementType) {
       (story) => {
         if (story) {
           dispatch(setStory(story));
-          history.push(`/user/stories/${story.url}`);
+          history.push(`/user/story/${story.url}`);
         }
       },
       [dispatch, history],

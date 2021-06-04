@@ -12,7 +12,7 @@ function PublishSub({ story }: { story: GetStoryDto }) {
 
 function BottomSub({ story }: { story: GetStoryDto }) {
   return (
-    <>
+    <div style={{ marginTop: "2px" }}>
       <span>
         {story.view} <Icon icon="eye" />
       </span>
@@ -24,7 +24,7 @@ function BottomSub({ story }: { story: GetStoryDto }) {
       <span>
         {story.downvote} <Icon icon="thumbs-down" />
       </span>
-    </>
+    </div>
   );
 }
 

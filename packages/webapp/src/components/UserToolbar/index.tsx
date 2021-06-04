@@ -50,7 +50,7 @@ export function UserToolbar() {
   }, [history]);
 
   const handleShowUserStories = useCallback(() => {
-    history.push("/user/stories");
+    history.push("/user/story");
   }, [history]);
 
   return (
