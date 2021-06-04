@@ -32,6 +32,10 @@ const { StringType, ArrayType, BooleanType } = Schema.Types;
 
 const REQUIRED_FIELD = "This field is required";
 
+function ToggleWrapper({ value, ...rest }: any) {
+  return <Toggle {...rest} checked={!!value} />;
+}
+
 function wrapItems(keyName: string, items?: any[]): any {
   return items
     ? items.map((item) => ({
@@ -175,7 +179,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
         </FormGroup>
         <FormGroup className="group-inline">
           <ControlLabel>Published</ControlLabel>
-          <FormControl name="published" accepter={Toggle} />
+          <FormControl name="published" accepter={ToggleWrapper} />
         </FormGroup>
       </Form>
 
