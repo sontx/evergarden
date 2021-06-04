@@ -250,4 +250,8 @@ export class StoryService {
       await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: result });
     }
   }
+
+  async deleteStory(storyId: IdType): Promise<void> {
+    await this.storyRepository.delete(storyId);
+  }
 }

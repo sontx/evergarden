@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   ForbiddenException,
   forwardRef,
   Get,
@@ -204,5 +204,27 @@ export class StoryController {
     } else {
       throw new NotFoundException();
     }
+  }
+
+  @Delete(":id")
+  @Role("user")
+  @UseGuards(JwtGuard, RolesGuard)
+  async deleteStory(@Param("id") id: string, @Req() req) {
+    if (isDevelopment()) {
+      await delay(2000);
+    }
+
+    const story = await this.storyService.getStory(id);
+    if (!story) {
+      throw new NotFoundException();
+    }
+
+    const isUploader = req.user.id === story.uploadBy;
+    const isAdminOrMod = req.user.role === "admin" || req.user.role === "mod";
+    if (!isUploader && !isAdminOrMod) {
+      throw new ForbiddenException();
+    }
+
+    await this.storyService.deleteStory(story.id);
   }
 }

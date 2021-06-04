@@ -15,7 +15,8 @@ import { ErrorPage } from "./pages/ErrorPage";
 import { Following } from "./pages/Following";
 import { History } from "./pages/History";
 import { AuthRequired } from "./components/AuthRequired";
-import {StoryEditorPage} from "./pages/StoryEditor";
+import { StoryEditorPage } from "./pages/StoryEditor";
+import { UserStoriesPage } from "./pages/UserStories";
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
@@ -47,9 +48,14 @@ const App = () => (
                   <History />
                 </AuthRequired>
               </Route>
-              <Route exact path="/new-story">
+              <Route exact path="/user/new-story">
                 <AuthRequired>
                   <StoryEditorPage />
+                </AuthRequired>
+              </Route>
+              <Route exact path="/user/stories">
+                <AuthRequired>
+                  <UserStoriesPage />
                 </AuthRequired>
               </Route>
               <Route path="/500">

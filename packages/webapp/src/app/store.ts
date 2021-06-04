@@ -29,6 +29,7 @@ import searchReducer from "../features/search/searchSlice";
 import storyEditorReducer from "../features/story-editor/storyEditorSlice";
 import authorsReducer from "../features/authors/authorsSlice";
 import genresReducer from "../features/genres/genresSlice";
+import userStoriesReducer from "../features/user-stories/userStoriesSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
@@ -44,7 +45,8 @@ const reducers = combineReducers({
   search: searchReducer,
   storyEditor: storyEditorReducer,
   authors: authorsReducer,
-  genres: genresReducer
+  genres: genresReducer,
+  userStories: userStoriesReducer,
 });
 
 const persistConfig: PersistConfig<any> = {
@@ -59,7 +61,7 @@ const persistConfig: PersistConfig<any> = {
     "story",
     "search",
     "storyEditor",
-    "authors"
+    "authors",
   ],
   migrate: (state: any) => {
     state = state || {};
