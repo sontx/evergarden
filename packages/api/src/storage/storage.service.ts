@@ -114,8 +114,8 @@ export class StorageService {
     fileName = this.revertThumbnailName(fileName);
 
     const uploadDir = path.resolve(this.configService.get("upload.dir"));
-    const tempFilePath = path.resolve(uploadDir, category, fileName);
-    await this.deleteFile(tempFilePath, ignoreError);
+    const filePath = path.resolve(uploadDir, category, fileName);
+    await this.deleteFile(filePath, ignoreError);
   }
 
   revertThumbnailName(thumbnailUrl: string | undefined): string {

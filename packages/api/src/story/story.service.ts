@@ -33,6 +33,7 @@ export class StoryService {
     private genreService: GenreService,
     private storageService: StorageService,
   ) {
+    this.toDto = this.toDto.bind(this);
     this.logger.debug("Initializing search engine...");
     this.initializeSearchEngine().then(() => {
       this.logger.debug("Initialized search engine!");
@@ -54,19 +55,14 @@ export class StoryService {
     findOption?: FindManyOptions<Story>,
     includeUnpublished?: boolean,
   ): Promise<PaginationResult<GetStoryDto>> {
-    try {
-      const { where = {}, ...rest } = findOption || ({} as any);
-      const result = await this.storyRepository.findAndCount({
-        ...rest,
-        where: includeUnpublished ? where : { published: true, ...where },
-        take: options.limit,
-        skip: isFinite(options.skip) ? options.skip : options.page * options.limit,
-      });
-      return this.toPaginationResult(options, result);
-    } catch (e) {
-      this.logger.warn("Error while querying stories", e);
-      throw new BadRequestException();
-    }
+    const { where = {}, ...rest } = findOption || ({} as any);
+    const result = await this.storyRepository.findAndCount({
+      ...rest,
+      where: includeUnpublished ? where : { published: true, ...where },
+      take: options.limit,
+      skip: isFinite(options.skip) ? options.skip : options.page * options.limit,
+    });
+    return this.toPaginationResult(options, result);
   }
 
   private toPaginationResult(options: PaginationOptions, result: [Story[], number]): PaginationResult<GetStoryDto> {
@@ -115,7 +111,8 @@ export class StoryService {
   }
 
   async search(text: string): Promise<StorySearchBody[]> {
-    return await this.storySearchService.search(text);
+    const result = await this.storySearchService.search(text);
+    return result.map((item) => ({ ...item, thumbnail: this.storageService.makeThumbnailUrl(item.thumbnail) }));
   }
 
   toDto(story: Story): GetStoryDto {
