@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { Story } from "./story.entity";
 import { StorySearchBody, StorySearchResult } from "@evergarden/shared";
+import { StorageService } from "../storage/storage.service";
 
 @Injectable()
 export default class StorySearchService {
@@ -9,7 +10,7 @@ export default class StorySearchService {
 
   private readonly logger = new Logger(StorySearchService.name);
 
-  constructor(private readonly elasticsearchService: ElasticsearchService) {}
+  constructor(private readonly elasticsearchService: ElasticsearchService, private storageService: StorageService) {}
 
   async createIndex(stories: Story[]) {
     const checkIndex = await this.elasticsearchService.indices.exists({ index: StorySearchService.index });
