@@ -282,7 +282,7 @@ export class StoryService {
 
   async increaseCount(storyId: IdType) {
     try {
-      await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: { view: 1 } });
+      await this.storyRepository.findOneAndUpdate({ _id: new ObjectID(storyId) }, { $inc: { view: 1 } });
     } catch (e) {
       this.logger.warn(`Error while increase view count: ${storyId}`, e);
     }
@@ -291,7 +291,7 @@ export class StoryService {
   async changeRating(storyId: IdType, oldVote?: VoteType, newVote?: VoteType) {
     const result = calculateVoteCount(oldVote, newVote);
     if (result) {
-      await this.storyRepository.findOneAndUpdate({ id: new ObjectID(storyId) }, { $inc: result });
+      await this.storyRepository.findOneAndUpdate({ _id: new ObjectID(storyId) }, { $inc: result });
     }
   }
 
