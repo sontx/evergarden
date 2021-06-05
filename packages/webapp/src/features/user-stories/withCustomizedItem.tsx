@@ -1,14 +1,7 @@
 import { ElementType } from "react";
 import { GetStoryDto } from "@evergarden/shared";
 import { Divider, Icon } from "rsuite";
-
-function PublishSub({ story }: { story: GetStoryDto }) {
-  return story.published ? (
-    <span style={{ color: "green", fontWeight: "bold" }}>Published</span>
-  ) : (
-    <span style={{ color: "rgba(255, 255, 255, 0.45)" }}>Unpublished</span>
-  );
-}
+import { PublishSub } from "../../components/PublishSub";
 
 function BottomSub({ story }: { story: GetStoryDto }) {
   return (
@@ -34,7 +27,9 @@ export function withCustomizedItem(Component: ElementType) {
       <Component
         story={story}
         {...rest}
-        RightSub={PublishSub}
+        RightSub={({ story }: { story: GetStoryDto }) => (
+          <PublishSub published={story.published} />
+        )}
         BottomSub={BottomSub}
       />
     );

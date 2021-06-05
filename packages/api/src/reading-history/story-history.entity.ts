@@ -1,8 +1,8 @@
-import { Column, ObjectIdColumn } from "typeorm";
+import { Column } from "typeorm";
 import { IdType, VoteType } from "@evergarden/shared";
 
 export class StoryHistory {
-  @ObjectIdColumn({ name: "storyId" })
+  @Column({ type: "string" })
   storyId: IdType;
 
   @Column({ type: "number", nullable: false })

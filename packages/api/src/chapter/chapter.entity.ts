@@ -8,7 +8,7 @@ export class Chapter {
   @ObjectIdColumn({ name: "_id" })
   id: ObjectID;
 
-  @ObjectIdColumn({ name: "storyId" })
+  @Column({ type: "string" })
   storyId: IdType;
 
   @Column({ type: "number", nullable: false })

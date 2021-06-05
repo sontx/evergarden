@@ -17,6 +17,7 @@ import { History } from "./pages/History";
 import { AuthRequired } from "./components/AuthRequired";
 import { StoryEditorPage } from "./pages/StoryEditor";
 import { UserStoriesPage } from "./pages/UserStories";
+import { UserChaptersPage } from "./pages/UserChapters";
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
@@ -61,6 +62,11 @@ const App = () => (
               <Route exact path="/user/story/:url">
                 <AuthRequired>
                   <StoryEditorPage />
+                </AuthRequired>
+              </Route>
+              <Route exact path="/user/story/:url/chapter">
+                <AuthRequired>
+                  <UserChaptersPage />
                 </AuthRequired>
               </Route>
               <Route path="/500">

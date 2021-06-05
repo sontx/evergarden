@@ -36,6 +36,6 @@ export class User {
   @Column((type) => UserSettings)
   settings: UserSettings;
 
-  @ObjectIdColumn({ name: "historyId" })
+  @Column({ type: "string" })
   historyId?: IdType;
 }

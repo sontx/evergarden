@@ -55,9 +55,9 @@ export class Story {
   @Column({ type: "number", nullable: true })
   published?: boolean;
 
-  @ObjectIdColumn()
+  @Column({ type: "string" })
   uploadBy: IdType;
 
-  @ObjectIdColumn()
+  @Column({ type: "string" })
   updatedBy: IdType;
 }

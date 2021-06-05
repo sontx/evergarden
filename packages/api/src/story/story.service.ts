@@ -254,7 +254,7 @@ export class StoryService {
 
   async getStory(id: IdType): Promise<Story | null> {
     try {
-      return await this.storyRepository.findOne(new ObjectID(id) as any);
+      return await this.storyRepository.findOne(id);
     } catch (e) {
       this.logger.warn(`Error while querying story: ${id}`, e);
       throw new BadRequestException();

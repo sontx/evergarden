@@ -21,7 +21,7 @@ import { selectReadingFont } from "../../features/settings/settingsSlice";
 import { withScrollSync } from "./withScrollSync";
 import { withChapterNoSync } from "./withChapterNoSync";
 import { withViewCountSync } from "./withViewCountSync";
-import { selectIsLoggedIn, selectUser } from "../../features/auth/authSlice";
+import { selectIsLoggedIn } from "../../features/auth/authSlice";
 
 const ReadingWrapper = withViewCountSync(
   withScrollSync(withChapterNoSync(ReadingMobile)),

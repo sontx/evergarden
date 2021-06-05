@@ -9,6 +9,8 @@ import { ReactNode, useEffect, useRef } from "react";
 import "./index.less";
 import InfiniteLoader from "react-window-infinite-loader";
 import { fetchRangeChapters } from "../../features/chapters/chaptersAPI";
+import { StandardProps } from "rsuite/es/@types/common";
+import classNames from "classnames";
 
 export function ChapterSub({ chapter }: { chapter: GetChapterDto }) {
   return (
@@ -35,13 +37,15 @@ export function ChaptersPanel({
   renderAction,
   renderItemSub,
   sort = "9-0",
+  className,
+  style,
 }: {
   story?: GetStoryDto;
   onSelect: (chapter: GetChapterDto | number) => void;
   renderItemSub?: (chapter: GetChapterDto | number) => ReactNode;
   renderAction?: (chapter: GetChapterDto | number) => ReactNode;
   sort?: "0-9" | "9-0";
-}) {
+} & StandardProps) {
   const infiniteLoaderRef = useRef<InfiniteLoader | null>(null);
 
   useEffect(() => {
@@ -93,7 +97,10 @@ export function ChaptersPanel({
     typeof CHAPTERS_DATA[index] === "object";
 
   return (
-    <AutoSizer className="chapters-panel-container">
+    <AutoSizer
+      className={classNames("chapters-panel-container", className)}
+      style={style}
+    >
       {({ height, width }: { height: number; width: number }) => (
         <InfiniteLoader
           ref={infiniteLoaderRef}

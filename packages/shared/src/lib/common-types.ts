@@ -9,7 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export type OAuth2Provider = "google" | "facebook";
+export type OAuth2Provider = 'google' | 'facebook';
 
 export class Auth2Body {
   @IsString()
@@ -169,7 +169,10 @@ export class CreateChapterDto {
   published?: boolean;
 }
 
-export type UpdateChapterDto = CreateChapterDto;
+export class UpdateChapterDto extends CreateChapterDto {
+  @IsString()
+  id: IdType;
+}
 
 export interface PaginationOptions {
   page: number;
@@ -188,7 +191,12 @@ export interface PaginationResult<T> {
   };
 }
 
-export type StoryCategory = 'updated' | 'hot' | 'following' | 'history' | "user";
+export type StoryCategory =
+  | 'updated'
+  | 'hot'
+  | 'following'
+  | 'history'
+  | 'user';
 export type VoteType = 'upvote' | 'downvote' | 'none';
 
 export interface GetStoryHistoryDto {

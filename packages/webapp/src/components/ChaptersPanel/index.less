@@ -13,6 +13,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    > :first-child {
+      min-width: 0;
+    }
   }
   .chapter-sub {
     font-size: @font-size-base - 2;
@@ -20,7 +23,6 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    width: calc(100vw - 70px);
     margin-top: 2px;
 
     .rs-divider {
