@@ -75,14 +75,9 @@ export function ThumbnailUploader({
                 height="100%"
                 alt="Thumbnail image"
               />
-              <IconButton
-                onClick={handleRemove}
-                className="close-button"
-                size="sm"
-                circle
-                icon={<Icon icon="close" />}
-                appearance="subtle"
-              />
+              <span onClick={handleRemove} className="close-button">
+                <Icon icon="close" />
+              </span>
             </>
           ) : (
             <>
