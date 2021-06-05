@@ -93,7 +93,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   return story ? (
     <div className="story-preview-mobile-container">
       <Panel bodyFill>
-        <img src={story.thumbnail || defaultThumbnail} alt={story.title} />
+        <img src={story.cover || defaultThumbnail} alt={story.title} />
         <Panel header={story.title}>
           <div className="sub-header">
             <span>
