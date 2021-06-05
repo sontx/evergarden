@@ -110,7 +110,7 @@ export function StoryDetail(props: { story: GetStoryDto }) {
         </>
       )}
 
-      {!isEmpty(story.lastChapter) && (
+      {!!story.lastChapter && (
         <>
           <label>Last chapter</label>
           <span>
