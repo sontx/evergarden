@@ -5,17 +5,14 @@ import {
   selectStory,
   updateStoryAsync,
 } from "./storyEditorSlice";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  ControlLabel,
   Form,
   FormControl,
   FormGroup,
   Icon,
   Loader,
   Notification,
-  Radio,
-  RadioGroup,
   Schema,
   Toggle,
 } from "rsuite";
@@ -28,6 +25,7 @@ import { isValidUrl, UrlBox } from "./UrlBox";
 import { Fab } from "react-tiny-fab";
 import { selectShowSearchBox } from "../settings/settingsSlice";
 import { useHistory } from "react-router-dom";
+import { ThumbnailUploader } from "../../components/ThumbnailUploader";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 
@@ -103,9 +101,11 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
     status: "ongoing",
     thumbnail: "",
   });
+  const thumbnailRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (story && mode === "update") {
+      thumbnailRef.current = story.thumbnail;
       setValue((prevState) => mergeObjects(story, prevState));
     }
   }, [story, mode]);
@@ -127,6 +127,10 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
     setValue(newValue);
   }, []);
 
+  const handleThumbnailChange = useCallback((newTempFile: string | undefined) => {
+    thumbnailRef.current = newTempFile;
+  }, []);
+
   const isValid = (() => {
     const result = model.check(value as any) as any;
     for (const key of Object.keys(result)) {
@@ -138,10 +142,14 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   })();
 
   function handleSave() {
+    const isThumbnailChanged =
+      !story || story.thumbnail !== thumbnailRef.current;
     const temp: CreateStoryDto = {
       ...value,
       authors: wrapItems("name", value.authors),
       genres: wrapItems("id", value.genres),
+      thumbnail: isThumbnailChanged ? thumbnailRef.current : story?.thumbnail,
+      cover: isThumbnailChanged ? undefined : story?.cover,
     };
     if (mode === "update") {
       if (story) {
@@ -195,6 +203,9 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
             componentClass="textarea"
             placeholder="Description"
           />
+        </FormGroup>
+        <FormGroup>
+          <ThumbnailUploader story={story} onChange={handleThumbnailChange} />
         </FormGroup>
         <FormGroup className="form-group-inline">
           <FormControl name="status" accepter={StatusFormControl} />

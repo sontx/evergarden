@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { UploadService } from "./upload.service";
-import { UploadController } from "./upload.controller";
+import { StorageService } from "./storage.service";
+import { StorageController } from "./storage.controller";
 import { MulterModule } from "@nestjs/platform-express";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import * as multer from "multer";
@@ -47,8 +47,8 @@ const MAX_UPLOAD_FILE_SIZE = 3 * 1024 * 1024;
       inject: [ConfigService],
     }),
   ],
-  providers: [UploadService],
-  controllers: [UploadController],
-  exports: [UploadService],
+  providers: [StorageService],
+  controllers: [StorageController],
+  exports: [StorageService],
 })
-export class UploadModule {}
+export class StorageModule {}

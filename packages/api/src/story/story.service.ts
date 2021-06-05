@@ -20,6 +20,7 @@ import { ObjectID } from "mongodb";
 import StorySearchService from "./story-search.service";
 import { AuthorService } from "../author/author.service";
 import { GenreService } from "../genre/genre.service";
+import { StorageService } from "../storage/storage.service";
 
 @Injectable()
 export class StoryService {
@@ -30,6 +31,7 @@ export class StoryService {
     private storySearchService: StorySearchService,
     private authorService: AuthorService,
     private genreService: GenreService,
+    private storageService: StorageService,
   ) {
     this.logger.debug("Initializing search engine...");
     this.initializeSearchEngine().then(() => {
@@ -131,7 +133,8 @@ export class StoryService {
         downvote: story.downvote,
         status: story.status,
         url: story.url,
-        thumbnail: story.thumbnail,
+        thumbnail: this.storageService.makeThumbnailUrl(story.thumbnail),
+        cover: this.storageService.makeThumbnailUrl(story.cover),
         title: story.title,
         view: story.view,
         uploadBy: story.uploadBy,
@@ -160,6 +163,7 @@ export class StoryService {
 
       story.authors = await this.authorService.syncAuthors(story.authors || []);
       story.genres = await this.genreService.getValidGenres(story.genres || []);
+      await this.syncThumbnail(story);
 
       const newStory = await this.storyRepository.create(story);
       const now = new Date();
@@ -182,6 +186,69 @@ export class StoryService {
     }
   }
 
+  async updateStory(currentStory: Story, story: UpdateStoryDto, user: AuthUser): Promise<Story> {
+    try {
+      const authors = await this.authorService.syncAuthors(story.authors || []);
+      const genres = await this.genreService.getValidGenres(story.genres || []);
+      await this.syncThumbnail(story, currentStory);
+      await this.storyRepository.update(currentStory.id, {
+        ...story,
+        authors,
+        genres,
+        updated: new Date(),
+        updatedBy: user.id,
+      });
+      const savedStory = await this.getStory(currentStory.id);
+      await this.storySearchService.update(savedStory);
+      return savedStory;
+    } catch (e) {
+      this.logger.warn(`Error while updating story: ${currentStory.id}`, e);
+      throw new BadRequestException();
+    }
+  }
+
+  private async syncThumbnail(newStory: CreateStoryDto, oldStory: Partial<Story> = {}): Promise<void> {
+    newStory.thumbnail = this.storageService.revertThumbnailName(newStory.thumbnail);
+    newStory.cover = this.storageService.revertThumbnailName(newStory.cover);
+
+    const newTempThumbnail = newStory.thumbnail;
+
+    const deleteOldImage = async (type: "thumbnail" | "cover") => {
+      await this.storageService.deleteStorageFile("storage", oldStory[type], true);
+    };
+
+    const deleteOldImages = async () => {
+      if (oldStory.thumbnail !== newStory.thumbnail) {
+        await deleteOldImage("thumbnail");
+      }
+      if (oldStory.cover !== newStory.cover) {
+        await deleteOldImage("cover");
+      }
+    };
+
+    if (!newTempThumbnail) {
+      await deleteOldImage("thumbnail");
+      await deleteOldImage("cover");
+      newStory.thumbnail = "";
+      newStory.cover = "";
+      return;
+    }
+
+    const isTempThumbnail = await this.storageService.isTempThumbnail(newTempThumbnail);
+    if (!isTempThumbnail) {
+      await deleteOldImages();
+      return;
+    }
+
+    const result = await this.storageService.saveThumbnail(newTempThumbnail);
+    newStory.thumbnail = result.thumbnail;
+    newStory.cover = result.cover;
+
+    await deleteOldImages();
+
+    await this.storageService.deleteStorageFile("temp", newTempThumbnail);
+  }
+
   async getStoryByUrl(url: string): Promise<Story | null> {
     try {
       return await this.storyRepository.findOne({
@@ -198,26 +265,6 @@ export class StoryService {
       return await this.storyRepository.findOne(id);
     } catch (e) {
       this.logger.warn(`Error while querying story: ${id}`, e);
-      throw new BadRequestException();
-    }
-  }
-
-  async updateStory(id: IdType, story: UpdateStoryDto, user: AuthUser): Promise<Story> {
-    try {
-      const authors = await this.authorService.syncAuthors(story.authors || []);
-      const genres = await this.genreService.getValidGenres(story.genres || []);
-      await this.storyRepository.update(id, {
-        ...story,
-        authors,
-        genres,
-        updated: new Date(),
-        updatedBy: user.id,
-      });
-      const savedStory = await this.getStory(id);
-      await this.storySearchService.update(savedStory);
-      return savedStory;
-    } catch (e) {
-      this.logger.warn(`Error while updating story: ${id}`, e);
       throw new BadRequestException();
     }
   }

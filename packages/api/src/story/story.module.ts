@@ -9,7 +9,7 @@ import StorySearchService from "./story-search.service";
 import { SearchModule } from "../search/search.module";
 import { AuthorModule } from "../author/author.module";
 import { GenreModule } from "../genre/genre.module";
-import {UploadModule} from "../upload/upload.module";
+import {StorageModule} from "../storage/storage.module";
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import {UploadModule} from "../upload/upload.module";
     forwardRef(() => UserModule),
     AuthorModule,
     GenreModule,
-    UploadModule
+    StorageModule
   ],
   controllers: [StoryController],
   providers: [StoryService, StorySearchService],

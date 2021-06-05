@@ -14,7 +14,7 @@ export function StoryEditorPage() {
   const { url } = useParams<{ url: string }>();
 
   useEffect(() => {
-    if (!story || story.url !== url) {
+    if ((!story || story.url !== url) && url) {
       dispatch(fetchUserStoryAsync(url));
     }
   }, [dispatch, story, url]);

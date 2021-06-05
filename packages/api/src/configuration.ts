@@ -44,5 +44,6 @@ export default () => ({
   upload: {
     dir: "./upload",
     maxFileCount: 1000,
+    serveHost: "http://localhost:2000"
   },
 });

@@ -19,7 +19,7 @@ import { Chapter } from "./chapter/chapter.entity";
 import { Author } from "./author/author.entity";
 import { Genre } from "./genre/genre.entity";
 import { ReadingHistory } from "./reading-history/reading-history.entity";
-import { UploadModule } from './upload/upload.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -54,7 +54,7 @@ import { UploadModule } from './upload/upload.module';
     SearchModule,
     AuthorModule,
     GenreModule,
-    UploadModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

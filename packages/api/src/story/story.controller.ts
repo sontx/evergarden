@@ -201,7 +201,7 @@ export class StoryController {
     const currentStory = await this.storyService.getStory(id);
     if (currentStory) {
       if (isOwnerOrGod(req, currentStory)) {
-        const storyData = await this.storyService.updateStory(id, story, req.user);
+        const storyData = await this.storyService.updateStory(currentStory, story, req.user);
         return this.storyService.toDto(storyData);
       }
       throw new ForbiddenException();

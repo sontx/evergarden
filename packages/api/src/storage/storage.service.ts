@@ -8,12 +8,15 @@ import * as imagemin from "imagemin";
 import * as imageminJpegtran from "imagemin-jpegtran";
 import imageminPngquant from "imagemin-pngquant";
 import { nanoid } from "nanoid";
+import {isUri} from "valid-url";
 
 @Injectable()
-export class UploadService {
+export class StorageService {
   private currentStorageDirIndex: number;
+  private readonly serveHost: string;
 
   constructor(private configService: ConfigService) {
+    this.serveHost = configService.get("upload.serveHost");
     this.findLastStorageDir();
     this.generateNewStorageIfNeed().then();
   }
@@ -87,7 +90,7 @@ export class UploadService {
       return false;
     }
 
-    if (/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(file)) {
+    if (isUri(file)) {
       return false;
     }
 
@@ -96,11 +99,42 @@ export class UploadService {
     return fs.existsSync(tempFilePath);
   }
 
-  async deleteTempThumbnail(file: string): Promise<void> {
+  makeThumbnailUrl(name): string {
+    if ((!name || isUri(name))) {
+      return name;
+    }
+    return `${this.serveHost}/${name}`;
+  }
+
+  async deleteStorageFile(category: "temp" | "storage", fileName?: string, ignoreError?: boolean): Promise<void> {
+    if (!fileName) {
+      return;
+    }
+
+    fileName = this.revertThumbnailName(fileName);
+
     const uploadDir = path.resolve(this.configService.get("upload.dir"));
-    const tempFilePath = path.resolve(uploadDir, "temp", file);
+    const tempFilePath = path.resolve(uploadDir, category, fileName);
+    await this.deleteFile(tempFilePath, ignoreError);
+  }
+
+  revertThumbnailName(thumbnailUrl: string | undefined): string {
+    if (!thumbnailUrl) {
+      return thumbnailUrl;
+    }
+    if (thumbnailUrl.startsWith(this.serveHost) && thumbnailUrl.length > this.serveHost.length) {
+      return thumbnailUrl.substr(this.serveHost.length + 1);
+    }
+    return thumbnailUrl;
+  }
+
+  private deleteFile(file: string, ignoreError?: boolean): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      fs.unlink(tempFilePath, (err) => {
+      fs.unlink(file, (err) => {
+        if (ignoreError) {
+          resolve();
+          return;
+        }
         if (err) {
           reject(err);
         } else {
@@ -161,8 +195,8 @@ export class UploadService {
     sharpObj.destroy();
 
     return {
-      thumbnail: path.relative(path.resolve(uploadDir, "storage"), thumbnailFilePath),
-      cover: path.relative(path.resolve(uploadDir, "storage"), coverFilePath),
+      thumbnail: path.relative(path.resolve(uploadDir, "storage"), thumbnailFilePath).replace(/\\/g, "/"),
+      cover: path.relative(path.resolve(uploadDir, "storage"), coverFilePath).replace(/\\/g, "/"),
     };
   }
 
