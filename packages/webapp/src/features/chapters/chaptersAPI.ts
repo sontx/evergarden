@@ -15,3 +15,21 @@ export async function fetchChapters(
   });
   return response.data;
 }
+
+export async function fetchRangeChapters(
+  storyId: IdType,
+  skip: number,
+  limit: number,
+  sort: string
+): Promise<PaginationResult<GetChapterDto>> {
+  const response = await api.get(`/api/stories/${storyId}/chapters`, {
+    params: {
+      skip,
+      limit,
+      includesContent: false,
+      sort
+    },
+  });
+  return response.data;
+}
+

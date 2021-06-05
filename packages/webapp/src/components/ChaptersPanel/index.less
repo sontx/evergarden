@@ -1,0 +1,31 @@
+@import "~rsuite/lib/styles/themes/dark/index.less";
+
+.chapters-panel-container {
+  .rs-list {
+    background: @modal-content-bg;
+    box-shadow: 0 1px 0 @border-base-color, 0 -1px 0 @border-base-color;
+  }
+  .rs-list-item {
+    background: @modal-content-bg;
+    box-shadow: 0 -1px 0 @border-base-color, 0 1px 0 @border-base-color;
+  }
+  .rs-list-item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .chapter-sub {
+    font-size: @font-size-base - 2;
+    color: #a4a9b3;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: calc(100vw - 70px);
+    margin-top: 2px;
+
+    .rs-divider {
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+  }
+}
