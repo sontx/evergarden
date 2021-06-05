@@ -1,5 +1,5 @@
 import { GetUserDto, IdType } from "@evergarden/shared";
-import {forwardRef, Inject, Injectable} from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { Repository } from "typeorm";
@@ -15,32 +15,31 @@ export class UserService {
   ) {}
 
   async getByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({ email });
-    return user;
+    return await this.userRepository.findOne({ email });
   }
 
   async getById(id: IdType): Promise<User> {
-    const user = await this.userRepository.findOne(id);
-    return user;
+    return await this.userRepository.findOne(id);
   }
 
   toDto(user: User): GetUserDto {
-    return user && {
-      id: user.id,
-      fullName: user.fullName,
-    };
+    return (
+      user && {
+        id: user.id.toHexString(),
+        fullName: user.fullName,
+      }
+    );
   }
 
   async addUser(user: Partial<User>): Promise<User> {
     const newUser = await this.userRepository.create(user);
     const history = await this.readingHistoryService.createEmptyReadingHistory();
     try {
-      newUser.historyId = history.id;
+      newUser.historyId = history.id.toHexString();
     } finally {
-      await this.readingHistoryService.deleteReadingHistory(history.id);
+      await this.readingHistoryService.deleteReadingHistory(history.id.toHexString());
     }
     await this.userRepository.save(newUser);
-
     return newUser;
   }
 
@@ -68,7 +67,7 @@ export class UserService {
     });
   }
 
-  updateUser(user: User) {
-    return this.userRepository.update(user.id, user);
+  updateUser({ id, ...rest }: User) {
+    return this.userRepository.update(id as any, rest);
   }
 }

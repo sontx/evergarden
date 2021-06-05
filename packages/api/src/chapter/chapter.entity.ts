@@ -1,13 +1,14 @@
 import { Column, Entity, ObjectIdColumn, PrimaryGeneratedColumn } from "typeorm";
+import { ObjectID } from "mongodb";
 import { IdType } from "@evergarden/shared";
 
 @Entity("chapters")
 export class Chapter {
   @PrimaryGeneratedColumn()
-  @ObjectIdColumn()
-  id: IdType;
+  @ObjectIdColumn({ name: "_id" })
+  id: ObjectID;
 
-  @ObjectIdColumn({name: "storyId"})
+  @ObjectIdColumn({ name: "storyId" })
   storyId: IdType;
 
   @Column({ type: "number", nullable: false })

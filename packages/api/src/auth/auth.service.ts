@@ -56,7 +56,7 @@ export class AuthService {
   getAuthenticatedUser(user: User): AuthUser {
     return (
       user && {
-        id: user.id,
+        id: user.id.toHexString(),
         email: user.email,
         fullName: user.fullName,
         photoUrl: user.photoUrl,
@@ -69,7 +69,7 @@ export class AuthService {
   private getAccessToken(user: User): string {
     const payload: JwtPayload = {
       email: user.email,
-      id: user.id,
+      id: user.id.toHexString(),
       role: user.role || "guest",
       historyId: user.historyId,
     };

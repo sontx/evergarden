@@ -1,5 +1,5 @@
-import {Column, ObjectIdColumn} from "typeorm";
-import {IdType, VoteType} from "@evergarden/shared";
+import { Column, ObjectIdColumn } from "typeorm";
+import { IdType, VoteType } from "@evergarden/shared";
 
 export class StoryHistory {
   @ObjectIdColumn({ name: "storyId" })
@@ -20,6 +20,6 @@ export class StoryHistory {
   @Column({ type: "string", nullable: true })
   vote: VoteType;
 
-  @Column({type: "boolean", default: false})
+  @Column({ type: "boolean", default: false })
   isFollowing: boolean;
 }

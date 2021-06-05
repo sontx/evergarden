@@ -62,7 +62,7 @@ export class ReadingHistoryService {
       history = await this.readingHistoryRepository.save(history);
 
       if (user) {
-        user.historyId = history.id;
+        user.historyId = history.id.toHexString();
         await this.userService.updateUser(user);
       }
     } else {
@@ -76,7 +76,7 @@ export class ReadingHistoryService {
       history.storyHistories = isAddNew ? this.removeOldHistories(storyHistories) : storyHistories;
 
       await this.updateRatingIfNeeded(oldStoryHistory, normalizedHistory);
-      await this.readingHistoryRepository.update(history.id, history);
+      await this.readingHistoryRepository.update(history.id as any, history);
     }
   }
 
@@ -109,12 +109,16 @@ export class ReadingHistoryService {
     return histories;
   }
 
-  private normalizeStoryHistory(newHistory: UpdateStoryHistoryDto, oldHistory: StoryHistory | null): StoryHistory {
+  private normalizeStoryHistory(
+    { storyId, ...newHistory }: UpdateStoryHistoryDto,
+    oldHistory: StoryHistory | null,
+  ): StoryHistory {
     const current: Partial<StoryHistory> = oldHistory || {};
     const now = new Date();
     return {
       ...current,
       ...newHistory,
+      storyId: current.storyId || storyId,
       currentChapterNo:
         newHistory.currentChapterNo !== undefined ? newHistory.currentChapterNo : current.currentChapterNo || 0,
       currentReadingPosition:
@@ -128,7 +132,7 @@ export class ReadingHistoryService {
     };
   }
 
-  private async updateRatingIfNeeded(oldStoryHistory: StoryHistory, newStoryHistory: UpdateStoryHistoryDto) {
+  private async updateRatingIfNeeded(oldStoryHistory: StoryHistory, newStoryHistory: StoryHistory) {
     const needUpdate =
       (!oldStoryHistory && !!newStoryHistory.vote) ||
       (oldStoryHistory && oldStoryHistory.vote !== newStoryHistory.vote);

@@ -127,7 +127,7 @@ export default class StorySearchService {
 
   private toSearchBody(story: Story) {
     return {
-      id: story.id,
+      id: story.id.toHexString(),
       url: story.url,
       title: story.title,
       description: story.description,

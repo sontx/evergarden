@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-  NotFoundException,
-  Query
-} from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ObjectID } from "mongodb";
 import { Repository } from "typeorm";
@@ -15,7 +8,6 @@ import {
   CreateChapterDto,
   GetChapterDto,
   IdType,
-  mergeObjects,
   PaginationOptions,
   PaginationResult,
   UpdateChapterDto,
@@ -46,12 +38,14 @@ export class ChapterService {
     if (!chapter) {
       return null;
     }
-
+    console.log(chapter);
     const updatedBy = chapter.updatedBy && (await this.userService.getById(chapter.updatedBy));
     const uploadBy = chapter.uploadBy && (await this.userService.getById(chapter.uploadBy));
     return (
       chapter && {
         ...chapter,
+        storyId: chapter.storyId,
+        id: chapter.id.toHexString(),
         updatedBy: updatedBy && this.userService.toDto(updatedBy),
         uploadBy: uploadBy && this.userService.toDto(uploadBy),
       }
@@ -92,7 +86,7 @@ export class ChapterService {
     const now = new Date();
     newChapter = await this.chapterRepository.save({
       ...newChapter,
-      storyId: story.id,
+      storyId: story.id.toHexString(),
       created: now,
       updated: now,
       uploadBy: user.id,
@@ -104,36 +98,40 @@ export class ChapterService {
       user,
     );
     if (!updatedStory) {
-      await this.chapterRepository.delete(newChapter.id);
+      await this.chapterRepository.delete(newChapter.id as any);
       throw new BadRequestException("Cannot update story");
     }
     return this.toDto(newChapter);
   }
 
-  async updateChapter(story: Story, chapter: UpdateChapterDto, user: AuthUser): Promise<GetChapterDto> {
-    const currentChapter = await this.chapterRepository.findOne(chapter.id);
+  async updateChapter(
+    story: Story,
+    { id, ...updateContent }: UpdateChapterDto,
+    user: AuthUser,
+  ): Promise<GetChapterDto> {
+    const currentChapter = await this.chapterRepository.findOne(id);
 
     if (!currentChapter) {
       throw new NotFoundException();
     }
-    if (story.id !== currentChapter.storyId) {
+    if (story.id.toHexString() !== currentChapter.storyId) {
       throw new ForbiddenException();
     }
 
     const updatedChapter: Chapter = {
       ...currentChapter,
-      ...chapter,
+      ...updateContent,
       updatedBy: user.id,
       updated: new Date(),
     };
 
-    await this.chapterRepository.update(chapter.id, updatedChapter);
+    await this.chapterRepository.update(id, updatedChapter);
     return this.toDto(updatedChapter);
   }
 
   private toDto(chapter: Chapter): GetChapterDto {
     return {
-      id: chapter.id,
+      id: chapter.id.toHexString(),
       chapterNo: chapter.chapterNo,
       storyId: chapter.storyId,
       title: chapter.title,

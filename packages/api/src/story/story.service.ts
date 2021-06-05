@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindManyOptions, MongoRepository } from "typeorm";
-import { Story } from "./story.entity";
+import {BadRequestException, Injectable, Logger} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {FindManyOptions, MongoRepository} from "typeorm";
+import {Story} from "./story.entity";
 import {
   AuthUser,
   calculateVoteCount,
@@ -16,11 +16,11 @@ import {
   UpdateStoryDto,
   VoteType,
 } from "@evergarden/shared";
-import { ObjectID } from "mongodb";
+import {ObjectID} from "mongodb";
 import StorySearchService from "./story-search.service";
-import { AuthorService } from "../author/author.service";
-import { GenreService } from "../genre/genre.service";
-import { StorageService } from "../storage/storage.service";
+import {AuthorService} from "../author/author.service";
+import {GenreService} from "../genre/genre.service";
+import {StorageService} from "../storage/storage.service";
 
 @Injectable()
 export class StoryService {
@@ -100,11 +100,11 @@ export class StoryService {
   }
 
   async getUserStories(userId: IdType): Promise<PaginationResult<GetStoryDto>> {
-    return this.getStories(
-      { page: 0, skip: 0, limit: 99999990 },
+    return await this.getStories(
+      {page: 0, skip: 0, limit: 99999990},
       {
-        where: { uploadBy: userId },
-        order: { updated: "DESC" },
+        where: {uploadBy: userId},
+        order: {updated: "DESC"},
       },
       true,
     );
@@ -118,7 +118,7 @@ export class StoryService {
   toDto(story: Story): GetStoryDto {
     return (
       story && {
-        id: story.id,
+        id: story.id?.toHexString(),
         created: story.created,
         updated: story.updated,
         authors: story.authors,
@@ -141,46 +141,41 @@ export class StoryService {
   }
 
   async addStory(story: CreateStoryDto, user: AuthUser): Promise<GetStoryDto> {
-    try {
-      if (story.url) {
-        const found = await this.getStoryByUrl(story.url);
-        if (found) {
-          throw new BadRequestException(`Duplicated story url: ${story.url}`);
-        }
-      } else {
-        let newUrl = stringToSlug(story.title);
-        try {
-          const found = await this.getStoryByUrl(newUrl);
-          if (found) {
-            newUrl = `${newUrl}-${randomNumberString(4)}`;
-          }
-        } catch (e) {}
-        story.url = newUrl;
+    if (story.url) {
+      const found = await this.getStoryByUrl(story.url);
+      if (found) {
+        throw new BadRequestException(`Duplicated story url: ${story.url}`);
       }
-
-      story.authors = await this.authorService.syncAuthors(story.authors || []);
-      story.genres = await this.genreService.getValidGenres(story.genres || []);
-      await this.syncThumbnail(story);
-
-      const newStory = await this.storyRepository.create(story);
-      const now = new Date();
-      const savedStory = await this.storyRepository.save({
-        ...newStory,
-        created: now,
-        updated: now,
-        uploadBy: user.id,
-        updatedBy: user.id,
-        view: 0,
-        lastChapter: 0,
-        upvote: 0,
-        downvote: 0,
-      });
-      await this.storySearchService.add(savedStory);
-      return this.toDto(savedStory);
-    } catch (e) {
-      this.logger.warn("Error while adding new story", e);
-      throw new BadRequestException();
+    } else {
+      let newUrl = stringToSlug(story.title);
+      try {
+        const found = await this.getStoryByUrl(newUrl);
+        if (found) {
+          newUrl = `${newUrl}-${randomNumberString(4)}`;
+        }
+      } catch (e) {}
+      story.url = newUrl;
     }
+
+    story.authors = await this.authorService.syncAuthors(story.authors || []);
+    story.genres = await this.genreService.getValidGenres(story.genres || []);
+    await this.syncThumbnail(story);
+
+    const newStory = await this.storyRepository.create(story);
+    const now = new Date();
+    const savedStory = await this.storyRepository.save({
+      ...newStory,
+      created: now,
+      updated: now,
+      uploadBy: user.id,
+      updatedBy: user.id,
+      view: 0,
+      lastChapter: 0,
+      upvote: 0,
+      downvote: 0,
+    });
+    await this.storySearchService.add(savedStory);
+    return this.toDto(savedStory);
   }
 
   async updateStory(currentStory: Story, story: UpdateStoryDto, user: AuthUser): Promise<Story> {
@@ -188,14 +183,14 @@ export class StoryService {
       const authors = await this.authorService.syncAuthors(story.authors || []);
       const genres = await this.genreService.getValidGenres(story.genres || []);
       await this.syncThumbnail(story, currentStory);
-      await this.storyRepository.update(currentStory.id, {
+      await this.storyRepository.update(currentStory.id as any, {
         ...story,
         authors,
         genres,
         updated: new Date(),
         updatedBy: user.id,
       });
-      const savedStory = await this.getStory(currentStory.id);
+      const savedStory = await this.getStory(currentStory.id.toHexString());
       await this.storySearchService.update(savedStory);
       return savedStory;
     } catch (e) {
@@ -259,7 +254,7 @@ export class StoryService {
 
   async getStory(id: IdType): Promise<Story | null> {
     try {
-      return await this.storyRepository.findOne(id);
+      return await this.storyRepository.findOne(new ObjectID(id) as any);
     } catch (e) {
       this.logger.warn(`Error while querying story: ${id}`, e);
       throw new BadRequestException();
@@ -268,7 +263,7 @@ export class StoryService {
 
   async updateStoryInternal(story: Story, user: AuthUser): Promise<boolean> {
     try {
-      await this.storyRepository.update(story.id, {
+      await this.storyRepository.update(story.id as any, {
         ...story,
         updated: new Date(),
         updatedBy: user.id,

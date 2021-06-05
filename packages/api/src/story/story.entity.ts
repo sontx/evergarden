@@ -2,12 +2,13 @@ import { Column, Entity, ObjectIdColumn, PrimaryGeneratedColumn } from "typeorm"
 import { IdType, StoryStatus } from "@evergarden/shared";
 import { Author } from "../author/author.entity";
 import { Genre } from "../genre/genre.entity";
+import { ObjectID } from "mongodb";
 
 @Entity("stories")
 export class Story {
   @PrimaryGeneratedColumn()
   @ObjectIdColumn({ name: "_id" })
-  id: IdType;
+  id: ObjectID;
 
   @Column({ type: "string", nullable: false, unique: true })
   url: string;
@@ -54,9 +55,9 @@ export class Story {
   @Column({ type: "number", nullable: true })
   published?: boolean;
 
-  @Column({ type: "string", nullable: false })
+  @ObjectIdColumn()
   uploadBy: IdType;
 
-  @Column({ type: "string", nullable: false })
+  @ObjectIdColumn()
   updatedBy: IdType;
 }

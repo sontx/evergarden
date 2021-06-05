@@ -227,6 +227,6 @@ export class StoryController {
       throw new ForbiddenException();
     }
 
-    await this.storyService.deleteStory(story.id);
+    await this.storyService.deleteStory(story.id.toHexString());
   }
 }
