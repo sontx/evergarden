@@ -1,18 +1,36 @@
 @import "~rsuite/lib/styles/themes/dark/index.less";
 
-.reading-container .rs-panel-body,
-.reading-container .rs-panel-heading {
-  padding-left: 10px !important;
-  padding-right: 10px !important;
-}
+.reading-container {
+  .rs-panel-body,
+  .rs-panel-heading {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
 
-.reading-container article {
-  line-height: calc(1ex / 0.32);
-}
+  article {
+    line-height: calc(1ex / 0.32);
+  }
 
-.reading-container .reading-subtitle {
-  font-size: @font-size-base - 1;
-  color: #a4a9b3;
+  .line-spacing--s p + p {
+    margin-top: 0.75em;
+  }
+
+  .line-spacing--m p + p {
+    margin-top: 1em;
+  }
+
+  .line-spacing--l p + p {
+    margin-top: 1.5em;
+  }
+
+  .line-spacing--xl p + p {
+    margin-top: 2em;
+  }
+
+  .reading-subtitle {
+    font-size: @font-size-base - 1;
+    color: #a4a9b3;
+  }
 }
 
 .reading-footer {
@@ -28,57 +46,48 @@
   overflow: hidden;
 }
 
-.reading-navigation {
+.reading-nav {
   position: fixed;
   width: 100%;
   background: @btn-default-bg;
   touch-action: none;
 }
 
-.reading-navigation--top {
+.reading-nav--top {
   top: 0;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .title {
+    text-align: center;
+    padding: 10px 5px;
+  }
+
+  .title--more {
+    font-size: @font-size-base - 1;
+  }
+
+  .title--sub {
+    font-size: @font-size-base - 5;
+    margin-top: 2px;
+  }
+
+  button {
+    border-radius: 0;
+  }
+
+  .action {
+    padding: 10px;
+  }
 }
 
-.reading-navigation-top-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.reading-navigation--top button {
-  border-radius: 0;
-}
-
-.reading-navigation--bottom {
+.reading-nav--bottom {
   bottom: 0;
-}
-.reading-navigation--bottom button {
- border-radius: 0 !important;
-}
-
-.reading-navigation-title {
-  text-align: center;
-  padding: 10px 5px;
-}
-
-.reading-navigation-title--more {
-  font-size: @font-size-base - 1;
-}
-
-.reading-navigation-title--sub {
-  font-size: @font-size-base - 5;
-  margin-top: 2px;
-}
-
-.reading-container .line-spacing--s p + p {
-  margin-top: 0.75em;
-}
-.reading-container .line-spacing--m p + p {
-  margin-top: 1em;
-}
-.reading-container .line-spacing--l p + p {
-  margin-top: 1.5em;
-}
-.reading-container .line-spacing--xl p + p {
-  margin-top: 2em;
+  button {
+    border-radius: 0 !important;
+  }
 }

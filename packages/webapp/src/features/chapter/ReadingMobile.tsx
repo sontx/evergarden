@@ -1,7 +1,7 @@
-import { GetChapterDto, GetStoryDto, SizeType } from "@evergarden/shared";
-import { Animation, Panel } from "rsuite";
-import { useIntl } from "react-intl";
-import { Link } from "react-router-dom";
+import {GetChapterDto, GetStoryDto, SizeType} from "@evergarden/shared";
+import {Animation, Panel} from "rsuite";
+import {useIntl} from "react-intl";
+import {Link} from "react-router-dom";
 
 import "./readingMobile.less";
 import {
@@ -13,22 +13,22 @@ import {
   useState,
 } from "react";
 import moment from "moment";
-import { ReadingPanel } from "../../components/ReadingPanel";
-import { ReadingNavigationBottom } from "./ReadingNavigationBottom";
+import {ReadingPanel} from "../../components/ReadingPanel";
+import {ReadingNavigationBottom} from "./ReadingNavigationBottom";
 import {
   getChapterDisplayName,
   ReadingNavigationTop,
 } from "./ReadingNavigationTop";
-import { useAppSelector } from "../../app/hooks";
+import {useAppSelector} from "../../app/hooks";
 import {
   getFont,
   selectReadingFont,
   selectReadingFontSize,
   selectReadingLineSpacing,
 } from "../settings/settingsSlice";
-import { selectStatus as selectChapterStatus } from "./chapterSlice";
-import { selectStatus as selectStoryStatus } from "../story/storySlice";
-import { ReadingLoader } from "../../components/ReadingLoader";
+import {selectStatus as selectChapterStatus} from "./chapterSlice";
+import {selectStatus as selectStoryStatus} from "../story/storySlice";
+import {ReadingLoader} from "../../components/ReadingLoader";
 
 const ReadingFooter = forwardRef(
   (props: { chapter: GetChapterDto | undefined }, ref: any) => {
@@ -188,10 +188,10 @@ export function ReadingMobile(props: {
       ) : (
         <ReadingLoader />
       )}
-      {!showNavigation && isChapterReady && window.scrollY > 0 && (
+      {!showNavigation && isReady && window.scrollY > 0 && (
         <ReadingFooter chapter={chapter} ref={footerRef} />
       )}
-      {showNavigation && isStoryReady && isChapterReady && (
+      {showNavigation && isReady && (
         <>
           <ReadingNavigationTop chapter={chapter} story={story} />
           <ReadingNavigationBottom chapter={chapter} story={story} />

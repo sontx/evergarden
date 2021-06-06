@@ -66,28 +66,28 @@ export function ReadingNavigationTop(props: {
   }, [dispatch, history, story]);
 
   return (
-    <div className="reading-navigation reading-navigation--top">
-      <div className="reading-navigation-top-header">
-        <Button onClick={handleClickBack} appearance="subtle">
+    <div className="reading-nav reading-nav--top">
+      <div className="header">
+        <span className="action" onClick={handleClickBack}>
           <Icon size="lg" icon="chevron-left" />
-        </Button>
-        <div className="reading-navigation-title">
+        </span>
+        <div className="title">
           <div
             className={classNames({
-              "reading-navigation-title--more": showMore,
+              "title--more": showMore,
             })}
           >
             {story?.title}
           </div>
           {showMore && (
-            <div className="reading-navigation-title--sub">
+            <div className="title--sub">
               {getChapterDisplayName(chapter, intl)}
             </div>
           )}
         </div>
-        <Button onClick={handleClickMore} appearance="subtle">
+        <span className="action" onClick={handleClickMore}>
           <Icon size="lg" icon="more" />
-        </Button>
+        </span>
       </div>
       {showMore && (
         <ButtonToolbar>

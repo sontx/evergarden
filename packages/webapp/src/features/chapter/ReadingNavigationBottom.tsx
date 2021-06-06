@@ -48,7 +48,7 @@ export function ReadingNavigationBottom(props: {
   }, []);
 
   return (
-    <div className="reading-navigation reading-navigation--bottom">
+    <div className="reading-nav reading-nav--bottom">
       <Animation.Collapse in={showSettingsPopup}>
         {(props, ref) => (
           <div {...props} ref={ref}>
