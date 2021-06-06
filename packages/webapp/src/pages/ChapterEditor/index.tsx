@@ -4,7 +4,11 @@ import { useHistory, useParams } from "react-router-dom";
 import { withUpdateStory } from "../StoryEditor/withUpdateStory";
 import { UserPage } from "../../components/UserPage";
 import React, { useCallback, useEffect } from "react";
-import { fetchChapterAsync } from "../../features/chapter-editor/chapterEditorSlice";
+import {
+  fetchChapterAsync,
+  selectChapter,
+  setChapter,
+} from "../../features/chapter-editor/chapterEditorSlice";
 import { Button } from "rsuite";
 import { openReading } from "../../features/story/storySlice";
 import { ChapterEditor } from "../../features/chapter-editor/ChapterEditor";
@@ -13,12 +17,24 @@ const Wrapper = withUpdateStory(UserPage);
 
 export function ChapterEditorPage() {
   const story = useAppSelector(selectStory);
+  const chapter = useAppSelector(selectChapter);
   const history = useHistory();
   const dispatch = useAppDispatch();
   const { url, chapterNo } = useParams<{ url: string; chapterNo: string }>();
 
   useEffect(() => {
+    dispatch(setChapter(undefined));
+  }, [dispatch]);
+
+  useEffect(() => {
     if (story && isFinite(parseInt(chapterNo))) {
+      if (
+        chapter &&
+        chapter.storyId === story.id &&
+        chapter.chapterNo === parseInt(chapterNo)
+      ) {
+        return;
+      }
       dispatch(
         fetchChapterAsync({
           storyId: story.id,
@@ -26,7 +42,7 @@ export function ChapterEditorPage() {
         }),
       );
     }
-  }, [chapterNo, dispatch, story, url]);
+  }, [chapter, chapterNo, dispatch, story, url]);
 
   const handleBack = useCallback(() => {
     history.push(`/user/story/${url}/chapter`);

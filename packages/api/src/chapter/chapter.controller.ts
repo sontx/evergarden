@@ -118,6 +118,10 @@ export class ChapterController {
     @Body() chapter: CreateChapterDto,
     @Req() req,
   ): Promise<GetChapterDto> {
+    if (isDevelopment()) {
+      await delay(2000);
+    }
+
     const story = await this.getStoryAndCheckPermission(storyId, req);
     return this.chapterService.addChapter(story, chapter, req.user);
   }
@@ -131,6 +135,10 @@ export class ChapterController {
     @Body() chapter: UpdateChapterDto,
     @Req() req,
   ): Promise<GetChapterDto> {
+    if (isDevelopment()) {
+      await delay(2000);
+    }
+
     const currentChapter = await this.chapterService.getChapterById(chapter.id);
     if (!currentChapter) {
       throw new NotFoundException();

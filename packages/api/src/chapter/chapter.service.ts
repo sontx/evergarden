@@ -36,7 +36,7 @@ export class ChapterService {
     includesUnpublished?: boolean,
   ): Promise<GetChapterDto | null> {
     const chapter = await this.chapterRepository.findOne({
-      where: { chapterNo, storyId: new ObjectID(storyId), ...(!includesUnpublished ? { published: true } : {}) },
+      where: { chapterNo, storyId: storyId, ...(!includesUnpublished ? { published: true } : {}) },
     });
 
     if (!chapter) {

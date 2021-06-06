@@ -8,7 +8,7 @@ import {
   UpdateChapterDto,
 } from "@evergarden/shared";
 import { createChapter, updateChapter } from "./chapterEditorAPI";
-import {fetchChapter} from "../chapter/chapterAPI";
+import { fetchChapter } from "../chapter/chapterAPI";
 
 interface ChapterEditorState {
   chapter?: GetChapterDto;
@@ -18,7 +18,7 @@ interface ChapterEditorState {
 
 const initialState: ChapterEditorState = {
   status: "none",
-  fetchingStatus: "none"
+  fetchingStatus: "none",
 };
 
 export const fetchChapterAsync = createAsyncThunk(
@@ -60,6 +60,10 @@ export const chapterEditorSlice = createSlice({
   reducers: {
     setChapter: (state, { payload }) => {
       state.chapter = payload;
+      if (!payload) {
+        state.status = "none";
+        state.fetchingStatus = "none";
+      }
     },
   },
   extraReducers: {
