@@ -9,7 +9,7 @@ import {
   selectChapter,
   setChapter,
 } from "../../features/chapter-editor/chapterEditorSlice";
-import { Button } from "rsuite";
+import { Icon, IconButton } from "rsuite";
 import { openReading } from "../../features/story/storySlice";
 import { ChapterEditor } from "../../features/chapter-editor/ChapterEditor";
 
@@ -64,13 +64,19 @@ export function ChapterEditorPage() {
       action={
         <>
           {mode === "update" && (
-            <Button onClick={handleView} appearance="link" size="sm">
-              View
-            </Button>
+            <IconButton
+              onClick={handleView}
+              appearance="link"
+              size="sm"
+              icon={<Icon icon="eye" />}
+            />
           )}
-          <Button onClick={handleBack} appearance="link" size="sm">
-            Back
-          </Button>
+          <IconButton
+            icon={<Icon icon="close" />}
+            onClick={handleBack}
+            appearance="link"
+            size="sm"
+          />
         </>
       }
     >

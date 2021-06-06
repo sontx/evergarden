@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectStory } from "../../features/story-editor/storyEditorSlice";
 import { useHistory, useParams } from "react-router-dom";
-import { Button } from "rsuite";
+import { Icon, IconButton } from "rsuite";
 import { openStory } from "../../features/story/storySlice";
 import { withUpdateStory } from "./withUpdateStory";
 import { UserPage } from "../../components/UserPage";
@@ -39,17 +39,26 @@ export function StoryEditorPage() {
         <>
           {mode === "update" && (
             <>
-              <Button onClick={handleChapters} appearance="link" size="sm">
-                Chapters
-              </Button>
-              <Button onClick={handleView} appearance="link" size="sm">
-                View
-              </Button>
+              <IconButton
+                icon={<Icon icon="list" />}
+                onClick={handleChapters}
+                appearance="link"
+                size="sm"
+              />
+              <IconButton
+                icon={<Icon icon="eye" />}
+                onClick={handleView}
+                appearance="link"
+                size="sm"
+              />
             </>
           )}
-          <Button onClick={handleBack} appearance="link" size="sm">
-            Back
-          </Button>
+          <IconButton
+            icon={<Icon icon="close" />}
+            onClick={handleBack}
+            appearance="link"
+            size="sm"
+          />
         </>
       }
     >

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button } from "rsuite";
+import {Button, Icon, IconButton} from "rsuite";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -61,12 +61,8 @@ export function UserChaptersPage() {
       }
       action={
         <>
-          <Button onClick={handleCreateNew} size="sm" appearance="link">
-            Create new
-          </Button>
-          <Button onClick={handleBack} appearance="link" size="sm">
-            Back
-          </Button>
+          <IconButton icon={<Icon icon="plus"/>} onClick={handleCreateNew} size="sm" appearance="link"/>
+          <IconButton icon={<Icon icon="close"/>} onClick={handleBack} appearance="link" size="sm"/>
         </>
       }
     >
