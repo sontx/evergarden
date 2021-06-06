@@ -30,13 +30,21 @@ export function UserChaptersPage() {
   }, [history, story]);
 
   const handleCreateNew = useCallback(() => {
-    dispatch(setStory(undefined));
-    history.push("/user/story/new");
-  }, [dispatch, history]);
+    if (story) {
+      dispatch(setStory(undefined));
+      history.push(`/user/story/${story.url}/chapter/new`);
+    }
+  }, [dispatch, history, story]);
 
   const handleSelectChapter = useCallback(
-    (chapter: GetChapterDto | number) => {},
-    [],
+    (chapter: GetChapterDto | number) => {
+      if (story) {
+        const chapterNo =
+          typeof chapter === "object" ? chapter.chapterNo : chapter;
+        history.push(`/user/story/${story.url}/chapter/${chapterNo}`);
+      }
+    },
+    [history, story],
   );
 
   return (
@@ -73,9 +81,7 @@ export function UserChaptersPage() {
         <ChaptersPanel
           renderAction={(chapter) =>
             typeof chapter === "object" && !chapter.published ? (
-              <span className="chapter-action">
-                Unpublished
-              </span>
+              <span className="chapter-action">Unpublished</span>
             ) : (
               <></>
             )

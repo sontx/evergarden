@@ -131,8 +131,14 @@ export class ChapterController {
     @Body() chapter: UpdateChapterDto,
     @Req() req,
   ): Promise<GetChapterDto> {
-    const story = await this.getStoryAndCheckPermission(storyId, req);
-    return this.chapterService.updateChapter(story, chapter, req.user);
+    const currentChapter = await this.chapterService.getChapterById(chapter.id);
+    if (!currentChapter) {
+      throw new NotFoundException();
+    }
+    if (!isOwnerOrGod(req, currentChapter.uploadBy)) {
+      throw new ForbiddenException();
+    }
+    return this.chapterService.updateChapter(currentChapter, chapter, req.user);
   }
 
   private async getStoryAndCheckPermission(storyId: string, req) {

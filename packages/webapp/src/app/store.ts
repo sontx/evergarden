@@ -27,6 +27,7 @@ import followingReducer from "../features/following/followingSlice";
 import recentReducer from "../features/recent/recentSlice";
 import searchReducer from "../features/search/searchSlice";
 import storyEditorReducer from "../features/story-editor/storyEditorSlice";
+import chapterEditorReducer from "../features/chapter-editor/chapterEditorSlice";
 import authorsReducer from "../features/authors/authorsSlice";
 import genresReducer from "../features/genres/genresSlice";
 import userStoriesReducer from "../features/user-stories/userStoriesSlice";
@@ -44,6 +45,7 @@ const reducers = combineReducers({
   history: historyReducer,
   search: searchReducer,
   storyEditor: storyEditorReducer,
+  chapterEditor: chapterEditorReducer,
   authors: authorsReducer,
   genres: genresReducer,
   userStories: userStoriesReducer,
@@ -61,6 +63,7 @@ const persistConfig: PersistConfig<any> = {
     "story",
     "search",
     "storyEditor",
+    "chapterEditor",
     "authors",
   ],
   migrate: (state: any) => {

@@ -10,8 +10,6 @@ import {
   Form,
   FormControl,
   FormGroup,
-  Icon,
-  Loader,
   Notification,
   Schema,
   Toggle,
@@ -22,10 +20,9 @@ import { GenresPicker } from "../genres/GenresPicker";
 import "./storyEditor.less";
 import { CreateStoryDto, mergeObjects } from "@evergarden/shared";
 import { isValidUrl, UrlBox } from "./UrlBox";
-import { Fab } from "react-tiny-fab";
-import { selectShowSearchBox } from "../settings/settingsSlice";
 import { useHistory } from "react-router-dom";
 import { ThumbnailUploader } from "../../components/ThumbnailUploader";
+import { EditorForm, validateModel } from "../../components/EditorForm";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 
@@ -88,7 +85,6 @@ const model = Schema.Model({
 export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   const story = useAppSelector(selectStory);
   const savingStatus = useAppSelector(selectStatus);
-  const showSearchBox = useAppSelector(selectShowSearchBox);
   const dispatch = useAppDispatch();
   const history = useHistory();
   const [value, setValue] = useState<CreateStoryDto>({
@@ -123,23 +119,14 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
     }
   }, [history, mode, savingStatus, story]);
 
-  const handleChange = useCallback((newValue) => {
-    setValue(newValue);
-  }, []);
+  const handleThumbnailChange = useCallback(
+    (newTempFile: string | undefined) => {
+      thumbnailRef.current = newTempFile;
+    },
+    [],
+  );
 
-  const handleThumbnailChange = useCallback((newTempFile: string | undefined) => {
-    thumbnailRef.current = newTempFile;
-  }, []);
-
-  const isValid = (() => {
-    const result = model.check(value as any) as any;
-    for (const key of Object.keys(result)) {
-      if (result[key].hasError) {
-        return false;
-      }
-    }
-    return true;
-  })();
+  const isValid = validateModel(model, value);
 
   function handleSave() {
     const isThumbnailChanged =
@@ -171,13 +158,17 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   }
 
   return (
-    <>
+    <EditorForm
+      savingStatus={savingStatus}
+      mode={mode}
+      handleSave={isValid ? handleSave : undefined}
+    >
       <Form
         model={model}
         fluid
         className="story-editor-container"
         formValue={value}
-        onChange={handleChange}
+        onChange={setValue as any}
       >
         <FormGroup>
           <FormControl
@@ -212,35 +203,6 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
           <FormControl name="published" accepter={PublishedFormControl} />
         </FormGroup>
       </Form>
-
-      {!showSearchBox && (
-        <Fab
-          event="click"
-          onClick={isValid ? handleSave : undefined}
-          mainButtonStyles={{
-            width: "60px",
-            height: "60px",
-            background: isValid ? "#34c3ff" : "#a4a9b3",
-          }}
-          style={{ bottom: "40px", right: "20px", margin: 0 }}
-          icon={<Icon icon="save" />}
-        />
-      )}
-
-      {savingStatus === "processing" && (
-        <div>
-          <div
-            style={{ zIndex: 10000 }}
-            className="rs-modal-backdrop fade in"
-          />
-          <Loader
-            style={{ zIndex: 10001 }}
-            center
-            vertical
-            content={story ? "Updating..." : "Saving..."}
-          />
-        </div>
-      )}
-    </>
+    </EditorForm>
   );
 }

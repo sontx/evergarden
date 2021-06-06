@@ -27,10 +27,8 @@ export function StoryEditorPage() {
   }, [dispatch, history, story]);
 
   const handleChapters = useCallback(() => {
-    if (story) {
-      history.push(`/user/story/${story.url}/chapter`);
-    }
-  }, [history, story]);
+    history.push(`/user/story/${url}/chapter`);
+  }, [history, url]);
 
   const mode = !!url ? "update" : "create";
 

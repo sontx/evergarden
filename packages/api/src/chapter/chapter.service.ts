@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ObjectID } from "mongodb";
 import { Repository } from "typeorm";
@@ -26,6 +26,10 @@ export class ChapterService {
     private userService: UserService,
   ) {}
 
+  async getChapterById(chapterId: IdType): Promise<Chapter> {
+    return this.chapterRepository.findOne(chapterId);
+  }
+
   async getChapterByNo(
     storyId: IdType,
     chapterNo: number,
@@ -38,7 +42,7 @@ export class ChapterService {
     if (!chapter) {
       return null;
     }
-    console.log(chapter);
+
     const updatedBy = chapter.updatedBy && (await this.userService.getById(chapter.updatedBy));
     const uploadBy = chapter.uploadBy && (await this.userService.getById(chapter.uploadBy));
     return (
@@ -104,43 +108,36 @@ export class ChapterService {
     return this.toDto(newChapter);
   }
 
-  async updateChapter(
-    story: Story,
-    { id, ...updateContent }: UpdateChapterDto,
-    user: AuthUser,
-  ): Promise<GetChapterDto> {
-    const currentChapter = await this.chapterRepository.findOne(id);
-
+  async updateChapter(currentChapter: Chapter, newChapter: UpdateChapterDto, user: AuthUser): Promise<GetChapterDto> {
     if (!currentChapter) {
       throw new NotFoundException();
     }
-    if (story.id.toHexString() !== currentChapter.storyId) {
-      throw new ForbiddenException();
-    }
-
     const updatedChapter: Chapter = {
       ...currentChapter,
-      ...updateContent,
+      ...newChapter,
+      id: new ObjectID(newChapter.id),
       updatedBy: user.id,
       updated: new Date(),
     };
-
-    await this.chapterRepository.update(id, updatedChapter);
+    const { id, ...rest } = updatedChapter;
+    await this.chapterRepository.update(id.toHexString(), rest);
     return this.toDto(updatedChapter);
   }
 
   private toDto(chapter: Chapter): GetChapterDto {
-    return {
-      id: chapter.id.toHexString(),
-      chapterNo: chapter.chapterNo,
-      storyId: chapter.storyId,
-      title: chapter.title,
-      created: chapter.created,
-      updated: chapter.updated,
-      updatedBy: chapter.updatedBy,
-      uploadBy: chapter.uploadBy,
-      content: chapter.content,
-      published: chapter.published,
-    };
+    return (
+      chapter && {
+        id: chapter.id.toHexString(),
+        chapterNo: chapter.chapterNo,
+        storyId: chapter.storyId,
+        title: chapter.title,
+        created: chapter.created,
+        updated: chapter.updated,
+        updatedBy: chapter.updatedBy,
+        uploadBy: chapter.uploadBy,
+        content: chapter.content,
+        published: chapter.published,
+      }
+    );
   }
 }
