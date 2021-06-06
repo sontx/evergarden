@@ -64,7 +64,7 @@ export class ChapterService {
     sort?: "asc" | "desc",
   ): Promise<PaginationResult<GetChapterDto>> {
     const result = await this.chapterRepository.findAndCount({
-      where: { storyId: new ObjectID(storyId), ...(!includesUnpublished ? { published: true } : {}) },
+      where: { storyId: storyId, ...(!includesUnpublished ? { published: true } : {}) },
       order: { chapterNo: sort === "asc" ? "ASC" : "DESC" },
       take: pagination.limit,
       skip: isFinite(pagination.skip) ? pagination.skip : pagination.page * pagination.limit,
