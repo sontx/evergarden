@@ -1,5 +1,5 @@
 import { GetChapterDto, GetStoryDto, SizeType } from "@evergarden/shared";
-import { Panel, Placeholder } from "rsuite";
+import { Animation, Panel } from "rsuite";
 import { useIntl } from "react-intl";
 import { Link } from "react-router-dom";
 
@@ -28,6 +28,7 @@ import {
 } from "../settings/settingsSlice";
 import { selectStatus as selectChapterStatus } from "./chapterSlice";
 import { selectStatus as selectStoryStatus } from "../story/storySlice";
+import { ReadingLoader } from "../../components/ReadingLoader";
 
 const ReadingFooter = forwardRef(
   (props: { chapter: GetChapterDto | undefined }, ref: any) => {
@@ -93,7 +94,7 @@ export function ReadingMobile(props: {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [footerRef.current]);
+  }, []);
 
   useEffect(() => {
     if (chapter) {
@@ -110,78 +111,83 @@ export function ReadingMobile(props: {
   const isFetchingChapter = fetchChapterStatus === "processing";
   const isStoryReady = !isFetchingStory && story;
   const isChapterReady = !isFetchingChapter && chapter;
+  const isReady = isStoryReady && isChapterReady;
 
   return (
     <>
-      <Panel
-        className="reading-container"
-        style={{ fontFamily: font.family }}
-        header={
-          isStoryReady && isChapterReady ? (
-            <div style={{ textAlign: "center" }}>
-              <h5>
-                <span
-                  style={{
-                    textTransform: "uppercase",
-                    color: !chapter?.title ? "unset" : "#a4a9b3",
+      {isReady ? (
+        <Animation.Bounce in>
+          {(animationProps, ref) => (
+            <div ref={ref} {...animationProps}>
+              <Panel
+                className="reading-container"
+                style={{ fontFamily: font.family }}
+                header={
+                  <div style={{ textAlign: "center" }}>
+                    <h5>
+                      <span
+                        style={{
+                          textTransform: "uppercase",
+                          color: !chapter?.title ? "unset" : "#a4a9b3",
+                        }}
+                      >
+                        {intl.formatMessage(
+                          { id: "chapterTitle" },
+                          { chapterNo: chapter?.chapterNo },
+                        )}
+                        {chapter?.title && ":"}
+                      </span>
+                      {chapter?.title && (
+                        <span
+                          style={{
+                            marginLeft: "5px",
+                            lineHeight: "calc(1ex / 0.32)",
+                          }}
+                        >
+                          {chapter.title}
+                        </span>
+                      )}
+                    </h5>
+                    <span className="reading-subtitle">
+                      {typeof chapter?.uploadBy === "object"
+                        ? intl.formatMessage(
+                            { id: "readingSubtitle" },
+                            {
+                              updated: moment(chapter.updated).fromNow(),
+                              updatedBy: (
+                                <Link
+                                  to={{
+                                    pathname: `/user/${chapter.uploadBy.id}`,
+                                  }}
+                                >
+                                  {chapter.uploadBy.fullName}
+                                </Link>
+                              ),
+                            },
+                          )
+                        : moment(chapter?.updated).fromNow()}
+                    </span>
+                  </div>
+                }
+              >
+                <ReadingPanel
+                  style={{ fontSize: fontSize }}
+                  className={lineSpacingClass}
+                  minHeightConfig={{
+                    selectors: [".rs-panel-heading", ".rs-footer"],
+                    containerVertPadding: 30,
                   }}
+                  onClick={handleClick}
                 >
-                  {intl.formatMessage(
-                    { id: "chapterTitle" },
-                    { chapterNo: chapter?.chapterNo },
-                  )}
-                  {chapter?.title && ":"}
-                </span>
-                {chapter?.title && (
-                  <span
-                    style={{
-                      marginLeft: "5px",
-                      lineHeight: "calc(1ex / 0.32)",
-                    }}
-                  >
-                    {chapter.title}
-                  </span>
-                )}
-              </h5>
-              <span className="reading-subtitle">
-                {typeof chapter?.uploadBy === "object"
-                  ? intl.formatMessage(
-                      { id: "readingSubtitle" },
-                      {
-                        updated: moment(chapter.updated).fromNow(),
-                        updatedBy: (
-                          <Link
-                            to={{ pathname: `/user/${chapter.uploadBy.id}` }}
-                          >
-                            {chapter.uploadBy.fullName}
-                          </Link>
-                        ),
-                      },
-                    )
-                  : moment(chapter?.updated).fromNow()}
-              </span>
+                  {chapter?.content}
+                </ReadingPanel>
+              </Panel>
             </div>
-          ) : (
-            <Placeholder.Graph active height={35} />
-          )
-        }
-      >
-        {isChapterReady ? (
-          <ReadingPanel
-            style={{ fontSize: fontSize }}
-            className={lineSpacingClass}
-            minHeightConfig={{
-              selectors: [".rs-panel-heading", ".rs-footer"],
-              containerVertPadding: 30,
-            }}
-            onClick={handleClick}
-          >
-            {chapter?.content}
-          </ReadingPanel>
-        ) : (
-          <Placeholder.Paragraph rows={15} active />
-        )}
-      </Panel>
+          )}
+        </Animation.Bounce>
+      ) : (
+        <ReadingLoader />
+      )}
       {!showNavigation && isChapterReady && window.scrollY > 0 && (
         <ReadingFooter chapter={chapter} ref={footerRef} />
       )}
