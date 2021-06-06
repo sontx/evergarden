@@ -15,13 +15,24 @@ export function validateModel(model: any, value: any) {
   return true;
 }
 
+function LoadingPanel({ title }: { title: string }) {
+  return (
+    <div>
+      <div style={{ zIndex: 10000 }} className="rs-modal-backdrop fade in" />
+      <Loader style={{ zIndex: 10001 }} center vertical content={title} />
+    </div>
+  );
+}
+
 export function EditorForm({
   savingStatus,
+  fetchingStatus,
   handleSave,
   mode,
   children,
 }: {
   savingStatus: ProcessingStatus;
+  fetchingStatus?: ProcessingStatus;
   handleSave?: () => void;
   mode: "create" | "update";
   children: ReactNode;
@@ -45,19 +56,10 @@ export function EditorForm({
         />
       )}
 
-      {savingStatus === "processing" && (
-        <div>
-          <div
-            style={{ zIndex: 10000 }}
-            className="rs-modal-backdrop fade in"
-          />
-          <Loader
-            style={{ zIndex: 10001 }}
-            center
-            vertical
-            content={mode === "update" ? "Updating..." : "Saving..."}
-          />
-        </div>
+      {savingStatus === "processing" ? (
+        <LoadingPanel title={mode === "update" ? "Updating..." : "Saving..."} />
+      ) : (
+        fetchingStatus === "processing" && <LoadingPanel title="Fetching..." />
       )}
     </>
   );

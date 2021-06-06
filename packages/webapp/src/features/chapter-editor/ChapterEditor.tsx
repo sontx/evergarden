@@ -1,24 +1,28 @@
-import {TextEditor} from "../../components/TextEditor";
+import { TextEditor } from "../../components/TextEditor";
 import {
   Form,
   FormControl,
   FormGroup,
   Notification,
   Schema,
-  Toggle
+  Toggle,
 } from "rsuite";
-import React, {useCallback, useEffect, useState} from "react";
-import {CreateChapterDto, mergeObjects} from "@evergarden/shared";
-import {EditorForm, validateModel} from "../../components/EditorForm";
-import {useAppDispatch, useAppSelector} from "../../app/hooks";
+import React, { useCallback, useEffect, useState } from "react";
+import { CreateChapterDto, mergeObjects } from "@evergarden/shared";
+import { EditorForm, validateModel } from "../../components/EditorForm";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   createChapterAsync,
   selectChapter,
+  selectFetchingStatus as selectFetchingChapterStatus,
   selectStatus,
   updateChapterAsync,
 } from "./chapterEditorSlice";
-import {selectStory} from "../story-editor/storyEditorSlice";
-import {useHistory} from "react-router-dom";
+import {
+  selectFetchingStatus as selectFetchingStoryStatus,
+  selectStory,
+} from "../story-editor/storyEditorSlice";
+import { useHistory } from "react-router-dom";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 
@@ -52,6 +56,8 @@ export function ChapterEditor({
     published: false,
   });
   const savingStatus = useAppSelector(selectStatus);
+  const fetchingChapterStatus = useAppSelector(selectFetchingChapterStatus);
+  const fetchingStoryStatus = useAppSelector(selectFetchingStoryStatus);
   const chapter = useAppSelector(selectChapter);
   const story = useAppSelector(selectStory);
   const dispatch = useAppDispatch();
@@ -106,6 +112,12 @@ export function ChapterEditor({
 
   return (
     <EditorForm
+      fetchingStatus={
+        fetchingChapterStatus === "processing" ||
+        fetchingStoryStatus === "processing"
+          ? "processing"
+          : "none"
+      }
       savingStatus={savingStatus}
       mode={mode}
       handleSave={isValid ? handleSave : undefined}

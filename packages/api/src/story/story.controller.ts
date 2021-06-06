@@ -155,6 +155,11 @@ export class StoryController {
     @Query("check", ParseBoolPipe) check: boolean,
     @Req() req,
   ): Promise<GetStoryDto | boolean> {
+
+    if (isDevelopment()) {
+      await delay(2000);
+    }
+
     const storyData = url ? await this.storyService.getStoryByUrl(id) : await this.storyService.getStory(id);
     if (check) {
       return !!storyData;

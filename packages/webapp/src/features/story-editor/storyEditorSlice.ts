@@ -88,5 +88,6 @@ export const { setStory } = storyEditorSlice.actions;
 
 export const selectStory = (state: RootState) => state.storyEditor.story;
 export const selectStatus = (state: RootState) => state.storyEditor.status;
+export const selectFetchingStatus = (state: RootState) => state.storyEditor.fetchingStatus;
 
 export default storyEditorSlice.reducer;

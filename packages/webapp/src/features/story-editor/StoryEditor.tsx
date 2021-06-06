@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   createStoryAsync,
+  selectFetchingStatus,
   selectStatus,
   selectStory,
   updateStoryAsync,
@@ -85,6 +86,7 @@ const model = Schema.Model({
 export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   const story = useAppSelector(selectStory);
   const savingStatus = useAppSelector(selectStatus);
+  const fetchingStatus = useAppSelector(selectFetchingStatus);
   const dispatch = useAppDispatch();
   const history = useHistory();
   const [value, setValue] = useState<CreateStoryDto>({
@@ -160,6 +162,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   return (
     <EditorForm
       savingStatus={savingStatus}
+      fetchingStatus={fetchingStatus}
       mode={mode}
       handleSave={isValid ? handleSave : undefined}
     >

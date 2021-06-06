@@ -104,5 +104,6 @@ export const { setChapter } = chapterEditorSlice.actions;
 
 export const selectChapter = (state: RootState) => state.chapterEditor.chapter;
 export const selectStatus = (state: RootState) => state.chapterEditor.status;
+export const selectFetchingStatus = (state: RootState) => state.chapterEditor.fetchingStatus;
 
 export default chapterEditorSlice.reducer;
