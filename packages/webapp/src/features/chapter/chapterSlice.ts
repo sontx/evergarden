@@ -4,6 +4,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchChapter } from "./chapterAPI";
 import { RootState } from "../../app/store";
 
+let cachedNextChapter: GetChapterDto;
+
 export interface ChapterState {
   chapter?: GetChapterDto;
   status: ProcessingStatus;
@@ -16,8 +18,26 @@ const initialState: ChapterState = {
 
 export const fetchChapterAsync = createAsyncThunk(
   "chapter/fetch",
+  async (
+    { storyId, chapterNo }: { storyId: IdType; chapterNo: number },
+    thunkAPI,
+  ) => {
+    if (cachedNextChapter) {
+      if (
+        cachedNextChapter.storyId === storyId &&
+        cachedNextChapter.chapterNo == chapterNo
+      ) {
+        return cachedNextChapter;
+      }
+    }
+    return await fetchChapter(storyId, chapterNo);
+  },
+);
+
+export const fetchNextChapterAsync = createAsyncThunk(
+  "chapter/fetchNext",
   async (option: { storyId: IdType; chapterNo: number }) => {
-    return await fetchChapter(option.storyId, option.chapterNo);
+    cachedNextChapter = await fetchChapter(option.storyId, option.chapterNo);
   },
 );
 
@@ -27,6 +47,9 @@ export const chapterSlice = createSlice({
   reducers: {
     setChapter: (state, { payload }) => {
       state.chapter = payload;
+      if (!payload) {
+        state.status = "none";
+      }
     },
   },
   extraReducers: {

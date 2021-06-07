@@ -22,9 +22,11 @@ import { withScrollSync } from "./withScrollSync";
 import { withChapterNoSync } from "./withChapterNoSync";
 import { withViewCountSync } from "./withViewCountSync";
 import { selectIsLoggedIn } from "../../features/auth/authSlice";
+import { withCachedNextChapter } from "./withCachedNextChapter";
 
+const CachedReading = withCachedNextChapter(ReadingMobile);
 const ReadingWrapper = withViewCountSync(
-  withScrollSync(withChapterNoSync(ReadingMobile)),
+  withScrollSync(withChapterNoSync(CachedReading)),
 );
 
 export function Reading() {
@@ -63,7 +65,7 @@ export function Reading() {
         {isLoggedIn ? (
           <ReadingWrapper story={showStory} chapter={showChapter} />
         ) : (
-          <ReadingMobile story={showStory} chapter={showChapter} />
+          <CachedReading story={showStory} chapter={showChapter} />
         )}
       </Content>
       <AppFooter />
