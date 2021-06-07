@@ -17,7 +17,7 @@ import { withFollowSync } from "./withFollowSync";
 import { selectHistory } from "../history/historySlice";
 import { hasHistory } from "../../utils/types";
 
-import defaultThumbnail from "../../images/violet-evergarden.jpg";
+import defaultThumbnail from "../../images/default-cover.png";
 import { ReadingLoader } from "../../components/ReadingLoader";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
