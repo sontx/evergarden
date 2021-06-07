@@ -1,11 +1,4 @@
-import {
-  ButtonGroup,
-  Divider,
-  Icon,
-  IconButton,
-  Panel,
-  Placeholder,
-} from "rsuite";
+import { ButtonGroup, Divider, Icon, IconButton, Panel } from "rsuite";
 import { GetStoryDto } from "@evergarden/shared";
 // @ts-ignore
 import ShowMoreText from "react-show-more-text";
@@ -25,8 +18,7 @@ import { selectHistory } from "../history/historySlice";
 import { hasHistory } from "../../utils/types";
 
 import defaultThumbnail from "../../images/violet-evergarden.jpg";
-
-const { Paragraph } = Placeholder;
+import { ReadingLoader } from "../../components/ReadingLoader";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -171,6 +163,6 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
       </Panel>
     </div>
   ) : (
-    <Paragraph style={{ marginTop: 30 }} rows={5} graph="image" active />
+    <ReadingLoader />
   );
 }
