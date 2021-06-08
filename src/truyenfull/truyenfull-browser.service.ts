@@ -3,8 +3,13 @@ import * as puppeteer from "puppeteer";
 import { Browser } from "puppeteer";
 import { removeVietnameseTones } from "../utils";
 import * as fs from "fs";
+import { v4 as uuidv4 } from "uuid";
+import * as path from "path";
 
 export class TruyenfullBrowserService extends AbstractCrawlerService {
+  private total = 0;
+  private done = 0;
+
   async getLinks(): Promise<void> {
     const browser = await puppeteer.launch({ headless: true, defaultViewport: null });
     try {
@@ -67,10 +72,12 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
     const content = fs.readFileSync("truyenfull.links", { encoding: "utf8" });
     const data = JSON.parse(content) as { link: string; title: string }[];
     const count = to - from + 1;
+    this.total = count;
+    this.done = 0;
     const batchSize = Math.floor(count / parallel);
     for (let step = 0; step < parallel; step++) {
       const start = from + batchSize * step;
-      const end = step === parallel - 1 ? to : start + batchSize;
+      const end = step === parallel - 1 ? to + 1 : start + batchSize;
       const links = data.slice(start, end).map((link) => link.link);
       this.getBatch(links);
     }
@@ -90,6 +97,12 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
       } else {
         console.log("IGNORE: " + link);
       }
+
+      this.done++;
+    }
+
+    if (this.done === this.total) {
+      console.log("--------------------------- DONE ALL " + this.total);
     }
   }
 
@@ -97,8 +110,8 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
     return new Promise((resolve, reject) => {
       const { took, ...rest } = story;
       const saveContent = JSON.stringify(rest);
-      const fileName = `${removeVietnameseTones(story.title)}.txt`;
-      fs.writeFile(fileName, saveContent, { encoding: "utf8" }, (err) => {
+      const fileName = `${removeVietnameseTones(story.title)}-[${uuidv4().substr(0, 8)}].txt`;
+      fs.writeFile(path.resolve("data", fileName), saveContent, { encoding: "utf8" }, (err) => {
         if (err) {
           reject(err);
         } else {
@@ -117,7 +130,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
       console.log("START: " + url);
 
       const page = (await browser.pages())[0];
-
+      await page.setUserAgent(this.randomUserAgent());
       await page.setRequestInterception(true);
       page.on("request", (req) => {
         if (req.resourceType() == "image") {
@@ -155,10 +168,9 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
           const ret = [];
           for (const item of items) {
             const fullTitle = item.innerText;
-            const title = fullTitle.substr(fullTitle.indexOf(":") + 1).trim();
             const url = item.getAttribute("href");
             ret.push({
-              title,
+              fullTitle,
               url,
             });
           }
