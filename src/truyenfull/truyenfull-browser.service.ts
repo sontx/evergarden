@@ -5,6 +5,7 @@ import { removeVietnameseTones } from "../utils";
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import * as path from "path";
+import { Logger } from "@nestjs/common";
 
 export class TruyenfullBrowserService extends AbstractCrawlerService {
   private total = 0;
@@ -58,7 +59,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
 
       fs.writeFile("truyenfull.links", JSON.stringify(list, null, 2), { encoding: "utf8" }, (err) => {
         if (err) {
-          console.error(err);
+          Logger.error(err);
         } else {
           console.log("DONE!");
         }
@@ -70,7 +71,9 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
 
   async getStories(from: number, to: number, parallel: number): Promise<void> {
     const content = fs.readFileSync("truyenfull.links", { encoding: "utf8" });
-    const data = JSON.parse(content) as { link: string; title: string }[];
+    this.createFileLogIfNeeded();
+    const log = fs.readFileSync("truyenfull.log", { encoding: "utf8" });
+    const data = (JSON.parse(content) as { link: string; title: string }[]).filter((link) => !log.includes(link.link));
     const count = to - from + 1;
     this.total = count;
     this.done = 0;
@@ -83,12 +86,16 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
     }
   }
 
+  private createFileLogIfNeeded() {
+    if (!fs.existsSync("truyenfull.log")) {
+      fs.writeFileSync("truyenfull.log", "");
+    }
+  }
+
   private async getBatch(links: string[]) {
     console.log("BATCH: " + links.length);
     for (const link of links) {
-      if (!fs.existsSync("truyenfull.log")) {
-        fs.writeFileSync("truyenfull.log", "");
-      }
+      this.createFileLogIfNeeded();
       const log = fs.readFileSync("truyenfull.log", { encoding: "utf8" });
       if (!log.includes(link)) {
         const story = await this.getStory(link);
@@ -176,6 +183,12 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
           }
           return ret;
         });
+
+        if (chaptersOfPage.length === 0) {
+          console.log(`DONE: ${story.title} -> ${chapterPageIndex} without any chapters`);
+          break;
+        }
+
         story.chapters.push(...chaptersOfPage);
         if (!(await this.hasElement(page, ".glyphicon.glyphicon-menu-right"))) {
           break;
@@ -198,7 +211,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
         took: ((new Date() as any) - (start as any)) / 1000,
       };
     } catch (e) {
-      console.log("ERROR: " + url);
+      Logger.error("ERROR: " + url);
       console.error(e);
     } finally {
       // await browser.close();
