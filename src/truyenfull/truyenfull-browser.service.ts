@@ -1,11 +1,13 @@
 import { AbstractCrawlerService } from "../abstract-crawler.service";
 import * as puppeteer from "puppeteer";
-import { Browser } from "puppeteer";
+import { Browser, Page } from "puppeteer";
 import { removeVietnameseTones } from "../utils";
 import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import * as path from "path";
 import { Logger } from "@nestjs/common";
+import { Chapter, Story } from "../story";
+import config from "./config";
 
 export class TruyenfullBrowserService extends AbstractCrawlerService {
   private total = 0;
@@ -42,7 +44,6 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
         list.push(...links);
 
         console.log(`${page.url()} -> ${links.length} stories`);
-        fs.writeFileSync("backup.txt", page.url());
 
         try {
           await page.waitForSelector(".glyphicon.glyphicon-menu-right", { timeout: 10000 });
@@ -57,7 +58,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
         await this.delay(1000);
       } while (true);
 
-      fs.writeFile("truyenfull.links", JSON.stringify(list, null, 2), { encoding: "utf8" }, (err) => {
+      fs.writeFile(config.allLinksFileName, JSON.stringify(list, null, 2), { encoding: "utf8" }, (err) => {
         if (err) {
           Logger.error(err);
         } else {
@@ -70,9 +71,8 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
   }
 
   async getStories(from: number, to: number, parallel: number): Promise<void> {
-    const content = fs.readFileSync("truyenfull.links", { encoding: "utf8" });
-    this.createFileLogIfNeeded();
-    const log = fs.readFileSync("truyenfull.log", { encoding: "utf8" });
+    const content = fs.readFileSync(config.allLinksFileName, { encoding: "utf8" });
+    const log = fs.readFileSync(config.crawledLinksFileName, { encoding: "utf8" });
     const data = (JSON.parse(content) as { link: string; title: string }[]).filter((link) => !log.includes(link.link));
     const count = to - from + 1;
     this.total = count;
@@ -86,25 +86,18 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
     }
   }
 
-  private createFileLogIfNeeded() {
-    if (!fs.existsSync("truyenfull.log")) {
-      fs.writeFileSync("truyenfull.log", "");
-    }
-  }
-
   private async getBatch(links: string[]) {
     console.log("BATCH: " + links.length);
     for (const link of links) {
-      this.createFileLogIfNeeded();
-      const log = fs.readFileSync("truyenfull.log", { encoding: "utf8" });
-      if (!log.includes(link)) {
+      if (!this.hasLine(config.crawledLinksFileName, link)) {
         const story = await this.getStory(link);
         await this.saveStory(story);
-        fs.appendFileSync("truyenfull.log", link + "\n", { encoding: "utf8" });
+        this.appendLine(config.crawledLinksFileName, link);
       } else {
         console.log("IGNORE: " + link);
       }
 
+      this.setTerminalTitle(`${this.done}/${this.total}`);
       this.done++;
     }
 
@@ -118,7 +111,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
       const { took, ...rest } = story;
       const saveContent = JSON.stringify(rest);
       const fileName = `${removeVietnameseTones(story.title)}-[${uuidv4().substr(0, 8)}].txt`;
-      fs.writeFile(path.resolve("data", fileName), saveContent, { encoding: "utf8" }, (err) => {
+      fs.writeFile(path.resolve(config.dataDir, fileName), saveContent, { encoding: "utf8" }, (err) => {
         if (err) {
           reject(err);
         } else {
@@ -129,7 +122,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
     });
   }
 
-  private async getStory(url: string) {
+  private async getStory(url: string): Promise<Story & { took: number }> {
     const browser = await puppeteer.launch({ headless: true, defaultViewport: null });
     try {
       const start = new Date();
@@ -161,7 +154,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
           title,
           thumbnail,
           authors: authors.replace("Tác giả:", ""),
-          genresL: genres.replace("Thể loại:", ""),
+          genres: genres.replace("Thể loại:", ""),
           status,
           description,
           chapters: [],
@@ -170,19 +163,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
 
       let chapterPageIndex = 0;
       do {
-        const chaptersOfPage = await page.evaluate(() => {
-          const items = document.querySelectorAll("#list-chapter .row li a") as NodeListOf<HTMLElement>;
-          const ret = [];
-          for (const item of items) {
-            const fullTitle = item.innerText;
-            const url = item.getAttribute("href");
-            ret.push({
-              fullTitle,
-              url,
-            });
-          }
-          return ret;
-        });
+        const chaptersOfPage = await this.getChapterPage(page);
 
         if (chaptersOfPage.length === 0) {
           console.log(`DONE: ${story.title} -> ${chapterPageIndex} without any chapters`);
@@ -208,6 +189,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
 
       return {
         ...story,
+        url,
         took: ((new Date() as any) - (start as any)) / 1000,
       };
     } catch (e) {
@@ -218,7 +200,24 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
     }
   }
 
-  private async getChapterContent(browser: Browser, url: string): Promise<string> {
+  async getChapterPage(page: Page): Promise<Chapter[]> {
+    return await page.evaluate(() => {
+      const items = document.querySelectorAll("#list-chapter .row li a") as NodeListOf<HTMLElement>;
+      const ret: Chapter[] = [];
+      for (const item of items) {
+        const fullTitle = item.innerText;
+        const url = item.getAttribute("href");
+        ret.push({
+          fullTitle,
+          url,
+          content: "",
+        });
+      }
+      return ret;
+    });
+  }
+
+  async getChapterContent(browser: Browser, url: string): Promise<string> {
     const page = await browser.newPage();
     try {
       await page.goto(url, { waitUntil: "domcontentloaded" });
