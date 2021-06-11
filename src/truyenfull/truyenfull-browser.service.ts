@@ -214,7 +214,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
       Logger.error("ERROR: " + url);
       console.error(e);
     } finally {
-      // await browser.close();
+      await browser.close();
     }
   }
 
