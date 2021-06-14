@@ -48,6 +48,15 @@ export class TruyenfullVerifyService extends CommonService {
     let browser: Browser;
     try {
       browser = await puppeteer.launch({ headless: true, defaultViewport: null });
+      const page = (await browser.pages())[0];
+      await page.setRequestInterception(true);
+      page.on("request", (req) => {
+        if (req.resourceType() == "image") {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
 
       const linksContent = fs.readFileSync(config.allLinksFileName, { encoding: "utf8" });
       const links: Link[] = JSON.parse(linksContent) || [];
@@ -57,8 +66,10 @@ export class TruyenfullVerifyService extends CommonService {
       for (const file of crawledFiles) {
         done++;
         this.setTerminalTitle(`${done}/${crawledFiles.length} [${file}]`);
+        const pattern = file.substr(0, file.indexOf("-[") + 2);
         try {
-          if (this.hasLine(config.verifiedLinksFileName, file)) {
+          if (this.hasLine(config.verifiedLinksFileName, pattern)) {
+            console.log(`IGNORE: ${file}`);
             continue;
           }
 
@@ -89,16 +100,14 @@ export class TruyenfullVerifyService extends CommonService {
     if (story.url) {
       return story.url;
     }
-    if (!story.chapters || story.chapters.length === 0) {
-      return null;
-    }
-    const testChapter = story.chapters[0];
+    const testChapter = (story.chapters || [])[0] || { url: "" };
     const chapterLink = testChapter.url;
     if (chapterLink) {
       const url = new URL(chapterLink);
       return `${url.origin}${url.pathname.substr(0, url.pathname.indexOf("/", 1) + 1)}`;
     } else {
       const foundLink = fullLinks.find((item) => item.title === story.title);
+
       if (foundLink) {
         return foundLink.link;
       }
@@ -110,11 +119,13 @@ export class TruyenfullVerifyService extends CommonService {
     console.log(`CHECKING: ${story.title}`);
 
     const link = this.getStoryLink(story, links);
+
     if (!link) {
       console.log(`LINK IS NOT DEFINED: ${story.title}`);
     }
 
     const page = (await browser.pages())[0];
+
     await page.goto(link);
     const chapters = story.chapters || [];
     const chapterNos = chapters.filter((item) => !!item.content).map((item) => this.getChapterNo(item.fullTitle));

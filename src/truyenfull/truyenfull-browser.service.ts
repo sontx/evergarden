@@ -140,7 +140,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
         }
       });
 
-      await page.goto(url);
+      await page.goto(url, { timeout: 60000 });
       const story = await page.evaluate(() => {
         const title = document.querySelector(".title").textContent;
         const thumbnail = document.querySelector(".books > div > img").getAttribute("src");
@@ -220,7 +220,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
   async getChapterContent(browser: Browser, url: string): Promise<string> {
     const page = await browser.newPage();
     try {
-      await page.goto(url, { waitUntil: "domcontentloaded" });
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
       return await page.evaluate(() => {
         const element = document.querySelector("#chapter-c") as HTMLElement;
         if (element) {
