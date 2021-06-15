@@ -1,15 +1,15 @@
-export interface Story {
+export interface RawStory {
   title: string;
   thumbnail: string;
   description: string;
   authors: string;
   genres: string;
   status: string;
-  chapters: Chapter[];
+  chapters: RawChapter[];
   url?: string;
 }
 
-export interface Chapter {
+export interface RawChapter {
   fullTitle: string;
   url: string;
   content: string;

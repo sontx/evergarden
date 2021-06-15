@@ -6,7 +6,7 @@ import * as fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import * as path from "path";
 import { Logger } from "@nestjs/common";
-import { Chapter, Story } from "../story";
+import { RawChapter, RawStory } from "../story";
 import config from "./config";
 
 export class TruyenfullBrowserService extends AbstractCrawlerService {
@@ -122,7 +122,7 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
     });
   }
 
-  private async getStory(url: string): Promise<Story & { took: number }> {
+  private async getStory(url: string): Promise<RawStory & { took: number }> {
     const browser = await puppeteer.launch({ headless: true, defaultViewport: null });
     try {
       const start = new Date();
@@ -200,10 +200,10 @@ export class TruyenfullBrowserService extends AbstractCrawlerService {
     }
   }
 
-  async getChapterPage(page: Page): Promise<Chapter[]> {
+  async getChapterPage(page: Page): Promise<RawChapter[]> {
     return await page.evaluate(() => {
       const items = document.querySelectorAll("#list-chapter .row li a") as NodeListOf<HTMLElement>;
-      const ret: Chapter[] = [];
+      const ret: RawChapter[] = [];
       for (const item of items) {
         const fullTitle = item.innerText;
         const url = item.getAttribute("href");

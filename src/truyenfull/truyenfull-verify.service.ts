@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import config from "./config";
 import * as fs from "fs";
-import { Chapter, Link, Story } from "../story";
+import { RawChapter, Link, RawStory } from "../story";
 import * as path from "path";
 import * as puppeteer from "puppeteer";
 import { Browser } from "puppeteer";
@@ -25,7 +25,7 @@ export class TruyenfullVerifyService extends CommonService {
     crawledFiles.forEach((file) => {
       const filePath = path.resolve(this.dataDir, file);
       const content = fs.readFileSync(filePath, { encoding: "utf8" });
-      const story = JSON.parse(content) as Story;
+      const story = JSON.parse(content) as RawStory;
       const link = this.getStoryLink(story, links);
       if (!link) {
         console.log(`MISSING URL: ${file}`);
@@ -75,7 +75,7 @@ export class TruyenfullVerifyService extends CommonService {
 
           const filePath = path.resolve(this.dataDir, file);
           const content = fs.readFileSync(filePath, { encoding: "utf8" });
-          const story = JSON.parse(content) as Story;
+          const story = JSON.parse(content) as RawStory;
           if (!story.chapters) {
             story.chapters = [];
           }
@@ -96,7 +96,7 @@ export class TruyenfullVerifyService extends CommonService {
     }
   }
 
-  private getStoryLink(story: Story, fullLinks: Link[]): string | null {
+  private getStoryLink(story: RawStory, fullLinks: Link[]): string | null {
     if (story.url) {
       return story.url;
     }
@@ -115,7 +115,7 @@ export class TruyenfullVerifyService extends CommonService {
     return null;
   }
 
-  private async fixStory(story: Story, browser: Browser, links: Link[]): Promise<number> {
+  private async fixStory(story: RawStory, browser: Browser, links: Link[]): Promise<number> {
     console.log(`CHECKING: ${story.title}`);
 
     const link = this.getStoryLink(story, links);
@@ -169,7 +169,7 @@ export class TruyenfullVerifyService extends CommonService {
     return fixedChapterCount;
   }
 
-  private async fixMissingChapters(missingChapters: Chapter[], story: Story, browser: Browser) {
+  private async fixMissingChapters(missingChapters: RawChapter[], story: RawStory, browser: Browser) {
     const chapters = story.chapters || [];
     for (const chapter of missingChapters) {
       chapter.content = await this.truyenfullBrowserService.getChapterContent(browser, chapter.url);
