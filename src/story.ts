@@ -13,6 +13,7 @@ export interface RawChapter {
   fullTitle: string;
   url: string;
   content: string;
+  title?: string;
 }
 
 export interface Link {

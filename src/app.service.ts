@@ -43,19 +43,29 @@ export class AppService extends CommonService {
     const files = fs.readdirSync(dir);
     let imported = 0;
     let skip = 0;
+    let error = 0;
     console.log(`Start importing ${files.length} stories from ${dir}`);
     for (const file of files) {
       console.log(file);
       this.setTerminalTitle(`Importing [${imported + skip}/${files.length}]`);
-      const rawStory = await this.readRawStory(path.resolve(dir, file));
-      if (await this.shouldSaveStory(rawStory)) {
-        await this.saveRawStory(rawStory);
-        imported++;
-      } else {
-        skip++;
+      try {
+        const rawStory = await this.readRawStory(path.resolve(dir, file));
+        if (await this.shouldSaveStory(rawStory)) {
+          await this.saveRawStory(rawStory);
+          imported++;
+        } else {
+          console.log(`SKIP: ${file}`);
+          skip++;
+        }
+      } catch (e) {
+        console.log(`ERROR: ${file}`);
+        this.appendLine("import-error.log", file);
+        console.log(e);
+        error++;
       }
+      // console.log(rawStory.chapters.map((item) => `${item?.fullTitle} ---> ${item.title}`).join("\n"));
     }
-    console.log(`IMPORTED ${imported}, SKIP ${skip}!`);
+    console.log(`IMPORTED ${imported}, SKIP ${skip}, ERROR ${error}!`);
   }
 
   private async saveAuthorIfNeeded(name: string): Promise<AuthorDocument> {
@@ -91,10 +101,62 @@ export class AppService extends CommonService {
   private readRawStory(file: string): RawStory {
     const content = fs.readFileSync(file, { encoding: "utf8" });
     const raw = JSON.parse(content) as RawStory;
+    const chapters = raw.chapters || [];
+    const sortedChapters = [];
+    if (chapters.length > 1 && chapters[0].fullTitle.startsWith("Quyển")) {
+      const hasNextBook = (nextBook, nextChapter) => {
+        const test =
+          nextChapter === undefined ? `Quyển ${nextBook} - Chương 1` : `Quyển ${nextBook} - Chương ${nextChapter}`;
+        return chapters.find((item) => item.fullTitle === test || item.fullTitle.startsWith(test + ":"));
+      };
+
+      let book = 1;
+      let chapterNo = 1;
+      let continuousNo = 1;
+      for (let i = 0; i < chapters.length; i++) {
+        const chapterTitle = `Quyển ${book} - Chương ${chapterNo}`;
+        const foundIndex = chapters.findIndex((item) => item.fullTitle.startsWith(chapterTitle));
+        if (foundIndex === -1) {
+          book++;
+          if (hasNextBook(book, undefined)) {
+            chapterNo = 1;
+          } else if (hasNextBook(book, chapterNo)) {
+          } else {
+            throw new Error(`Chapter not found when sorting: ${file} --> ${continuousNo} --> search: ${chapterTitle}`);
+          }
+          continue;
+        }
+        const chapter = chapters[foundIndex];
+        chapters.splice(foundIndex, 1);
+        chapterNo++;
+        const extractedTitle = this.extractRealChapterTitle(chapter.fullTitle);
+        sortedChapters.push({
+          ...chapter,
+          title: extractedTitle ? `Chương ${continuousNo++}: ${extractedTitle}` : `Chương ${continuousNo++}`,
+        });
+      }
+    } else {
+      for (let i = 0; i < chapters.length; i++) {
+        const test = `Chương ${i + 1}`;
+        const foundIndex = chapters.findIndex(
+          (item) => item.fullTitle === test || item.fullTitle.startsWith(test + ":"),
+        );
+        if (foundIndex === -1) {
+          throw new Error(`Chapter not found when sorting: ${file} --> ${i + 1}`);
+        }
+        const chapter = chapters[foundIndex];
+        chapters.splice(foundIndex, 1);
+        sortedChapters.push({
+          ...chapter,
+          title: chapter.fullTitle,
+        });
+      }
+    }
+
     return {
       ...raw,
       title: raw.title.trim(),
-      chapters: raw.chapters || [],
+      chapters: sortedChapters,
     };
   }
 
@@ -147,16 +209,9 @@ export class AppService extends CommonService {
         }
 
         chapterNo++;
-        if (!this.extractChapterNo(rawChapter.fullTitle).includes(`Chương ${chapterNo}`)) {
-          throw new Error(
-            `Mismatch chapter no: ${savedStory.title} ---> ${rawChapter.fullTitle} ---> actual ${this.extractChapterNo(
-              rawChapter.fullTitle,
-            )}, calculated ${chapterNo}`,
-          );
-        }
 
         await this.saveChapter({
-          title: this.extractChapterTitle(rawChapter.fullTitle),
+          title: this.extractChapterTitle(rawChapter.title),
           content: rawChapter.content,
           published: true,
           updated: new Date(),
@@ -184,6 +239,10 @@ export class AppService extends CommonService {
 
   private extractChapterTitle(fullTitle: string): string {
     return fullTitle ? fullTitle.substr(fullTitle.indexOf(":") + 1).trim() : "";
+  }
+
+  private extractRealChapterTitle(fullTitle: string): string {
+    return fullTitle && fullTitle.indexOf(":") >= 0 ? fullTitle.substr(fullTitle.indexOf(":") + 1).trim() : "";
   }
 
   private extractChapterNo(fullTitle: string): string {
