@@ -39,7 +39,7 @@ namespace SentenceAnalyzer
                 }
             }
 
-            return builder.ToString().ToLower();
+            return builder.ToString().Trim().ToLower();
         }
     }
 }

@@ -74,6 +74,7 @@ namespace SentenceAnalyzer
                   file.ToLower().EndsWith("translate.json") || file.ToLower().EndsWith("convert.json")))
                 {
                     var newLineAsEndSentence = MessageBox.Show(
+                        this,
                         "Break sentences if new line?",
                         Title,
                         MessageBoxButton.YesNo,

@@ -10,7 +10,6 @@
     Height="450"
     d:DataContext="{d:DesignInstance sentenceAnalyzer:MainViewModel}"
     AllowDrop="True"
-    Topmost="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <FrameworkElement.Resources>

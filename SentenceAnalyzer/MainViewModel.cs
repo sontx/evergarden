@@ -95,7 +95,7 @@ namespace SentenceAnalyzer
                         Convert = item.Convert.Text
                     });
                 await csv.WriteRecordsAsync(rows);
-                MessageBox.Show($"Saved to {path}");
+                MessageBox.Show(_view, $"Saved to {path}");
             }
             finally
             {
