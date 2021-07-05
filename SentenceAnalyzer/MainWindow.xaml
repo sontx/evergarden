@@ -109,14 +109,56 @@
                 <TextBlock>
                     <Run Text="Rows: " /><Run Text="{Binding ValidRowCount, Mode=OneWay}" />
                     <Separator Width="10" Style="{StaticResource VerticalSeparatorStyle}" />
-                    <Run Text="Hotkeys: Delete(" /><Bold>Delete</Bold>
-                    <Run Text=") Merge(" /><Bold>Ctrl + M</Bold><Run>)</Run></TextBlock>
-                <Button
-                    Grid.Column="1"
-                    MinWidth="80"
-                    Command="{Binding SaveCommand}">
-                    Save
-                </Button>
+                    <Run Text="Session: " /><Bold>
+                        <Run Text="{Binding SessionInfo.SessionId}" />
+                    </Bold>
+                    <Separator Width="10" Style="{StaticResource VerticalSeparatorStyle}" />
+                    <Run Text="Translate: " /><Bold>
+                        <Run Text="{Binding SessionInfo.TranslateSummary, Mode=OneWay}" />
+                    </Bold>
+                    <Separator Width="10" Style="{StaticResource VerticalSeparatorStyle}" />
+                    <Run Text="Convert: " /><Bold>
+                        <Run Text="{Binding SessionInfo.ConvertSummary, Mode=OneWay}" />
+                    </Bold>
+                </TextBlock>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button MinWidth="80" Command="{Binding MoveNextCommand}">Move Next</Button>
+                    <Button
+                        Width="20"
+                        BorderThickness="0,1,1,1"
+                        Click="MenuButton_OnClick">
+                        ▼
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem
+                                    Command="{Binding AddChapterCommand}"
+                                    CommandParameter="translate"
+                                    Header="Add translate chapter" />
+                                <MenuItem
+                                    Command="{Binding AddChapterCommand}"
+                                    CommandParameter="convert"
+                                    Header="Add convert chapter" />
+                                <Separator />
+                                <MenuItem
+                                    Command="{Binding RemoveChapterCommand}"
+                                    CommandParameter="translate"
+                                    Header="Remove translate chapter" />
+                                <MenuItem
+                                    Command="{Binding RemoveChapterCommand}"
+                                    CommandParameter="convert"
+                                    Header="Remove convert chapter" />
+                                <Separator />
+                                <MenuItem Command="{Binding ReloadCommand}" Header="Reload" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+                    <Button
+                        MinWidth="80"
+                        Margin="10,0,0,0"
+                        Command="{Binding SaveCommand}">
+                        Save
+                    </Button>
+                </StackPanel>
             </Grid>
         </Grid>
         <Grid

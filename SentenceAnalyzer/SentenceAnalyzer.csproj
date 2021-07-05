@@ -58,19 +58,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ChapterModel.cs" />
-    <Compile Include="CsvFileReader.cs" />
     <Compile Include="CsvRowModel.cs" />
-    <Compile Include="CsvSentencesReader.cs" />
     <Compile Include="DiffToBrushConverter.cs" />
     <Compile Include="EmptyRowToBrushConverter.cs" />
-    <Compile Include="IFileReader.cs" />
-    <Compile Include="ISentencesReader.cs" />
-    <Compile Include="JsonFileReader.cs" />
-    <Compile Include="JsonSentencesReader.cs" />
+    <Compile Include="FileUtils.cs" />
     <Compile Include="NullToCollapsedConverter.cs" />
+    <Compile Include="Project.cs" />
+    <Compile Include="ProjectManager.cs" />
     <Compile Include="SentenceModel.cs" />
     <Compile Include="SentencePairExtensions.cs" />
     <Compile Include="SentencePairModel.cs" />
+    <Compile Include="SessionInfo.cs" />
     <Compile Include="StoryModel.cs" />
     <Compile Include="TextExtensions.cs" />
     <Page Include="MainWindow.xaml">

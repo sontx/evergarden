@@ -1,11 +1,8 @@
-﻿using CsvHelper;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,8 +16,13 @@ namespace SentenceAnalyzer
         private ObservableCollection<SentencePairModel> _sentencePairs;
         private string _processingText;
         private bool _isSaving;
+        private ProjectManager _projectManager;
 
         public RelayCommand SaveCommand { get; }
+        public RelayCommand MoveNextCommand { get; }
+        public RelayCommand<string> AddChapterCommand { get; }
+        public RelayCommand<string> RemoveChapterCommand { get; }
+        public RelayCommand ReloadCommand { get; }
 
         public ObservableCollection<SentencePairModel> SentencePairs
         {
@@ -29,11 +31,12 @@ namespace SentenceAnalyzer
             {
                 if (Set(ref _sentencePairs, value))
                 {
-                    RaisePropertyChanged(nameof(ValidRowCount));
-                    SaveCommand.RaiseCanExecuteChanged();
+                    UpdateUi();
                 }
             });
         }
+
+        public SessionInfo SessionInfo => _projectManager?.GetSessionInfo();
 
         public string ProcessingText
         {
@@ -72,30 +75,139 @@ namespace SentenceAnalyzer
         {
             _view = view;
             SaveCommand = new RelayCommand(HandleSave, CanSave);
+            MoveNextCommand = new RelayCommand(HandleMoveNext, CanMoveNext);
+            AddChapterCommand = new RelayCommand<string>(HandleAddChapter, CanAddChapter);
+            RemoveChapterCommand = new RelayCommand<string>(HandleRemoveChapter, CanRemoveChapter);
+            ReloadCommand = new RelayCommand(HandleReload, CanReload);
+        }
+
+        private async void HandleReload()
+        {
+            IsLoading = true;
+            try
+            {
+                await _projectManager.LoadAsync();
+                SentencePairs = new ObservableCollection<SentencePairModel>();
+                ShowPairs(_projectManager.GetCurrent());
+                UpdateUi();
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private bool CanReload()
+        {
+            return _projectManager != null;
+        }
+
+        private void UpdateUi()
+        {
+            RaisePropertyChanged(nameof(ValidRowCount));
+            RaisePropertyChanged(nameof(SessionInfo));
+            SaveCommand.RaiseCanExecuteChanged();
+            MoveNextCommand.RaiseCanExecuteChanged();
+            AddChapterCommand.RaiseCanExecuteChanged();
+            RemoveChapterCommand.RaiseCanExecuteChanged();
+            ReloadCommand.RaiseCanExecuteChanged();
+        }
+
+        private void HandleRemoveChapter(string arg)
+        {
+            var removeFirst = MessageBox.Show(
+                _view,
+                "Remove first?",
+                "Remove chapter",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question,
+                MessageBoxResult.No) == MessageBoxResult.Yes;
+
+            var test = removeFirst ? SentencePairs.First() : SentencePairs.Last();
+            SentencePairs =
+                new ObservableCollection<SentencePairModel>(SentencePairs.Where(pair => pair.Id != test.Id));
+
+            if (arg == "translate")
+            {
+                _projectManager?.RemoveTranslateChapter(removeFirst);
+            }
+            else
+            {
+                _projectManager?.RemoveConvertChapter(removeFirst);
+            }
+        }
+
+        private bool CanRemoveChapter(string arg)
+        {
+            return arg == "translate"
+                ? _projectManager?.CanRemoveTranslateChapter() ?? false
+                : _projectManager?.CanRemoveConvertChapter() ?? false;
+        }
+
+        private bool CanAddChapter(string arg)
+        {
+            return arg == "translate"
+                ? _projectManager?.CanAddTranslateChapter() ?? false
+                : _projectManager?.CanAddConvertChapter() ?? false;
+        }
+
+        private void HandleAddChapter(string arg)
+        {
+            if (arg == "translate")
+            {
+                var result = _projectManager?.AddTranslateChapter() ?? new List<SentencePairModel>(0);
+                ShowPairs(result);
+            }
+            else
+            {
+                var result = _projectManager?.AddConvertChapter() ?? new List<SentencePairModel>(0);
+                ShowPairs(result);
+            }
+        }
+
+        private void ShowPairs(List<SentencePairModel> pairs)
+        {
+            var id = Guid.NewGuid().ToString();
+            foreach (var pair in pairs)
+            {
+                pair.Id = id;
+                SentencePairs.Add(pair);
+            }
+            UpdateUi();
+        }
+
+        private bool CanMoveNext()
+        {
+            return _projectManager?.CanMoveNext() ?? false;
+        }
+
+        private async void HandleMoveNext()
+        {
+            if (_projectManager != null)
+            {
+                await SaveAsync();
+                _projectManager.MoveNext();
+                SentencePairs.Clear();
+                ShowPairs(_projectManager.GetCurrent());
+            }
         }
 
         private bool CanSave()
         {
-            return SentencePairs is { Count: > 0 } && !IsSaving;
+            return _projectManager != null && SentencePairs is { Count: > 0 } && !IsSaving;
         }
 
         private async void HandleSave()
         {
+            await SaveAsync();
+        }
+
+        private async Task SaveAsync()
+        {
             IsSaving = true;
             try
             {
-                var path = Path.GetFullPath(Path.Combine("data", "ouptut.csv"));
-                using var writer = new StreamWriter(path);
-                using var csv = new CsvWriter(writer, new CultureInfo("vi"));
-                var rows = SentencePairs
-                    .Where(item => item.IsValid)
-                    .Select(item => new CsvRowModel
-                    {
-                        Translate = item.Translate.Text,
-                        Convert = item.Convert.Text
-                    });
-                await csv.WriteRecordsAsync(rows);
-                MessageBox.Show(_view, $"Saved to {path}");
+                await _projectManager.SaveAsync(SentencePairs);
             }
             finally
             {
@@ -103,36 +215,35 @@ namespace SentenceAnalyzer
             }
         }
 
-        public void Load(ISentencesReader reader)
+        public async void Load(string translateFile, string convertFile, bool breakSentencesIfNewLine)
         {
-            Task.Run(() =>
+            IsLoading = true;
+            try
             {
-                IsLoading = true;
+                var projectManager = await ProjectManager.CreateAsync(translateFile, convertFile, breakSentencesIfNewLine);
+                await LoadAsync(projectManager);
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
 
-                try
-                {
-                    var translateSentences = reader.ReadTranslate();
-                    var convertSentences = reader.ReadConvert();
-                    var max = Math.Max(convertSentences.Count, translateSentences.Count);
-                    var sentencePairs = new List<SentencePairModel>(max);
-                    for (var i = 0; i < max; i++)
-                    {
-                        var translateSentence = i < translateSentences.Count
-                            ? translateSentences[i]
-                            : new SentenceModel { Id = Guid.NewGuid().ToString(), Text = string.Empty };
-                        var convertSentence = i < convertSentences.Count
-                            ? convertSentences[i]
-                            : new SentenceModel { Id = Guid.NewGuid().ToString(), Text = string.Empty };
-                        sentencePairs.Add(new SentencePairModel { Translate = translateSentence, Convert = convertSentence });
-                    }
-
-                    SentencePairs = new ObservableCollection<SentencePairModel>(sentencePairs);
-                }
-                finally
-                {
-                    IsLoading = false;
-                }
-            });
+        public async Task LoadAsync(ProjectManager projectManager)
+        {
+            IsLoading = true;
+            try
+            {
+                _projectManager = projectManager;
+                await _projectManager.LoadAsync();
+                await _projectManager.SaveAsync();
+                SentencePairs = new ObservableCollection<SentencePairModel>();
+                ShowPairs(_projectManager.GetCurrent());
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         public void RemoveSentences(List<SentencePairModel> pairs, string sentenceName)
@@ -140,6 +251,9 @@ namespace SentenceAnalyzer
             foreach (var pair in pairs)
             {
                 var removeIndex = SentencePairs.IndexOf(pair);
+                if (removeIndex == -1) continue;
+
+                SentencePairs.Remove(pair);
                 for (var i = removeIndex; i < SentencePairs.Count; i++)
                 {
                     var current = SentencePairs[i];
@@ -148,6 +262,8 @@ namespace SentenceAnalyzer
                     current.NotifyChanged();
                 }
             }
+
+            RemoveEmptyPairs();
             RaisePropertyChanged(nameof(ValidRowCount));
         }
 
@@ -168,8 +284,10 @@ namespace SentenceAnalyzer
             {
                 var pair = pairs[i];
                 currentValue += " " + pair.GetSentenceValue(sentenceName);
+                SentencePairs.Remove(pair);
             }
 
+            RemoveEmptyPairs();
             first.SetSentenceValue(sentenceName, currentValue);
             first.NotifyChanged();
             RemoveSentences(pairs.Where(item => item != first).ToList(), sentenceName);
@@ -189,10 +307,22 @@ namespace SentenceAnalyzer
                 SentencePairs.Remove(pair);
             }
 
+            RemoveEmptyPairs();
             first.Translate.Text = translateText;
             first.Convert.Text = convertText;
             first.NotifyChanged();
             RaisePropertyChanged(nameof(ValidRowCount));
+        }
+
+        private void RemoveEmptyPairs()
+        {
+            foreach (var pair in new List<SentencePairModel>(SentencePairs))
+            {
+                if (pair.IsEmpty)
+                {
+                    SentencePairs.Remove(pair);
+                }
+            }
         }
 
         private void RunOnUi(Action action)

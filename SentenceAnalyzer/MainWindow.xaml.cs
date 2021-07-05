@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -61,30 +62,54 @@ namespace SentenceAnalyzer
             }
         }
 
-        protected override void OnDrop(DragEventArgs e)
+        protected override async void OnDrop(DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length == 2 && files.All(file =>
+                file.ToLower().EndsWith("translate.json") || file.ToLower().EndsWith("convert.json")))
             {
-                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (files.Length == 1 && files[0].ToLower().EndsWith(".csv"))
+                var newLineAsEndSentence = MessageBox.Show(
+                    this,
+                    "Break sentences if new line?",
+                    Title,
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.Yes) != MessageBoxResult.No;
+
+                _vm.Load(files.First(file => file.ToLower().EndsWith("translate.json")),
+                    files.First(file => file.ToLower().EndsWith("convert.json")),
+                    newLineAsEndSentence);
+            }
+            else if (files.Length == 1)
+            {
+                var file = files.First();
+                if (Directory.Exists(file))
                 {
-                    _vm.Load(new CsvSentencesReader(files[0]));
+                    var projectFile = Path.Combine(file, "project.json");
+                    if (File.Exists(projectFile))
+                    {
+                        var project = FileUtils.FileToObject<Project>(projectFile);
+                        project.ProjectDir = file;
+                        await _vm.LoadAsync(new ProjectManager(project));
+                    }
                 }
-                else if (files.Length == 2 && files.All(file =>
-                  file.ToLower().EndsWith("translate.json") || file.ToLower().EndsWith("convert.json")))
+                else if (file.EndsWith("project.json"))
                 {
-                    var newLineAsEndSentence = MessageBox.Show(
-                        this,
-                        "Break sentences if new line?",
-                        Title,
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Question,
-                        MessageBoxResult.Yes) != MessageBoxResult.No;
-                    _vm.Load(new JsonSentencesReader(
-                        files.First(file => file.ToLower().EndsWith("translate.json")),
-                        files.First(file => file.ToLower().EndsWith("convert.json")),
-                        newLineAsEndSentence));
+                    var project = FileUtils.FileToObject<Project>(file);
+                    project.ProjectDir = Path.GetDirectoryName(file);
+                    await _vm.LoadAsync(new ProjectManager(project));
                 }
+            }
+        }
+
+        private void MenuButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                button.ContextMenu.DataContext = _vm;
+                button.ContextMenu.IsOpen = true;
             }
         }
     }

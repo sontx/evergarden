@@ -9,7 +9,7 @@ namespace SentenceAnalyzer
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var diff = Math.Abs((int)value);
+            var diff = Math.Abs(long.Parse(value.ToString()));
             if (diff < 10)
                 return new SolidColorBrush(Colors.DarkGreen);
             if (diff < 25)

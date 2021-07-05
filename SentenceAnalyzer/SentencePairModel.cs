@@ -33,6 +33,10 @@ namespace SentenceAnalyzer
             }
         }
 
+        public string Id { get; set; }
+
+        public bool IsEmpty => string.IsNullOrWhiteSpace(Translate.Text) && string.IsNullOrWhiteSpace(Convert.Text);
+
         public bool IsValid => !string.IsNullOrWhiteSpace(Translate.Text) && !string.IsNullOrWhiteSpace(Convert.Text);
 
         public int LengthDiffPercent => (int)(((float)Translate.Text.Length - Convert.Text.Length) / Math.Max(Translate.Text.Length, Convert.Text.Length) * 100F);
@@ -41,6 +45,9 @@ namespace SentenceAnalyzer
         {
             get
             {
+                if (string.IsNullOrWhiteSpace(Translate.Text) || string.IsNullOrWhiteSpace(Convert.Text))
+                    return 100;
+
                 var translateWords = Translate.Text
                     .NonUnicode()
                     .Prune()
