@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Blackcat.Configuration;
+using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Media;
 
 namespace SentenceAnalyzer
 {
@@ -12,7 +15,24 @@ namespace SentenceAnalyzer
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
+            ConfigLoader.Default.InitializeSettings(new object[]{new AppSettings
+            {
+                Filters = new List<DiffFilter>
+                {
+                    new() {Peak = 10, Color = Colors.Green},
+                    new() {Peak = 25, Color = Colors.YellowGreen},
+                    new() {Peak = 50, Color = Colors.Yellow},
+                    new() {Peak = 75, Color = Colors.Red},
+                    new() {Peak = 100, Color = Colors.DarkRed},
+                }
+            }});
             base.OnStartup(e);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            ConfigLoader.Default.Dispose();
+            base.OnExit(e);
         }
 
         private void Dispatcher_UnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

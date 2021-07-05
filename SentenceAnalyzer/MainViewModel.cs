@@ -1,10 +1,13 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Blackcat.Configuration;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -12,7 +15,7 @@ namespace SentenceAnalyzer
 {
     internal class MainViewModel : ViewModelBase
     {
-        private readonly Window _view;
+        private readonly MainWindow _view;
         private bool _isLoading;
         private ObservableCollection<SentencePairModel> _sentencePairs;
         private string _processingText;
@@ -25,6 +28,8 @@ namespace SentenceAnalyzer
         public RelayCommand<string> RemoveChapterCommand { get; }
         public RelayCommand ReloadCommand { get; }
         public RelayCommand ExportCommand { get; }
+        public RelayCommand SettingsCommand { get; }
+        public RelayCommand<CancelEventArgs> ClosingCommand { get; }
 
         public ObservableCollection<SentencePairModel> SentencePairs
         {
@@ -73,7 +78,7 @@ namespace SentenceAnalyzer
 
         public int ValidRowCount => SentencePairs?.Count(pair => pair.IsValid) ?? 0;
 
-        public MainViewModel(Window view)
+        public MainViewModel(MainWindow view)
         {
             _view = view;
             SaveCommand = new RelayCommand(HandleSave, CanSave);
@@ -82,6 +87,30 @@ namespace SentenceAnalyzer
             RemoveChapterCommand = new RelayCommand<string>(HandleRemoveChapter, CanRemoveChapter);
             ReloadCommand = new RelayCommand(HandleReload, CanReload);
             ExportCommand = new RelayCommand(HandleExport, CanExport);
+            SettingsCommand = new RelayCommand(HandleSettings);
+            ClosingCommand = new RelayCommand<CancelEventArgs>(HandleClosing);
+        }
+
+        private void HandleClosing(CancelEventArgs arg)
+        {
+            if (ConfigLoader.Default.Get<AppSettings>().AutoSave)
+            {
+                var thread = new Thread(() =>
+                {
+                    SaveAsync().Wait();
+                })
+                { IsBackground = false };
+                thread.Start();
+            }
+        }
+
+        private void HandleSettings()
+        {
+            new SettingsWindow(ConfigLoader.Default.Get<AppSettings>()) { Owner = _view }.ShowDialog();
+            if (SentencePairs != null)
+            {
+                SentencePairs = new ObservableCollection<SentencePairModel>(SentencePairs);
+            }
         }
 
         private bool CanExport()
@@ -243,6 +272,11 @@ namespace SentenceAnalyzer
 
         private async Task SaveAsync()
         {
+            if (_projectManager == null)
+            {
+                return;
+            }
+
             IsSaving = true;
             try
             {

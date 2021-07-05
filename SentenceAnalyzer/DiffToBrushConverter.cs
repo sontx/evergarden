@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blackcat.Configuration;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -7,15 +8,27 @@ namespace SentenceAnalyzer
 {
     internal class DiffToBrushConverter : IValueConverter
     {
+        private readonly AppSettings _settings;
+
+        public DiffToBrushConverter()
+        {
+            _settings = ConfigLoader.Default.Get<AppSettings>();
+        }
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var diff = Math.Abs(long.Parse(value.ToString()));
-            if (diff < 10)
-                return new SolidColorBrush(Colors.DarkGreen);
-            if (diff < 25)
-                return new SolidColorBrush(Colors.Green);
-            if (diff < 50)
-                return new SolidColorBrush(Colors.YellowGreen);
+
+            var filters = _settings.Filters;
+            if (filters != null)
+            {
+                var found = filters.Find(filter => diff <= filter.Peak);
+                if (found != null)
+                {
+                    return new SolidColorBrush(found.Color);
+                }
+            }
+
             return new SolidColorBrush(Colors.Red);
         }
 
