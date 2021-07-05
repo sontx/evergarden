@@ -270,5 +270,50 @@ namespace SentenceAnalyzer
                 });
             await csv.WriteRecordsAsync(rows);
         }
+
+        public bool CanExport()
+        {
+            var segmentsDir = FileUtils.GetDir(Project.ProjectDir, "segments");
+            return Directory.GetFiles(segmentsDir, "*.csv").Length > 0;
+        }
+
+        public async Task ExportAsync(string exportDir)
+        {
+            var segmentsDir = FileUtils.GetDir(Project.ProjectDir, "segments");
+            var files = Directory.GetFiles(segmentsDir, "*.csv").ToList();
+            files.Sort((f1, f2) => int.Parse(Path.GetFileNameWithoutExtension(f1)) - int.Parse(Path.GetFileNameWithoutExtension(f2)));
+
+            var translateList = new List<string>(files.Count * 100);
+            var convertList = new List<string>(files.Count * 100);
+
+            foreach (var file in files)
+            {
+                var data = await GetCsvRowsAsync(file);
+                foreach (var row in data)
+                {
+                    if (!string.IsNullOrWhiteSpace(row.Convert) && !string.IsNullOrWhiteSpace(row.Translate))
+                    {
+                        translateList.Add(row.Translate);
+                        convertList.Add(row.Convert);
+                    }
+                }
+            }
+
+            exportDir = FileUtils.GetDir(exportDir);
+            var sourceFile = Path.Combine(exportDir, "source.txt");
+            var targetFile = Path.Combine(exportDir, "target.txt");
+            File.WriteAllText(sourceFile, string.Join(Environment.NewLine, convertList));
+            File.WriteAllText(targetFile, string.Join(Environment.NewLine, translateList));
+        }
+
+        private Task<List<CsvRowModel>> GetCsvRowsAsync(string file)
+        {
+            return Task.Run(() =>
+            {
+                using var reader = new StreamReader(file);
+                using var csv = new CsvReader(reader, new CultureInfo("vi"));
+                return csv.GetRecords<CsvRowModel>().ToList();
+            });
+        }
     }
 }

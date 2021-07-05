@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,6 +24,7 @@ namespace SentenceAnalyzer
         public RelayCommand<string> AddChapterCommand { get; }
         public RelayCommand<string> RemoveChapterCommand { get; }
         public RelayCommand ReloadCommand { get; }
+        public RelayCommand ExportCommand { get; }
 
         public ObservableCollection<SentencePairModel> SentencePairs
         {
@@ -79,6 +81,42 @@ namespace SentenceAnalyzer
             AddChapterCommand = new RelayCommand<string>(HandleAddChapter, CanAddChapter);
             RemoveChapterCommand = new RelayCommand<string>(HandleRemoveChapter, CanRemoveChapter);
             ReloadCommand = new RelayCommand(HandleReload, CanReload);
+            ExportCommand = new RelayCommand(HandleExport, CanExport);
+        }
+
+        private bool CanExport()
+        {
+            return _projectManager?.CanExport() ?? false;
+        }
+
+        private async void HandleExport()
+        {
+            ProcessingText = "Exporting...";
+            try
+            {
+                var saveCurrent = MessageBox.Show(
+                    _view,
+                    "Save current session before export?",
+                    "Exporter",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.No) == MessageBoxResult.Yes;
+
+                if (saveCurrent)
+                {
+                    await SaveAsync();
+                }
+
+                var dialog = new VistaFolderBrowserDialog();
+                if (dialog.ShowDialog(_view) ?? false)
+                {
+                    await _projectManager.ExportAsync(dialog.SelectedPath);
+                }
+            }
+            finally
+            {
+                ProcessingText = null;
+            }
         }
 
         private async void HandleReload()
@@ -111,6 +149,7 @@ namespace SentenceAnalyzer
             AddChapterCommand.RaiseCanExecuteChanged();
             RemoveChapterCommand.RaiseCanExecuteChanged();
             ReloadCommand.RaiseCanExecuteChanged();
+            ExportCommand.RaiseCanExecuteChanged();
         }
 
         private void HandleRemoveChapter(string arg)
