@@ -21,6 +21,7 @@ namespace SentenceAnalyzer
         private string _processingText;
         private bool _isSaving;
         private ProjectManager _projectManager;
+        private SentencePairModel _editingSentencePair;
 
         public RelayCommand SaveCommand { get; }
         public RelayCommand MoveNextCommand { get; }
@@ -30,6 +31,7 @@ namespace SentenceAnalyzer
         public RelayCommand ExportCommand { get; }
         public RelayCommand SettingsCommand { get; }
         public RelayCommand<CancelEventArgs> ClosingCommand { get; }
+        public RelayCommand<SentencePairModel> EditCommand { get; }
 
         public ObservableCollection<SentencePairModel> SentencePairs
         {
@@ -44,6 +46,20 @@ namespace SentenceAnalyzer
         }
 
         public SessionInfo SessionInfo => _projectManager?.GetSessionInfo();
+
+        public SentencePairModel EditingSentencePair
+        {
+            get => _editingSentencePair;
+            set
+            {
+                var old = _editingSentencePair;
+                if (Set(ref _editingSentencePair, value))
+                {
+                    old?.NotifyChanged();
+                    _view.HighlightEditor(_editingSentencePair);
+                }
+            }
+        }
 
         public string ProcessingText
         {
@@ -89,6 +105,12 @@ namespace SentenceAnalyzer
             ExportCommand = new RelayCommand(HandleExport, CanExport);
             SettingsCommand = new RelayCommand(HandleSettings);
             ClosingCommand = new RelayCommand<CancelEventArgs>(HandleClosing);
+            EditCommand = new RelayCommand<SentencePairModel>(HandleEdit);
+        }
+
+        private void HandleEdit(SentencePairModel obj)
+        {
+            EditingSentencePair = obj;
         }
 
         private void HandleClosing(CancelEventArgs arg)
@@ -107,6 +129,13 @@ namespace SentenceAnalyzer
         private void HandleSettings()
         {
             new SettingsWindow(ConfigLoader.Default.Get<AppSettings>()) { Owner = _view }.ShowDialog();
+
+            if (_projectManager != null)
+            {
+                _projectManager.Project.BreakSentencesIfNewLine =
+                    ConfigLoader.Default.Get<AppSettings>().BreakSentencesIfNewLine;
+            }
+
             if (SentencePairs != null)
             {
                 SentencePairs = new ObservableCollection<SentencePairModel>(SentencePairs);
@@ -288,11 +317,12 @@ namespace SentenceAnalyzer
             }
         }
 
-        public async void Load(string translateFile, string convertFile, bool breakSentencesIfNewLine)
+        public async void Load(string translateFile, string convertFile)
         {
             IsLoading = true;
             try
             {
+                var breakSentencesIfNewLine = ConfigLoader.Default.Get<AppSettings>().BreakSentencesIfNewLine;
                 var projectManager = await ProjectManager.CreateAsync(translateFile, convertFile, breakSentencesIfNewLine);
                 await LoadAsync(projectManager);
             }

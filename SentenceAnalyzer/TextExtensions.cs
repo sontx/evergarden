@@ -33,9 +33,17 @@ namespace SentenceAnalyzer
             var builder = new StringBuilder(text.Length);
             foreach (var ch in text)
             {
-                if (char.IsLetter(ch) || (ch is >= '0' and <= '9') || ch == ' ')
+                if (char.IsLetter(ch) || (ch is >= '0' and <= '9'))
                 {
                     builder.Append(ch);
+                }
+
+                if (ch == '\n' || ch == ' ')
+                {
+                    if (builder.Length > 0 && builder[builder.Length - 1] != ' ')
+                    {
+                        builder.Append(' ');
+                    }
                 }
             }
 

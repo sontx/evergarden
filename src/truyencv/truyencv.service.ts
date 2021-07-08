@@ -59,8 +59,12 @@ export class TruyencvService extends CommonService {
       console.log(`Start getting ${toChapterNo - fromChapterNo} chapters from ${slug}`);
       for (let i = fromChapterNo; i <= toChapterNo; i++) {
           console.log(`GET ${i}`)
-          const chapter = await this.getChapter(slug, i);
-          chapters.push(chapter)
+          try {
+              const chapter = await this.getChapter(slug, i);
+              chapters.push(chapter)
+          } catch (e) {
+              console.log(e);
+          }
           await this.delay(500);
       }
       console.log("DONE!");

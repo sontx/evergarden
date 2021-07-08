@@ -8,6 +8,7 @@ namespace SentenceAnalyzer
         public List<DiffFilter> Filters { get; set; }
 
         public bool AutoSave { get; set; }
+        public bool BreakSentencesIfNewLine { get; set; }
     }
 
     internal class DiffFilter

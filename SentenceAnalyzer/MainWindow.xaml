@@ -98,6 +98,13 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
+                    <DataGridTemplateColumn Width="Auto" Header="Action">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding}">Edit</Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
@@ -190,5 +197,45 @@
                 FontWeight="Bold"
                 Text="{Binding ProcessingText}" />
         </Grid>
+        <Border
+            Padding="10"
+            Background="#D1000000"
+            Visibility="{Binding EditingSentencePair, Converter={StaticResource NullToCollapsedConverter}}">
+            <Border
+                Padding="5"
+                VerticalAlignment="Center"
+                Background="Gray">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock>Translate:</TextBlock>
+                        <ContentControl x:Name="ContentControl1" Grid.Column="1" />
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="0,2,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock>Convert:</TextBlock>
+                        <ContentControl x:Name="ContentControl2" Grid.Column="1" />
+                    </Grid>
+                    <Button
+                        Grid.Row="2"
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Right"
+                        Click="EditorCloseButton_OnClick">
+                        <TextBlock Margin="5,0,5,0">Close (ESC)</TextBlock>
+                    </Button>
+                </Grid>
+            </Border>
+        </Border>
     </Grid>
 </Window>

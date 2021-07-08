@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SentenceAnalyzer
@@ -41,6 +42,8 @@ namespace SentenceAnalyzer
 
         public int LengthDiffPercent => (int)(((float)Translate.Text.Length - Convert.Text.Length) / Math.Max(Translate.Text.Length, Convert.Text.Length) * 100F);
 
+        public string[] MatchedWordsCached { get; private set; }
+
         public int WordsDiffPercent
         {
             get
@@ -58,20 +61,21 @@ namespace SentenceAnalyzer
                     .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                     .ToArray();
 
-                var matchedCount = 0;
+                var matchedWords = new List<string>();
                 foreach (var translateWord in translateWords)
                 {
                     for (var i = 0; i < convertWords.Length; i++)
                     {
                         if (translateWord == convertWords[i])
                         {
-                            matchedCount++;
+                            matchedWords.Add(translateWord);
                             convertWords[i] = string.Empty;
                         }
                     }
                 }
 
-                return (int)((float)(translateWords.Length - matchedCount) / translateWords.Length * 100F);
+                MatchedWordsCached = matchedWords.ToArray();
+                return (int)((float)(translateWords.Length - matchedWords.Count) / translateWords.Length * 100F);
             }
         }
 
