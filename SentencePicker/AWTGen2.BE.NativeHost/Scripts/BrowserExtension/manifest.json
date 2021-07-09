@@ -1,0 +1,54 @@
+{
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn2hEhtolLiyVqh5xU8UWsZj+Skb+tAbJX4ssAVFb6BbOwOh71943gKdDWf+mqyye1pPK4OxSydUFLLNSWm1dCBO7zTfCA/BJApm1tzyhGqIfCjn4QEwUw4qqKXRSHKrvUlR5pNBF5NneqN/AJWOF/dL80vHghbMTIg7/7QFXWGJwvUtEgLfvERVNd0IPCTpoxMpJ61zXMBjbElOcOaRpFjXB9sIIYA/DP0j66u8jxc0B8mvP8KUw5zqF2h5uhbM7nsp0NpGEnTzQ5H45m1cpm8rCmu1L3vc740FmVqINK4YHu4yLIuhDK9EkIAj89UU2iVSBUVZocs9flvqKKfQnXQIDAQAB",
+  "description": "AutoWebTools extension for interact with browser",
+  "icons": {
+    "128": "app.png",
+    "16": "app.png",
+    "48": "app.png"
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "background": {
+    "scripts": [
+      "Loader.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "ContentLoader.js"
+      ],
+      "css": [
+        "style.css"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "file://*/*"
+      ],
+      "match_about_blank": true,
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "manifest_version": 2,
+  "name": "AWTGen2",
+  "short_name": "AWTGen2 Extension",
+  "author": "AWT",
+  "permissions": [
+    "nativeMessaging",
+    "tabs",
+    "contextMenus",
+    "unlimitedStorage",
+    "storage",
+    "activeTab",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking",
+    "proxy",
+    "http://*/*",
+    "https://*/*",
+    "file://*/*",
+    "\u003Call_urls>"
+  ],
+  "version": "0.0.0"
+}

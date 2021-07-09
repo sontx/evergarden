@@ -1,0 +1,14 @@
+#awt-gen2-highlighted-left,
+#awt-gen2-highlighted-right {
+    z-index: 10000;
+    background: #478cff;
+    width: 2px;
+    position: fixed;
+}
+#awt-gen2-highlighted-top,
+#awt-gen2-highlighted-bottom {
+    z-index: 10000;
+    background: #478cff;
+    height: 2px;
+    position: fixed;
+}
