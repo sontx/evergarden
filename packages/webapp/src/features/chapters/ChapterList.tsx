@@ -54,7 +54,7 @@ export function ChapterList(props: { story: GetStoryDto }) {
   );
 
   return (
-    <>
+    <div style={{marginTop: "10px"}}>
       {(status === "success" || !isEmpty(chapters)) && (
         <div style={{ position: "relative" }}>
           <div className="chapter-list-container">
@@ -98,6 +98,6 @@ export function ChapterList(props: { story: GetStoryDto }) {
       {status === "error" && (
         <Message closable type="error" description={errorMessage} full />
       )}
-    </>
+    </div>
   );
 }
