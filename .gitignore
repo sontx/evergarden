@@ -1,5 +1,8 @@
 node_modules
 *.local
 *.env
+.env.development
+.env.production
+.idea
 SentenceAnalyzer
 SentencePicker
