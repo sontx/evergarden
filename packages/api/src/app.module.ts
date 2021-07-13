@@ -36,8 +36,7 @@ import { StorageModule } from './storage/storage.module';
         return {
           type: "mongodb",
           url: configService.get("database.mongodb.connectionString"),
-          database: configService.get("database.mongodb.databaseName"),
-          ssl: true,
+          ssl: false,
           useUnifiedTopology: true,
           useNewUrlParser: true,
           isGlobal: true,

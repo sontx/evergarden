@@ -3,7 +3,6 @@ export default () => ({
   database: {
     mongodb: {
       connectionString: process.env.MONGODB_CONNECTION_STRING,
-      databaseName: process.env.MONGODB_DATABASE_NAME,
     },
   },
   credentials: {
