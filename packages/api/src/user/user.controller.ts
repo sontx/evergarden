@@ -1,15 +1,16 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   Logger,
   NotFoundException,
   Param,
-  Put, Req, UnauthorizedException,
-  UseGuards, UsePipes, ValidationPipe,
+  Put,
+  Req,
+  UnauthorizedException,
+  UseGuards,
 } from "@nestjs/common";
-import { GetUserDto, UpdateUserSettingsDto } from "@evergarden/shared";
+import { GetUserDto, mergeObjects, UpdateUserSettingsDto } from "@evergarden/shared";
 import { UserService } from "./user.service";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
@@ -21,46 +22,26 @@ export class UserController {
 
   constructor(private userService: UserService) {}
 
-  @Get("ping/:id")
-  async getUser(@Param("id") id: string): Promise<GetUserDto> {
-    try {
-      const user = await this.userService.getById(id);
-      if (!user) {
-        throw new NotFoundException();
-      }
-      return this.userService.toDto(user);
-    } catch (e) {
-      this.logger.warn(`Not found user id ${id}`, e);
+  @Get(":id")
+  async getUser(@Param("id") id: number): Promise<GetUserDto> {
+    const user = await this.userService.getById(id);
+    if (!user) {
       throw new NotFoundException();
     }
+    return this.userService.toDto(user);
   }
 
   @UseGuards(JwtGuard, RolesGuard)
   @Role("user")
   @Put("current/settings")
-  @UsePipes(new ValidationPipe({ transform: true }))
   async updateUserSettings(@Req() req, @Body() settings: UpdateUserSettingsDto) {
-    const {id} = req.user || {};
-    if (!id) {
-      throw new UnauthorizedException();
-    }
-
+    const { id } = req.user || {};
     const user = await this.userService.getById(id);
     if (!user) {
       throw new UnauthorizedException();
     }
 
-    try {
-      const oldSettings = user.settings || ({} as any);
-      user.settings = {
-        readingFont: settings.readingFont || oldSettings.readingFont,
-        readingFontSize: settings.readingFontSize || oldSettings.readingFontSize,
-        readingLineSpacing: settings.readingLineSpacing || oldSettings.readingLineSpacing,
-      };
-      await this.userService.updateUser(user);
-    } catch (e) {
-      this.logger.warn(`Error while update settings for user ${id}`, e);
-      throw new BadRequestException();
-    }
+    user.settings = mergeObjects(settings, user.settings || {});
+    await this.userService.updateUser(user);
   }
 }

@@ -1,14 +1,8 @@
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException
-} from "@nestjs/common";
+import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import {Reflector} from "@nestjs/core";
-import {Observable} from "rxjs";
-import {Role} from "@evergarden/shared";
-import {checkRole} from "../role/roles";
-import {JwtConfig} from "./jwt-config.decorator";
+import { Reflector } from "@nestjs/core";
+import { Observable } from "rxjs";
+import { JwtConfig } from "./jwt-config.decorator";
 
 @Injectable()
 export default class JwtGuard extends AuthGuard("jwt") {

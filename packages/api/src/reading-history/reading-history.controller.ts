@@ -4,21 +4,18 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseBoolPipe,
+  ParseIntPipe,
   Put,
-  Query,
   Req,
   UnauthorizedException,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from "@nestjs/common";
 import { ReadingHistoryService } from "./reading-history.service";
-import { IdType, UpdateStoryHistoryDto } from "@evergarden/shared";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
 import { Role } from "../auth/role/roles.decorator";
 import { StoryService } from "../story/story.service";
+import { UpdateReadingHistoryDto } from "@evergarden/shared";
 
 @Controller("histories")
 export class ReadingHistoryController {
@@ -27,11 +24,9 @@ export class ReadingHistoryController {
   @Get(":historyId/:storyId")
   @UseGuards(JwtGuard, RolesGuard)
   @Role("user")
-  async getStoryHistory(@Param("historyId") historyId: IdType, @Param("storyId") storyId: IdType) {
-    if (!historyId || !storyId) {
-      throw new NotFoundException();
-    }
-    const history = this.readingHistoryService.getStoryHistory(historyId, storyId);
+  async getStoryHistory(@Param("storyId", ParseIntPipe) storyId: number, @Req() req) {
+    const { id } = req.user;
+    const history = this.readingHistoryService.getStoryHistory(id, storyId);
     if (!history) {
       throw new NotFoundException();
     }
@@ -41,21 +36,13 @@ export class ReadingHistoryController {
   @Put()
   @UseGuards(JwtGuard, RolesGuard)
   @Role("user")
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async updateStoryHistory(
-    @Query("historyId") historyId: IdType,
-    @Query("startReading", ParseBoolPipe) startReading: boolean,
-    @Req() req,
-    @Body() storyHistory: UpdateStoryHistoryDto,
-  ) {
+  async updateStoryHistory(@Req() req, @Body() storyHistory: UpdateReadingHistoryDto) {
     const { id } = req.user || {};
     if (!id) {
       throw new UnauthorizedException();
     }
 
-    await this.readingHistoryService.updateStoryHistory(id, historyId || "", storyHistory);
-    if (startReading) {
-      await this.storyService.increaseCount(storyHistory.storyId);
-    }
+    await this.readingHistoryService.updateStoryHistory(id, storyHistory);
+    // TODO: calculate new reading count
   }
 }

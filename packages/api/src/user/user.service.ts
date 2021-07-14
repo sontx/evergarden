@@ -1,10 +1,11 @@
-import { GetUserDto, IdType } from "@evergarden/shared";
+import { GetUserDto, Role } from "@evergarden/shared";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { ReadingHistoryService } from "../reading-history/reading-history.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class UserService {
@@ -12,45 +13,55 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @Inject(forwardRef(() => ReadingHistoryService))
     private readingHistoryService: ReadingHistoryService,
+    private configService: ConfigService,
   ) {}
 
   async getByEmail(email: string): Promise<User> {
     return await this.userRepository.findOne({ email });
   }
 
-  async getById(id: IdType): Promise<User> {
+  async getByEmailAndPassword(email: string, password: string): Promise<User> {
+    return await this.userRepository.findOne({ email, password });
+  }
+
+  async getAllByRole(role: Role): Promise<User[]> {
+    return await this.userRepository.find({ role });
+  }
+
+  async getById(id: number): Promise<User> {
     return await this.userRepository.findOne(id);
   }
 
   toDto(user: User): GetUserDto {
     return (
       user && {
-        id: user.id.toHexString(),
+        id: user.id,
         fullName: user.fullName,
       }
     );
   }
 
   async addUser(user: Partial<User>): Promise<User> {
-    const newUser = await this.userRepository.create(user);
-    const history = await this.readingHistoryService.createEmptyReadingHistory();
-    try {
-      newUser.historyId = history.id.toHexString();
-    } finally {
-      await this.readingHistoryService.deleteReadingHistory(history.id.toHexString());
-    }
+    const newUser = await this.userRepository.create({
+      ...user,
+      settings: {
+        readingFont: this.configService.get("settings.user.readingFont"),
+        readingFontSize: this.configService.get("settings.user.readingFontSize"),
+        readingLineSpacing: this.configService.get("settings.user.readingLineSpacing"),
+      },
+    });
     await this.userRepository.save(newUser);
     return newUser;
   }
 
-  async setCurrentRefreshToken(refreshToken: string, userId: IdType) {
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.userRepository.update(userId, {
       refreshToken: currentHashedRefreshToken,
     });
   }
 
-  async getUserIfRefreshTokenMatches(refreshToken: string, userId: IdType): Promise<User | undefined> {
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number): Promise<User | undefined> {
     const user = await this.getById(userId);
     if (!user || !user.refreshToken || !refreshToken) {
       return null;
@@ -61,13 +72,17 @@ export class UserService {
     }
   }
 
-  async removeRefreshToken(userId: IdType) {
+  async removeRefreshToken(userId: number) {
     return this.userRepository.update(userId, {
       refreshToken: null,
     });
   }
 
-  updateUser({ id, ...rest }: User) {
+  updateUser({ id, ...rest }: Partial<User>) {
     return this.userRepository.update(id as any, rest);
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    await this.userRepository.delete(id);
   }
 }

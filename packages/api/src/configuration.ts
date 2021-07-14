@@ -1,14 +1,26 @@
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 3000,
+  isDevelopment: process.env.NODE_ENV === "development",
   database: {
     mongodb: {
       connectionString: process.env.MONGODB_CONNECTION_STRING,
+    },
+    mysql: {
+      host: process.env.MYSQL_HOST,
+      port: process.env.MYSQL_PORT || 3306,
+      databaseName: process.env.MYSQL_DBNAME,
+      username: process.env.MYSQL_USERNAME,
+      password: process.env.MYSQL_PASSWORD,
     },
   },
   credentials: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
       secret: process.env.GOOGLE_SECRET,
+    },
+    admin: {
+      username: process.env.USER_ADMIN_USERNAME,
+      password: process.env.USER_ADMIN_PASSWORD,
     },
   },
   jwt: {
@@ -29,7 +41,6 @@ export default () => ({
     },
   },
   settings: {
-    maxHistoryCount: 15,
     sizing: {
       thumbnail: {
         width: 40,
@@ -39,10 +50,15 @@ export default () => ({
         maxWidth: 768,
       },
     },
+    user: {
+      readingFont: "Roboto",
+      readingFontSize: "M",
+      readingLineSpacing: "M",
+    },
   },
   upload: {
     dir: "./upload",
     maxFileCount: 1000,
-    serveHost: "http://localhost:2000"
+    serveHost: "http://localhost:2000",
   },
 });

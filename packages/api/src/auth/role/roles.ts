@@ -1,10 +1,10 @@
-import {Role} from "@evergarden/shared";
+import { Role } from "@evergarden/shared";
 
-const roleWeight: {[K in Role]: number} = {
+const roleWeight: { [K in Role]: number } = {
   guest: 0,
   user: 1,
   mod: 2,
-  admin: 3
+  admin: 3,
 };
 
 export function checkRole(accessRole: Role, userRole: Role): boolean {

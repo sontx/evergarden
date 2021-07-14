@@ -8,7 +8,7 @@ import * as imagemin from "imagemin";
 import * as imageminJpegtran from "imagemin-jpegtran";
 import imageminPngquant from "imagemin-pngquant";
 import { nanoid } from "nanoid";
-import {isUri} from "valid-url";
+import { isUri } from "valid-url";
 
 @Injectable()
 export class StorageService {
@@ -100,7 +100,7 @@ export class StorageService {
   }
 
   makeThumbnailUrl(name): string {
-    if ((!name || isUri(name))) {
+    if (!name || isUri(name)) {
       return name;
     }
     return `${this.serveHost}/${name}`;
@@ -186,7 +186,11 @@ export class StorageService {
     await this.writeFileAsync(coverFilePath, coverBuffer);
 
     // Optimize and save thumbnail image to file
-    sharpObj = sharpObj.resize({ width: thumbnailWidth, height: thumbnailHeight, fit: "cover" });
+    sharpObj = sharpObj.resize({
+      width: thumbnailWidth,
+      height: thumbnailHeight,
+      fit: "cover",
+    });
     let thumbnailBuffer = await sharpObj.toBuffer();
     thumbnailBuffer = await this.optimizeImage(thumbnailBuffer);
     const thumbnailFilePath = path.resolve(storageDir, `${sharedName}.thumbnail.jpg`);

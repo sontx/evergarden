@@ -149,7 +149,7 @@ export function ReadingMobile(props: {
                       )}
                     </h5>
                     <span className="reading-subtitle">
-                      {typeof chapter?.uploadBy === "object"
+                      {typeof chapter?.createdBy === "object"
                         ? intl.formatMessage(
                             { id: "readingSubtitle" },
                             {
@@ -157,10 +157,10 @@ export function ReadingMobile(props: {
                               updatedBy: (
                                 <Link
                                   to={{
-                                    pathname: `/user/${chapter.uploadBy.id}`,
+                                    pathname: `/user/${chapter.createdBy.id}`,
                                   }}
                                 >
-                                  {chapter.uploadBy.fullName}
+                                  {chapter.createdBy.fullName}
                                 </Link>
                               ),
                             },

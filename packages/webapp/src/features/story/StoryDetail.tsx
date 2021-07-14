@@ -17,7 +17,7 @@ function Full() {
   return <span className="story-preview-detail-status--full">Full</span>;
 }
 
-function UploadBy({ user }: { user: IdType | GetUserDto }) {
+function createdBy({ user }: { user: IdType | GetUserDto }) {
   const showUser =
     typeof user === "object"
       ? { id: user.id, name: user.fullName }
@@ -96,10 +96,10 @@ export function StoryDetail(props: { story: GetStoryDto }) {
         </>
       )}
 
-      {story.uploadBy && (
+      {story.createdBy && (
         <>
           <label>Upload by</label>
-          <UploadBy user={story.uploadBy} />
+          <createdBy user={story.createdBy} />
         </>
       )}
 

@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
-import { Story } from "./story.entity";
-import { StorySearchBody, StorySearchResult } from "@evergarden/shared";
+import { Story } from "../story/story.entity";
 import { StorageService } from "../storage/storage.service";
+import { StorySearchBody, StorySearchResult } from "@evergarden/shared";
 
 @Injectable()
 export default class StorySearchService {
@@ -66,7 +66,15 @@ export default class StorySearchService {
       );
       const body = [];
       for (const story of stories) {
-        body.push({ index: { _index: StorySearchService.index, _id: story.id } }, this.toSearchBody(story));
+        body.push(
+          {
+            index: {
+              _index: StorySearchService.index,
+              _id: story.id,
+            },
+          },
+          this.toSearchBody(story),
+        );
       }
 
       this.elasticsearchService.bulk(
@@ -127,7 +135,7 @@ export default class StorySearchService {
 
   private toSearchBody(story: Story) {
     return {
-      id: story.id.toHexString(),
+      id: story.id,
       url: story.url,
       title: story.title,
       description: story.description,
@@ -148,6 +156,11 @@ export default class StorySearchService {
       },
     });
     const hits = body.hits.hits;
-    return hits.map((item) => item._source);
+    return hits
+      .map((item) => item._source)
+      .map((item) => ({
+        ...item,
+        thumbnail: this.storageService.makeThumbnailUrl(item.thumbnail),
+      }));
   }
 }

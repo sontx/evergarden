@@ -1,5 +1,3 @@
-import {GetStoryHistoryDto} from "@evergarden/shared";
-
 export type ProcessingStatus = "none" | "processing" | "success" | "error";
 
 export function isEmpty(val: any): boolean {
@@ -13,13 +11,6 @@ export function isEmpty(val: any): boolean {
     return Object.keys(val).length === 0;
   }
   return false;
-}
-
-export function hasHistory(history: GetStoryHistoryDto | null | undefined): history is GetStoryHistoryDto {
-  if (!history) {
-    return false;
-  }
-  return history.currentChapterNo > 0;
 }
 
 export function abbreviateNumber(value: number): string {

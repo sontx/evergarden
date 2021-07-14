@@ -1,37 +1,21 @@
-import { Column, Entity, ObjectIdColumn, PrimaryGeneratedColumn } from "typeorm";
-import { ObjectID } from "mongodb";
-import { IdType } from "@evergarden/shared";
+import { Column, Entity, ManyToOne } from "typeorm";
+import { Story } from "../story/story.entity";
+import { AbstractEntity } from "../common/abstract.entity";
 
 @Entity("chapters")
-export class Chapter {
-  @PrimaryGeneratedColumn()
-  @ObjectIdColumn({ name: "_id" })
-  id: ObjectID;
-
-  @Column({ type: "string" })
-  storyId: IdType;
-
-  @Column({ type: "number", nullable: false })
+export class Chapter extends AbstractEntity {
+  @Column({ type: "int" })
   chapterNo: number;
 
-  @Column({ type: "string", nullable: true })
+  @Column({ type: "nvarchar", length: 50, nullable: true })
   title?: string;
 
-  @Column({ type: "string", nullable: false })
+  @Column({ type: "mediumtext" })
   content: string;
 
-  @Column({ type: "datetime", nullable: false })
-  created: Date;
-
-  @Column({ type: "datetime", nullable: false })
-  updated: Date;
-
-  @Column({ type: "number", nullable: true })
+  @Column({ type: "boolean", default: false })
   published?: boolean;
 
-  @Column({ type: "string", nullable: false })
-  uploadBy: IdType;
-
-  @Column({ type: "string", nullable: false })
-  updatedBy: IdType;
+  @ManyToOne(() => Story, (story) => story.chapters)
+  story: Promise<Story>;
 }

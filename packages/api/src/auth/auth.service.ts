@@ -1,12 +1,12 @@
-import {AuthUser, IdType, JwtPayload, OAuth2Provider} from "@evergarden/shared";
+import { AuthUser, JwtPayload, OAuth2Provider, UserPass } from "@evergarden/shared";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
 import { User } from "src/user/user.entity";
-import { GoogleAuthService } from "./google/google-auth.service";
+import { GoogleAuthService } from "./google-auth.service";
+import { FacebookAuthService } from "./facebook-auth.service";
 import ms = require("ms");
-import {FacebookAuthService} from "./facebook/facebook-auth.service";
 
 @Injectable()
 export class AuthService {
@@ -20,6 +20,10 @@ export class AuthService {
     private facebookAuthService: FacebookAuthService,
   ) {}
 
+  async login(userpass: UserPass): Promise<User> {
+    return await this.userService.getByEmailAndPassword(userpass.username, userpass.password);
+  }
+
   async loginFacebook(token: string): Promise<User | null> {
     const authUser = await this.facebookAuthService.getUserFromToken(token);
     return this.doLogin(authUser, "facebook");
@@ -30,7 +34,7 @@ export class AuthService {
     return this.doLogin(authUser, "google");
   }
 
-  private async doLogin(authUser: Partial<AuthUser>, provider: OAuth2Provider): Promise<User> {
+  private async doLogin(authUser: Partial<AuthUser>, provider: OAuth2Provider | null): Promise<User> {
     if (!authUser) {
       return null;
     }
@@ -56,12 +60,11 @@ export class AuthService {
   getAuthenticatedUser(user: User): AuthUser {
     return (
       user && {
-        id: user.id.toHexString(),
+        id: user.id,
         email: user.email,
         fullName: user.fullName,
         photoUrl: user.photoUrl,
         settings: user.settings,
-        historyId: user.historyId,
       }
     );
   }
@@ -69,9 +72,8 @@ export class AuthService {
   private getAccessToken(user: User): string {
     const payload: JwtPayload = {
       email: user.email,
-      id: user.id.toHexString(),
+      id: user.id,
       role: user.role || "guest",
-      historyId: user.historyId,
     };
     const expires = `${this.configService.get("jwt.auth.expires")}`;
     return this.jwtService.sign(payload, {
@@ -86,7 +88,7 @@ export class AuthService {
     return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${ms(expires) / 1000}`;
   }
 
-  getCookieWithJwtRefreshToken(userId: IdType): { cookie: string; token: string } {
+  getCookieWithJwtRefreshToken(userId: number): { cookie: string; token: string } {
     const payload: Partial<JwtPayload> = { id: userId };
     const expires = `${this.configService.get("jwt.refresh.expires")}`;
     const token = this.jwtService.sign(payload, {
@@ -101,9 +103,6 @@ export class AuthService {
   }
 
   getCookiesForLogOut(): string[] {
-    return [
-      "Authentication=; HttpOnly; Path=/; Max-Age=0",
-      "Refresh=; HttpOnly; Path=/; Max-Age=0",
-    ];
+    return ["Authentication=; HttpOnly; Path=/; Max-Age=0", "Refresh=; HttpOnly; Path=/; Max-Age=0"];
   }
 }

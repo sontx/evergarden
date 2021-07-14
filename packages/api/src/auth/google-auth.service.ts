@@ -17,13 +17,8 @@ export class GoogleAuthService {
     const ticket = await this.client.verifyIdToken({
       idToken: token,
     });
-    const id = ticket.getUserId();
-    if (!id) {
-      return null;
-    }
     const { name, email, picture } = ticket.getPayload();
     return {
-      id,
       fullName: name,
       email,
       photoUrl: picture,

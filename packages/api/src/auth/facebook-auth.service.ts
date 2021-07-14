@@ -11,14 +11,11 @@ export class FacebookAuthService {
       .toPromise();
     if (response.status === 200) {
       const data = response.data;
-      if (data.id) {
-        return {
-          id: data.id,
-          fullName: data.name,
-          email: data.email,
-          photoUrl: data?.picture?.data?.url,
-        };
-      }
+      return {
+        fullName: data.name,
+        email: data.email,
+        photoUrl: data?.picture?.data?.url,
+      };
     }
     return null;
   }

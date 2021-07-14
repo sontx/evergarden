@@ -1,41 +1,52 @@
 import { Exclude } from "class-transformer";
-import { Column, Entity, ObjectIdColumn, PrimaryGeneratedColumn } from "typeorm";
-import { IdType, OAuth2Provider, Role } from "@evergarden/shared";
-import { UserSettings } from "./user-settings.entity";
-import { ObjectID } from "mongodb";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { OAuth2Provider, Role } from "@evergarden/shared";
+import { UserSettings } from "./user-settings";
+import { Story } from "../story/story.entity";
+import { ReadingHistory } from "../reading-history/reading-history.entity";
 
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
-  @ObjectIdColumn({ name: "_id" })
-  id: ObjectID;
+  id: number;
 
-  @Column({ type: "string", nullable: false })
+  @Column({ type: "nvarchar", length: 50, unique: true })
   email: string;
 
-  @Column({ type: "string", nullable: true })
+  @Column({ type: "nvarchar", length: 50, nullable: true })
   @Exclude()
-  password: string;
+  password?: string;
 
-  @Column({ nullable: true, type: "string" })
-  provider: OAuth2Provider | null;
+  @Column({
+    type: "enum",
+    enum: ["google", "facebook"],
+    default: null,
+    nullable: true,
+  })
+  provider?: OAuth2Provider;
 
-  @Column({ nullable: true, type: "string" })
+  @Column({ type: "nvarchar", length: 50, nullable: false })
   fullName: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "nvarchar", length: 255, nullable: true })
   @Exclude()
   refreshToken?: string;
 
-  @Column({ nullable: true, type: "string" })
-  role?: Role;
+  @Column({ type: "enum", enum: ["user", "mod", "admin"], default: "user" })
+  role: Role;
 
-  @Column({ nullable: true, type: "string" })
+  @Column({ type: "nvarchar", length: 500, nullable: true })
   photoUrl?: string;
 
-  @Column((type) => UserSettings)
+  @Column({ type: "simple-json", nullable: true })
   settings: UserSettings;
 
-  @Column({ type: "string" })
-  historyId?: IdType;
+  @OneToMany(() => Story, (story) => story.createdBy)
+  createdStories: Promise<Story[]>;
+
+  @OneToMany(() => Story, (story) => story.updatedBy)
+  updatedStories: Promise<Story[]>;
+
+  @OneToMany(() => ReadingHistory, (history) => history.user)
+  histories: Promise<ReadingHistory[]>;
 }

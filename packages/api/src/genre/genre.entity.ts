@@ -1,12 +1,14 @@
-import { Column, Entity, ObjectIdColumn, PrimaryGeneratedColumn } from "typeorm";
-import { IdType } from "@evergarden/shared";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Story } from "../story/story.entity";
 
 @Entity("genres")
 export class Genre {
   @PrimaryGeneratedColumn()
-  @ObjectIdColumn({ name: "_id" })
-  id: IdType;
+  id: number;
 
-  @Column({ type: "string", unique: true })
+  @Column({ type: "nvarchar", length: 50, unique: true })
   name: string;
+
+  @ManyToMany(() => Story, (story) => story.genres)
+  stories: Story[];
 }

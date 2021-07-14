@@ -1,52 +1,49 @@
-import {BadRequestException, Injectable, Logger} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
-import {FindManyOptions, MongoRepository} from "typeorm";
-import {Story} from "./story.entity";
+import { BadRequestException, forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { FindManyOptions, Repository } from "typeorm";
+import { Story } from "./story.entity";
 import {
-  AuthUser,
-  calculateVoteCount,
   CreateStoryDto,
   GetStoryDto,
-  IdType,
   PaginationOptions,
   PaginationResult,
   randomNumberString,
   StorySearchBody,
   stringToSlug,
   UpdateStoryDto,
-  VoteType,
 } from "@evergarden/shared";
-import {ObjectID} from "mongodb";
-import StorySearchService from "./story-search.service";
-import {AuthorService} from "../author/author.service";
-import {GenreService} from "../genre/genre.service";
-import {StorageService} from "../storage/storage.service";
+import StorySearchService from "../search/story-search.service";
+import { AuthorService } from "../author/author.service";
+import { GenreService } from "../genre/genre.service";
+import { StorageService } from "../storage/storage.service";
+import { User } from "../user/user.entity";
+import { UserService } from "../user/user.service";
+import { ViewCountService } from "./view-count.service";
 
 @Injectable()
 export class StoryService {
   private readonly logger = new Logger(StoryService.name);
 
   constructor(
-    @InjectRepository(Story) private storyRepository: MongoRepository<Story>,
+    @InjectRepository(Story)
+    private storyRepository: Repository<Story>,
     private storySearchService: StorySearchService,
     private authorService: AuthorService,
     private genreService: GenreService,
     private storageService: StorageService,
+    @Inject(forwardRef(() => UserService))
+    private userService: UserService,
+    private viewCountService: ViewCountService,
   ) {
     this.toDto = this.toDto.bind(this);
-    this.logger.debug("Initializing search engine...");
-    this.initializeSearchEngine().then(() => {
-      this.logger.debug("Initialized search engine!");
-    });
   }
 
-  private async initializeSearchEngine() {
-    const stories = await this.storyRepository.find();
-    await this.storySearchService.createIndex(stories);
+  async getAll() {
+    return await this.storyRepository.find();
   }
 
-  async getStoriesByIds(ids: IdType[]): Promise<GetStoryDto[]> {
-    const stories = await this.storyRepository.findByIds(ids.map((id) => new ObjectID(id)));
+  async getStoriesByIds(ids: number[]): Promise<GetStoryDto[]> {
+    const stories = await this.storyRepository.findByIds(ids);
     return stories.map(this.toDto);
   }
 
@@ -99,12 +96,12 @@ export class StoryService {
     return this.getLastUpdatedStories(options, includeUnpublished);
   }
 
-  async getUserStories(userId: IdType): Promise<PaginationResult<GetStoryDto>> {
+  async getUserStories(userId: number): Promise<PaginationResult<GetStoryDto>> {
     return await this.getStories(
-      {page: 0, skip: 0, limit: 99999990},
+      { page: 0, skip: 0, limit: 99999990 },
       {
-        where: {uploadBy: userId},
-        order: {updated: "DESC"},
+        where: { createdBy: userId },
+        order: { updated: "DESC" },
       },
       true,
     );
@@ -112,35 +109,23 @@ export class StoryService {
 
   async search(text: string): Promise<StorySearchBody[]> {
     const result = await this.storySearchService.search(text);
-    return result.map((item) => ({ ...item, thumbnail: this.storageService.makeThumbnailUrl(item.thumbnail) }));
+    return result.map((item) => ({
+      ...item,
+      thumbnail: this.storageService.makeThumbnailUrl(item.thumbnail),
+    }));
   }
 
   toDto(story: Story): GetStoryDto {
     return (
       story && {
-        id: story.id?.toHexString(),
-        created: story.created,
-        updated: story.updated,
-        authors: story.authors,
-        lastChapter: story.lastChapter,
-        description: story.description,
-        genres: story.genres,
-        published: story.published,
-        upvote: story.upvote,
-        downvote: story.downvote,
-        status: story.status,
-        url: story.url,
+        ...story,
         thumbnail: this.storageService.makeThumbnailUrl(story.thumbnail),
         cover: this.storageService.makeThumbnailUrl(story.cover),
-        title: story.title,
-        view: story.view,
-        uploadBy: story.uploadBy,
-        updatedBy: story.updatedBy,
       }
     );
   }
 
-  async addStory(story: CreateStoryDto, user: AuthUser): Promise<GetStoryDto> {
+  async addStory(story: CreateStoryDto, userId: number): Promise<GetStoryDto> {
     if (story.url) {
       const found = await this.getStoryByUrl(story.url);
       if (found) {
@@ -161,14 +146,15 @@ export class StoryService {
     story.genres = await this.genreService.getValidGenres(story.genres || []);
     await this.syncThumbnail(story);
 
+    const user = await this.userService.getById(userId);
     const newStory = await this.storyRepository.create(story);
     const now = new Date();
     const savedStory = await this.storyRepository.save({
       ...newStory,
       created: now,
       updated: now,
-      uploadBy: user.id,
-      updatedBy: user.id,
+      createdBy: user,
+      updatedBy: user,
       view: 0,
       lastChapter: 0,
       upvote: 0,
@@ -178,8 +164,9 @@ export class StoryService {
     return this.toDto(savedStory);
   }
 
-  async updateStory(currentStory: Story, story: UpdateStoryDto, user: AuthUser): Promise<Story> {
+  async updateStory(currentStory: Story, story: UpdateStoryDto, userId: number): Promise<Story> {
     try {
+      const user = await this.userService.getById(userId);
       const authors = await this.authorService.syncAuthors(story.authors || []);
       const genres = await this.genreService.getValidGenres(story.genres || []);
       await this.syncThumbnail(story, currentStory);
@@ -188,9 +175,9 @@ export class StoryService {
         authors,
         genres,
         updated: new Date(),
-        updatedBy: user.id,
+        updatedBy: user,
       });
-      const savedStory = await this.getStory(currentStory.id.toHexString());
+      const savedStory = await this.getStory(currentStory.id);
       await this.storySearchService.update(savedStory);
       return savedStory;
     } catch (e) {
@@ -252,7 +239,7 @@ export class StoryService {
     }
   }
 
-  async getStory(id: IdType): Promise<Story | null> {
+  async getStory(id: number): Promise<Story | null> {
     try {
       return await this.storyRepository.findOne(id);
     } catch (e) {
@@ -261,12 +248,12 @@ export class StoryService {
     }
   }
 
-  async updateStoryInternal(story: Story, user: AuthUser): Promise<boolean> {
+  async updateStoryInternal(story: Story, user: User): Promise<boolean> {
     try {
       await this.storyRepository.update(story.id as any, {
         ...story,
         updated: new Date(),
-        updatedBy: user.id,
+        updatedBy: user,
       });
       return true;
     } catch (e) {
@@ -275,22 +262,15 @@ export class StoryService {
     }
   }
 
-  async increaseCount(storyId: IdType) {
+  async increaseCount(storyId: number) {
     try {
-      await this.storyRepository.findOneAndUpdate({ _id: new ObjectID(storyId) }, { $inc: { view: 1 } });
+      await this.viewCountService.enqueue(storyId, 1);
     } catch (e) {
       this.logger.warn(`Error while increase view count: ${storyId}`, e);
     }
   }
 
-  async changeRating(storyId: IdType, oldVote?: VoteType, newVote?: VoteType) {
-    const result = calculateVoteCount(oldVote, newVote);
-    if (result) {
-      await this.storyRepository.findOneAndUpdate({ _id: new ObjectID(storyId) }, { $inc: result });
-    }
-  }
-
-  async deleteStory(storyId: IdType): Promise<void> {
+  async deleteStory(storyId: number): Promise<void> {
     await this.storyRepository.delete(storyId);
   }
 }

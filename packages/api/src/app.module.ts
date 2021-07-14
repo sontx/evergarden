@@ -19,7 +19,7 @@ import { Chapter } from "./chapter/chapter.entity";
 import { Author } from "./author/author.entity";
 import { Genre } from "./genre/genre.entity";
 import { ReadingHistory } from "./reading-history/reading-history.entity";
-import { StorageModule } from './storage/storage.module';
+import { StorageModule } from "./storage/storage.module";
 
 @Module({
   imports: [
@@ -34,13 +34,15 @@ import { StorageModule } from './storage/storage.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return {
-          type: "mongodb",
-          url: configService.get("database.mongodb.connectionString"),
-          ssl: false,
-          useUnifiedTopology: true,
-          useNewUrlParser: true,
+          type: "mysql",
+          host: configService.get("database.mysql.host"),
+          port: configService.get("database.mysql.port") || 3306,
+          username: configService.get("database.mysql.username"),
+          password: configService.get("database.mysql.password"),
+          database: configService.get("database.mysql.databaseName"),
           isGlobal: true,
-          synchronize: true,
+          autoLoadEntities: true,
+          synchronize: !!configService.get("isDevelopment"),
           entities: [User, Story, Chapter, Author, Genre, ReadingHistory],
         };
       },

@@ -1,15 +1,26 @@
 import {
   IsArray,
   IsBoolean,
-  IsMongoId,
+  IsEmail,
   IsOptional,
   IsString,
   Matches,
+  MaxLength,
   Min,
   MinLength,
 } from 'class-validator';
 
 export type OAuth2Provider = 'google' | 'facebook';
+
+export class UserPass {
+  @IsEmail()
+  username: string;
+
+  @IsString()
+  @MinLength(4)
+  @MaxLength(25)
+  password: string;
+}
 
 export class Auth2Body {
   @IsString()
@@ -21,16 +32,15 @@ export class Auth2Body {
 }
 
 export interface AuthUser {
-  id: IdType;
+  id: number;
   email: string;
   fullName: string;
   photoUrl: string;
-  historyId: IdType;
   settings: GetUserSettingsDto;
 }
 
 export interface GetUserDto {
-  id: IdType;
+  id: number;
   email?: string;
   fullName: string;
   photoUrl?: string;
@@ -58,33 +68,30 @@ export class UpdateUserSettingsDto {
 }
 
 export interface JwtPayload {
-  id: IdType;
+  id: number;
   email: string;
   role: Role;
-  historyId: IdType;
 }
-
-export type IdType = string | number;
 
 export type Role = 'guest' | 'user' | 'mod' | 'admin';
 
 export type StoryStatus = 'ongoing' | 'full';
 
 export interface GetAuthorDto {
-  id: IdType;
+  id: number;
   name: string;
 }
 
 export interface GetGenreDto {
-  id: IdType;
+  id: number;
   name: string;
 }
 
 export interface GetStoryDto {
-  id: IdType;
+  id: number;
   url: string;
   title: string;
-  description: string;
+  description?: string;
   thumbnail?: string;
   cover?: string;
   status: StoryStatus;
@@ -95,12 +102,12 @@ export interface GetStoryDto {
   view: number;
   upvote: number;
   downvote: number;
-  lastChapter: number;
+  lastChapter?: number;
   published?: boolean;
-  uploadBy: IdType | GetUserDto;
-  updatedBy: IdType | GetUserDto;
+  createdBy: GetUserDto;
+  updatedBy: GetUserDto;
 
-  history?: GetStoryHistoryDto;
+  history?: GetReadingHistoryDto;
 }
 
 export class CreateStoryDto {
@@ -143,14 +150,14 @@ export class CreateStoryDto {
 export type UpdateStoryDto = Omit<CreateStoryDto, 'url'>;
 
 export class GetChapterDto {
-  id: IdType;
-  storyId: IdType;
+  id: number;
+  storyId: number;
   chapterNo: number;
   title?: string;
   created: Date;
   updated: Date;
-  uploadBy: IdType | GetUserDto;
-  updatedBy: IdType | GetUserDto;
+  createdBy: number | GetUserDto;
+  updatedBy: number | GetUserDto;
   published?: boolean;
   content: string;
 }
@@ -171,7 +178,7 @@ export class CreateChapterDto {
 
 export class UpdateChapterDto extends CreateChapterDto {
   @IsString()
-  id: IdType;
+  id: number;
 }
 
 export interface PaginationOptions {
@@ -191,17 +198,12 @@ export interface PaginationResult<T> {
   };
 }
 
-export type StoryCategory =
-  | 'updated'
-  | 'hot'
-  | 'following'
-  | 'history'
-  | 'user';
+export type StoryCategory = 'updated' | 'hot' | 'user';
 export type VoteType = 'upvote' | 'downvote' | 'none';
 
-export interface GetStoryHistoryDto {
-  id: IdType;
-  storyId: IdType;
+export interface GetReadingHistoryDto {
+  id: number;
+  storyId: number;
   currentChapterNo: number;
   started: Date;
   lastVisit: Date;
@@ -210,10 +212,9 @@ export interface GetStoryHistoryDto {
   isFollowing: boolean;
 }
 
-export class UpdateStoryHistoryDto {
+export class UpdateReadingHistoryDto {
   @IsString()
-  @IsMongoId()
-  storyId: IdType;
+  storyId: number;
 
   @Min(0)
   @IsOptional()
@@ -234,7 +235,7 @@ export class UpdateStoryHistoryDto {
 }
 
 export interface StorySearchBody {
-  id: IdType;
+  id: number;
   title: string;
   url: string;
   description?: string;

@@ -1,28 +1,16 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { GetGenreDto } from "@evergarden/shared";
 import { Genre } from "./genre.entity";
-import genresDataset from "../genres.dataset";
 
 @Injectable()
 export class GenreService {
-  private readonly logger = new Logger(GenreService.name);
-
-  constructor(@InjectRepository(Genre) private genreRepository: Repository<Genre>) {
-    this.logger.debug("Synchronizing genres dataset...");
-    this.initializeDataset().then(() => {
-      this.logger.debug("Synchronized genres dataset!");
-    });
-  }
-
-  private async initializeDataset(): Promise<void> {
-    await this.syncGenres(genresDataset.map((item) => item.name));
-  }
+  constructor(@InjectRepository(Genre) private genreRepository: Repository<Genre>) {}
 
   async getByName(name: string): Promise<GetGenreDto> {
     const found = await this.genreRepository.findOne({
-      where: { name: new RegExp(`^${name}$`, "i") },
+      where: { name },
     });
     return this.toDto(found);
   }

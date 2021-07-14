@@ -7,15 +7,12 @@ import {
   Logger,
   NotFoundException,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Post,
   Put,
   Query,
   Req,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from "@nestjs/common";
 import { ChapterService } from "./chapter.service";
 import { CreateChapterDto, GetChapterDto, PaginationResult, toInt, UpdateChapterDto } from "@evergarden/shared";
@@ -23,7 +20,7 @@ import { Role } from "../auth/role/roles.decorator";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
 import { StoryService } from "../story/story.service";
-import { delay, isDevelopment, isOwnerOrGod } from "../utils";
+import { isOwnerOrGod } from "../utils";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 
 @Controller()
@@ -36,14 +33,10 @@ export class ChapterController {
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
   async getChapterByChapterNo(
-    @Param("storyId") storyId: string,
+    @Param("storyId", ParseIntPipe) storyId: number,
     @Param("chapterNo", ParseIntPipe) chapterNo: number,
     @Req() req,
   ): Promise<GetChapterDto> {
-    if (isDevelopment()) {
-      await delay(2000);
-    }
-
     const story = await this.storyService.getStory(storyId);
     if (!story) {
       throw new NotFoundException();
@@ -70,18 +63,13 @@ export class ChapterController {
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
   async getChapters(
-    @Param("storyId") storyId: string,
+    @Param("storyId", ParseIntPipe) storyId: number,
     @Query("page") page,
     @Query("skip") skip,
     @Query("limit") limit,
     @Query("sort") sort: "asc" | "desc",
-    @Query("includesContent", ParseBoolPipe) includesContent = false,
     @Req() req,
   ): Promise<PaginationResult<GetChapterDto>> {
-    if (isDevelopment()) {
-      await delay(2000);
-    }
-
     page = toInt(page);
     limit = toInt(limit);
     skip = toInt(skip);
@@ -99,9 +87,8 @@ export class ChapterController {
           skip,
           limit: limit > 100 ? 100 : limit,
         },
-        includesContent,
         isOwnerOrGod(req, story),
-        sort
+        sort,
       );
     } catch (e) {
       this.logger.warn(`Error while finding chapters of story ${storyId}`, e);
@@ -110,53 +97,43 @@ export class ChapterController {
   }
 
   @Post("stories/:storyId/chapters")
-  @UsePipes(new ValidationPipe({ transform: true }))
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   async addChapter(
-    @Param("storyId") storyId: string,
+    @Param("storyId", ParseIntPipe) storyId: number,
     @Body() chapter: CreateChapterDto,
     @Req() req,
   ): Promise<GetChapterDto> {
-    if (isDevelopment()) {
-      await delay(2000);
-    }
-
     const story = await this.getStoryAndCheckPermission(storyId, req);
     return this.chapterService.addChapter(story, chapter, req.user);
   }
 
   @Put("stories/:storyId/chapters")
-  @UsePipes(new ValidationPipe({ transform: true }))
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   async updateChapter(
-    @Param("storyId") storyId: string,
+    @Param("storyId", ParseIntPipe) storyId: number,
     @Body() chapter: UpdateChapterDto,
     @Req() req,
   ): Promise<GetChapterDto> {
-    if (isDevelopment()) {
-      await delay(2000);
-    }
-
     const currentChapter = await this.chapterService.getChapterById(chapter.id);
     if (!currentChapter) {
       throw new NotFoundException();
     }
-    if (!isOwnerOrGod(req, currentChapter.uploadBy)) {
+    if (!isOwnerOrGod(req, currentChapter.createdBy?.id)) {
       throw new ForbiddenException();
     }
     return this.chapterService.updateChapter(currentChapter, chapter, req.user);
   }
 
-  private async getStoryAndCheckPermission(storyId: string, req) {
+  private async getStoryAndCheckPermission(storyId: number, req) {
     const story = await this.storyService.getStory(storyId);
     if (!story) {
       throw new NotFoundException("Story was not found");
     }
 
     if (story.status === "full") {
-      throw new BadRequestException("Story's status is full, so you cann't add more chapters");
+      throw new BadRequestException("Story's status is full, so you can't add more chapters");
     }
 
     if (!isOwnerOrGod(req, story)) {

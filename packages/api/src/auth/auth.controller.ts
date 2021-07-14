@@ -1,54 +1,45 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Logger,
-  Post,
-  Req,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Response } from "express";
 import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import JwtRefreshGuard from "./jwt-refresh/jwt-refresh.guard";
 import JwtGuard from "./jwt/jwt.guard";
-import { Auth2Body } from "@evergarden/shared";
+import { Auth2Body, UserPass } from "@evergarden/shared";
+import { User } from "../user/user.entity";
 
 @Controller("auth")
 export class AuthController {
-  private readonly logger = new Logger(AuthController.name);
-
   constructor(private authService: AuthService, private userService: UserService) {}
 
   @Post()
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async loginOAuth2(@Body() auth: Auth2Body, @Res() res: Response) {
-    const token = auth.token;
-    let user;
-    switch (auth.provider) {
-      case "google":
-        user = await this.authService.loginGoogle(token);
-        break;
-      case "facebook":
-        user = await this.authService.loginFacebook(token);
-        break;
-    }
-    if (user) {
-      const { cookie: refreshTokenCookie, token: refreshToken } = this.authService.getCookieWithJwtRefreshToken(
-        user.id,
-      );
-      await this.userService.setCurrentRefreshToken(refreshToken, user.id);
-      const accessTokenCookie = this.authService.getAccessTokenCookie(user);
+  async login(@Body() auth: Auth2Body | UserPass, @Res() res: Response) {
+    const user = this.isUserPass(auth) ? await this.authService.login(auth) : await this.loginWithAuth2(auth);
 
-      res.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
-    } else {
+    if (!user) {
       throw new UnauthorizedException();
     }
+
+    const { cookie: refreshTokenCookie, token: refreshToken } = this.authService.getCookieWithJwtRefreshToken(user.id);
+    await this.userService.setCurrentRefreshToken(refreshToken, user.id);
+    const accessTokenCookie = this.authService.getAccessTokenCookie(user);
+
+    res.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
     res.send(this.authService.getAuthenticatedUser(user));
+  }
+
+  private async loginWithAuth2(auth: Auth2Body): Promise<User> {
+    const token = auth.token;
+    switch (auth.provider) {
+      case "google":
+        return await this.authService.loginGoogle(token);
+      case "facebook":
+        return await this.authService.loginFacebook(token);
+    }
+    return null;
+  }
+
+  private isUserPass(auth: Auth2Body | UserPass): auth is UserPass {
+    return "username" in auth && "password" in auth;
   }
 
   @Get("refresh")

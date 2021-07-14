@@ -2,6 +2,9 @@ import { Module } from "@nestjs/common";
 
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ElasticsearchModule } from "@nestjs/elasticsearch";
+import { SearchController } from "./search.controller";
+import StorySearchService from "./story-search.service";
+import { StorageModule } from "../storage/storage.module";
 
 @Module({
   imports: [
@@ -18,7 +21,10 @@ import { ElasticsearchModule } from "@nestjs/elasticsearch";
       }),
       inject: [ConfigService],
     }),
+    StorageModule,
   ],
-  exports: [ElasticsearchModule],
+  providers: [StorySearchService],
+  exports: [ElasticsearchModule, StorySearchService],
+  controllers: [SearchController],
 })
 export class SearchModule {}
