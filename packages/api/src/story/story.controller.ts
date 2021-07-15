@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -32,7 +33,7 @@ import { RolesGuard } from "../auth/role/roles.guard";
 import { ReadingHistoryService } from "../reading-history/reading-history.service";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
-import { isGod, isOwnerOrGod } from "../utils";
+import {isGod, isNumber, isOwnerOrGod} from "../utils";
 
 @Controller("stories")
 export class StoryController {
@@ -81,7 +82,7 @@ export class StoryController {
         }
         return await this.storyService.getUserStories(req.user.id);
       default:
-        const result = await this.storyService.getStoriesByIds(ids);
+        const result = await this.storyService.getStoriesByIds(ids || []);
         if (imGod) {
           return result;
         }
@@ -102,7 +103,7 @@ export class StoryController {
     @Req() req,
   ): Promise<GetStoryDto | boolean> {
     const storyData =
-      typeof idOrSlug === "string"
+      this.isSlug(idOrSlug)
         ? await this.storyService.getStoryByUrl(idOrSlug)
         : await this.storyService.getStory(idOrSlug);
 
@@ -121,10 +122,17 @@ export class StoryController {
     return this.storyService.toDto(storyData);
   }
 
+  private isSlug(idOrSlug: number | string): idOrSlug is string {
+    return !isNumber(idOrSlug);
+  }
+
   @Post()
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   async addStory(@Body() story: CreateStoryDto, @Req() req): Promise<GetStoryDto> {
+    if (isNumber(story.title)) {
+      throw new BadRequestException("Story title can't only contain numbers")
+    }
     return await this.storyService.addStory(story, req.user);
   }
 
@@ -132,6 +140,9 @@ export class StoryController {
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   async updateStory(@Param("id") id: number, @Body() story: UpdateStoryDto, @Req() req): Promise<GetStoryDto> {
+    if (isNumber(story.title)) {
+      throw new BadRequestException("Story title can't only contain numbers")
+    }
     const currentStory = await this.storyService.getStory(id);
     if (currentStory) {
       if (isOwnerOrGod(req, currentStory)) {

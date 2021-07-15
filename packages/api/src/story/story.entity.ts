@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
+import {Check, Column, Entity, JoinTable, ManyToMany, OneToMany} from "typeorm";
 import { StoryStatus } from "@evergarden/shared";
 import { Author } from "../author/author.entity";
 import { Genre } from "../genre/genre.entity";
@@ -7,6 +7,10 @@ import { AbstractEntity } from "../common/abstract.entity";
 import { ReadingHistory } from "../reading-history/reading-history.entity";
 
 @Entity("stories")
+@Check(`"view" >= 0`)
+@Check(`"upvote" >= 0`)
+@Check(`"downvote" >= 0`)
+@Check(`"lastChapter" is NULL OR lastChapter > 0`)
 export class Story extends AbstractEntity {
   @Column({ type: "nvarchar", length: 255, unique: true })
   url: string;
@@ -39,13 +43,13 @@ export class Story extends AbstractEntity {
   @JoinTable()
   genres: Genre[];
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ type: "int", default: 0 })
   view: number;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ type: "int", default: 0 })
   upvote: number;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ type: "int", default: 0 })
   downvote: number;
 
   @Column({ type: "int", nullable: true })

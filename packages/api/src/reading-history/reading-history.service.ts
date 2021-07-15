@@ -34,18 +34,7 @@ export class ReadingHistoryService {
   }
 
   async getStoryHistory(userId: number, storyId: number): Promise<ReadingHistory> {
-    return await this.readingHistoryRepository.findOne({
-      join: {
-        alias: "histories",
-        innerJoin: { stories: "histories.story", users: "histories.user" },
-      },
-      where: (qb) => {
-        qb.where({
-          "users.id": userId,
-          "stories.id": storyId,
-        });
-      },
-    });
+    return await this.readingHistoryRepository.findOne({ where: { userId, storyId } });
   }
 
   async getReadingHistories(userId: number): Promise<ReadingHistory[]> {

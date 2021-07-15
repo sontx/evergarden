@@ -22,12 +22,27 @@ import { RolesGuard } from "../auth/role/roles.guard";
 import { StoryService } from "../story/story.service";
 import { isOwnerOrGod } from "../utils";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
+import {Chapter} from "./chapter.entity";
 
 @Controller()
 export class ChapterController {
   private readonly logger = new Logger(ChapterController.name);
 
   constructor(private chapterService: ChapterService, private storyService: StoryService) {}
+
+  @Get("chapters/:id")
+  @UseGuards(JwtGuard)
+  @JwtConfig({ anonymous: true })
+  async getChapter(@Param("id", ParseIntPipe) id: number, @Req() req,) {
+    const chapter = await this.chapterService.getChapterById(id);
+    if (!chapter) {
+      throw new NotFoundException();
+    }
+    if (!chapter.published && !isOwnerOrGod(req, chapter)) {
+      throw new ForbiddenException();
+    }
+    return this.chapterService.toDto(chapter);
+  }
 
   @Get("stories/:storyId/chapters/:chapterNo")
   @UseGuards(JwtGuard)
@@ -42,7 +57,7 @@ export class ChapterController {
       throw new NotFoundException();
     }
 
-    let chapter: GetChapterDto;
+    let chapter: Chapter;
     if (storyId && chapterNo >= 0) {
       try {
         chapter = await this.chapterService.getChapterByNo(storyId, chapterNo, isOwnerOrGod(req, story));
@@ -54,7 +69,7 @@ export class ChapterController {
         throw new NotFoundException();
       }
 
-      return chapter;
+      return this.chapterService.toDto(chapter);
     }
     throw new BadRequestException();
   }
@@ -108,19 +123,20 @@ export class ChapterController {
     return this.chapterService.addChapter(story, chapter, req.user);
   }
 
-  @Put("stories/:storyId/chapters")
+  @Put("stories/:storyId/chapters/:chapterNo")
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
   async updateChapter(
     @Param("storyId", ParseIntPipe) storyId: number,
+    @Param("chapterNo", ParseIntPipe) chapterNo: number,
     @Body() chapter: UpdateChapterDto,
     @Req() req,
   ): Promise<GetChapterDto> {
-    const currentChapter = await this.chapterService.getChapterById(chapter.id);
+    const currentChapter = await this.chapterService.getChapterByNo(storyId, chapterNo, true);
     if (!currentChapter) {
       throw new NotFoundException();
     }
-    if (!isOwnerOrGod(req, currentChapter.createdBy?.id)) {
+    if (!isOwnerOrGod(req, currentChapter)) {
       throw new ForbiddenException();
     }
     return this.chapterService.updateChapter(currentChapter, chapter, req.user);

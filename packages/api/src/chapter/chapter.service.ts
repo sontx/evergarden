@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Chapter } from "./chapter.entity";
@@ -19,25 +19,22 @@ export class ChapterService {
     @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
     private storyService: StoryService,
     private userService: UserService,
-  ) {}
+  ) {
+    this.toDto = this.toDto.bind(this);
+  }
 
   async getChapterById(chapterId: number): Promise<Chapter> {
     return this.chapterRepository.findOne(chapterId);
   }
 
-  async getChapterByNo(
-    storyId: number,
-    chapterNo: number,
-    includesUnpublished?: boolean,
-  ): Promise<GetChapterDto | null> {
-    const chapter = await this.chapterRepository.findOne({
+  async getChapterByNo(storyId: number, chapterNo: number, includesUnpublished?: boolean): Promise<Chapter | null> {
+    return await this.chapterRepository.findOne({
       where: {
         chapterNo,
-        storyId: storyId,
+        storyId,
         ...(!includesUnpublished ? { published: true } : {}),
       },
     });
-    return this.toDto(chapter, storyId);
   }
 
   async getChapters(
@@ -72,7 +69,7 @@ export class ChapterService {
     const now = new Date();
     newChapter = await this.chapterRepository.save({
       ...newChapter,
-      story: Promise.resolve(story),
+      storyId: story.id,
       created: now,
       updated: now,
       createdBy: user,
@@ -87,13 +84,10 @@ export class ChapterService {
       await this.chapterRepository.delete(newChapter.id as any);
       throw new BadRequestException("Cannot update story");
     }
-    return this.toDto(newChapter, story.id);
+    return this.toDto(newChapter);
   }
 
   async updateChapter(currentChapter: Chapter, newChapter: UpdateChapterDto, userId: number): Promise<GetChapterDto> {
-    if (!currentChapter) {
-      throw new NotFoundException();
-    }
     const user = await this.userService.getById(userId);
     const updatedChapter: Partial<Chapter> = {
       title: newChapter.title || currentChapter.title,
@@ -108,21 +102,20 @@ export class ChapterService {
         ...currentChapter,
         ...updatedChapter,
       },
-      (await currentChapter.story).id,
     );
   }
 
-  private toDto(chapter: Chapter, storyId: number): GetChapterDto {
+  toDto(chapter: Chapter): GetChapterDto {
     return (
       chapter && {
-        storyId,
+        storyId: chapter.storyId,
         id: chapter.id,
         chapterNo: chapter.chapterNo,
         title: chapter.title,
         created: chapter.created,
         updated: chapter.updated,
-        updatedBy: chapter.updatedBy,
-        createdBy: chapter.createdBy,
+        updatedBy: this.userService.toDto(chapter.updatedBy),
+        createdBy: this.userService.toDto(chapter.createdBy),
         content: chapter.content,
         published: chapter.published,
       }

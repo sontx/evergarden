@@ -5,13 +5,13 @@ export abstract class AbstractEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.createdStories)
+  @ManyToOne(() => User, (user) => user.createdStories, { eager: true })
   createdBy: User;
 
   @Column({ type: "datetime", nullable: false })
   created: Date;
 
-  @ManyToOne(() => User, (user) => user.updatedStories)
+  @ManyToOne(() => User, (user) => user.updatedStories, { eager: true })
   updatedBy: User;
 
   @Column({ type: "datetime", nullable: false })

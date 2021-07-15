@@ -96,8 +96,8 @@ export class StoryService {
     return this.getLastUpdatedStories(options, includeUnpublished);
   }
 
-  async getUserStories(userId: number): Promise<PaginationResult<GetStoryDto>> {
-    return await this.getStories(
+  async getUserStories(userId: number): Promise<GetStoryDto[]> {
+    const result = await this.getStories(
       { page: 0, skip: 0, limit: 99999990 },
       {
         where: { createdBy: userId },
@@ -105,6 +105,7 @@ export class StoryService {
       },
       true,
     );
+    return result.items;
   }
 
   async search(text: string): Promise<StorySearchBody[]> {
@@ -119,6 +120,8 @@ export class StoryService {
     return (
       story && {
         ...story,
+        createdBy: this.userService.toDto(story.createdBy),
+        updatedBy: this.userService.toDto(story.updatedBy),
         thumbnail: this.storageService.makeThumbnailUrl(story.thumbnail),
         cover: this.storageService.makeThumbnailUrl(story.cover),
       }
@@ -165,25 +168,21 @@ export class StoryService {
   }
 
   async updateStory(currentStory: Story, story: UpdateStoryDto, userId: number): Promise<Story> {
-    try {
-      const user = await this.userService.getById(userId);
-      const authors = await this.authorService.syncAuthors(story.authors || []);
-      const genres = await this.genreService.getValidGenres(story.genres || []);
-      await this.syncThumbnail(story, currentStory);
-      await this.storyRepository.update(currentStory.id as any, {
-        ...story,
-        authors,
-        genres,
-        updated: new Date(),
-        updatedBy: user,
-      });
-      const savedStory = await this.getStory(currentStory.id);
-      await this.storySearchService.update(savedStory);
-      return savedStory;
-    } catch (e) {
-      this.logger.warn(`Error while updating story: ${currentStory.id}`, e);
-      throw new BadRequestException();
-    }
+    const user = await this.userService.getById(userId);
+    const authors = await this.authorService.syncAuthors(story.authors || []);
+    const genres = await this.genreService.getValidGenres(story.genres || []);
+    await this.syncThumbnail(story, currentStory);
+    await this.storyRepository.save({
+      ...story,
+      id: currentStory.id,
+      authors,
+      genres,
+      updated: new Date(),
+      updatedBy: user,
+    });
+    const savedStory = await this.getStory(currentStory.id);
+    await this.storySearchService.update(savedStory);
+    return savedStory;
   }
 
   private async syncThumbnail(newStory: CreateStoryDto, oldStory: Partial<Story> = {}): Promise<void> {
@@ -229,23 +228,13 @@ export class StoryService {
   }
 
   async getStoryByUrl(url: string): Promise<Story | null> {
-    try {
-      return await this.storyRepository.findOne({
-        where: { url },
-      });
-    } catch (e) {
-      this.logger.warn(`Error while querying story: ${url}`, e);
-      throw new BadRequestException();
-    }
+    return await this.storyRepository.findOne({
+      where: { url },
+    });
   }
 
   async getStory(id: number): Promise<Story | null> {
-    try {
-      return await this.storyRepository.findOne(id);
-    } catch (e) {
-      this.logger.warn(`Error while querying story: ${id}`, e);
-      throw new BadRequestException();
-    }
+    return await this.storyRepository.findOne(id);
   }
 
   async updateStoryInternal(story: Story, user: User): Promise<boolean> {

@@ -13,7 +13,7 @@ export class User {
   @Column({ type: "nvarchar", length: 50, unique: true })
   email: string;
 
-  @Column({ type: "nvarchar", length: 50, nullable: true })
+  @Column({ type: "nvarchar", length: 50, nullable: true, select: false })
   @Exclude()
   password?: string;
 
@@ -28,7 +28,7 @@ export class User {
   @Column({ type: "nvarchar", length: 50, nullable: false })
   fullName: string;
 
-  @Column({ type: "nvarchar", length: 255, nullable: true })
+  @Column({ type: "nvarchar", length: 255, nullable: true, select: false })
   @Exclude()
   refreshToken?: string;
 

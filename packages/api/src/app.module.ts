@@ -41,6 +41,7 @@ import { StorageModule } from "./storage/storage.module";
           password: configService.get("database.mysql.password"),
           database: configService.get("database.mysql.databaseName"),
           isGlobal: true,
+          logging: configService.get("isDevelopment"),
           autoLoadEntities: true,
           synchronize: !!configService.get("isDevelopment"),
           entities: [User, Story, Chapter, Author, Genre, ReadingHistory],

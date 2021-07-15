@@ -1,7 +1,7 @@
 import {
   IsArray,
   IsBoolean,
-  IsEmail,
+  IsEmail, IsJWT, IsNumber,
   IsOptional,
   IsString,
   Matches,
@@ -23,7 +23,7 @@ export class UserPass {
 }
 
 export class Auth2Body {
-  @IsString()
+  @IsJWT()
   token: string;
 
   @IsString()
@@ -114,6 +114,7 @@ export class CreateStoryDto {
   @IsOptional()
   @MinLength(4)
   @IsString()
+  @Matches(/[a-zA-Z]/s)
   url?: string;
 
   @MinLength(4)
@@ -125,9 +126,11 @@ export class CreateStoryDto {
   description?: string;
 
   @IsOptional()
+  @IsString()
   thumbnail?: string;
 
   @IsOptional()
+  @IsString()
   cover?: string;
 
   @IsString()
@@ -156,8 +159,8 @@ export class GetChapterDto {
   title?: string;
   created: Date;
   updated: Date;
-  createdBy: number | GetUserDto;
-  updatedBy: number | GetUserDto;
+  createdBy: GetUserDto;
+  updatedBy: GetUserDto;
   published?: boolean;
   content: string;
 }
@@ -177,8 +180,6 @@ export class CreateChapterDto {
 }
 
 export class UpdateChapterDto extends CreateChapterDto {
-  @IsString()
-  id: number;
 }
 
 export interface PaginationOptions {
@@ -213,15 +214,17 @@ export interface GetReadingHistoryDto {
 }
 
 export class UpdateReadingHistoryDto {
-  @IsString()
+  @IsNumber()
   storyId: number;
 
   @Min(0)
   @IsOptional()
+  @IsNumber()
   currentChapterNo?: number;
 
   @Min(0)
   @IsOptional()
+  @IsNumber()
   currentReadingPosition?: number;
 
   @IsString()

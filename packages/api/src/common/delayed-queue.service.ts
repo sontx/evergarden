@@ -1,10 +1,9 @@
-import { throttle } from "throttle-debounce";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const throttle = require("lodash.throttle");
 import { Logger } from "@nestjs/common";
 
 export abstract class DelayedQueueService {
   private readonly logger = new Logger(DelayedQueueService.name);
-
-  protected constructor(private readonly delayMillis = 5000) {}
 
   private readonly queue: {
     [x: string]: {
@@ -13,19 +12,27 @@ export abstract class DelayedQueueService {
     };
   } = {};
 
+  protected constructor(private readonly delayMillis = 5000) {}
+
   enqueue(id: number, value: any) {
-    let current = this.queue[`${id}`];
+    const key = `${id}`;
+    let current = this.queue[key];
     if (current) {
       current.value = this.onMerge(current.value, value);
     } else {
-      current = this.queue[`${id}`] = {
-        value,
-        notice: throttle(this.delayMillis, true, (argId, argValue) => {
-          this.onExecute(argId, argValue).then();
-          this.logger.debug(`Dequeued ${argId} with ${JSON.stringify(argValue)}`);
-          delete this.queue[`${argId}`];
-        }),
+      this.queue[key] = {
+        value: this.onMerge(undefined, value),
+        notice: throttle(
+          (argId, argValue) => {
+            this.onExecute(argId, argValue).then();
+            this.logger.debug(`Dequeued ${argId} with ${JSON.stringify(argValue)}`);
+            delete this.queue[`${argId}`];
+          },
+          this.delayMillis,
+          { leading: false },
+        ),
       };
+      current = this.queue[key];
     }
     current.notice(id, current.value);
   }

@@ -9,7 +9,6 @@ import { calculateVoteCount, VoteType } from "@evergarden/shared";
 import { ConfigService } from "@nestjs/config";
 import { InternalUpdateReadingHistoryDto } from "./internal-update-reading-history.dto";
 import { VoteService } from "../story/vote.service";
-import { Story } from "../story/story.entity";
 
 @Injectable()
 export class UpdateReadingHistoryService extends DelayedQueueService {
@@ -27,32 +26,32 @@ export class UpdateReadingHistoryService extends DelayedQueueService {
   }
 
   protected async onExecute(id: number, value: InternalUpdateReadingHistoryDto[]): Promise<void> {
-    const user = await this.userService.getById(id);
-    if (user) {
-      await this.readingHistoryRepository.manager.transaction(async (entityManager) => {
-        for (const updateItem of value) {
-          if (typeof updateItem.id === "number") {
-            const oldHistory = await entityManager.findOne(ReadingHistory, updateItem.id);
-            if (oldHistory.vote !== updateItem.vote) {
-              await this.changeRating(updateItem.storyId, oldHistory.vote, updateItem.vote);
-            }
-            await entityManager.update(ReadingHistory, updateItem.id, updateItem);
-          } else {
-            if (updateItem.vote) {
-              await this.changeRating(updateItem.storyId, undefined, updateItem.vote);
-            }
-            const newHistory = await entityManager.create(ReadingHistory, updateItem);
-            newHistory.story = entityManager.findOne(Story, updateItem.storyId);
-            newHistory.user = Promise.resolve(user);
-            newHistory.started = updateItem.lastVisit;
-            await entityManager.save(newHistory);
+    await this.readingHistoryRepository.manager.transaction(async (entityManager) => {
+      for (const updateItem of value) {
+        const foundHistory = await entityManager.findOne(ReadingHistory, {where: {userId: id, storyId: updateItem.storyId}});
+        if (foundHistory) {
+          if (foundHistory.vote !== updateItem.vote) {
+            await this.changeRating(updateItem.storyId, foundHistory.vote, updateItem.vote);
           }
+          await entityManager.update(ReadingHistory, foundHistory.id, updateItem);
+        } else {
+          if (updateItem.vote) {
+            await this.changeRating(updateItem.storyId, undefined, updateItem.vote);
+          }
+          const newHistory = await entityManager.create(ReadingHistory, updateItem);
+          newHistory.storyId = updateItem.storyId;
+          newHistory.userId = id;
+          newHistory.started = updateItem.lastVisit;
+          await entityManager.save(newHistory);
         }
-      });
-    }
+      }
+    });
   }
 
   protected onMerge(current: any, newValue: InternalUpdateReadingHistoryDto): any {
+    if (!current) {
+      return [newValue];
+    }
     if (Array.isArray(current)) {
       return this.mergeArray(current, newValue);
     }
@@ -62,8 +61,6 @@ export class UpdateReadingHistoryService extends DelayedQueueService {
   private mergeArray(current: InternalUpdateReadingHistoryDto[], newValue: InternalUpdateReadingHistoryDto) {
     const foundIndex = current.findIndex((item) => item.storyId === newValue.storyId);
     if (foundIndex >= 0) {
-      const old = current[foundIndex];
-      newValue.id = old.id;
       current[foundIndex] = newValue;
       return current;
     }
