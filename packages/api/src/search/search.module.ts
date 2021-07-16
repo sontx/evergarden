@@ -11,10 +11,10 @@ import { StorageModule } from "../storage/storage.module";
     ElasticsearchModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        node: configService.get("search.elastic.url"),
+        node: configService.get("database.elastic.url"),
         auth: {
-          username: configService.get("search.elastic.username"),
-          password: configService.get("search.elastic.password"),
+          username: configService.get("database.elastic.username"),
+          password: configService.get("database.elastic.password"),
         },
         maxRetries: 3,
         sniffOnStart: true,

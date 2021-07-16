@@ -25,6 +25,6 @@ import { VoteService } from "./vote.service";
   ],
   controllers: [StoryController],
   providers: [StoryService, StorySearchService, ViewCountService, VoteService],
-  exports: [StoryService, VoteService],
+  exports: [StoryService, VoteService, ViewCountService],
 })
 export class StoryModule {}

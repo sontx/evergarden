@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { DelayedQueueService } from "../common/delayed-queue.service";
 
 @Injectable()
-export class VoteService extends DelayedQueueService {
+export class VoteService extends DelayedQueueService<number> {
   constructor(@InjectRepository(Story) private storyRepository: Repository<Story>) {
     super();
   }

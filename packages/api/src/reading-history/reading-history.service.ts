@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import { UpdateReadingHistoryDto } from "@evergarden/shared";
 import { UpdateReadingHistoryService } from "./update-reading-history.service";
 import { InternalUpdateReadingHistoryDto } from "./internal-update-reading-history.dto";
+import { ViewCountIdentity, ViewCountService } from "../story/view-count.service";
 
 @Injectable()
 export class ReadingHistoryService {
@@ -19,6 +20,8 @@ export class ReadingHistoryService {
     private storyService: StoryService,
     private configService: ConfigService,
     private updateReadingService: UpdateReadingHistoryService,
+    @Inject(forwardRef(() => ViewCountService))
+    private viewCountService: ViewCountService,
   ) {}
 
   async deleteReadingHistory(id: number) {
@@ -31,6 +34,9 @@ export class ReadingHistoryService {
       lastVisit: new Date(),
     };
     this.updateReadingService.enqueue(userId, newHistory);
+    this.viewCountService.enqueue(new ViewCountIdentity(userId, storyHistory.storyId), {
+      triggerAt: newHistory.lastVisit,
+    });
   }
 
   async getStoryHistory(userId: number, storyId: number): Promise<ReadingHistory> {

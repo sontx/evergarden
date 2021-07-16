@@ -251,14 +251,6 @@ export class StoryService {
     }
   }
 
-  async increaseCount(storyId: number) {
-    try {
-      await this.viewCountService.enqueue(storyId, 1);
-    } catch (e) {
-      this.logger.warn(`Error while increase view count: ${storyId}`, e);
-    }
-  }
-
   async deleteStory(storyId: number): Promise<void> {
     await this.storyRepository.delete(storyId);
   }

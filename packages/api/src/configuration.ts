@@ -12,6 +12,15 @@ export default () => ({
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
     },
+    redis: {
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+    },
+    elastic: {
+      url: process.env.ELASTIC_URL,
+      username: process.env.ELASTIC_USERNAME,
+      password: process.env.ELASTIC_PASSWORD,
+    },
   },
   credentials: {
     google: {
@@ -33,13 +42,6 @@ export default () => ({
       expires: "180 days",
     },
   },
-  search: {
-    elastic: {
-      url: "http://localhost:9200",
-      username: "elastic",
-      password: "admin",
-    },
-  },
   settings: {
     sizing: {
       thumbnail: {
@@ -54,6 +56,12 @@ export default () => ({
       readingFont: "Roboto",
       readingFontSize: "M",
       readingLineSpacing: "M",
+    },
+  },
+  policy: {
+    viewCount: {
+      minReading: "5s",
+      minReadingInterval: "10s",
     },
   },
   upload: {

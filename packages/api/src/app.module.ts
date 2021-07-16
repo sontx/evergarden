@@ -20,6 +20,7 @@ import { Author } from "./author/author.entity";
 import { Genre } from "./genre/genre.entity";
 import { ReadingHistory } from "./reading-history/reading-history.entity";
 import { StorageModule } from "./storage/storage.module";
+import { RedisModule } from "nestjs-redis";
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { StorageModule } from "./storage/storage.module";
         return {
           type: "mysql",
           host: configService.get("database.mysql.host"),
-          port: configService.get("database.mysql.port") || 3306,
+          port: configService.get("database.mysql.port"),
           username: configService.get("database.mysql.username"),
           password: configService.get("database.mysql.password"),
           database: configService.get("database.mysql.databaseName"),
@@ -45,6 +46,17 @@ import { StorageModule } from "./storage/storage.module";
           autoLoadEntities: true,
           synchronize: !!configService.get("isDevelopment"),
           entities: [User, Story, Chapter, Author, Genre, ReadingHistory],
+        };
+      },
+    }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return {
+          host: configService.get("database.redis.host"),
+          port: configService.get("database.redis.port"),
+          name: "evergarden",
         };
       },
     }),

@@ -2,19 +2,19 @@
 const throttle = require("lodash.throttle");
 import { Logger } from "@nestjs/common";
 
-export abstract class DelayedQueueService {
+export abstract class DelayedQueueService<T> {
   private readonly logger = new Logger(DelayedQueueService.name);
 
   private readonly queue: {
     [x: string]: {
       value: any;
-      notice: (id: number, value: any) => void;
+      notice: (id: any, value: any) => void;
     };
   } = {};
 
   protected constructor(private readonly delayMillis = 5000) {}
 
-  enqueue(id: number, value: any) {
+  enqueue(id: T, value: any) {
     const key = `${id}`;
     let current = this.queue[key];
     if (current) {
@@ -39,5 +39,5 @@ export abstract class DelayedQueueService {
 
   protected abstract onMerge(current: any, newValue: any): any;
 
-  protected abstract onExecute(id: number, value: any): Promise<void>;
+  protected abstract onExecute(id: any, value: any): Promise<void>;
 }

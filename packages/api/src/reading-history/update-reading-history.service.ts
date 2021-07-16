@@ -11,7 +11,7 @@ import { InternalUpdateReadingHistoryDto } from "./internal-update-reading-histo
 import { VoteService } from "../story/vote.service";
 
 @Injectable()
-export class UpdateReadingHistoryService extends DelayedQueueService {
+export class UpdateReadingHistoryService extends DelayedQueueService<number> {
   constructor(
     @InjectRepository(ReadingHistory) private readingHistoryRepository: Repository<ReadingHistory>,
     @Inject(forwardRef(() => UserService))
@@ -28,7 +28,9 @@ export class UpdateReadingHistoryService extends DelayedQueueService {
   protected async onExecute(id: number, value: InternalUpdateReadingHistoryDto[]): Promise<void> {
     await this.readingHistoryRepository.manager.transaction(async (entityManager) => {
       for (const updateItem of value) {
-        const foundHistory = await entityManager.findOne(ReadingHistory, {where: {userId: id, storyId: updateItem.storyId}});
+        const foundHistory = await entityManager.findOne(ReadingHistory, {
+          where: { userId: id, storyId: updateItem.storyId },
+        });
         if (foundHistory) {
           if (foundHistory.vote !== updateItem.vote) {
             await this.changeRating(updateItem.storyId, foundHistory.vote, updateItem.vote);
@@ -61,7 +63,7 @@ export class UpdateReadingHistoryService extends DelayedQueueService {
   private mergeArray(current: InternalUpdateReadingHistoryDto[], newValue: InternalUpdateReadingHistoryDto) {
     const foundIndex = current.findIndex((item) => item.storyId === newValue.storyId);
     if (foundIndex >= 0) {
-      current[foundIndex] = newValue;
+      current[foundIndex] = { ...current[foundIndex], ...newValue };
       return current;
     }
     return [...current, newValue];
