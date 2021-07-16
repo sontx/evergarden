@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Author } from "./author.entity";
 import { GetAuthorDto } from "@evergarden/shared";
-import { trimText } from "../../../webapp/src/utils/types";
 
 @Injectable()
 export class AuthorService {
@@ -42,7 +41,7 @@ export class AuthorService {
   async syncAuthors(authors: GetAuthorDto[]): Promise<GetAuthorDto[]> {
     const syncList = [];
     for (const author of authors) {
-      const name = trimText(author.name);
+      const name = author.name.trim();
       if (name) {
         const existingAuthor = await this.getByName(name);
         if (!existingAuthor) {

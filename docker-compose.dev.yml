@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysqldb
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=evergarden
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/config/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/backup:/data_backup/data
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    container_name: elastic
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elastic/data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+  redis:
+    image: redis:6.2.4-alpine
+    command: redis-server
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis/data:/var/lib/redis
+      - ./redis/config:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_REPLICATION_MODE=master
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: api
+    depends_on:
+      - mysql
+      - elastic
+      - redis
+    stdin_open: true
+    tty: true
+    ports:
+      - 3000:3000
+    links:
+      - mysql
+      - redis
+      - elastic
+

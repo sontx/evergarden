@@ -1,0 +1,11 @@
+**/.dockerignore
+**/.git
+**/.gitignore
+**/Dockerfile*
+**/dist
+**/build
+**/node_modules
+**/upload
+**/README.md
+mysql
+elastic

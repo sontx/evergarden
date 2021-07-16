@@ -10,15 +10,19 @@ import { StorageModule } from "../storage/storage.module";
   imports: [
     ElasticsearchModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        node: configService.get("database.elastic.url"),
-        auth: {
-          username: configService.get("database.elastic.username"),
-          password: configService.get("database.elastic.password"),
-        },
-        maxRetries: 3,
-        sniffOnStart: true,
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const result = {
+          node: configService.get("database.elastic.url"),
+          auth: {
+            username: configService.get("database.elastic.username"),
+            password: configService.get("database.elastic.password"),
+          },
+          maxRetries: 3,
+          sniffOnStart: true,
+        };
+        console.log(result)
+        return result;
+      },
       inject: [ConfigService],
     }),
     StorageModule,
