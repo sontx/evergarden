@@ -20,6 +20,8 @@ COPY packages/api ./packages/api/
 
 RUN npm run compile
 
+COPY wait-for-it.sh .
+
 EXPOSE 3000
 
-CMD npm run start:api
+CMD ./wait-for-it.sh mysql:3306 -- ./wait-for-it.sh elastic:9200 -- ./wait-for-it.sh redis:6379 -- npm run start:api
