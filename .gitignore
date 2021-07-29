@@ -8,6 +8,4 @@ SentenceAnalyzer
 SentencePicker
 dist
 *.tgz
-mysql
-elastic
-redis
+data

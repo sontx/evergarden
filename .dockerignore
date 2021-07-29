@@ -7,5 +7,7 @@
 **/node_modules
 **/upload
 **/README.md
-mysql
-elastic
+**/.idea
+**/.vscode
+**/README.md
+data

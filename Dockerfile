@@ -1,13 +1,14 @@
-FROM node
+FROM node:16 AS development
 
-WORKDIR /src
+WORKDIR "/app"
 
-ADD packages/api/package.json /src
+COPY lerna.json .
+COPY package*.json .
+COPY packages/api/package*.json ./packages/api/
+COPY packages/shared/package*.json ./packages/shared/
 
-RUN npm i --silent
+RUN npm i
 
-ADD packages/api /src
+COPY wait-for-it.sh .
 
-RUN npm run build
-
-CMD npm start
+EXPOSE 3000

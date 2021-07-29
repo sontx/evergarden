@@ -10,14 +10,15 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=evergarden
     ports:
-      - 3306:3306
+      - "3306:3306"
     volumes:
-      - ./mysql/config/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./mysql/data:/var/lib/mysql
-      - ./mysql/backup:/data_backup/data
+      - ./data/mysql/config/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./data/mysql/data:/var/lib/mysql
+      - ./data/mysql/backup:/data_backup/data
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
     container_name: elastic
+    restart: always
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
@@ -26,24 +27,28 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./elastic/data01:/usr/share/elasticsearch/data
+      - ./data/elastic/data01:/usr/share/elasticsearch/data
     ports:
-      - 9200:9200
+      - "9200:9200"
   redis:
     image: redis:6.2.4-alpine
     command: redis-server
+    restart: always
     ports:
-      - 6379:6379
+      - "6379:6379"
     volumes:
-      - ./redis/data:/var/lib/redis
-      - ./redis/config:/usr/local/etc/redis/redis.conf
+      - ./data/redis/data:/var/lib/redis
+      - ./data/redis/config:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
   api:
     build:
       context: .
-      dockerfile: Dockerfile.dev
-    image: api
+      dockerfile: Dockerfile
+      target: development
+    command: ./wait-for-it.sh mysql:3306 -- ./wait-for-it.sh elastic:9200 -- ./wait-for-it.sh redis:6379 -- npm run docker:dev
+    environment:
+      - NODE_ENV=development
     depends_on:
       - mysql
       - elastic
@@ -51,9 +56,14 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - 3000:3000
+      - "3000:3000"
+      - "9229:9229"
     links:
       - mysql
       - redis
       - elastic
-
+    volumes:
+      - ./packages:/app/packages
+      - /app/packages/api/node_modules
+      - /app/packages/shared/node_modules
+      - ./data/app/upload:/app/packages/api/upload

@@ -9,6 +9,7 @@
   "keywords": [],
   "scripts": {
     "start:dev": "npm run watch:build",
+    "docker:dev": "npm run compile",
     "build": "npm run compile",
     "compile": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
@@ -66,7 +67,7 @@
     "standard-version": "^9.0.0",
     "ts-node": "^9.0.0",
     "typedoc": "^0.19.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.3.5"
   },
   "files": [
     "build/main",
