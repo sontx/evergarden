@@ -1,219 +1,108 @@
-import { Injectable } from "@nestjs/common";
-import * as fs from "fs";
-import * as path from "path";
-import imageSize from "image-size";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as sharp from "sharp";
+import { Sharp } from "sharp";
+import imageSize from "image-size";
 import * as imagemin from "imagemin";
 import * as imageminJpegtran from "imagemin-jpegtran";
 import imageminPngquant from "imagemin-pngquant";
-import { nanoid } from "nanoid";
-import { isUri } from "valid-url";
+import { Client } from "minio";
+import { BufferedFile } from "./file.model";
+import { ISizeCalculationResult } from "image-size/dist/types/interface";
+
+const DEFAULT_REGION = "ap-southeast-1";
+const THUMBNAIL_BUCKET = "thumbnails";
+const COVER_BUCKET = "covers";
 
 @Injectable()
 export class StorageService {
-  private currentStorageDirIndex: number;
-  private readonly serveHost: string;
+  private readonly logger = new Logger(StorageService.name);
+  private readonly client: Client;
 
   constructor(private configService: ConfigService) {
-    this.serveHost = configService.get("upload.serveHost");
-    this.findLastStorageDir();
-    this.generateNewStorageIfNeed().then();
-  }
-
-  private findLastStorageDir() {
-    const uploadDir = this.configService.get("upload.dir");
-    const storageDir = path.resolve(uploadDir, "storage");
-    if (fs.existsSync(storageDir)) {
-      const dirs = fs
-        .readdirSync(storageDir, { withFileTypes: true })
-        .filter((dirent) => dirent.isDirectory())
-        .map((dirent) => parseInt(dirent.name))
-        .sort((v1, v2) => v2 - v1);
-      this.currentStorageDirIndex = dirs[0] || 0;
-    } else {
-      this.currentStorageDirIndex = 0;
-    }
-  }
-
-  private getCurrentStorageDir(): string {
-    const name = `${this.currentStorageDirIndex}`.padStart(4, "0");
-    const uploadDir = this.configService.get("upload.dir");
-    return path.resolve(uploadDir, "storage", name);
-  }
-
-  private async generateNewStorageIfNeed(): Promise<void> {
-    const maxFileCount = this.configService.get<number>("upload.maxFileCount");
-    const storageDir = this.getCurrentStorageDir();
-    await this.createDirIfNeeded(storageDir);
-    return new Promise((resolve, reject) => {
-      fs.readdir(storageDir, (err, files) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (files.length >= maxFileCount) {
-            this.currentStorageDirIndex++;
-            const nextStorageDir = this.getCurrentStorageDir();
-            fs.mkdir(nextStorageDir, (err1) => {
-              if (err1) {
-                reject(err1);
-              } else {
-                resolve();
-              }
-            });
-          } else {
-            resolve();
-          }
-        }
-      });
+    this.client = new Client({
+      endPoint: configService.get("storage.minio.host"),
+      port: configService.get("storage.minio.port"),
+      useSSL: !!configService.get("storage.minio.useSSL"),
+      accessKey: configService.get("storage.minio.accessKey"),
+      secretKey: configService.get("storage.minio.secretKey"),
     });
   }
 
-  private createDirIfNeeded(dir: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      if (!fs.existsSync(dir)) {
-        fs.mkdir(dir, { recursive: true }, (err) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        });
-      } else {
-        resolve();
+  async initialize() {
+    await this.createBucket(THUMBNAIL_BUCKET, true);
+    await this.createBucket(COVER_BUCKET, true);
+  }
+
+  async upload(
+    file: BufferedFile,
+    name: string,
+  ): Promise<{
+    thumbnail: string;
+    cover: string;
+  }> {
+    if (!(file.mimetype.includes("jpeg") || file.mimetype.includes("png"))) {
+      throw new BadRequestException("File type not supported");
+    }
+
+    const info = imageSize(file.buffer);
+    let originSharp = sharp(file.buffer);
+    let coverSharp: Sharp;
+    let thumbnailSharp: Sharp;
+
+    try {
+      // Convert file to jpg if needed
+      if (info.type === "png") {
+        originSharp = originSharp.toFormat("jpg");
       }
-    });
+
+      const fileName = `${name}.jpg`;
+      const metaData = {
+        "Content-Type": "image/jpeg",
+      };
+
+      coverSharp = await this.saveCover(originSharp, info, fileName, metaData);
+      thumbnailSharp = await this.saveThumbnail(originSharp, fileName, metaData);
+
+      return {
+        cover: `${COVER_BUCKET}/${fileName}`,
+        thumbnail: `${THUMBNAIL_BUCKET}/${fileName}`,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new BadRequestException("Error uploading file");
+    } finally {
+      originSharp?.destroy();
+      coverSharp?.destroy();
+      thumbnailSharp?.destroy();
+    }
   }
 
-  isTempThumbnail(file: string): boolean {
-    if (file.endsWith(".cover.jpg") || file.endsWith(".thumbnail.jpg")) {
-      return false;
-    }
-
-    if (isUri(file)) {
-      return false;
-    }
-
-    const uploadDir = path.resolve(this.configService.get("upload.dir"));
-    const tempFilePath = path.resolve(uploadDir, "temp", file);
-    return fs.existsSync(tempFilePath);
-  }
-
-  makeThumbnailUrl(name): string {
-    if (!name || isUri(name)) {
-      return name;
-    }
-    return `${this.serveHost}/${name}`;
-  }
-
-  async deleteStorageFile(category: "temp" | "storage", fileName?: string, ignoreError?: boolean): Promise<void> {
-    if (!fileName) {
-      return;
-    }
-
-    fileName = this.revertThumbnailName(fileName);
-
-    const uploadDir = path.resolve(this.configService.get("upload.dir"));
-    const filePath = path.resolve(uploadDir, category, fileName);
-    await this.deleteFile(filePath, ignoreError);
-  }
-
-  revertThumbnailName(thumbnailUrl: string | undefined): string {
-    if (!thumbnailUrl) {
-      return thumbnailUrl;
-    }
-    if (thumbnailUrl.startsWith(this.serveHost) && thumbnailUrl.length > this.serveHost.length) {
-      return thumbnailUrl.substr(this.serveHost.length + 1);
-    }
-    return thumbnailUrl;
-  }
-
-  private deleteFile(file: string, ignoreError?: boolean): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      fs.unlink(file, (err) => {
-        if (ignoreError) {
-          resolve();
-          return;
-        }
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
-
-  async saveThumbnail(tempFileName: string): Promise<{ thumbnail: string; cover: string }> {
-    const uploadDir = path.resolve(this.configService.get("upload.dir"));
+  private async saveCover(originSharp: Sharp, info: ISizeCalculationResult, fileName: string, metaData: any) {
     const maxCoverWidth = this.configService.get<number>("settings.sizing.cover.maxWidth");
+    const coverSharp =
+      info.width > maxCoverWidth
+        ? originSharp.jpeg({ quality: 100, progressive: true }).resize({
+            width: maxCoverWidth,
+            height: Math.round((info.height * maxCoverWidth) / info.width),
+          })
+        : originSharp;
+    const coverBuffer = await this.optimizeImage(await coverSharp.toBuffer());
+    await this.client.putObject(COVER_BUCKET, fileName, coverBuffer, metaData);
+    return coverSharp;
+  }
+
+  private async saveThumbnail(originSharp: Sharp, fileName: string, metaData: any) {
     const thumbnailWidth = this.configService.get<number>("settings.sizing.thumbnail.width");
     const thumbnailHeight = this.configService.get<number>("settings.sizing.thumbnail.height");
-
-    // Check if temp file exists
-    const tempFilePath = path.resolve(uploadDir, "temp", tempFileName);
-    if (!fs.existsSync(tempFilePath)) {
-      throw new Error(`File ${tempFileName} not found`);
-    }
-
-    // Prepare storage dir
-    await this.generateNewStorageIfNeed();
-    const storageDir = this.getCurrentStorageDir();
-    await this.createDirIfNeeded(storageDir);
-
-    // Read temp file image info
-    const info = imageSize(tempFilePath);
-    let sharpObj = sharp(tempFilePath);
-
-    // Convert temp file to jpg if needed
-    if (info.type === "png") {
-      sharpObj = sharpObj.toFormat("jpg");
-    }
-
-    // Make sure cover image's width is less than maxCoverWidth
-    if (info.width > maxCoverWidth) {
-      sharpObj = sharpObj.jpeg({ quality: 100, progressive: true }).resize({
-        width: maxCoverWidth,
-        height: Math.round((info.height * maxCoverWidth) / info.width),
-      });
-    }
-
-    // Optimize and save cover image to file
-    let coverBuffer = await sharpObj.toBuffer();
-    coverBuffer = await this.optimizeImage(coverBuffer);
-    const sharedName = nanoid();
-    const coverFilePath = path.resolve(storageDir, `${sharedName}.cover.jpg`);
-    await this.writeFileAsync(coverFilePath, coverBuffer);
-
-    // Optimize and save thumbnail image to file
-    sharpObj = sharpObj.resize({
+    const thumbnailSharp = originSharp.resize({
       width: thumbnailWidth,
       height: thumbnailHeight,
       fit: "cover",
     });
-    let thumbnailBuffer = await sharpObj.toBuffer();
-    thumbnailBuffer = await this.optimizeImage(thumbnailBuffer);
-    const thumbnailFilePath = path.resolve(storageDir, `${sharedName}.thumbnail.jpg`);
-    await this.writeFileAsync(thumbnailFilePath, thumbnailBuffer);
-
-    sharpObj.destroy();
-
-    return {
-      thumbnail: path.relative(path.resolve(uploadDir, "storage"), thumbnailFilePath).replace(/\\/g, "/"),
-      cover: path.relative(path.resolve(uploadDir, "storage"), coverFilePath).replace(/\\/g, "/"),
-    };
-  }
-
-  private writeFileAsync(filePath: string, content: Buffer): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      fs.writeFile(filePath, content, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    const thumbnailBuffer = await this.optimizeImage(await thumbnailSharp.toBuffer());
+    await this.client.putObject(THUMBNAIL_BUCKET, fileName, thumbnailBuffer, metaData);
+    return thumbnailSharp;
   }
 
   private async optimizeImage(content: Buffer): Promise<Buffer> {
@@ -225,5 +114,30 @@ export class StorageService {
         }),
       ],
     });
+  }
+
+  private async createBucket(name: string, publish: boolean) {
+    if (await this.client.bucketExists(name)) {
+      return;
+    }
+
+    await this.client.makeBucket(name, DEFAULT_REGION);
+    if (publish) {
+      const policy = {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Sid: "PublicRead",
+            Effect: "Allow",
+            Principal: "*",
+            Action: ["s3:GetObject"],
+            Resource: [`arn:aws:s3:::${name}/*`],
+          },
+        ],
+      };
+      await this.client.setBucketPolicy(name, JSON.stringify(policy));
+    }
+
+    this.logger.debug(`Create new bucket ${name}, public policy: ${publish}`);
   }
 }

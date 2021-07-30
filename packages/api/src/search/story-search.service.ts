@@ -160,7 +160,6 @@ export default class StorySearchService {
       .map((item) => item._source)
       .map((item) => ({
         ...item,
-        thumbnail: this.storageService.makeThumbnailUrl(item.thumbnail),
       }));
   }
 }

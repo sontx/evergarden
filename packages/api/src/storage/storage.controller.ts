@@ -1,20 +1,20 @@
-import { Controller, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Controller, Param, ParseIntPipe, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Role } from "../auth/role/roles.decorator";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
-import { ThumbnailUploadResponse } from "@evergarden/shared";
 import { StorageService } from "./storage.service";
+import { BufferedFile } from "./file.model";
 
 @Controller("storage")
 export class StorageController {
   constructor(private storageService: StorageService) {}
 
-  @Post("/thumbnail")
+  @Post("stories/:id")
   @UseInterceptors(FileInterceptor("file"))
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
-  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<ThumbnailUploadResponse> {
-    return { tempFileName: file.filename };
+  async uploadFile(@UploadedFile() file: BufferedFile, @Param("id", ParseIntPipe) storyId: number) {
+    return await this.storageService.upload(file, `${storyId}`);
   }
 }

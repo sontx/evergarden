@@ -112,7 +112,6 @@ export class StoryService {
     const result = await this.storySearchService.search(text);
     return result.map((item) => ({
       ...item,
-      thumbnail: this.storageService.makeThumbnailUrl(item.thumbnail),
     }));
   }
 
@@ -122,8 +121,6 @@ export class StoryService {
         ...story,
         createdBy: this.userService.toDto(story.createdBy),
         updatedBy: this.userService.toDto(story.updatedBy),
-        thumbnail: this.storageService.makeThumbnailUrl(story.thumbnail),
-        cover: this.storageService.makeThumbnailUrl(story.cover),
       }
     );
   }
@@ -147,7 +144,6 @@ export class StoryService {
 
     story.authors = await this.authorService.syncAuthors(story.authors || []);
     story.genres = await this.genreService.getValidGenres(story.genres || []);
-    await this.syncThumbnail(story);
 
     const user = await this.userService.getById(userId);
     const newStory = await this.storyRepository.create(story);
@@ -171,7 +167,6 @@ export class StoryService {
     const user = await this.userService.getById(userId);
     const authors = await this.authorService.syncAuthors(story.authors || []);
     const genres = await this.genreService.getValidGenres(story.genres || []);
-    await this.syncThumbnail(story, currentStory);
     await this.storyRepository.save({
       ...story,
       id: currentStory.id,
@@ -183,48 +178,6 @@ export class StoryService {
     const savedStory = await this.getStory(currentStory.id);
     await this.storySearchService.update(savedStory);
     return savedStory;
-  }
-
-  private async syncThumbnail(newStory: CreateStoryDto, oldStory: Partial<Story> = {}): Promise<void> {
-    newStory.thumbnail = this.storageService.revertThumbnailName(newStory.thumbnail);
-    newStory.cover = this.storageService.revertThumbnailName(newStory.cover);
-
-    const newTempThumbnail = newStory.thumbnail;
-
-    const deleteOldImage = async (type: "thumbnail" | "cover") => {
-      await this.storageService.deleteStorageFile("storage", oldStory[type], true);
-    };
-
-    const deleteOldImages = async () => {
-      if (oldStory.thumbnail !== newStory.thumbnail) {
-        await deleteOldImage("thumbnail");
-      }
-      if (oldStory.cover !== newStory.cover) {
-        await deleteOldImage("cover");
-      }
-    };
-
-    if (!newTempThumbnail) {
-      await deleteOldImage("thumbnail");
-      await deleteOldImage("cover");
-      newStory.thumbnail = "";
-      newStory.cover = "";
-      return;
-    }
-
-    const isTempThumbnail = await this.storageService.isTempThumbnail(newTempThumbnail);
-    if (!isTempThumbnail) {
-      await deleteOldImages();
-      return;
-    }
-
-    const result = await this.storageService.saveThumbnail(newTempThumbnail);
-    newStory.thumbnail = result.thumbnail;
-    newStory.cover = result.cover;
-
-    await deleteOldImages();
-
-    await this.storageService.deleteStorageFile("temp", newTempThumbnail);
   }
 
   async getStoryByUrl(url: string): Promise<Story | null> {

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:8.0.26
     container_name: mysqldb
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -41,14 +41,29 @@ services:
       - ./data/redis/config:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - ./data/minio:/data
   api:
     build:
       context: .
       dockerfile: Dockerfile
       target: development
-    command: ./wait-for-it.sh mysql:3306 -- ./wait-for-it.sh elastic:9200 -- ./wait-for-it.sh redis:6379 -- npm run docker:dev
+    command: ./wait-for-it.sh mysql:3306 -- ./wait-for-it.sh elastic:9200 -- ./wait-for-it.sh redis:6379 -- ./wait-for-it.sh minio:9000 -- npm run docker:dev
     environment:
-      - NODE_ENV=development
+      NODE_ENV: development
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     depends_on:
       - mysql
       - elastic
@@ -62,8 +77,8 @@ services:
       - mysql
       - redis
       - elastic
+      - minio
     volumes:
       - ./packages:/app/packages
       - /app/packages/api/node_modules
       - /app/packages/shared/node_modules
-      - ./data/app/upload:/app/packages/api/upload

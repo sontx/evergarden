@@ -2,25 +2,31 @@ export default () => ({
   port: parseInt(process.env.PORT, 10) || 3000,
   isDevelopment: process.env.NODE_ENV === "development",
   database: {
-    mongodb: {
-      connectionString: process.env.MONGODB_CONNECTION_STRING,
-    },
     mysql: {
-      host: process.env.MYSQL_HOST,
+      host: process.env.MYSQL_HOST || "mysql",
       port: process.env.MYSQL_PORT || 3306,
-      databaseName: process.env.MYSQL_DBNAME,
-      username: process.env.MYSQL_USERNAME,
-      password: process.env.MYSQL_PASSWORD,
+      databaseName: process.env.MYSQL_DBNAME || "evergarden",
+      username: process.env.MYSQL_USERNAME || "root",
+      password: process.env.MYSQL_PASSWORD || "root",
     },
     redis: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
+      host: process.env.REDIS_HOST || "redis",
+      port: process.env.REDIS_PORT || 6379,
     },
     elastic: {
-      url: process.env.ELASTIC_URL,
-      username: process.env.ELASTIC_USERNAME,
-      password: process.env.ELASTIC_PASSWORD,
+      url: process.env.ELASTIC_URL || "http://elastic:9200",
+      username: process.env.ELASTIC_USERNAME || "elastic",
+      password: process.env.ELASTIC_PASSWORD || "changeme",
     },
+  },
+  storage: {
+    minio: {
+      host: process.env.MINIO_HOST || "minio",
+      port: process.env.MINIO_PORT || 9000,
+      useSSL: process.env.MINIO_USE_SSL || false,
+      accessKey: process.env.MINIO_ROOT_USER,
+      secretKey: process.env.MINIO_ROOT_PASSWORD,
+    }
   },
   credentials: {
     google: {
@@ -28,8 +34,8 @@ export default () => ({
       secret: process.env.GOOGLE_SECRET,
     },
     admin: {
-      username: process.env.USER_ADMIN_USERNAME,
-      password: process.env.USER_ADMIN_PASSWORD,
+      username: process.env.USER_ADMIN_USERNAME || "admin@evergarden.app",
+      password: process.env.USER_ADMIN_PASSWORD || "admin",
     },
   },
   jwt: {
@@ -63,10 +69,5 @@ export default () => ({
       minReading: "5s",
       minReadingInterval: "10s",
     },
-  },
-  upload: {
-    dir: "./upload",
-    maxFileCount: 1000,
-    serveHost: "http://localhost:2000",
   },
 });

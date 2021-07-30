@@ -5,6 +5,7 @@ import genresDataset from "./genres.dataset";
 import { GenreService } from "./genre/genre.service";
 import { UserService } from "./user/user.service";
 import { ConfigService } from "@nestjs/config";
+import {StorageService} from "./storage/storage.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -16,6 +17,7 @@ export class AppService implements OnApplicationBootstrap {
     private genreService: GenreService,
     private userService: UserService,
     private configService: ConfigService,
+    private storageService: StorageService,
   ) {}
 
   async onApplicationBootstrap() {
@@ -30,6 +32,10 @@ export class AppService implements OnApplicationBootstrap {
     this.logger.debug("Synchronizing genres admin user...");
     await this.initializeAdminUser();
     this.logger.debug("Synchronized genres admin user!");
+
+    this.logger.debug("Initializing storage service...");
+    await this.storageService.initialize();
+    this.logger.debug("Initialized storage service!");
   }
 
   private async initializeSearchEngine() {
