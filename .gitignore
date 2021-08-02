@@ -37,3 +37,7 @@ data/
 data-fixed/
 
 *.links
+
+dump
+packages
+*.env

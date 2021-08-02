@@ -21,6 +21,10 @@ export abstract class CommonService {
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36 Edg/90.0.818.66",
   ];
 
+  protected print(msg: string, color: string) {
+    console.log(`%c${msg}`, `color: ${color}`)
+  }
+
   private randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
