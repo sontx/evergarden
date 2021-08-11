@@ -101,7 +101,7 @@ export function Auth() {
             <h3>
               <FormattedMessage id="loginWelcome" />
             </h3>
-            <span className="sub">
+            <span>
               <FormattedMessage id="loginSlogan" />
             </span>
           </div>
@@ -120,6 +120,7 @@ export function Auth() {
                 disabled={renderProps.isDisabled}
                 loading={renderProps.isProcessing}
                 color="blue"
+                size="sm"
                 block
               >
                 <Icon icon="facebook" />{" "}
@@ -133,6 +134,7 @@ export function Auth() {
               <Button
                 disabled={renderProps.disabled}
                 color="red"
+                size="sm"
                 block
                 onClick={renderProps.onClick}
               >
