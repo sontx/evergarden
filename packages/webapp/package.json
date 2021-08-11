@@ -55,6 +55,7 @@
   "scripts": {
     "start": "npm run start:dev",
     "start:dev": "cross-env PORT=4000 react-app-rewired start",
+    "docker:dev": "npm run start:dev",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject"

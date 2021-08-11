@@ -56,7 +56,7 @@ export function ChapterEditorPage() {
 
   const mode = isFinite(parseInt(chapterNo)) ? "update" : "create";
   const showChapterNo =
-    mode === "update" ? chapterNo : story ? story.lastChapter + 1 : 0;
+    mode === "update" ? chapterNo : story ? (story.lastChapter || 0) + 1 : 0;
 
   return (
     <Wrapper

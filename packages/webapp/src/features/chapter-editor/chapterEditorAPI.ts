@@ -1,13 +1,12 @@
 import {
   CreateChapterDto,
   GetChapterDto,
-  IdType,
   UpdateChapterDto,
 } from "@evergarden/shared";
 import api from "../../utils/api";
 
 export async function createChapter(
-  storyId: IdType,
+  storyId: number,
   chapter: CreateChapterDto,
 ): Promise<GetChapterDto> {
   const response = await api.post(`/api/stories/${storyId}/chapters`, chapter);
@@ -15,7 +14,8 @@ export async function createChapter(
 }
 
 export async function updateChapter(
-  storyId: IdType,
+  storyId: number,
+  chapterNo: number,
   chapter: UpdateChapterDto,
 ): Promise<GetChapterDto> {
   const response = await api.put(`/api/stories/${storyId}/chapters`, chapter);

@@ -70,7 +70,7 @@ export function ReadingNavigationBottom(props: {
           <Button
             onClick={handleNext}
             disabled={
-              !chapter || !story || chapter.chapterNo >= story.lastChapter
+              !chapter || !story || chapter.chapterNo >= (story.lastChapter || 0)
             }
           >
             <Icon size="lg" icon="arrow-circle-right" />

@@ -1,14 +1,13 @@
 import {
   CreateStoryDto,
   GetStoryDto,
-  IdType,
   UpdateStoryDto,
 } from "@evergarden/shared";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ProcessingStatus } from "../../utils/types";
 import { createStory, updateStory } from "./storyEditorAPI";
 import { RootState } from "../../app/store";
-import { fetchStoryByUrl } from "../story/storyAPI";
+import { fetchStory } from "../story/storyAPI";
 
 interface StoryEditorState {
   story?: GetStoryDto;
@@ -24,7 +23,7 @@ const initialState: StoryEditorState = {
 export const fetchUserStoryAsync = createAsyncThunk(
   "storyEditor/fetch",
   async (url: string) => {
-    return await fetchStoryByUrl(url);
+    return await fetchStory(url);
   },
 );
 
@@ -37,7 +36,7 @@ export const createStoryAsync = createAsyncThunk(
 
 export const updateStoryAsync = createAsyncThunk(
   "storyEditor/update",
-  async ({ story, id }: { id: IdType; story: UpdateStoryDto }) => {
+  async ({ story, id }: { id: number; story: UpdateStoryDto }) => {
     return await updateStory(id, story);
   },
 );

@@ -2,11 +2,11 @@ import { ElementType, SyntheticEvent, useCallback, useRef } from "react";
 import { withAction } from "../../components/StoryItemEx/withAction";
 import { withAnimation } from "../../components/StoryItemEx/withAnimation";
 import { Icon } from "rsuite";
-import { updateStoryHistoryAsync } from "../history/historySlice";
 import { useAppDispatch } from "../../app/hooks";
 import { removeStory } from "./followingSlice";
 
 import "./withDeleteAction.less";
+import { updateStoryHistoryAsync } from "../histories/historiesSlice";
 
 export function withDeleteAction(Component: ElementType) {
   const Wrapper = withAnimation(withAction(Component));
@@ -26,11 +26,8 @@ export function withDeleteAction(Component: ElementType) {
         }
         dispatch(
           updateStoryHistoryAsync({
-            history: {
-              storyId: story.id,
-              isFollowing: false,
-            },
-            startReading: false,
+            storyId: story.id,
+            isFollowing: false,
           }),
         );
       },

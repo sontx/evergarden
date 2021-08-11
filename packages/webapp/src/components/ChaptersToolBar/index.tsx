@@ -30,7 +30,7 @@ export function ChaptersToolBar({
     setChapterNo(newValue);
   }, []);
 
-  const maxChapterNo = story ? story.lastChapter : 0;
+  const maxChapterNo = story?.lastChapter || 0;
 
   return (
     <div className="chapter-toolbar-container">

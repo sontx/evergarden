@@ -7,7 +7,7 @@ export function CommentCount(props: { story: GetStoryDto }) {
     <Disqus.CommentCount
       shortname="evergarden"
       config={{
-        identifier: story.id as string,
+        identifier: story.url,
         title: story.title,
       }}
     />

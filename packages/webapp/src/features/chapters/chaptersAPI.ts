@@ -1,8 +1,8 @@
-import { GetChapterDto, IdType, PaginationResult } from "@evergarden/shared";
+import { GetChapterDto, PaginationResult } from "@evergarden/shared";
 import api from "../../utils/api";
 
 export async function fetchChapters(
-  storyId: IdType,
+  storyId: number,
   page: number,
   limit: number,
 ): Promise<PaginationResult<GetChapterDto>> {
@@ -17,7 +17,7 @@ export async function fetchChapters(
 }
 
 export async function fetchRangeChapters(
-  storyId: IdType,
+  storyId: number,
   skip: number,
   limit: number,
   sort: string

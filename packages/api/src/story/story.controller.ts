@@ -33,7 +33,7 @@ import { RolesGuard } from "../auth/role/roles.guard";
 import { ReadingHistoryService } from "../reading-history/reading-history.service";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
-import {isGod, isNumber, isOwnerOrGod} from "../utils";
+import { isGod, isNumber, isOwnerOrGod } from "../utils";
 
 @Controller("stories")
 export class StoryController {
@@ -102,10 +102,9 @@ export class StoryController {
     @Query("check", ParseBoolPipe) check: boolean,
     @Req() req,
   ): Promise<GetStoryDto | boolean> {
-    const storyData =
-      this.isSlug(idOrSlug)
-        ? await this.storyService.getStoryByUrl(idOrSlug)
-        : await this.storyService.getStory(idOrSlug);
+    const storyData = this.isSlug(idOrSlug)
+      ? await this.storyService.getStoryByUrl(idOrSlug)
+      : await this.storyService.getStory(idOrSlug);
 
     if (check) {
       return !!storyData;
@@ -131,7 +130,7 @@ export class StoryController {
   @UseGuards(JwtGuard, RolesGuard)
   async addStory(@Body() story: CreateStoryDto, @Req() req): Promise<GetStoryDto> {
     if (isNumber(story.title)) {
-      throw new BadRequestException("Story title can't only contain numbers")
+      throw new BadRequestException("Story title can't only contain numbers");
     }
     return await this.storyService.addStory(story, req.user);
   }
@@ -141,7 +140,7 @@ export class StoryController {
   @UseGuards(JwtGuard, RolesGuard)
   async updateStory(@Param("id") id: number, @Body() story: UpdateStoryDto, @Req() req): Promise<GetStoryDto> {
     if (isNumber(story.title)) {
-      throw new BadRequestException("Story title can't only contain numbers")
+      throw new BadRequestException("Story title can't only contain numbers");
     }
     const currentStory = await this.storyService.getStory(id);
     if (currentStory) {

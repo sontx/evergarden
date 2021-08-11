@@ -22,7 +22,6 @@ import storyReducer from "../features/story/storySlice";
 import storiesReducer from "../features/stories/storiesSlice";
 import chaptersReducer from "../features/chapters/chaptersSlice";
 import chapterReducer from "../features/chapter/chapterSlice";
-import historyReducer from "../features/history/historySlice";
 import followingReducer from "../features/following/followingSlice";
 import recentReducer from "../features/recent/recentSlice";
 import searchReducer from "../features/search/searchSlice";
@@ -31,6 +30,7 @@ import chapterEditorReducer from "../features/chapter-editor/chapterEditorSlice"
 import authorsReducer from "../features/authors/authorsSlice";
 import genresReducer from "../features/genres/genresSlice";
 import userStoriesReducer from "../features/user-stories/userStoriesSlice";
+import historiesReducer from "../features/histories/historiesSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
@@ -42,7 +42,7 @@ const reducers = combineReducers({
   chapter: chapterReducer,
   login: authReducer,
   settings: settingsReducer,
-  history: historyReducer,
+  histories: historiesReducer,
   search: searchReducer,
   storyEditor: storyEditorReducer,
   chapterEditor: chapterEditorReducer,
@@ -59,7 +59,6 @@ const persistConfig: PersistConfig<any> = {
     "stories",
     "chapters",
     "chapter",
-    "history",
     "story",
     "search",
     "storyEditor",

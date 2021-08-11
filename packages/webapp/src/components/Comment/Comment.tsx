@@ -7,7 +7,7 @@ export function Comment(props: { story: GetStoryDto, onReady?: () => void }) {
     <Disqus.DiscussionEmbed
       shortname="evergarden"
       config={{
-        identifier: story.id as string,
+        identifier: story.url,
         title: story.title,
         onReady
       }}

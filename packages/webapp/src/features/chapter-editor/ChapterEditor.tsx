@@ -24,7 +24,7 @@ import {
 } from "../story-editor/storyEditorSlice";
 import { useHistory } from "react-router-dom";
 
-const { StringType, ArrayType, BooleanType } = Schema.Types;
+const { StringType, BooleanType } = Schema.Types;
 
 function PublishedFormControl({ value, ...rest }: any) {
   return (
@@ -92,9 +92,9 @@ export function ChapterEditor({
         dispatch(
           updateChapterAsync({
             storyId: story.id,
+            chapterNo: chapter.chapterNo,
             chapter: {
               ...value,
-              id: chapter.id,
             },
           }),
         );

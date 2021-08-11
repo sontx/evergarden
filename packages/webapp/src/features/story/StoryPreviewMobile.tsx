@@ -11,14 +11,13 @@ import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
 import { useHistory, useLocation } from "react-router-dom";
 import { Reaction } from "../../components/Reaction";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import { openReading } from "./storySlice";
 import { withFollowSync } from "./withFollowSync";
-import { selectHistory } from "../history/historySlice";
-import { hasHistory } from "../../utils/types";
 
 import defaultThumbnail from "../../images/default-cover.png";
 import { ReadingLoader } from "../../components/ReadingLoader";
+import { useStoryHistory } from "../histories/useStoryHistory";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -43,11 +42,10 @@ function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
 const FollowButtonWrapper = withFollowSync(FollowButton);
 
 export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
-  const { story } = props;
+  const story = useStoryHistory(props.story);
   const intl = useIntl();
   const { state = {} } = useLocation() as any;
   const history = useHistory();
-  const storyHistory = useAppSelector(selectHistory);
 
   const handleExpandPanel = useCallback((element) => {
     if (element) {
@@ -77,10 +75,10 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
   }, [dispatch, history, story]);
 
   const handleContinue = useCallback(() => {
-    if (story && hasHistory(storyHistory)) {
-      dispatch(openReading(history, story, storyHistory.currentChapterNo));
+    if (story && story.history) {
+      dispatch(openReading(history, story, story.history.currentChapterNo));
     }
-  }, [dispatch, history, story, storyHistory]);
+  }, [dispatch, history, story]);
 
   return story ? (
     <div className="story-preview-mobile-container">
@@ -117,8 +115,8 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         }}
         justified
       >
-        {story && hasHistory(storyHistory) && <FollowButtonWrapper />}
-        {story && !hasHistory(storyHistory) && (
+        {story && story.history && <FollowButtonWrapper />}
+        {story && !story.history && (
           <IconButton
             placement="right"
             icon={<Icon icon="angle-right" />}
@@ -129,7 +127,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
             Read
           </IconButton>
         )}
-        {story && hasHistory(storyHistory) && (
+        {story && story.history && (
           <IconButton
             onClick={handleContinue}
             placement="right"
@@ -138,7 +136,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
             size="sm"
             appearance="primary"
           >
-            {`Continue (${storyHistory.currentChapterNo})`}
+            {`Continue (${story.history.currentChapterNo})`}
           </IconButton>
         )}
       </ButtonGroup>

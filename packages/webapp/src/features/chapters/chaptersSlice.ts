@@ -1,4 +1,4 @@
-import { GetChapterDto, IdType } from "@evergarden/shared";
+import { GetChapterDto } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchChapters } from "./chaptersAPI";
@@ -23,7 +23,7 @@ const initialState: ChaptersState = {
 
 export const fetchChaptersAsync = createAsyncThunk(
   "chapters/fetch",
-  async (option: { storyId: IdType; page: number; limit: number }) => {
+  async (option: { storyId: number; page: number; limit: number }) => {
     return await fetchChapters(option.storyId, option.page, option.limit);
   },
 );

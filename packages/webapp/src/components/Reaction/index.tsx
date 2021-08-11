@@ -7,10 +7,11 @@ import classNames from "classnames";
 import { abbreviateNumber } from "../../utils/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectStory, setStory } from "../../features/story/storySlice";
-import { updateStoryHistoryAsync } from "../../features/history/historySlice";
-import { useDebouncedCallback } from "use-debounce";
-import { ReactElement, useCallback, useEffect } from "react";
+import { ReactElement, useCallback } from "react";
 import { selectUser } from "../../features/auth/authSlice";
+import { useAutoFlushDebounce } from "../../hooks/useAutoFlushDebounce";
+import { useStoryHistory } from "../../features/histories/useStoryHistory";
+import { updateStoryHistoryAsync } from "../../features/histories/historiesSlice";
 
 function VoteButton({
   icon,
@@ -35,29 +36,15 @@ function VoteButton({
 }
 
 export function Reaction() {
-  const story = useAppSelector(selectStory);
+  const story = useStoryHistory(useAppSelector(selectStory));
   const dispatch = useAppDispatch();
 
-  const changeVoteDebounce = useDebouncedCallback(
+  const changeVoteDebounce = useAutoFlushDebounce(
     (story: GetStoryDto, vote?: VoteType) => {
-      dispatch(
-        updateStoryHistoryAsync({
-          history: {
-            storyId: story.id,
-            vote,
-          },
-          startReading: false,
-        }),
-      );
+      dispatch(updateStoryHistoryAsync({ storyId: story.id, vote }));
     },
     500,
   );
-
-  useEffect(() => {
-    if (changeVoteDebounce.isPending()) {
-      changeVoteDebounce.flush();
-    }
-  }, [changeVoteDebounce]);
 
   const updateVote = useCallback(
     (story: GetStoryDto, oldVote: VoteType, newVote: VoteType) => {
@@ -68,10 +55,6 @@ export function Reaction() {
             ...story,
             upvote: (story.upvote || 0) + result.upvote,
             downvote: (story.downvote || 0) + result.downvote,
-            history: {
-              ...(story.history || {}),
-              vote: newVote,
-            },
           }),
         );
         changeVoteDebounce(story, newVote);

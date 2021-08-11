@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  fetchStoryByUrlAsync,
+  fetchStoryAsync,
   selectStory,
 } from "../../features/story/storySlice";
 import { AppHeader } from "../../components/AppHeader";
@@ -21,7 +21,7 @@ export function Story() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    dispatch(fetchStoryByUrlAsync(url));
+    dispatch(fetchStoryAsync(url));
   }, [url, dispatch]);
 
   const showStory = story && story.url === url ? story : undefined;

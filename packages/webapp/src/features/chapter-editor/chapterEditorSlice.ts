@@ -4,7 +4,6 @@ import { RootState } from "../../app/store";
 import {
   CreateChapterDto,
   GetChapterDto,
-  IdType,
   UpdateChapterDto,
 } from "@evergarden/shared";
 import { createChapter, updateChapter } from "./chapterEditorAPI";
@@ -23,7 +22,7 @@ const initialState: ChapterEditorState = {
 
 export const fetchChapterAsync = createAsyncThunk(
   "chapterEditor/fetch",
-  async (option: { storyId: IdType; chapterNo: number }) => {
+  async (option: { storyId: number; chapterNo: number }) => {
     return await fetchChapter(option.storyId, option.chapterNo);
   },
 );
@@ -34,7 +33,7 @@ export const createChapterAsync = createAsyncThunk(
     chapter,
     storyId,
   }: {
-    storyId: IdType;
+    storyId: number;
     chapter: CreateChapterDto;
   }) => {
     return await createChapter(storyId, chapter);
@@ -45,12 +44,14 @@ export const updateChapterAsync = createAsyncThunk(
   "chapterEditor/update",
   async ({
     chapter,
+    chapterNo,
     storyId,
   }: {
-    storyId: IdType;
+    storyId: number;
+    chapterNo: number;
     chapter: UpdateChapterDto;
   }) => {
-    return await updateChapter(storyId, chapter);
+    return await updateChapter(storyId, chapterNo, chapter);
   },
 );
 
@@ -104,6 +105,7 @@ export const { setChapter } = chapterEditorSlice.actions;
 
 export const selectChapter = (state: RootState) => state.chapterEditor.chapter;
 export const selectStatus = (state: RootState) => state.chapterEditor.status;
-export const selectFetchingStatus = (state: RootState) => state.chapterEditor.fetchingStatus;
+export const selectFetchingStatus = (state: RootState) =>
+  state.chapterEditor.fetchingStatus;
 
 export default chapterEditorSlice.reducer;

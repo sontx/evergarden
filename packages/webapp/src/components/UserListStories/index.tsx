@@ -8,6 +8,7 @@ import {
 import { ElementType, useEffect, useState } from "react";
 import { List, Loader, Message } from "rsuite";
 import { isEmpty } from "../../utils/types";
+import { useStoriesHistories } from "../../features/histories/useStoriesHistories";
 
 function sortNew(item1: GetStoryDto, item2: GetStoryDto) {
   // @ts-ignore
@@ -40,20 +41,21 @@ export function UserListStories({
   stories: GetStoryDto[];
   hasAction?: boolean;
 }) {
+  const storiesWithHistories = useStoriesHistories(stories);
   const status = useAppSelector(selectStatus);
   const errorMessage = useAppSelector(selectErrorMessage);
   const [showStories, setShowStories] = useState<GetStoryDto[]>([]);
 
   useEffect(() => {
-    if (stories) {
+    if (storiesWithHistories) {
       let temp;
       if (filter) {
         const filterValue = filter.toLowerCase();
-        temp = stories.filter((item) =>
+        temp = storiesWithHistories.filter((item) =>
           item.title.toLowerCase().includes(filterValue),
         );
       } else {
-        temp = [...stories];
+        temp = [...storiesWithHistories];
       }
 
       if (sort) {
@@ -74,7 +76,7 @@ export function UserListStories({
       }
       setShowStories(temp);
     }
-  }, [filter, sort, stories]);
+  }, [filter, sort, storiesWithHistories]);
 
   return (
     <>
@@ -84,7 +86,7 @@ export function UserListStories({
           description={errorMessage || "Error while fetching data"}
         />
       )}
-      {status === "processing" && isEmpty(stories) ? (
+      {status === "processing" && isEmpty(storiesWithHistories) ? (
         <Loader center />
       ) : (
         <List>

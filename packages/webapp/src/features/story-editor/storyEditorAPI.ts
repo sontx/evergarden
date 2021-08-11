@@ -1,7 +1,6 @@
 import {
   CreateStoryDto,
   GetStoryDto,
-  IdType,
   UpdateStoryDto,
 } from "@evergarden/shared";
 import api from "../../utils/api";
@@ -12,7 +11,7 @@ export async function createStory(story: CreateStoryDto): Promise<GetStoryDto> {
 }
 
 export async function updateStory(
-  id: IdType,
+  id: number,
   story: UpdateStoryDto,
 ): Promise<GetStoryDto> {
   const response = await api.put(`/api/stories/${id}`, story);

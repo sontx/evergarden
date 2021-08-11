@@ -1,8 +1,7 @@
-import { GetStoryDto, GetUserDto, IdType } from "@evergarden/shared";
+import { GetStoryDto, GetUserDto } from "@evergarden/shared";
 import { Icon, Tag } from "rsuite";
 import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
-import { isEmpty } from "../../utils/types";
 
 import "./storyDetail.less";
 import { useCallback } from "react";
@@ -17,7 +16,7 @@ function Full() {
   return <span className="story-preview-detail-status--full">Full</span>;
 }
 
-function createdBy({ user }: { user: IdType | GetUserDto }) {
+function CreatedBy({ user }: { user: number | GetUserDto }) {
   const showUser =
     typeof user === "object"
       ? { id: user.id, name: user.fullName }
@@ -39,7 +38,9 @@ export function StoryDetail(props: { story: GetStoryDto }) {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const handleLastChapterClick = useCallback(() => {
-    dispatch(openReading(history, story, story.lastChapter));
+    if (story.lastChapter !== undefined && story.lastChapter > 0) {
+      dispatch(openReading(history, story, story.lastChapter));
+    }
   }, [dispatch, history, story]);
 
   return (
@@ -99,7 +100,7 @@ export function StoryDetail(props: { story: GetStoryDto }) {
       {story.createdBy && (
         <>
           <label>Upload by</label>
-          <createdBy user={story.createdBy} />
+          <CreatedBy user={story.createdBy} />
         </>
       )}
 

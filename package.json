@@ -11,7 +11,7 @@
     "start": "lerna run start:dev --no-sort --parallel",
     "start:api": "lerna run start:dev --ignore=@evergarden/webapp --parallel",
     "start:webapp": "lerna run start:dev --ignore=@evergarden/api --parallel",
-    "docker:dev": "lerna run docker:dev --ignore=@evergarden/webapp --parallel",
+    "docker:dev": "lerna run docker:dev --parallel",
     "publish": "lerna publish",
     "test": "lerna run test",
     "killnode": "taskkill /im node.exe /f /t"

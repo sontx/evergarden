@@ -2,10 +2,7 @@ import { ReadingMobile } from "../../features/chapter/ReadingMobile";
 import { useParams } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  fetchStoryByUrlAsync,
-  selectStory,
-} from "../../features/story/storySlice";
+import { fetchStoryAsync, selectStory } from "../../features/story/storySlice";
 import {
   fetchChapterAsync,
   selectChapter,
@@ -18,16 +15,12 @@ import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
 import { Helmet } from "react-helmet";
 import { selectReadingFont } from "../../features/settings/settingsSlice";
-import { withScrollSync } from "./withScrollSync";
-import { withChapterNoSync } from "./withChapterNoSync";
-import { withViewCountSync } from "./withViewCountSync";
 import { selectIsLoggedIn } from "../../features/auth/authSlice";
 import { withCachedNextChapter } from "./withCachedNextChapter";
+import { withReadingHistorySync } from "./withReadingHistorySync";
 
 const CachedReading = withCachedNextChapter(ReadingMobile);
-const ReadingWrapper = withViewCountSync(
-  withScrollSync(withChapterNoSync(CachedReading)),
-);
+const ReadingWrapper = withReadingHistorySync(CachedReading);
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
@@ -41,7 +34,7 @@ export function Reading() {
 
   useEffect(() => {
     if (!story || story.url !== url) {
-      dispatch(fetchStoryByUrlAsync(url));
+      dispatch(fetchStoryAsync(url));
     }
   }, [dispatch, story, url]);
 

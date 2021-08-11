@@ -1,4 +1,4 @@
-import { GetStoryDto, IdType, PaginationResult } from "@evergarden/shared";
+import { GetStoryDto, PaginationResult } from "@evergarden/shared";
 import api from "../../utils/api";
 
 export async function fetchUserStories(): Promise<
@@ -10,6 +10,6 @@ export async function fetchUserStories(): Promise<
   return response.data;
 }
 
-export async function deleteUserStory(id: IdType): Promise<void> {
+export async function deleteUserStory(id: number): Promise<void> {
   await api.delete(`/api/stories/${id}`);
 }

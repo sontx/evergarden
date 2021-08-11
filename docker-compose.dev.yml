@@ -48,8 +48,6 @@ services:
       - "9001:9001"
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
@@ -57,13 +55,13 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: packages/api/Dockerfile
       target: development
     command: ./wait-for-it.sh mysql:3306 -- ./wait-for-it.sh elastic:9200 -- ./wait-for-it.sh redis:6379 -- ./wait-for-it.sh minio:9000 -- npm run docker:dev
     environment:
       NODE_ENV: development
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     depends_on:
       - mysql
       - elastic
@@ -72,13 +70,13 @@ services:
     tty: true
     ports:
       - "3000:3000"
-      - "9229:9229"
     links:
       - mysql
       - redis
       - elastic
       - minio
     volumes:
-      - ./packages:/app/packages
+      - ./packages/api:/app/packages/api
+      - ./packages/shared:/app/packages/shared
       - /app/packages/api/node_modules
       - /app/packages/shared/node_modules

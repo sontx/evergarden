@@ -1,4 +1,4 @@
-import { GetStoryDto, IdType } from "@evergarden/shared";
+import { GetStoryDto } from "@evergarden/shared";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ProcessingStatus } from "../../utils/types";
 import { RootState } from "../../app/store";
@@ -24,7 +24,7 @@ export const fetchUserStoriesAsync = createAsyncThunk(
 
 export const deleteUserStoryAsync = createAsyncThunk(
   "userStories/delete",
-  async (id: IdType) => {
+  async (id: number) => {
     await deleteUserStory(id);
     return id;
   },

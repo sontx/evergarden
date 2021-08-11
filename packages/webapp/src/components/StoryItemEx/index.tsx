@@ -8,6 +8,7 @@ import { ElementType, forwardRef, ReactNode, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import "./index.less";
+import { useStoryHistory } from "../../features/histories/useStoryHistory";
 
 export interface StoryItemExProps extends StandardProps {
   story: GetStoryDto;
@@ -22,7 +23,7 @@ export interface StoryItemExProps extends StandardProps {
 export const StoryItemEx = forwardRef(
   (
     {
-      story,
+      story: passStory,
       children,
       RightSub,
       BottomSub,
@@ -33,6 +34,7 @@ export const StoryItemEx = forwardRef(
     }: StoryItemExProps,
     ref: any,
   ) => {
+    const story = useStoryHistory(passStory);
     const intl = useIntl();
 
     const handleClick = useCallback(() => {
@@ -66,7 +68,7 @@ export const StoryItemEx = forwardRef(
             ) : (
               <span className="sub">
                 {story.updated !== undefined && moment(story.updated).fromNow()}
-                {story.lastChapter > 0 && (
+                {story.lastChapter && story.lastChapter > 0 && (
                   <>
                     <Divider vertical={true} />
                     <span
