@@ -19,11 +19,11 @@ export class User {
 
   @Column({
     type: "enum",
-    enum: ["google", "facebook"],
+    enum: ["google", "facebook", "system"],
     default: null,
     nullable: true,
   })
-  provider?: OAuth2Provider;
+  provider?: OAuth2Provider | "system";
 
   @Column({ type: "nvarchar", length: 50, nullable: false })
   fullName: string;

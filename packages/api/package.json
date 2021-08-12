@@ -17,7 +17,11 @@
     "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "start:prod": "node dist/main",
     "start:storage": "serve upload/storage -l 2000",
-    "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix"
+    "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
+    "typeorm:migrate": "npm run typeorm migration:generate -- -n DbChange",
+    "typeorm:run": "npm run typeorm migration:run",
+    "typeorm:revert": "npm run typeorm migration:revert",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/ormconfig.migration.ts"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.13.0",

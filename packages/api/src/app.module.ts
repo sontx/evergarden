@@ -44,7 +44,9 @@ import { RedisModule } from "nestjs-redis";
           isGlobal: true,
           logging: configService.get("isDevelopment"),
           autoLoadEntities: true,
-          synchronize: !!configService.get("isDevelopment"),
+          synchronize: false,
+          migrationsRun: true,
+          migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
           entities: [User, Story, Chapter, Author, Genre, ReadingHistory],
         };
       },
