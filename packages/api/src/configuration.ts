@@ -34,8 +34,12 @@ export default () => ({
       secret: process.env.GOOGLE_SECRET,
     },
     admin: {
-      username: process.env.USER_ADMIN_USERNAME || "admin@evergarden.app",
+      username: process.env.USER_ADMIN_USERNAME || "admin",
       password: process.env.USER_ADMIN_PASSWORD || "admin",
+    },
+    bot: {
+      username: process.env.USER_BOT_USERNAME || "bot",
+      password: process.env.USER_BOT_PASSWORD || "bot",
     },
   },
   jwt: {

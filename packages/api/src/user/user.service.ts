@@ -1,4 +1,4 @@
-import { GetUserDto, Role } from "@evergarden/shared";
+import { GetUserDto, Role, OAuth2Provider } from "@evergarden/shared";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
@@ -26,6 +26,10 @@ export class UserService {
 
   async getAllByRole(role: Role): Promise<User[]> {
     return await this.userRepository.find({ role });
+  }
+
+  async getOneByRoleAndProvider(role: Role, provider: OAuth2Provider | "system"): Promise<User> {
+    return await this.userRepository.findOne({ role, provider });
   }
 
   async getById(id: number): Promise<User> {

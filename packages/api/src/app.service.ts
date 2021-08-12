@@ -5,7 +5,8 @@ import genresDataset from "./genres.dataset";
 import { GenreService } from "./genre/genre.service";
 import { UserService } from "./user/user.service";
 import { ConfigService } from "@nestjs/config";
-import {StorageService} from "./storage/storage.service";
+import { StorageService } from "./storage/storage.service";
+import { Role } from "@evergarden/shared";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -29,9 +30,9 @@ export class AppService implements OnApplicationBootstrap {
     await this.initializeGenresDataset();
     this.logger.debug("Synchronized genres dataset!");
 
-    this.logger.debug("Synchronizing genres admin user...");
-    await this.initializeAdminUser();
-    this.logger.debug("Synchronized genres admin user!");
+    this.logger.debug("Synchronizing initial users...");
+    await this.initializeUsers();
+    this.logger.debug("Synchronized initial users!");
 
     this.logger.debug("Initializing storage service...");
     await this.storageService.initialize();
@@ -47,39 +48,33 @@ export class AppService implements OnApplicationBootstrap {
     await this.genreService.syncGenres(genresDataset.map((item) => item.name));
   }
 
-  private async initializeAdminUser() {
-    const username = this.configService.get("credentials.admin.username");
-    const password = this.configService.get("credentials.admin.password");
-    if (username && password) {
-      const admins = await this.userService.getAllByRole("admin");
-      if (admins && admins.length > 0) {
-        if (admins.length > 1) {
-          this.logger.warn(`Found ${admins.length} old admin users in the database, these users will be removed!`);
-          for (const admin of admins) {
-            await this.userService.deleteUser(admin.id);
-          }
-        } else {
-          const admin = admins[0];
-          if (username === admin.email && password === admin.password) {
-            this.logger.debug("Admin user is up to date");
-          } else {
-            this.logger.debug("Updating the current admin user in the database");
-            await this.userService.updateUser({
-              id: admin.id,
-              email: username,
-              password: password,
-            });
-          }
-        }
-      } else {
-        this.logger.debug("Admin user was not found, adding new one to the database");
-        await this.userService.addUser({
-          email: username,
-          password: password,
-          fullName: username,
-          role: "admin",
-        });
-      }
+  private async initializeUsers() {
+    const adminUsername = this.configService.get("credentials.admin.username");
+    const adminPassword = this.configService.get("credentials.admin.password");
+    await this.initializeUser(adminUsername, adminPassword, "admin");
+
+    const botUsername = this.configService.get("credentials.bot.username");
+    const botPassword = this.configService.get("credentials.bot.password");
+    await this.initializeUser(botUsername, botPassword, "user");
+  }
+
+  private async initializeUser(username: string, password: string, role: Role) {
+    const user = await this.userService.getOneByRoleAndProvider(role, "system");
+    if (user) {
+      await this.userService.updateUser({
+        id: user.id,
+        email: username,
+        password,
+        fullName: username,
+      });
+    } else {
+      await this.userService.addUser({
+        email: username,
+        password,
+        fullName: username,
+        provider: "system",
+        role,
+      });
     }
   }
 }
