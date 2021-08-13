@@ -1,4 +1,4 @@
-import {Check, Column, Entity, JoinTable, ManyToMany, OneToMany} from "typeorm";
+import { Check, Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import { StoryStatus } from "@evergarden/shared";
 import { Author } from "../author/author.entity";
 import { Genre } from "../genre/genre.entity";
@@ -18,13 +18,13 @@ export class Story extends AbstractEntity {
   @Column({ type: "nvarchar", length: 255, unique: true })
   title: string;
 
-  @Column({ type: "nvarchar", length: 2000, nullable: true })
+  @Column({ type: "nvarchar", length: 8000, nullable: true })
   description?: string;
 
-  @Column({ type: "nvarchar", length: 500, nullable: true })
+  @Column({ type: "nvarchar", length: 2000, nullable: true })
   thumbnail?: string;
 
-  @Column({ type: "nvarchar", length: 500, nullable: true })
+  @Column({ type: "nvarchar", length: 2000, nullable: true })
   cover?: string;
 
   @Column({
