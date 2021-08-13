@@ -1,0 +1,13 @@
+{
+   "type": "mysql",
+   "host": "localhost",
+   "port": 3306,
+   "username": "root",
+   "password": "root",
+   "database": "evergarden",
+   "charset": "utf8mb4",
+   "synchronize": false,
+   "entities": [
+      "../packages/api/src/**/*.entity{.ts,.js}"
+   ]
+}

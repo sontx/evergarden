@@ -1,0 +1,20 @@
+{
+   "name": "importdb",
+   "version": "0.0.1",
+   "description": "Import crawled stories to database",
+   "devDependencies": {
+      "@types/node": "^8.0.29",
+      "@types/prompt": "^1.1.1",
+      "ts-node": "3.3.0",
+      "typescript": "^4.3.5"
+   },
+   "dependencies": {
+      "mysql": "^2.14.1",
+      "prompt": "^1.1.0",
+      "reflect-metadata": "^0.1.10",
+      "typeorm": "0.2.36"
+   },
+   "scripts": {
+      "start": "ts-node src/index.ts"
+   }
+}
