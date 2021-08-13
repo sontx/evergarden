@@ -9,5 +9,5 @@ packages/api/Dockerfile
 **/README.md
 **/.idea
 **/.vscode
-**/README.md
 data
+dump

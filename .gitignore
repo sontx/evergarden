@@ -7,6 +7,5 @@ node_modules
 SentenceAnalyzer
 SentencePicker
 dist
-dump
 data
 *.tgz
