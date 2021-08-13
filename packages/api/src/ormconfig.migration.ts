@@ -10,6 +10,7 @@ const config: ConnectionOptions = {
   username: process.env.MYSQL_USERNAME,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DBNAME,
+  charset: "utf8mb4",
   logging: true,
   synchronize: false,
   migrationsRun: true,

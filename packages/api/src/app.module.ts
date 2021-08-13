@@ -41,6 +41,7 @@ import { RedisModule } from "nestjs-redis";
           username: configService.get("database.mysql.username"),
           password: configService.get("database.mysql.password"),
           database: configService.get("database.mysql.databaseName"),
+          charset: "utf8mb4",
           isGlobal: true,
           logging: configService.get("isDevelopment"),
           autoLoadEntities: true,
