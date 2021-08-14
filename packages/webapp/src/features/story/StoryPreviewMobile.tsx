@@ -11,13 +11,13 @@ import { Comment } from "../../components/Comment/Comment";
 import { CommentCount } from "../../components/Comment/CommentCount";
 import { useHistory, useLocation } from "react-router-dom";
 import { Reaction } from "../../components/Reaction";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { openReading } from "./storySlice";
 import { withFollowSync } from "./withFollowSync";
 
 import defaultThumbnail from "../../images/default-cover.png";
 import { ReadingLoader } from "../../components/ReadingLoader";
-import { useStoryHistory } from "../histories/useStoryHistory";
+import { selectIsLoggedIn } from "../auth/authSlice";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -41,11 +41,11 @@ function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
 
 const FollowButtonWrapper = withFollowSync(FollowButton);
 
-export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
-  const story = useStoryHistory(props.story);
+export function StoryPreviewMobile({ story }: { story?: GetStoryDto }) {
   const intl = useIntl();
   const { state = {} } = useLocation() as any;
   const history = useHistory();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
 
   const handleExpandPanel = useCallback((element) => {
     if (element) {
@@ -115,7 +115,7 @@ export function StoryPreviewMobile(props: { story?: GetStoryDto }) {
         }}
         justified
       >
-        {story && story.history && <FollowButtonWrapper />}
+        {story && isLoggedIn && <FollowButtonWrapper story={story} />}
         {story && !story.history && (
           <IconButton
             placement="right"

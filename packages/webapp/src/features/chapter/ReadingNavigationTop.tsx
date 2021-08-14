@@ -95,7 +95,7 @@ export function ReadingNavigationTop(props: {
             <Button onClick={handleClickComment}>
               <Icon icon="commenting" />
             </Button>
-            {story && story.history && <FollowButtonWrapper />}
+            {story && story.history && <FollowButtonWrapper story={story} />}
             <Button>
               <Icon icon="bug" />
             </Button>

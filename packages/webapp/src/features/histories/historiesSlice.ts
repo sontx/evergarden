@@ -31,15 +31,15 @@ export const fetchReadingHistoriesAsync = createAsyncThunk(
 
 function setStoryHistory(
   state: Draft<HistoriesState>,
-  story: GetReadingHistoryDto,
+  readingHistory: GetReadingHistoryDto,
 ) {
-  if (story) {
-    if (state.histories.find((item) => item.storyId === story.id)) {
+  if (readingHistory) {
+    if (state.histories.find((item) => item.storyId === readingHistory.storyId)) {
       state.histories = state.histories.map((item) =>
-        item.storyId !== story.storyId ? item : { ...item, ...story },
+        item.storyId !== readingHistory.storyId ? item : { ...item, ...readingHistory },
       );
     } else {
-      state.histories.push(story);
+      state.histories.push(readingHistory);
     }
   }
 }

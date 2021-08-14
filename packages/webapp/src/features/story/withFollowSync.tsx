@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectStory } from "./storySlice";
+import { useAppDispatch } from "../../app/hooks";
 import { useAutoFlushDebounce } from "../../hooks/useAutoFlushDebounce";
 import { updateStoryHistoryAsync } from "../histories/historiesSlice";
 
 export function withFollowSync(Component: React.ElementType) {
   return function (props: any) {
-    const story = useAppSelector(selectStory);
+    const story = props.story;
     const dispatch = useAppDispatch();
 
     const [isFollowing, setFollowing] = useState<boolean>();
