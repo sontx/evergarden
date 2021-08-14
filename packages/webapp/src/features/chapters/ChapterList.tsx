@@ -37,7 +37,7 @@ export function ChapterList(props: { story: GetStoryDto }) {
       fetchChaptersAsync({
         storyId: story.id,
         page: page,
-        limit: 30,
+        limit: 50,
       }),
     );
   }, [page, dispatch, story.id]);
@@ -54,16 +54,18 @@ export function ChapterList(props: { story: GetStoryDto }) {
   );
 
   return (
-    <div style={{marginTop: "10px"}}>
+    <div style={{ marginTop: "10px" }}>
       {(status === "success" || !isEmpty(chapters)) && (
         <div style={{ position: "relative" }}>
           <div className="chapter-list-container">
             {(chapters || []).map((chapter) => (
               <a key={chapter.id} onClick={() => handleChapterClick(chapter)}>
-                {intl.formatMessage(
-                  { id: "chapterTitle" },
-                  { chapterNo: chapter.chapterNo },
-                )}
+                <span className="chapter-no">
+                  {intl.formatMessage(
+                    { id: "chapterTitle" },
+                    { chapterNo: chapter.chapterNo },
+                  )}
+                </span>
                 {chapter.title && `: ${chapter.title}`}
               </a>
             ))}
@@ -93,7 +95,7 @@ export function ChapterList(props: { story: GetStoryDto }) {
         </div>
       )}
       {status === "processing" && isEmpty(chapters) && (
-        <Placeholder.Grid rows={10} active />
+        <Placeholder.Paragraph rows={10} active />
       )}
       {status === "error" && (
         <Message closable type="error" description={errorMessage} full />

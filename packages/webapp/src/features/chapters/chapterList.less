@@ -2,8 +2,13 @@
 
 .chapter-list-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   column-gap: 10px;
   row-gap: 12px;
   font-size: @font-size-base - 1;
+
+  .chapter-no {
+    text-transform: uppercase;
+    font-weight: 500;
+  }
 }
