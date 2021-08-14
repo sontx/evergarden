@@ -4,7 +4,6 @@ import { useAppSelector } from "../../app/hooks";
 import { selectCurrentTab } from "../../features/settings/settingsSlice";
 import { AppHeader } from "../../components/AppHeader";
 import { Content } from "rsuite";
-import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
@@ -27,7 +26,6 @@ export function Home() {
         {currentTab === "hot" && <StoryList category="hot" />}
         {currentTab === "following" && <FollowingStories />}
       </Content>
-      <AppFooter />
     </AppContainer>
   );
 }
