@@ -105,7 +105,7 @@ export function StoryList({ category }: { category: StoryCategory }) {
                 layout="vertical"
                 ref={ref}
                 width={width}
-                innerElementType={(listProps) => <List {...listProps} hover />}
+                innerElementType={(listProps) => <List {...listProps} />}
               >
                 {(itemProps: ListChildComponentProps<GetStoryDto[]>) => {
                   const data = SHOW_STORIES[itemProps.index] as any;
