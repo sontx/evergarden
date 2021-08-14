@@ -147,6 +147,7 @@ createConnection()
 
         const newStory = new Story();
         const now = new Date();
+        now.setHours(now.getHours() - 7);// to utc
         newStory.title = title;
         newStory.thumbnail = thumbnail;
         newStory.cover = thumbnail;
