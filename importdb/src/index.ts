@@ -10,31 +10,40 @@ import { stringToSlug } from "../../packages/shared/src";
 import { Chapter } from "../../packages/api/src/chapter/chapter.entity";
 import { User } from "../../packages/api/src/user/user.entity";
 
-const syncGenres = async (manager: EntityManager, name: string) => {
+const syncGenres = async (manager: EntityManager, name: string): Promise<Genre[]> => {
   const genres = name.split(",");
+  const ret = [];
   for (const genre of genres) {
     const name = genre.trim();
     const found = await manager.findOne(Genre, { name });
     if (!found) {
       const newGenre = new Genre();
       newGenre.name = name;
-      await manager.save(newGenre);
+      ret.push(await manager.save(newGenre));
+    } else {
+      ret.push(found)
     }
   }
+  return ret;
 };
 
-const syncAuthors = async (manager: EntityManager, name: string) => {
+const syncAuthors = async (manager: EntityManager, name: string): Promise<Author[]> => {
   const authors = name.split(",");
+  const ret = []
   for (const author of authors) {
     const name = author.trim();
     const found = await manager.findOne(Author, { name });
     if (!found) {
       const newAuthor = new Author();
       newAuthor.name = name;
-      await manager.save(newAuthor);
+      ret.push(await manager.save(newAuthor));
+    } else {
+      ret.push(found)
     }
   }
+  return ret;
 };
+
 const saveChapter = async (
   manager: EntityManager,
   storyId: number,
@@ -133,8 +142,9 @@ createConnection()
         const actualMax = Math.min(chapters.length, maxChapters);
         const flexMax = randomInt(Math.min(actualMax, 10), actualMax);
 
-        await syncGenres(manager, genres);
-        await syncAuthors(manager, authors);
+        const savedGenres = await syncGenres(manager, genres);
+        const savedAuthors = await syncAuthors(manager, authors);
+
         const newStory = new Story();
         const now = new Date();
         newStory.title = title;
@@ -147,15 +157,19 @@ createConnection()
         newStory.createdBy = botUser;
         newStory.updated = now;
         newStory.updatedBy = botUser;
+        newStory.published = true;
         newStory.lastChapter = flexMax;
-        const savedStory = await manager.save(newStory);
+        newStory.authors = savedAuthors;
+        newStory.genres = savedGenres;
+
+        const savedStory = await manager.save(Story, newStory);
+
         console.log(`${chapters.length} chapters`);
         for (let i = 0; i < flexMax; i++) {
           const chapter = chapters[i];
           await saveChapter(manager, savedStory.id, botUser, chapter, i + 1);
-          console.log(`Done ${i} / ${chapters.length}`);
+          console.log(`Done ${i + 1} / ${chapters.length}`);
         }
-
         added++;
       } while (added < Math.min(files.length, count));
       console.log("DONE!");
