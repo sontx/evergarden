@@ -55,6 +55,7 @@ const saveChapter = async (
   const title = extractRealChapterTitle(fullTitle);
   const newChapter = new Chapter();
   const now = new Date();
+  now.setHours(now.getHours() - 7);// to utc
   newChapter.chapterNo = chapterNo;
   newChapter.title = title;
   newChapter.content = content;
