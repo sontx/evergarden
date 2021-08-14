@@ -114,7 +114,7 @@ export function StoryList({ category }: { category: StoryCategory }) {
                       key={itemProps.index}
                       style={itemProps.style}
                     >
-                      {isItemLoaded(itemProps.index) ? (
+                      {(isItemLoaded(itemProps.index) && data !== false) ? (
                         <Animation.Bounce in={true}>
                           {(animationProps, ref) => (
                             <div {...animationProps} ref={ref}>
