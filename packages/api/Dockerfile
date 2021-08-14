@@ -11,4 +11,6 @@ RUN npm i
 
 COPY wait-for-it.sh .
 
+RUN ["chmod", "+x", "/app/wait-for-it.sh"]
+
 EXPOSE 3000
