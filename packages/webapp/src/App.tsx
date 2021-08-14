@@ -18,77 +18,80 @@ import { AuthRequired } from "./components/AuthRequired";
 import { StoryEditorPage } from "./pages/StoryEditor";
 import { UserStoriesPage } from "./pages/UserStories";
 import { UserChaptersPage } from "./pages/UserChapters";
-import {ChapterEditorPage} from "./pages/ChapterEditor";
+import { ChapterEditorPage } from "./pages/ChapterEditor";
+import { HistoriesSync } from "./features/histories/HistoriesSync";
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
     <RSIntlProvider locale={enGB}>
       <AuthSync>
-        <SettingsSync>
-          <Router>
-            <HttpError />
-            <Switch>
-              <Route exact path="/login">
-                <Login />
-              </Route>
-              <Route path="/" exact>
-                <Home />
-              </Route>
-              <Route exact path="/story/:url">
-                <Story />
-              </Route>
-              <Route exact path="/reading/:url/:chapterNo">
-                <Reading />
-              </Route>
-              <Route exact path="/following">
-                <AuthRequired>
-                  <Following />
-                </AuthRequired>
-              </Route>
-              <Route exact path="/history">
-                <AuthRequired>
-                  <History />
-                </AuthRequired>
-              </Route>
-              <Route exact path="/user/story">
-                <AuthRequired>
-                  <UserStoriesPage />
-                </AuthRequired>
-              </Route>
-              <Route exact path="/user/story/new">
-                <AuthRequired>
-                  <StoryEditorPage />
-                </AuthRequired>
-              </Route>
-              <Route exact path="/user/story/:url">
-                <AuthRequired>
-                  <StoryEditorPage />
-                </AuthRequired>
-              </Route>
-              <Route exact path="/user/story/:url/chapter">
-                <AuthRequired>
-                  <UserChaptersPage />
-                </AuthRequired>
-              </Route>
-              <Route exact path="/user/story/:url/chapter/new">
-                <AuthRequired>
-                  <ChapterEditorPage />
-                </AuthRequired>
-              </Route>
-              <Route exact path="/user/story/:url/chapter/:chapterNo">
-                <AuthRequired>
-                  <ChapterEditorPage />
-                </AuthRequired>
-              </Route>
-              <Route path="/500">
-                <ErrorPage code="500" />
-              </Route>
-              <Route>
-                <ErrorPage code="404" />
-              </Route>
-            </Switch>
-          </Router>
-        </SettingsSync>
+        <HistoriesSync>
+          <SettingsSync>
+            <Router>
+              <HttpError />
+              <Switch>
+                <Route exact path="/login">
+                  <Login />
+                </Route>
+                <Route path="/" exact>
+                  <Home />
+                </Route>
+                <Route exact path="/story/:url">
+                  <Story />
+                </Route>
+                <Route exact path="/reading/:url/:chapterNo">
+                  <Reading />
+                </Route>
+                <Route exact path="/following">
+                  <AuthRequired>
+                    <Following />
+                  </AuthRequired>
+                </Route>
+                <Route exact path="/history">
+                  <AuthRequired>
+                    <History />
+                  </AuthRequired>
+                </Route>
+                <Route exact path="/user/story">
+                  <AuthRequired>
+                    <UserStoriesPage />
+                  </AuthRequired>
+                </Route>
+                <Route exact path="/user/story/new">
+                  <AuthRequired>
+                    <StoryEditorPage />
+                  </AuthRequired>
+                </Route>
+                <Route exact path="/user/story/:url">
+                  <AuthRequired>
+                    <StoryEditorPage />
+                  </AuthRequired>
+                </Route>
+                <Route exact path="/user/story/:url/chapter">
+                  <AuthRequired>
+                    <UserChaptersPage />
+                  </AuthRequired>
+                </Route>
+                <Route exact path="/user/story/:url/chapter/new">
+                  <AuthRequired>
+                    <ChapterEditorPage />
+                  </AuthRequired>
+                </Route>
+                <Route exact path="/user/story/:url/chapter/:chapterNo">
+                  <AuthRequired>
+                    <ChapterEditorPage />
+                  </AuthRequired>
+                </Route>
+                <Route path="/500">
+                  <ErrorPage code="500" />
+                </Route>
+                <Route>
+                  <ErrorPage code="404" />
+                </Route>
+              </Switch>
+            </Router>
+          </SettingsSync>
+        </HistoriesSync>
       </AuthSync>
     </RSIntlProvider>
   </IntlProvider>

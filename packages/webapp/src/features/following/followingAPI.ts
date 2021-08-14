@@ -1,13 +1,13 @@
 import { GetStoryDto } from "@evergarden/shared";
 import api from "../../utils/api";
 
-export async function fetchFollowingStories(): Promise<GetStoryDto[]> {
+export async function fetchFollowingStories(
+  ids: number[],
+): Promise<GetStoryDto[]> {
   const response = await api.get("/api/stories", {
     params: {
-      category: "following",
-      page: 0,
-      limit: 99999999
+      ids,
     },
   });
-  return response.data && response.data.items;
+  return response.data;
 }

@@ -18,8 +18,11 @@ const initialState: FollowingState = {
 
 export const fetchFollowingStoriesAsync = createAsyncThunk(
   "following/fetch",
-  async () => {
-    return await fetchFollowingStories();
+  async (ids: number[]) => {
+    if (ids && ids.length > 0) {
+      return await fetchFollowingStories(ids);
+    }
+    return [];
   },
 );
 
