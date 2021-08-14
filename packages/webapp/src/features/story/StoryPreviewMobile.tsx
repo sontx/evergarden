@@ -116,7 +116,7 @@ export function StoryPreviewMobile({ story }: { story?: GetStoryDto }) {
         justified
       >
         {story && isLoggedIn && <FollowButtonWrapper story={story} />}
-        {story && !story.history && (
+        {story && (!story.history || story.history.currentChapterNo === undefined) && (
           <IconButton
             placement="right"
             icon={<Icon icon="angle-right" />}
@@ -127,7 +127,7 @@ export function StoryPreviewMobile({ story }: { story?: GetStoryDto }) {
             Read
           </IconButton>
         )}
-        {story && story.history && (
+        {story && story.history && story.history.currentChapterNo !== undefined && (
           <IconButton
             onClick={handleContinue}
             placement="right"

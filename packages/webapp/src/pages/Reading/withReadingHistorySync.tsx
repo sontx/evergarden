@@ -13,15 +13,23 @@ export function withReadingHistorySync(Component: ElementType) {
     const isEndOfSession = useEndOfSessionWatch();
 
     useEffect(() => {
-      if (isEndOfSession && story && chapter) {
-        dispatch(
-          updateStoryHistoryAsync({
-            storyId: story.id,
-            currentChapterNo: chapter.chapterNo,
-            currentReadingPosition:
-              window.scrollY / document.documentElement.scrollHeight,
-          }),
-        );
+      if (story && chapter) {
+        const updateHistory = () => {
+          dispatch(
+            updateStoryHistoryAsync({
+              storyId: story.id,
+              currentChapterNo: chapter.chapterNo,
+              currentReadingPosition:
+                window.scrollY / document.documentElement.scrollHeight,
+            }),
+          );
+        }
+
+        if (isEndOfSession) {
+          updateHistory();
+        }
+
+        return () => updateHistory();
       }
     }, [chapter, dispatch, isEndOfSession, story]);
 
@@ -34,7 +42,9 @@ export function withReadingHistorySync(Component: ElementType) {
         chapter.chapterNo === story.history.currentChapterNo
       ) {
         window.scrollTo({
-          top: (story.history.currentReadingPosition || 0) * document.documentElement.scrollHeight,
+          top:
+            (story.history.currentReadingPosition || 0) *
+            document.documentElement.scrollHeight,
           behavior: "smooth",
         });
       } else {
