@@ -120,7 +120,7 @@ export function ChaptersPanel({
               itemSize={53}
               width={width}
               innerElementType={(listProps) => (
-                <List {...listProps} hover size="sm" />
+                <List {...listProps} size="sm" />
               )}
             >
               {(itemProps: ListChildComponentProps) => {
