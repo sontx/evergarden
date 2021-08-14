@@ -149,11 +149,10 @@ createConnection()
         newStory.updatedBy = botUser;
         newStory.lastChapter = flexMax;
         const savedStory = await manager.save(newStory);
-        let i = 1;
         console.log(`${chapters.length} chapters`);
         for (let i = 0; i < flexMax; i++) {
           const chapter = chapters[i];
-          await saveChapter(manager, savedStory.id, botUser, chapter, i++);
+          await saveChapter(manager, savedStory.id, botUser, chapter, i + 1);
           console.log(`Done ${i} / ${chapters.length}`);
         }
 
