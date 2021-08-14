@@ -23,10 +23,10 @@ export class ReadingHistory {
   @Column({ type: "int", default: 0 })
   currentChapterNo: number;
 
-  @Column({ type: "datetime" })
+  @Column({ type: "timestamp" })
   started: Date;
 
-  @Column({ type: "datetime" })
+  @Column({ type: "timestamp" })
   lastVisit: Date;
 
   @Column({ type: "float", default: 0 })

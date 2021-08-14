@@ -8,12 +8,13 @@ export abstract class AbstractEntity {
   @ManyToOne(() => User, (user) => user.createdStories, { eager: true })
   createdBy: User;
 
-  @Column({ type: "datetime", nullable: false })
+  @Column({ type: "timestamp", nullable: false })
   created: Date;
 
   @ManyToOne(() => User, (user) => user.updatedStories, { eager: true })
   updatedBy: User;
 
-  @Column({ type: "datetime", nullable: false })
+  @Column({ type: "timestamp", nullable: false })
   updated: Date;
 }
+
