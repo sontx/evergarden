@@ -90,7 +90,7 @@ export function StoryPreviewMobile({ story }: { story?: GetStoryDto }) {
               {intl.formatNumber(story.view)} readings |{" "}
               {intl.formatDate(story.created)}
             </span>
-            <Reaction />
+            <Reaction story={story}/>
           </div>
           <Divider style={{ margin: "10px 0 15px 0" }} />
           <div className="story-preview-mobile-description">

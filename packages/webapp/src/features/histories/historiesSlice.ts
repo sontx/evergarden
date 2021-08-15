@@ -66,7 +66,7 @@ export const historiesSlice = createSlice({
   },
 });
 
-export const { setHistories } = historiesSlice.actions;
+export const { setHistories, setHistory } = historiesSlice.actions;
 
 export const selectHistories = (state: RootState) => state.histories.histories;
 
