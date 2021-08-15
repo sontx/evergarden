@@ -51,8 +51,8 @@ export function StoryPreviewMobile({ story }: { story?: GetStoryDto }) {
     if (element) {
       (element as HTMLElement).scrollIntoView({
         behavior: "smooth",
-        block: "end",
-        inline: "nearest",
+        block: "start",
+        inline: "start",
       });
     }
   }, []);
