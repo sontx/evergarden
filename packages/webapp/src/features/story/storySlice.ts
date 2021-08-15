@@ -64,7 +64,7 @@ export const openReading =
       dispatch(setStory(story));
     }
     dispatch(setChapter(undefined));
-    history.push(`/reading/${story.url}/${chapterNo}`);
+    history.push(`/reading/${story.url}/${isFinite(chapterNo) ? (chapterNo > 0 ? chapterNo : 1) : 1}`);
   };
 
 export const openStoryByUrl =

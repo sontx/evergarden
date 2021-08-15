@@ -22,6 +22,13 @@ import GoogleLogin, {
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
 const FACEBOOK_CLIENT_ID = process.env.REACT_APP_FACEBOOK_CLIENT_ID || "";
 
+const NOT_SUPPORTED_REDIRECT_ROUTES = [
+  "/login",
+  "/following",
+  "/history",
+  "/user/story",
+];
+
 function isGoogleLoginResponse(
   response: GoogleLoginResponse | GoogleLoginResponseOffline,
 ): response is GoogleLoginResponse {
@@ -74,9 +81,15 @@ export function Auth() {
     } else if (status === "success") {
       if (user) {
         dispatch(setUserSettings(user.settings));
-        const prevPath =
+        const prevPath: string =
           (location.state && (location.state as any).prevPathName) || "/";
-        history.push(prevPath === "/login" ? "/" : prevPath);
+        const redirectPath =
+          NOT_SUPPORTED_REDIRECT_ROUTES.findIndex((route) =>
+            prevPath.startsWith(route),
+          ) >= 0
+            ? "/"
+            : prevPath;
+        history.push(redirectPath);
       }
     }
   }, [dispatch, history, intl, loginError, status, user, location]);

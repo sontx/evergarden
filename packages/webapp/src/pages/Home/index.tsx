@@ -1,7 +1,10 @@
 import { AppNav } from "../../components/AppNav";
-import React from "react";
-import { useAppSelector } from "../../app/hooks";
-import { selectCurrentTab } from "../../features/settings/settingsSlice";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  selectCurrentTab,
+  setCurrentTab,
+} from "../../features/settings/settingsSlice";
 import { AppHeader } from "../../components/AppHeader";
 import { Content } from "rsuite";
 import { SEO } from "../../components/SEO";
@@ -9,10 +12,19 @@ import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
 import { FollowingStories } from "../../features/following/FollowingStories";
 import { StoryList } from "../../features/stories/StoryList";
+import { selectIsLoggedIn } from "../../features/auth/authSlice";
 
 export function Home() {
   const currentTab = useAppSelector(selectCurrentTab);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const dispatch = useAppDispatch();
   const intl = useIntl();
+
+  useEffect(() => {
+    if (!isLoggedIn && currentTab === "following") {
+      dispatch(setCurrentTab("updated"));
+    }
+  }, [currentTab, dispatch, isLoggedIn]);
 
   return (
     <AppContainer>
