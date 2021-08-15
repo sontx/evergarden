@@ -57,7 +57,7 @@ export class AuthController {
 
     const accessTokenCookie = this.authService.getAccessTokenCookie(user);
     res.setHeader("Set-Cookie", accessTokenCookie);
-    res.send(this.authService.getAuthenticatedUser(req.user));
+    res.send(this.authService.getAuthenticatedUser(user));
   }
 
   @Get()

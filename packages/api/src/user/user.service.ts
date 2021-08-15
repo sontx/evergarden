@@ -66,7 +66,7 @@ export class UserService {
   }
 
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number): Promise<User | undefined> {
-    const user = await this.getById(userId);
+    const user = await this.userRepository.findOne({where: {id: userId}, select: ["id", "refreshToken"]})
     if (!user || !user.refreshToken || !refreshToken) {
       return null;
     }
