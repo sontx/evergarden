@@ -15,6 +15,8 @@ export function useStoryHistory<T extends (GetStoryDto | undefined)>(story: T): 
           ...story,
           history: foundHistory,
         })
+      } else {
+        setWithHistory(story);
       }
     }
   }, [histories, story])

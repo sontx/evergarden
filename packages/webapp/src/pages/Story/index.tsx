@@ -15,7 +15,8 @@ export function Story() {
   const { url } = useParams() as any;
   const dispatch = useAppDispatch();
   const intl = useIntl();
-  const story = useStoryHistory(useAppSelector(selectStory));
+  const fetchedStory = useAppSelector(selectStory);
+  const story = useStoryHistory(fetchedStory);
 
   useEffect(() => {
     window.scrollTo(0, 0);
