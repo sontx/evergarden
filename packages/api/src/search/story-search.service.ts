@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { Story } from "../story/story.entity";
-import { StorageService } from "../storage/storage.service";
 import { StorySearchBody, StorySearchResult } from "@evergarden/shared";
 
 @Injectable()
@@ -10,7 +9,7 @@ export default class StorySearchService {
 
   private readonly logger = new Logger(StorySearchService.name);
 
-  constructor(private readonly elasticsearchService: ElasticsearchService, private storageService: StorageService) {}
+  constructor(private readonly elasticsearchService: ElasticsearchService) {}
 
   async createIndex(stories: Story[]) {
     const checkIndex = await this.elasticsearchService.indices.exists({ index: StorySearchService.index });
@@ -52,6 +51,22 @@ export default class StorySearchService {
                       search_analyzer: "autocomplete_search_analyzer",
                     },
                   },
+                },
+                description: {
+                  type: "text",
+                  index: false,
+                },
+                id: {
+                  type: "long",
+                  index: false,
+                },
+                thumbnail: {
+                  type: "text",
+                  index: false,
+                },
+                url: {
+                  type: "text",
+                  index: false,
                 },
               },
             },
@@ -147,10 +162,12 @@ export default class StorySearchService {
     const { body } = await this.elasticsearchService.search<StorySearchResult>({
       index: StorySearchService.index,
       body: {
+        from: 0,
+        size: 10,
         query: {
           multi_match: {
             query: text,
-            fields: ["title", "description"],
+            fields: ["title"],
           },
         },
       },

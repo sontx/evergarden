@@ -6,7 +6,7 @@ import {
   ForbiddenException,
   forwardRef,
   Get,
-  Inject,
+  Inject, Logger,
   NotFoundException,
   Param,
   ParseArrayPipe,
@@ -34,6 +34,7 @@ import { ReadingHistoryService } from "../reading-history/reading-history.servic
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
 import { isGod, isNumber, isOwnerOrGod } from "../utils";
+import { StorySearchBody } from "@evergarden/shared/lib/common-types";
 
 @Controller("stories")
 export class StoryController {
@@ -60,8 +61,9 @@ export class StoryController {
       }),
     )
     ids: number[],
+    @Query("search") search: string,
     @Req() req,
-  ): Promise<PaginationResult<GetStoryDto> | GetStoryDto[]> {
+  ): Promise<PaginationResult<GetStoryDto> | GetStoryDto[] | StorySearchBody[]> {
     limit = toInt(limit);
     const pagination = {
       page: toInt(page),
@@ -82,15 +84,20 @@ export class StoryController {
         }
         return await this.storyService.getUserStories(req.user.id);
       default:
-        const result = await this.storyService.getStoriesByIds(ids || []);
-        if (imGod) {
+        if (ids && ids.length > 0) {
+          const result = await this.storyService.getStoriesByIds(ids || []);
+          if (imGod) {
+            return result;
+          }
+          const unpublishedStory = result.find((item) => !item.published);
+          if (unpublishedStory) {
+            throw new ForbiddenException(`Story ${unpublishedStory.id} isn't published yet`);
+          }
           return result;
+        } else if (search) {
+          return await this.storyService.search(search.trim());
         }
-        const unpublishedStory = result.find((item) => !item.published);
-        if (unpublishedStory) {
-          throw new ForbiddenException(`Story ${unpublishedStory.id} isn't published yet`);
-        }
-        return result;
+        return [];
     }
   }
 
