@@ -4,6 +4,8 @@ import { ElementType, useEffect, useState } from "react";
 import { List, Loader, Message } from "rsuite";
 import { isEmpty, ProcessingStatus } from "../../utils/types";
 import { useStoriesHistories } from "../../features/histories/useStoriesHistories";
+import { StoryItemLoading } from "../StoryItemLoading";
+import { StoryListLoading } from "../StoryListLoading";
 
 function sortNew(item1: GetStoryDto, item2: GetStoryDto) {
   // @ts-ignore
@@ -84,7 +86,7 @@ export function UserListStories({
         />
       )}
       {status === "processing" && isEmpty(storiesWithHistories) ? (
-        <Loader center />
+        <StoryListLoading min={3} max={7} />
       ) : (
         <List>
           {(showStories || []).map((story) => (

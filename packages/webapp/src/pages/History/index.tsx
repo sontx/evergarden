@@ -10,6 +10,7 @@ import { withAnimation } from "../../components/StoryItemEx/withAnimation";
 import { StoryItemEx } from "../../components/StoryItemEx";
 import { fetchStoriesByIds } from "../../features/stories/storiesAPI";
 import { GetStoryDto } from "@evergarden/shared";
+import { ProcessingStatus } from "../../utils/types";
 
 const StoryItemWrapper = withContinueReading(withAnimation(StoryItemEx));
 
@@ -17,19 +18,30 @@ export function History() {
   const intl = useIntl();
   const histories = useAppSelector(selectHistories);
   const [stories, setStories] = useState<GetStoryDto[]>([]);
+  const [status, setStatus] = useState<ProcessingStatus>("none");
 
   useEffect(() => {
     if (histories) {
-      let isActive = true;
       const ids = histories.map((item) => item.storyId);
-      fetchStoriesByIds(ids).then((res) => {
-        if (isActive) {
-          setStories(res);
-        }
-      });
-      return () => {
-        isActive = false;
-      };
+      if (ids.length > 0) {
+        let isActive = true;
+        setStatus("processing");
+        fetchStoriesByIds(ids)
+          .then((res) => {
+            if (isActive) {
+              setStories(res);
+              setStatus("success");
+            }
+          })
+          .catch(() => {
+            if (isActive) {
+              setStatus("error");
+            }
+          });
+        return () => {
+          isActive = false;
+        };
+      }
     }
   }, [histories]);
 
@@ -38,6 +50,7 @@ export function History() {
       {(props) => (
         <UserListStories
           {...props}
+          status={status}
           stories={stories}
           StoryItem={StoryItemWrapper}
         />

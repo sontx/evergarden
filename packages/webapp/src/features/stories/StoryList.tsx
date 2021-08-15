@@ -13,25 +13,12 @@ import "./storyList.less";
 import { withAnimation } from "../../components/StoryItemEx/withAnimation";
 import { StoryItemEx } from "../../components/StoryItemEx";
 import { abbreviateNumber } from "../../utils/types";
+import { StoryItemLoading } from "../../components/StoryItemLoading";
 
 const StoryItemWrapper = withAnimation(StoryItemEx);
 
 function ViewCountSub({ story }: { story: GetStoryDto }) {
   return <span>{abbreviateNumber(story.view)} views</span>;
-}
-
-function Loading() {
-  return (
-    <div className="story-list-item--loading rs-placeholder rs-placeholder-paragraph">
-      <div className="rs-placeholder-paragraph-graph rs-placeholder-paragraph-graph-square">
-        <span className="rs-placeholder-paragraph-graph-inner" />
-      </div>
-      <div className="rs-placeholder-paragraph-rows">
-        <p style={{ width: "64.4229%", height: "10px", marginTop: "5px" }} />
-        <p style={{ width: "47.1585%", height: "10px", marginTop: "10px" }} />
-      </div>
-    </div>
-  );
 }
 
 const ITEM_HEIGHT = 66;
@@ -110,11 +97,8 @@ export function StoryList({ category }: { category: StoryCategory }) {
                 {(itemProps: ListChildComponentProps<GetStoryDto[]>) => {
                   const data = SHOW_STORIES[itemProps.index] as any;
                   return (
-                    <List.Item
-                      key={itemProps.index}
-                      style={itemProps.style}
-                    >
-                      {(isItemLoaded(itemProps.index) && data !== false) ? (
+                    <List.Item key={itemProps.index} style={itemProps.style}>
+                      {isItemLoaded(itemProps.index) && data !== false ? (
                         <Animation.Bounce in={true}>
                           {(animationProps, ref) => (
                             <div {...animationProps} ref={ref}>
@@ -128,7 +112,7 @@ export function StoryList({ category }: { category: StoryCategory }) {
                           )}
                         </Animation.Bounce>
                       ) : (
-                        <Loading />
+                        <StoryItemLoading />
                       )}
                     </List.Item>
                   );
