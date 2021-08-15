@@ -1,13 +1,8 @@
 import { GetStoryDto } from "@evergarden/shared";
 import { UserListItemsChildrenProps } from "../UserListStoriesPage";
-import { useAppSelector } from "../../app/hooks";
-import {
-  selectErrorMessage,
-  selectStatus,
-} from "../../features/recent/recentSlice";
 import { ElementType, useEffect, useState } from "react";
 import { List, Loader, Message } from "rsuite";
-import { isEmpty } from "../../utils/types";
+import { isEmpty, ProcessingStatus } from "../../utils/types";
 import { useStoriesHistories } from "../../features/histories/useStoriesHistories";
 
 function sortNew(item1: GetStoryDto, item2: GetStoryDto) {
@@ -36,14 +31,16 @@ export function UserListStories({
   StoryItem,
   stories,
   hasAction,
+  status,
+  errorMessage,
 }: UserListItemsChildrenProps & {
   StoryItem: ElementType;
   stories: GetStoryDto[];
+  status?: ProcessingStatus;
+  errorMessage?: string;
   hasAction?: boolean;
 }) {
   const storiesWithHistories = useStoriesHistories(stories);
-  const status = useAppSelector(selectStatus);
-  const errorMessage = useAppSelector(selectErrorMessage);
   const [showStories, setShowStories] = useState<GetStoryDto[]>([]);
 
   useEffect(() => {

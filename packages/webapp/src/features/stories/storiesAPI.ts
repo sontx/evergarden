@@ -15,3 +15,12 @@ export async function fetchStories(
   });
   return response.data;
 }
+
+export async function fetchStoriesByIds(ids: number[]): Promise<GetStoryDto[]> {
+  const response = await api.get("/api/stories", {
+    params: {
+      ids,
+    },
+  });
+  return response.data;
+}

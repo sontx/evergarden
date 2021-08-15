@@ -1,8 +1,8 @@
 import { GetStoryDto } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchFollowingStories } from "./followingAPI";
 import { RootState } from "../../app/store";
+import { fetchStoriesByIds } from "../stories/storiesAPI";
 
 export interface FollowingState {
   stories: GetStoryDto[];
@@ -20,7 +20,7 @@ export const fetchFollowingStoriesAsync = createAsyncThunk(
   "following/fetch",
   async (ids: number[]) => {
     if (ids && ids.length > 0) {
-      return await fetchFollowingStories(ids);
+      return await fetchStoriesByIds(ids);
     }
     return [];
   },
