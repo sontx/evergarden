@@ -11,7 +11,7 @@ import {
   selectUser,
 } from "./authSlice";
 import { useCallback, useEffect, useMemo } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, Link } from "react-router-dom";
 import { isMobile } from "react-device-detect";
 import { setUserSettings } from "../settings/settingsSlice";
 import GoogleLogin, {
@@ -111,9 +111,11 @@ export function Auth() {
         bordered
         header={
           <div className="title">
-            <h3>
-              <FormattedMessage id="loginWelcome" />
-            </h3>
+            <Link to={{ pathname: "/" }}>
+              <h3>
+                <FormattedMessage id="loginWelcome" />
+              </h3>
+            </Link>
             <span>
               <FormattedMessage id="loginSlogan" />
             </span>
