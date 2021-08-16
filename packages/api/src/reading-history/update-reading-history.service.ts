@@ -32,7 +32,7 @@ export class UpdateReadingHistoryService extends DelayedQueueService<number> {
           where: { userId: id, storyId: updateItem.storyId },
         });
         if (foundHistory) {
-          if (foundHistory.vote !== updateItem.vote) {
+          if (foundHistory.vote !== updateItem.vote && !!updateItem.vote) {
             await this.changeRating(updateItem.storyId, foundHistory.vote, updateItem.vote);
           }
           await entityManager.update(ReadingHistory, foundHistory.id, updateItem);
@@ -40,7 +40,7 @@ export class UpdateReadingHistoryService extends DelayedQueueService<number> {
           if (updateItem.vote) {
             await this.changeRating(updateItem.storyId, undefined, updateItem.vote);
           }
-          const newHistory = await entityManager.create(ReadingHistory, updateItem);
+          const newHistory = entityManager.create(ReadingHistory, updateItem);
           newHistory.storyId = updateItem.storyId;
           newHistory.userId = id;
           newHistory.started = updateItem.lastVisit;
