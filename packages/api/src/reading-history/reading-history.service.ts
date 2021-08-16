@@ -34,9 +34,11 @@ export class ReadingHistoryService {
       lastVisit: new Date(),
     };
     this.updateReadingService.enqueue(userId, newHistory);
-    this.viewCountService.enqueue(new ViewCountIdentity(userId, storyHistory.storyId), {
-      triggerAt: newHistory.lastVisit,
-    });
+    if (isFinite(storyHistory.currentChapterNo)) {
+      this.viewCountService.enqueue(new ViewCountIdentity(userId, storyHistory.storyId), {
+        triggerAt: newHistory.lastVisit,
+      });
+    }
   }
 
   async getStoryHistory(userId: number, storyId: number): Promise<ReadingHistory> {

@@ -53,12 +53,15 @@ export class ViewCountService extends DelayedQueueService<ViewCountIdentity> {
       // @ts-ignore
       const duration = triggerAt - lastTriggerDate;
       const minReading = ms(this.configService.get<string>("policy.viewCount.minReading"));
+      console.log(duration, minReading)
       if (duration < minReading) {
         console.log("reading duration < min", duration)
         return;
       }
 
-      if (lastTriggerDate) {
+      await client.set(lastTriggerKey, triggerAt.toISOString(), "EX", 60 * 60); // expire in 1 hour
+
+      if (lastCountDate) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const lastCountDuration = triggerAt - lastCountDate;
