@@ -71,7 +71,7 @@ export default () => ({
   policy: {
     viewCount: {
       minReading: "5s",
-      minReadingInterval: "10s",
+      minReadingInterval: "60m",
     },
   },
 });

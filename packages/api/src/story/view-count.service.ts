@@ -39,9 +39,13 @@ export class ViewCountService extends DelayedQueueService<ViewCountIdentity> {
     const lastTriggerSt = await client.get(lastTriggerKey);
     const lastCountSt = await client.get(lastCountKey);
 
+    console.log("execute", id, triggerAt)
+
     if (!lastTriggerSt) {
       await client.set(lastTriggerKey, triggerAt.toISOString(), "EX", 60 * 60); // expire in 1 hour
+      console.log("do cache")
     } else {
+      console.log("calc view...")
       const lastTriggerDate = new Date(lastTriggerSt);
       const lastCountDate = lastCountSt ? new Date(lastCountSt) : undefined;
 
@@ -50,6 +54,7 @@ export class ViewCountService extends DelayedQueueService<ViewCountIdentity> {
       const duration = triggerAt - lastTriggerDate;
       const minReading = ms(this.configService.get<string>("policy.viewCount.minReading"));
       if (duration < minReading) {
+        console.log("reading duration < min", duration)
         return;
       }
 
@@ -59,17 +64,30 @@ export class ViewCountService extends DelayedQueueService<ViewCountIdentity> {
         const lastCountDuration = triggerAt - lastCountDate;
         const minReadingInterval = ms(this.configService.get<string>("policy.viewCount.minReadingInterval"));
         if (lastCountDuration < minReadingInterval) {
+          console.log("reading interval")
           return;
         }
       }
 
-      this.increaseViewCount(id.storyId);
       await client.set(lastCountSt, triggerAt.toISOString());
+      await this.increaseViewCount(id.storyId);
     }
   }
 
-  private increaseViewCount(storyId: number) {
+  private async increaseViewCount(storyId: number) {
     console.log(`Increase view count for ${storyId}`);
+    await this.storyRepository.manager.transaction(async (entityManager) => {
+      const currentStory = await entityManager.findOne(Story, storyId);
+      if (!currentStory) {
+        return;
+      }
+      await entityManager
+        .createQueryBuilder()
+        .update(Story)
+        .whereInIds(storyId)
+        .set({view: () => `view + 1`})
+        .execute();
+    });
   }
 
   protected onMerge(current: any, newValue: any): any {

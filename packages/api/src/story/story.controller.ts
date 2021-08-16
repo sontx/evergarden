@@ -6,7 +6,7 @@ import {
   ForbiddenException,
   forwardRef,
   Get,
-  Inject, Logger,
+  Inject,
   NotFoundException,
   Param,
   ParseArrayPipe,
