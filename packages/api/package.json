@@ -15,7 +15,7 @@
     "start:watch": "cross-env NODE_ENV=development nest start --watch",
     "docker:dev": "npm run compile && cross-env NODE_ENV=development nest start --watch --tsc",
     "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/api/src/main.js",
     "start:storage": "serve upload/storage -l 2000",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
     "typeorm:migrate": "npm run typeorm migration:generate -- -n DbChange",
