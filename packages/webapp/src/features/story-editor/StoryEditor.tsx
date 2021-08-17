@@ -151,10 +151,11 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
 
   return (
     <EditorForm
+      disabled={!validateModel(model, value)}
       savingStatus={savingStatus}
       fetchingStatus={fetchingStatus}
       mode={mode}
-      handleSave={validateModel(model, value) ? handleSave : undefined}
+      handleSave={handleSave}
     >
       <Form
         readOnly={savingStatus === "processing"}
@@ -182,7 +183,11 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
           />
         </FormGroup>
         <FormGroup>
-          <ThumbnailUploader disabled={savingStatus === "processing"} thumbnail={uploadFile} onChange={setUploadFile} />
+          <ThumbnailUploader
+            disabled={savingStatus === "processing"}
+            thumbnail={uploadFile}
+            onChange={setUploadFile}
+          />
         </FormGroup>
         <FormGroup className="form-group-inline">
           <FormControl name="status" accepter={StatusFormControl} />

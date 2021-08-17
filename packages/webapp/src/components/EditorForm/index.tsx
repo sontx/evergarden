@@ -1,7 +1,7 @@
-import { Button, Icon, Loader } from "rsuite";
+import { Button, Loader } from "rsuite";
 import React, { ReactNode } from "react";
 import { ProcessingStatus } from "../../utils/types";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 
 export function validateModel(model: any, value: any) {
   const result = model.check(value);
@@ -28,18 +28,21 @@ export function EditorForm({
   handleSave,
   mode,
   children,
+  disabled,
 }: {
   savingStatus: ProcessingStatus;
   fetchingStatus?: ProcessingStatus;
   handleSave?: () => void;
   mode: "create" | "update";
   children: ReactNode;
+  disabled?: boolean;
 }) {
   const intl = useIntl();
   return (
     <>
       {children}
       <Button
+        disabled={disabled}
         size="sm"
         style={{ marginTop: "36px" }}
         onClick={handleSave}
