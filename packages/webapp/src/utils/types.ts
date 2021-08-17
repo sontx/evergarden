@@ -47,3 +47,7 @@ export function trimText(text: string): string {
 export function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
+export function isValidSlug(st: string): boolean {
+  return !!(st && st.length >= 4) && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(st);
+}

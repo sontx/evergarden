@@ -20,7 +20,6 @@ import { GenresPicker } from "../genres/GenresPicker";
 
 import "./storyEditor.less";
 import { CreateStoryDto, mergeObjects } from "@evergarden/shared";
-import { isValidUrl, UrlBox } from "./UrlBox";
 import { useHistory } from "react-router-dom";
 import { ThumbnailUploader } from "../../components/ThumbnailUploader";
 import { EditorForm, validateModel } from "../../components/EditorForm";
@@ -70,9 +69,6 @@ function wrapItems(keyName: string, items?: any[]): any {
 }
 
 const model = Schema.Model({
-  url: StringType("Please enter a valid url slug").addRule((value, data) => {
-    return !value || isValidUrl(value);
-  }),
   title: StringType().isRequired(REQUIRED_FIELD).minLength(4).maxLength(255),
   description: StringType(),
   status: StringType()
@@ -90,7 +86,6 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const [value, setValue] = useState<CreateStoryDto>({
-    url: "",
     title: "",
     genres: [],
     authors: [],
@@ -168,14 +163,6 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
         formValue={value}
         onChange={setValue as any}
       >
-        <FormGroup>
-          <FormControl
-            name="url"
-            disabled={mode === "update"}
-            accepter={UrlBox}
-            value={mode === "update" ? value.url : value.title}
-          />
-        </FormGroup>
         <FormGroup>
           <FormControl name="title" placeholder="Title" />
         </FormGroup>

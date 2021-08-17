@@ -10,7 +10,6 @@ import {
   NotFoundException,
   Param,
   ParseArrayPipe,
-  ParseBoolPipe,
   Post,
   Put,
   Query,
@@ -104,18 +103,10 @@ export class StoryController {
   @Get(":idOrSlug")
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
-  async getStory(
-    @Param("idOrSlug") idOrSlug: string | number,
-    @Query("check", ParseBoolPipe) check: boolean,
-    @Req() req,
-  ): Promise<GetStoryDto | boolean> {
+  async getStory(@Param("idOrSlug") idOrSlug: string | number, @Req() req): Promise<GetStoryDto | boolean> {
     const storyData = this.isSlug(idOrSlug)
       ? await this.storyService.getStoryByUrl(idOrSlug)
       : await this.storyService.getStory(idOrSlug);
-
-    if (check) {
-      return !!storyData;
-    }
 
     if (!storyData) {
       throw new NotFoundException();
