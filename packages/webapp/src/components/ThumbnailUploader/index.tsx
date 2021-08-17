@@ -7,9 +7,11 @@ import { EnhancedImage } from "../../features/EnhancedImage";
 export function ThumbnailUploader({
   thumbnail,
   onChange,
+  disabled,
 }: {
   thumbnail: string | File | undefined | null;
   onChange: (newFile: File | undefined | null) => void;
+  disabled?: boolean;
 }) {
   const handleRemove = useCallback(
     (event) => {
@@ -28,6 +30,7 @@ export function ThumbnailUploader({
   return (
     <div className="thumbnail-uploader-container">
       <Uploader
+        disabled={disabled}
         fileList={fileList}
         fileListVisible={false}
         listType="picture"
@@ -39,7 +42,7 @@ export function ThumbnailUploader({
           }
         }}
       >
-        <button>
+        <button disabled={disabled}>
           {thumbnail ? (
             <>
               <EnhancedImage
@@ -49,7 +52,10 @@ export function ThumbnailUploader({
                 height="100%"
                 alt="Thumbnail image"
               />
-              <span onClick={handleRemove} className="close-button">
+              <span
+                onClick={disabled ? undefined : handleRemove}
+                className="close-button"
+              >
                 <Icon icon="close" />
               </span>
             </>

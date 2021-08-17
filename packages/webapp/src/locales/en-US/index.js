@@ -25,5 +25,10 @@ export default {
   showLess: "Show less",
   loadingText: "Loading...",
   chapterTitle: "Chapter {chapterNo}",
-  readingSubtitle: "{updated} by {updatedBy}"
+  readingSubtitle: "{updated} by {updatedBy}",
+  formSaveButtonLabel: "Save",
+  formUpdateButtonLabel: "Update",
+  processSavingLabel: "Saving...",
+  processUpdatingLabel: "Updating...",
+  processFetchingLabel: "Fetching...",
 };

@@ -157,6 +157,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
       handleSave={validateModel(model, value) ? handleSave : undefined}
     >
       <Form
+        readOnly={savingStatus === "processing"}
         model={model}
         fluid
         className="story-editor-container"
@@ -181,7 +182,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
           />
         </FormGroup>
         <FormGroup>
-          <ThumbnailUploader thumbnail={uploadFile} onChange={setUploadFile} />
+          <ThumbnailUploader disabled={savingStatus === "processing"} thumbnail={uploadFile} onChange={setUploadFile} />
         </FormGroup>
         <FormGroup className="form-group-inline">
           <FormControl name="status" accepter={StatusFormControl} />
