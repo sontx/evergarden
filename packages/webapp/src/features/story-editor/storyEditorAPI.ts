@@ -24,3 +24,17 @@ export async function checkStoryUrl(url: string): Promise<boolean> {
   });
   return response.data;
 }
+
+export async function uploadThumbnail(
+  storyId: number,
+  file: File,
+): Promise<{ thumbnail: string; cover: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await api.post(`/api/storage/stories/${storyId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+}

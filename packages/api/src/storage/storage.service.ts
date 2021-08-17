@@ -36,7 +36,7 @@ export class StorageService {
 
   async upload(
     file: BufferedFile,
-    name: string,
+    storyId: number,
   ): Promise<{
     thumbnail: string;
     cover: string;
@@ -56,7 +56,7 @@ export class StorageService {
         originSharp = originSharp.toFormat("jpg");
       }
 
-      const fileName = `${name}.jpg`;
+      const fileName = this.makeFileName(storyId);
       const metaData = {
         "Content-Type": "image/jpeg",
       };
@@ -76,6 +76,10 @@ export class StorageService {
       coverSharp?.destroy();
       thumbnailSharp?.destroy();
     }
+  }
+
+  private makeFileName(storyId: number): string {
+    return `${storyId}.jpg`;
   }
 
   private async saveCover(originSharp: Sharp, info: ISizeCalculationResult, fileName: string, metaData: any) {
@@ -139,5 +143,11 @@ export class StorageService {
     }
 
     this.logger.debug(`Create new bucket ${name}, public policy: ${publish}`);
+  }
+
+  async remove(storyId: number) {
+    const fileName = this.makeFileName(storyId);
+    await this.client.removeObject(THUMBNAIL_BUCKET, fileName);
+    await this.client.removeObject(COVER_BUCKET, fileName);
   }
 }

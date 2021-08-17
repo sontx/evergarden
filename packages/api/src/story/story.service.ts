@@ -159,16 +159,19 @@ export class StoryService {
       upvote: 0,
       downvote: 0,
     });
-    await this.storySearchService.add(savedStory);
+    // await this.storySearchService.add(savedStory);
     return this.toDto(savedStory);
   }
 
-  async updateStory(currentStory: Story, story: UpdateStoryDto, userId: number): Promise<Story> {
+  async updateStory(currentStory: Story, updateStory: UpdateStoryDto, userId: number): Promise<Story> {
     const user = await this.userService.getById(userId);
-    const authors = await this.authorService.syncAuthors(story.authors || []);
-    const genres = await this.genreService.getValidGenres(story.genres || []);
+    const authors = await this.authorService.syncAuthors(updateStory.authors || []);
+    const genres = await this.genreService.getValidGenres(updateStory.genres || []);
+    if (currentStory.thumbnail && updateStory.thumbnail === "") {
+      await this.storageService.remove(currentStory.id);
+    }
     await this.storyRepository.save({
-      ...story,
+      ...updateStory,
       id: currentStory.id,
       authors,
       genres,
@@ -176,7 +179,7 @@ export class StoryService {
       updatedBy: user,
     });
     const savedStory = await this.getStory(currentStory.id);
-    await this.storySearchService.update(savedStory);
+    // await this.storySearchService.update(savedStory);
     return savedStory;
   }
 

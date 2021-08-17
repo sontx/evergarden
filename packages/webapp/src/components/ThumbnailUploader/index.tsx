@@ -1,76 +1,50 @@
-import { Alert, Icon, IconButton, Loader, Uploader } from "rsuite";
-import React, { useCallback, useEffect, useState } from "react";
+import { Icon, Uploader } from "rsuite";
+import React, { useCallback } from "react";
 
 import "./index.less";
-import { FileType } from "rsuite/es/Uploader";
-import { GetStoryDto } from "@evergarden/shared";
-
-function previewFile(file: any, callback: (data: any) => void) {
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    callback(reader.result);
-  };
-  reader.readAsDataURL(file);
-}
+import { EnhancedImage } from "../../features/EnhancedImage";
 
 export function ThumbnailUploader({
-  story,
+  thumbnail,
   onChange,
 }: {
-  story?: GetStoryDto;
-  onChange: (newTempFileName: string | undefined) => void;
+  thumbnail: string | File | undefined | null;
+  onChange: (newFile: File | undefined | null) => void;
 }) {
-  const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState(story && story.cover);
-
-  useEffect(() => {
-    if (story) {
-      setPreview(story.cover);
-    }
-  }, [story]);
-
   const handleRemove = useCallback(
     (event) => {
       event.preventDefault();
       event.stopPropagation();
-      setPreview(undefined);
       if (onChange) {
-        onChange(undefined);
+        onChange(null);
       }
     },
     [onChange],
   );
 
+  const fileList =
+    typeof thumbnail === "object" && thumbnail !== null ? [thumbnail] : [];
+
   return (
     <div className="thumbnail-uploader-container">
       <Uploader
+        fileList={fileList}
         fileListVisible={false}
         listType="picture"
-        action="/api/storage/thumbnail"
-        onUpload={(file) => {
-          setUploading(true);
-          previewFile(file.blobFile, (value) => {
-            setPreview(value);
-          });
-        }}
-        onSuccess={(response: any, file: FileType) => {
-          setUploading(false);
-          if (onChange) {
-            onChange(response.tempFileName);
+        autoUpload={false}
+        onChange={(fileList) => {
+          const file = fileList[fileList.length - 1];
+          if (file) {
+            onChange(file.blobFile);
           }
-        }}
-        onError={() => {
-          setPreview(undefined);
-          setUploading(false);
-          Alert.error("Upload failed");
         }}
       >
         <button>
-          {uploading && <Loader backdrop center />}
-          {preview ? (
+          {thumbnail ? (
             <>
-              <img
-                src={preview}
+              <EnhancedImage
+                noCache
+                src={thumbnail}
                 width="100%"
                 height="100%"
                 alt="Thumbnail image"

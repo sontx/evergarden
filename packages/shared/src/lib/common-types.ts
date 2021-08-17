@@ -150,7 +150,41 @@ export class CreateStoryDto {
   published?: boolean;
 }
 
-export type UpdateStoryDto = Omit<CreateStoryDto, 'url'>;
+export class UpdateStoryDto {
+  @MinLength(4)
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  thumbnail?: string;
+
+  @IsOptional()
+  @IsString()
+  cover?: string;
+
+  @IsString()
+  @IsOptional()
+  @Matches(/ongoing|full/s)
+  status?: StoryStatus;
+
+  @IsArray()
+  @IsOptional()
+  authors?: GetAuthorDto[];
+
+  @IsArray()
+  @IsOptional()
+  genres?: GetGenreDto[];
+
+  @IsOptional()
+  @IsBoolean()
+  published?: boolean;
+}
 
 export class GetChapterDto {
   id: number;

@@ -20,6 +20,7 @@ export default () => ({
     },
   },
   storage: {
+    host: process.env.STORAGE_HOST || "http://localhost:9000",
     minio: {
       host: process.env.MINIO_HOST || "minio",
       port: process.env.MINIO_PORT || 9000,
@@ -70,7 +71,7 @@ export default () => ({
   },
   policy: {
     viewCount: {
-      minReading: "5s",
+      minReading: "20s",
       minReadingInterval: "60m",
     },
   },

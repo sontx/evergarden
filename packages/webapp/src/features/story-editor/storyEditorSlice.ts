@@ -5,7 +5,7 @@ import {
 } from "@evergarden/shared";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ProcessingStatus } from "../../utils/types";
-import { createStory, updateStory } from "./storyEditorAPI";
+import { createStory, updateStory, uploadThumbnail } from "./storyEditorAPI";
 import { RootState } from "../../app/store";
 import { fetchStory } from "../story/storyAPI";
 
@@ -29,15 +29,38 @@ export const fetchUserStoryAsync = createAsyncThunk(
 
 export const createStoryAsync = createAsyncThunk(
   "storyEditor/create",
-  async (story: CreateStoryDto) => {
-    return await createStory(story);
+  async ({story, uploadFile} : {story: CreateStoryDto, uploadFile?: File | null}) => {
+    const newStory =  await createStory(story);
+    if (uploadFile) {
+      const uploadedFile = await uploadThumbnail(newStory.id, uploadFile);
+      return await updateStory(newStory.id, {
+        thumbnail: uploadedFile.thumbnail,
+        cover: uploadedFile.cover
+      });
+    }
+    return newStory;
   },
 );
 
 export const updateStoryAsync = createAsyncThunk(
   "storyEditor/update",
-  async ({ story, id }: { id: number; story: UpdateStoryDto }) => {
-    return await updateStory(id, story);
+  async ({ story, id, uploadFile }: { id: number; story: UpdateStoryDto, uploadFile?: File | null }) => {
+    if (uploadFile) {
+      const uploadedFile = await uploadThumbnail(id, uploadFile);
+      return await updateStory(id, {
+        ...story,
+        thumbnail: uploadedFile.thumbnail,
+        cover: uploadedFile.cover
+      });
+    } if (uploadFile === null) {
+      return await updateStory(id, {
+        ...story,
+        thumbnail: "",
+        cover: ""
+      });
+    } else {
+      return await updateStory(id, story);
+    }
   },
 );
 

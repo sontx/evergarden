@@ -6,7 +6,7 @@ import {
   selectStory,
   updateStoryAsync,
 } from "./storyEditorSlice";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -97,14 +97,20 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
     published: false,
     description: "",
     status: "ongoing",
-    thumbnail: "",
   });
-  const thumbnailRef = useRef<string | undefined>(undefined);
+
+  const [uploadFile, setUploadFile] = useState<
+    string | File | null | undefined
+  >();
 
   useEffect(() => {
-    if (story && mode === "update") {
-      thumbnailRef.current = story.thumbnail;
-      setValue((prevState) => mergeObjects(story, prevState));
+    if (story) {
+      if (mode === "update") {
+        setValue((prevState) => mergeObjects(story, prevState));
+      }
+      if (story.cover) {
+        setUploadFile(story.cover);
+      }
     }
   }, [story, mode]);
 
@@ -121,30 +127,20 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
     }
   }, [history, mode, savingStatus, story]);
 
-  const handleThumbnailChange = useCallback(
-    (newTempFile: string | undefined) => {
-      thumbnailRef.current = newTempFile;
-    },
-    [],
-  );
-
-  const isValid = validateModel(model, value);
-
   function handleSave() {
-    const isThumbnailChanged =
-      !story || story.thumbnail !== thumbnailRef.current;
-    const temp: CreateStoryDto = {
-      ...value,
-      authors: wrapItems("name", value.authors),
-      genres: wrapItems("id", value.genres),
-      thumbnail: isThumbnailChanged ? thumbnailRef.current : story?.thumbnail,
-      cover: isThumbnailChanged ? undefined : story?.cover,
+    const payload = {
+      story: {
+        ...value,
+        authors: wrapItems("name", value.authors),
+        genres: wrapItems("id", value.genres),
+      },
+      uploadFile: typeof uploadFile === "object" ? uploadFile : undefined,
     };
     if (mode === "update") {
       if (story) {
         dispatch(
           updateStoryAsync({
-            story: temp,
+            ...payload,
             id: story.id,
           }),
         );
@@ -152,8 +148,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
     } else {
       dispatch(
         createStoryAsync({
-          ...temp,
-          url: value.url ? value.url : undefined,
+          ...payload,
         }),
       );
     }
@@ -164,7 +159,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
       savingStatus={savingStatus}
       fetchingStatus={fetchingStatus}
       mode={mode}
-      handleSave={isValid ? handleSave : undefined}
+      handleSave={validateModel(model, value) ? handleSave : undefined}
     >
       <Form
         model={model}
@@ -199,7 +194,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
           />
         </FormGroup>
         <FormGroup>
-          <ThumbnailUploader story={story} onChange={handleThumbnailChange} />
+          <ThumbnailUploader thumbnail={uploadFile} onChange={setUploadFile} />
         </FormGroup>
         <FormGroup className="form-group-inline">
           <FormControl name="status" accepter={StatusFormControl} />
