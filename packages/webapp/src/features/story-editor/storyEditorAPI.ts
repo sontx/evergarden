@@ -18,13 +18,6 @@ export async function updateStory(
   return response.data;
 }
 
-export async function checkStoryUrl(url: string): Promise<boolean> {
-  const response = await api.get(`/api/stories/${url}`, {
-    params: { url: true, check: true },
-  });
-  return response.data;
-}
-
 export async function uploadThumbnail(
   storyId: number,
   file: File,

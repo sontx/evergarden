@@ -7,14 +7,7 @@ import {
   updateStoryAsync,
 } from "./storyEditorSlice";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Form,
-  FormControl,
-  FormGroup,
-  Notification,
-  Schema,
-  Toggle,
-} from "rsuite";
+import { Form, FormControl, FormGroup, Schema, Toggle } from "rsuite";
 import { AuthorsPicker } from "../authors/AuthorsPicker";
 import { GenresPicker } from "../genres/GenresPicker";
 
@@ -114,11 +107,6 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
       if (story) {
         history.push(`/user/story/${story.url}`);
       }
-    } else if (savingStatus === "error") {
-      Notification.error({
-        title: mode === "create" ? "Save failed" : "Update failed",
-        description: "May be some fields were invalid, please check again.",
-      });
     }
   }, [history, mode, savingStatus, story]);
 

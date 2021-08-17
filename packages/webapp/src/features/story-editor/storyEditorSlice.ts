@@ -8,6 +8,7 @@ import { ProcessingStatus } from "../../utils/types";
 import { createStory, updateStory, uploadThumbnail } from "./storyEditorAPI";
 import { RootState } from "../../app/store";
 import { fetchStory } from "../story/storyAPI";
+import { catchRequestError } from "../../utils/api";
 
 interface StoryEditorState {
   story?: GetStoryDto;
@@ -29,38 +30,65 @@ export const fetchUserStoryAsync = createAsyncThunk(
 
 export const createStoryAsync = createAsyncThunk(
   "storyEditor/create",
-  async ({story, uploadFile} : {story: CreateStoryDto, uploadFile?: File | null}) => {
-    const newStory =  await createStory(story);
-    if (uploadFile) {
-      const uploadedFile = await uploadThumbnail(newStory.id, uploadFile);
-      return await updateStory(newStory.id, {
-        thumbnail: uploadedFile.thumbnail,
-        cover: uploadedFile.cover
-      });
-    }
-    return newStory;
+  async (
+    { story, uploadFile }: { story: CreateStoryDto; uploadFile?: File | null },
+    { rejectWithValue },
+  ) => {
+    return catchRequestError(
+      async () => {
+        const newStory = await createStory(story);
+        if (uploadFile) {
+          const uploadedFile = await uploadThumbnail(newStory.id, uploadFile);
+          return await updateStory(newStory.id, {
+            thumbnail: uploadedFile.thumbnail,
+            cover: uploadedFile.cover,
+          });
+        }
+        return newStory;
+      },
+      rejectWithValue,
+      true,
+    );
   },
 );
 
 export const updateStoryAsync = createAsyncThunk(
   "storyEditor/update",
-  async ({ story, id, uploadFile }: { id: number; story: UpdateStoryDto, uploadFile?: File | null }) => {
-    if (uploadFile) {
-      const uploadedFile = await uploadThumbnail(id, uploadFile);
-      return await updateStory(id, {
-        ...story,
-        thumbnail: uploadedFile.thumbnail,
-        cover: uploadedFile.cover
-      });
-    } if (uploadFile === null) {
-      return await updateStory(id, {
-        ...story,
-        thumbnail: "",
-        cover: ""
-      });
-    } else {
-      return await updateStory(id, story);
-    }
+  async (
+    {
+      story,
+      id,
+      uploadFile,
+    }: {
+      id: number;
+      story: UpdateStoryDto;
+      uploadFile?: File | null;
+    },
+    { rejectWithValue },
+  ) => {
+    return catchRequestError(
+      async () => {
+        if (uploadFile) {
+          const uploadedFile = await uploadThumbnail(id, uploadFile);
+          return await updateStory(id, {
+            ...story,
+            thumbnail: uploadedFile.thumbnail,
+            cover: uploadedFile.cover,
+          });
+        }
+        if (uploadFile === null) {
+          return await updateStory(id, {
+            ...story,
+            thumbnail: "",
+            cover: "",
+          });
+        } else {
+          return await updateStory(id, story);
+        }
+      },
+      rejectWithValue,
+      true,
+    );
   },
 );
 
