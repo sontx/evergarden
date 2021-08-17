@@ -17,8 +17,7 @@ const initialState: UserStoriesState = {
 export const fetchUserStoriesAsync = createAsyncThunk(
   "userStories/fetch",
   async () => {
-    const response = await fetchUserStories();
-    return response.items;
+    return await fetchUserStories();
   },
 );
 

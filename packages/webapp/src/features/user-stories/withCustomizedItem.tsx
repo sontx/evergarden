@@ -5,7 +5,7 @@ import { PublishSub } from "../../components/PublishSub";
 
 function BottomSub({ story }: { story: GetStoryDto }) {
   return (
-    <div style={{ marginTop: "2px" }}>
+    <div style={{ marginTop: "3px" }}>
       <span>
         {story.view} <Icon icon="eye" />
       </span>
