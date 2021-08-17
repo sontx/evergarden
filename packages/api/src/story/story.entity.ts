@@ -35,11 +35,11 @@ export class Story extends AbstractEntity {
   })
   status: StoryStatus;
 
-  @ManyToMany(() => Author, (author) => author.stories, { cascade: true })
+  @ManyToMany(() => Author, (author) => author.stories, { cascade: true, eager: true })
   @JoinTable()
   authors: Author[];
 
-  @ManyToMany(() => Genre, (genre) => genre.stories, { cascade: true })
+  @ManyToMany(() => Genre, (genre) => genre.stories, { cascade: true, eager: true })
   @JoinTable()
   genres: Genre[];
 

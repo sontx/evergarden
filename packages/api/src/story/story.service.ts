@@ -178,9 +178,7 @@ export class StoryService {
       updated: new Date(),
       updatedBy: user,
     });
-    const savedStory = await this.getStory(currentStory.id);
-    // await this.storySearchService.update(savedStory);
-    return savedStory;
+    return await this.getStory(currentStory.id);
   }
 
   async getStoryByUrl(url: string): Promise<Story | null> {
