@@ -2,6 +2,8 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { AuthorSearchBody, SearchResult } from "@evergarden/shared";
 import { Author } from "../author/author.entity";
+import { OnEvent } from "@nestjs/event-emitter";
+import { AuthorCreatedEvent } from "../events/author-created.event";
 
 @Injectable()
 export default class AuthorSearchService {
@@ -10,6 +12,11 @@ export default class AuthorSearchService {
   private readonly logger = new Logger(AuthorSearchService.name);
 
   constructor(private readonly elasticsearchService: ElasticsearchService) {}
+
+  @OnEvent(AuthorCreatedEvent.name, {async: true})
+  async handleAuthorCreatedEvent(event: AuthorCreatedEvent) {
+    await this.add(event.createdAuthor);
+  }
 
   async indexExists(): Promise<boolean> {
     const checkIndex = await this.elasticsearchService.indices.exists({ index: AuthorSearchService.index });
@@ -97,7 +104,7 @@ export default class AuthorSearchService {
     );
   }
 
-  async remove(authorId: number) {
+  private async remove(authorId: number) {
     this.elasticsearchService.deleteByQuery({
       index: AuthorSearchService.index,
       body: {
@@ -110,7 +117,7 @@ export default class AuthorSearchService {
     });
   }
 
-  async update(author: Author) {
+  private async update(author: Author) {
     const newBody = this.toSearchBody(author);
     const script = Object.entries(newBody).reduce((result, [key, value]) => {
       return `${result} ctx._source.${key}='${value}';`;
@@ -131,7 +138,7 @@ export default class AuthorSearchService {
     });
   }
 
-  async add(author: Author) {
+  private async add(author: Author) {
     return this.elasticsearchService.index<SearchResult<AuthorSearchBody>, AuthorSearchBody>({
       index: AuthorSearchService.index,
       body: this.toSearchBody(author),

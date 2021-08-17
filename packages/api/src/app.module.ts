@@ -21,6 +21,7 @@ import { Genre } from "./genre/genre.entity";
 import { ReadingHistory } from "./reading-history/reading-history.entity";
 import { StorageModule } from "./storage/storage.module";
 import { RedisModule } from "nestjs-redis";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
@@ -47,7 +48,7 @@ import { RedisModule } from "nestjs-redis";
           autoLoadEntities: true,
           synchronize: false,
           migrationsRun: true,
-          migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+          migrations: [__dirname + "/migrations/**/*{.ts,.js}"],
           entities: [User, Story, Chapter, Author, Genre, ReadingHistory],
         };
       },
@@ -63,6 +64,7 @@ import { RedisModule } from "nestjs-redis";
         };
       },
     }),
+    EventEmitterModule.forRoot({ global: true }),
     AuthModule,
     UserModule,
     StoryModule,

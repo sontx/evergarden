@@ -2,6 +2,10 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { Story } from "../story/story.entity";
 import { SearchResult, StorySearchBody } from "@evergarden/shared";
+import { OnEvent } from "@nestjs/event-emitter";
+import { StoryCreatedEvent } from "../events/story-created.event";
+import { StoryUpdatedEvent } from "../events/story-updated.event";
+import { StoryDeletedEvent } from "../events/story-deleted.event";
 
 @Injectable()
 export default class StorySearchService {
@@ -10,6 +14,21 @@ export default class StorySearchService {
   private readonly logger = new Logger(StorySearchService.name);
 
   constructor(private readonly elasticsearchService: ElasticsearchService) {}
+
+  @OnEvent(StoryCreatedEvent.name)
+  async handleStoryCreatedEvent(event: StoryCreatedEvent) {
+    await this.add(event.createdStory);
+  }
+
+  @OnEvent(StoryUpdatedEvent.name)
+  async handleStoryUpdatedEvent(event: StoryUpdatedEvent) {
+    await this.update(event.updatedStory);
+  }
+
+  @OnEvent(StoryDeletedEvent.name)
+  async handleStoryDeletedEvent(event: StoryDeletedEvent) {
+    await this.remove(event.storyId);
+  }
 
   async indexExists(): Promise<boolean> {
     const checkIndex = await this.elasticsearchService.indices.exists({ index: StorySearchService.index });
@@ -61,7 +80,6 @@ export default class StorySearchService {
               },
               id: {
                 type: "long",
-                index: false,
               },
               thumbnail: {
                 type: "text",

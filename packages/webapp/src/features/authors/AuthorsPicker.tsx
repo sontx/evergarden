@@ -40,7 +40,7 @@ export function AuthorsPicker({ onChange, value: value, ...rest }: any) {
     [onChange],
   );
 
-  const mergedAuthors: GetAuthorDto[] = (value as any[]).map((item) =>
+  const mergedAuthors: GetAuthorDto[] = (value || [] as any[]).map((item: any) =>
     typeof item !== "object"
       ? {
           name: item,

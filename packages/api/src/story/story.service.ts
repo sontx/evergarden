@@ -18,7 +18,10 @@ import { GenreService } from "../genre/genre.service";
 import { StorageService } from "../storage/storage.service";
 import { User } from "../user/user.entity";
 import { UserService } from "../user/user.service";
-import { ViewCountService } from "./view-count.service";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { StoryUpdatedEvent } from "../events/story-updated.event";
+import { StoryDeletedEvent } from "../events/story-deleted.event";
+import { StoryCreatedEvent } from "../events/story-created.event";
 
 @Injectable()
 export class StoryService {
@@ -33,7 +36,7 @@ export class StoryService {
     private storageService: StorageService,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
-    private viewCountService: ViewCountService,
+    private eventEmitter: EventEmitter2,
   ) {
     this.toDto = this.toDto.bind(this);
   }
@@ -159,7 +162,7 @@ export class StoryService {
       upvote: 0,
       downvote: 0,
     });
-    // await this.storySearchService.add(savedStory);
+    this.eventEmitter.emitAsync(StoryCreatedEvent.name, new StoryCreatedEvent(savedStory)).then();
     return this.toDto(savedStory);
   }
 
@@ -178,7 +181,9 @@ export class StoryService {
       updated: new Date(),
       updatedBy: user,
     });
-    return await this.getStory(currentStory.id);
+    const saved = await this.getStory(currentStory.id);
+    this.eventEmitter.emitAsync(StoryUpdatedEvent.name, new StoryUpdatedEvent(saved)).then();
+    return saved;
   }
 
   async getStoryByUrl(url: string): Promise<Story | null> {
@@ -207,5 +212,6 @@ export class StoryService {
 
   async deleteStory(storyId: number): Promise<void> {
     await this.storyRepository.delete(storyId);
+    this.eventEmitter.emitAsync(StoryDeletedEvent.name, new StoryDeletedEvent(storyId)).then();
   }
 }

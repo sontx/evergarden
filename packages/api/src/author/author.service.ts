@@ -4,12 +4,15 @@ import { Repository } from "typeorm";
 import { Author } from "./author.entity";
 import { GetAuthorDto } from "@evergarden/shared";
 import AuthorSearchService from "../search/author-search.service";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { AuthorCreatedEvent } from "../events/author-created.event";
 
 @Injectable()
 export class AuthorService {
   constructor(
     @InjectRepository(Author) private authorRepository: Repository<Author>,
     private authorSearchService: AuthorSearchService,
+    private eventEmitter: EventEmitter2
   ) {}
 
   async getAll(): Promise<Author[]> {
@@ -39,6 +42,8 @@ export class AuthorService {
 
   private async add(name: string): Promise<GetAuthorDto> {
     const newAuthor = await this.authorRepository.create({ name });
+    const saved = await this.authorRepository.save(newAuthor)
+    this.eventEmitter.emitAsync(AuthorCreatedEvent.name, new AuthorCreatedEvent(saved)).then();
     return this.toDto(await this.authorRepository.save(newAuthor));
   }
 
