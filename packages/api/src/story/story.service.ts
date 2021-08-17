@@ -198,7 +198,7 @@ export class StoryService {
 
   async updateStoryInternal(story: Story, user: User): Promise<boolean> {
     try {
-      await this.storyRepository.update(story.id as any, {
+      await this.storyRepository.save({
         ...story,
         updated: new Date(),
         updatedBy: user,
