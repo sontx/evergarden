@@ -279,13 +279,18 @@ export interface StorySearchBody {
   thumbnail: string;
 }
 
-export interface StorySearchResult {
+export interface SearchResult<T> {
   hits: {
     total: number;
     hits: Array<{
-      _source: StorySearchBody;
+      _source: T;
     }>;
   };
+}
+
+export interface AuthorSearchBody {
+  id: number;
+  name: string;
 }
 
 export interface ThumbnailUploadResponse {

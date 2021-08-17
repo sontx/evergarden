@@ -7,6 +7,8 @@ import { UserService } from "./user/user.service";
 import { ConfigService } from "@nestjs/config";
 import { StorageService } from "./storage/storage.service";
 import { Role } from "@evergarden/shared";
+import AuthorSearchService from "./search/author-search.service";
+import { AuthorService } from "./author/author.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -15,7 +17,9 @@ export class AppService implements OnApplicationBootstrap {
   constructor(
     private storyService: StoryService,
     private storySearchService: StorySearchService,
+    private authorSearchService: AuthorSearchService,
     private genreService: GenreService,
+    private authorService: AuthorService,
     private userService: UserService,
     private configService: ConfigService,
     private storageService: StorageService,
@@ -40,8 +44,15 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   private async initializeSearchEngine() {
-    const stories = await this.storyService.getAll();
-    await this.storySearchService.createIndex(stories);
+    if (!await this.storySearchService.indexExists()) {
+      const stories = await this.storyService.getAll();
+      await this.storySearchService.createIndex(stories);
+    }
+
+    if (!await this.authorSearchService.indexExists()) {
+      const authors = await this.authorService.getAll();
+      await this.authorSearchService.createIndex(authors);
+    }
   }
 
   private async initializeGenresDataset() {

@@ -5,6 +5,7 @@ import { ElasticsearchModule } from "@nestjs/elasticsearch";
 import { SearchController } from "./search.controller";
 import StorySearchService from "./story-search.service";
 import { StorageModule } from "../storage/storage.module";
+import AuthorSearchService from "./author-search.service";
 
 @Module({
   imports: [
@@ -23,8 +24,8 @@ import { StorageModule } from "../storage/storage.module";
     }),
     StorageModule,
   ],
-  providers: [StorySearchService],
-  exports: [ElasticsearchModule, StorySearchService],
+  providers: [StorySearchService, AuthorSearchService],
+  exports: [ElasticsearchModule, StorySearchService, AuthorSearchService],
   controllers: [SearchController],
 })
 export class SearchModule {}

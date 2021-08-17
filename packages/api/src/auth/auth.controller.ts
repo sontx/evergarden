@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Response } from "express";
-import { UserService } from "src/user/user.service";
 import { AuthService } from "./auth.service";
 import JwtRefreshGuard from "./jwt-refresh/jwt-refresh.guard";
 import JwtGuard from "./jwt/jwt.guard";
 import { Auth2Body, UserPass } from "@evergarden/shared";
 import { User } from "../user/user.entity";
+import { UserService } from "../user/user.service";
 
 @Controller("auth")
 export class AuthController {

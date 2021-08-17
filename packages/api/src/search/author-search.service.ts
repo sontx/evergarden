@@ -1,25 +1,25 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
-import { Story } from "../story/story.entity";
-import { SearchResult, StorySearchBody } from "@evergarden/shared";
+import { AuthorSearchBody, SearchResult } from "@evergarden/shared";
+import { Author } from "../author/author.entity";
 
 @Injectable()
-export default class StorySearchService {
-  private static readonly index = "stories";
+export default class AuthorSearchService {
+  private static readonly index = "authors";
 
-  private readonly logger = new Logger(StorySearchService.name);
+  private readonly logger = new Logger(AuthorSearchService.name);
 
   constructor(private readonly elasticsearchService: ElasticsearchService) {}
 
   async indexExists(): Promise<boolean> {
-    const checkIndex = await this.elasticsearchService.indices.exists({ index: StorySearchService.index });
+    const checkIndex = await this.elasticsearchService.indices.exists({ index: AuthorSearchService.index });
     return checkIndex.statusCode !== 404;
   }
 
-  async createIndex(stories: Story[]) {
+  async createIndex(authors: Author[]) {
     this.elasticsearchService.indices.create(
       {
-        index: StorySearchService.index,
+        index: AuthorSearchService.index,
         body: {
           settings: {
             analysis: {
@@ -45,7 +45,7 @@ export default class StorySearchService {
           },
           mappings: {
             properties: {
-              title: {
+              name: {
                 type: "text",
                 fields: {
                   complete: {
@@ -55,20 +55,8 @@ export default class StorySearchService {
                   },
                 },
               },
-              description: {
-                type: "text",
-                index: false,
-              },
               id: {
                 type: "long",
-                index: false,
-              },
-              thumbnail: {
-                type: "text",
-                index: false,
-              },
-              url: {
-                type: "text",
                 index: false,
               },
             },
@@ -83,21 +71,21 @@ export default class StorySearchService {
       },
     );
     const body = [];
-    for (const story of stories) {
+    for (const author of authors) {
       body.push(
         {
           index: {
-            _index: StorySearchService.index,
-            _id: story.id,
+            _index: AuthorSearchService.index,
+            _id: author.id,
           },
         },
-        this.toSearchBody(story),
+        this.toSearchBody(author),
       );
     }
 
     this.elasticsearchService.bulk(
       {
-        index: StorySearchService.index,
+        index: AuthorSearchService.index,
         body,
       },
       (err) => {
@@ -109,31 +97,31 @@ export default class StorySearchService {
     );
   }
 
-  async remove(storyId: number) {
+  async remove(authorId: number) {
     this.elasticsearchService.deleteByQuery({
-      index: StorySearchService.index,
+      index: AuthorSearchService.index,
       body: {
         query: {
           match: {
-            id: storyId,
+            id: authorId,
           },
         },
       },
     });
   }
 
-  async update(story: Story) {
-    const newBody = this.toSearchBody(story);
+  async update(author: Author) {
+    const newBody = this.toSearchBody(author);
     const script = Object.entries(newBody).reduce((result, [key, value]) => {
       return `${result} ctx._source.${key}='${value}';`;
     }, "");
 
     return this.elasticsearchService.updateByQuery({
-      index: StorySearchService.index,
+      index: AuthorSearchService.index,
       body: {
         query: {
           match: {
-            id: story.id,
+            id: author.id,
           },
         },
         script: {
@@ -143,33 +131,30 @@ export default class StorySearchService {
     });
   }
 
-  async add(story: Story) {
-    return this.elasticsearchService.index<SearchResult<StorySearchBody>, StorySearchBody>({
-      index: StorySearchService.index,
-      body: this.toSearchBody(story),
+  async add(author: Author) {
+    return this.elasticsearchService.index<SearchResult<AuthorSearchBody>, AuthorSearchBody>({
+      index: AuthorSearchService.index,
+      body: this.toSearchBody(author),
     });
   }
 
-  private toSearchBody(story: Story) {
+  private toSearchBody(author: Author) {
     return {
-      id: story.id,
-      url: story.url,
-      title: story.title,
-      description: story.description,
-      thumbnail: story.thumbnail,
+      id: author.id,
+      name: author.name,
     };
   }
 
-  async search(text: string): Promise<StorySearchBody[]> {
-    const { body } = await this.elasticsearchService.search<SearchResult<StorySearchBody>>({
-      index: StorySearchService.index,
+  async search(text: string): Promise<AuthorSearchBody[]> {
+    const { body } = await this.elasticsearchService.search<SearchResult<AuthorSearchBody>>({
+      index: AuthorSearchService.index,
       body: {
         from: 0,
         size: 10,
         query: {
           multi_match: {
             query: text,
-            fields: ["title"],
+            fields: ["name"],
           },
         },
       },
