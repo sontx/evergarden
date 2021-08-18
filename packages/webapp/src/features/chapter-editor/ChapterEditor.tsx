@@ -16,19 +16,13 @@ import {
   selectStory,
 } from "../story-editor/storyEditorSlice";
 import { useHistory } from "react-router-dom";
+import {
+  EnhancedCheckbox,
+  SingleCheckboxFormAccepter,
+} from "../../components/EnhancedCheckbox";
+import { useIntl } from "react-intl";
 
 const { StringType, BooleanType } = Schema.Types;
-
-function PublishedFormControl({ value, ...rest }: any) {
-  return (
-    <Toggle
-      {...rest}
-      checked={!!value}
-      checkedChildren={<span>Published</span>}
-      unCheckedChildren={<span>Unpublished</span>}
-    />
-  );
-}
 
 const model = Schema.Model({
   title: StringType().maxLength(100),
@@ -55,6 +49,7 @@ export function ChapterEditor({
   const story = useAppSelector(selectStory);
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const intl = useIntl();
 
   useEffect(() => {
     if (chapter && mode === "update") {
@@ -123,14 +118,22 @@ export function ChapterEditor({
           <FormControl name="title" placeholder={`Chapter ${chapterNo}`} />
         </FormGroup>
         <FormGroup>
-          <FormControl name="published" accepter={PublishedFormControl} />
-        </FormGroup>
-        <FormGroup>
           <FormControl
             name="content"
             accepter={TextEditor}
             placeholder="Chapter content"
           />
+        </FormGroup>
+        <FormGroup>
+          <FormControl name="published" accepter={SingleCheckboxFormAccepter}>
+            <EnhancedCheckbox
+              description={intl.formatMessage({
+                id: "chapterFormPublishDescription",
+              })}
+            >
+              {intl.formatMessage({ id: "chapterFormPublishTitle" })}
+            </EnhancedCheckbox>
+          </FormControl>
         </FormGroup>
       </Form>
     </EditorForm>
