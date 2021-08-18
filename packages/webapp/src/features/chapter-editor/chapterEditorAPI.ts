@@ -18,6 +18,6 @@ export async function updateChapter(
   chapterNo: number,
   chapter: UpdateChapterDto,
 ): Promise<GetChapterDto> {
-  const response = await api.put(`/api/stories/${storyId}/chapters`, chapter);
+  const response = await api.put(`/api/stories/${storyId}/chapters/${chapterNo}`, chapter);
   return response.data;
 }
