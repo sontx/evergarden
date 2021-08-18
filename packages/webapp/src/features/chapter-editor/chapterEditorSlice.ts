@@ -8,6 +8,7 @@ import {
 } from "@evergarden/shared";
 import { createChapter, updateChapter } from "./chapterEditorAPI";
 import { fetchChapter } from "../chapter/chapterAPI";
+import { catchRequestError } from "../../utils/api";
 
 interface ChapterEditorState {
   chapter?: GetChapterDto;
@@ -22,36 +23,57 @@ const initialState: ChapterEditorState = {
 
 export const fetchChapterAsync = createAsyncThunk(
   "chapterEditor/fetch",
-  async (option: { storyId: number; chapterNo: number }) => {
-    return await fetchChapter(option.storyId, option.chapterNo);
+  async (
+    option: { storyId: number; chapterNo: number },
+    { rejectWithValue },
+  ) => {
+    return catchRequestError(
+      async () => await fetchChapter(option.storyId, option.chapterNo),
+      rejectWithValue,
+      true,
+    );
   },
 );
 
 export const createChapterAsync = createAsyncThunk(
   "chapterEditor/create",
-  async ({
-    chapter,
-    storyId,
-  }: {
-    storyId: number;
-    chapter: CreateChapterDto;
-  }) => {
-    return await createChapter(storyId, chapter);
+  async (
+    {
+      chapter,
+      storyId,
+    }: {
+      storyId: number;
+      chapter: CreateChapterDto;
+    },
+    { rejectWithValue },
+  ) => {
+    return catchRequestError(
+      async () => await createChapter(storyId, chapter),
+      rejectWithValue,
+      true,
+    );
   },
 );
 
 export const updateChapterAsync = createAsyncThunk(
   "chapterEditor/update",
-  async ({
-    chapter,
-    chapterNo,
-    storyId,
-  }: {
-    storyId: number;
-    chapterNo: number;
-    chapter: UpdateChapterDto;
-  }) => {
-    return await updateChapter(storyId, chapterNo, chapter);
+  async (
+    {
+      chapter,
+      chapterNo,
+      storyId,
+    }: {
+      storyId: number;
+      chapterNo: number;
+      chapter: UpdateChapterDto;
+    },
+    { rejectWithValue },
+  ) => {
+    return catchRequestError(
+      async () => await updateChapter(storyId, chapterNo, chapter),
+      rejectWithValue,
+      true,
+    );
   },
 );
 

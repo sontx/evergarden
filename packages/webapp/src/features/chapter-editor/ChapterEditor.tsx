@@ -1,12 +1,5 @@
 import { TextEditor } from "../../components/TextEditor";
-import {
-  Form,
-  FormControl,
-  FormGroup,
-  Notification,
-  Schema,
-  Toggle,
-} from "rsuite";
+import { Form, FormControl, FormGroup, Schema, Toggle } from "rsuite";
 import React, { useCallback, useEffect, useState } from "react";
 import { CreateChapterDto, mergeObjects } from "@evergarden/shared";
 import { EditorForm, validateModel } from "../../components/EditorForm";
@@ -74,11 +67,6 @@ export function ChapterEditor({
       if (story && chapter) {
         history.push(`/user/story/${story.url}/chapter/${chapter.chapterNo}`);
       }
-    } else if (savingStatus === "error") {
-      Notification.error({
-        title: mode === "create" ? "Save failed" : "Update failed",
-        description: "May be some fields were invalid, please check again.",
-      });
     }
   }, [chapter, history, mode, savingStatus, story]);
 
@@ -112,6 +100,7 @@ export function ChapterEditor({
 
   return (
     <EditorForm
+      disabled={savingStatus === "processing"}
       fetchingStatus={
         fetchingChapterStatus === "processing" ||
         fetchingStoryStatus === "processing"
@@ -123,6 +112,7 @@ export function ChapterEditor({
       handleSave={isValid ? handleSave : undefined}
     >
       <Form
+        readOnly={savingStatus === "processing"}
         model={model}
         fluid
         className="chapter-editor-container"
