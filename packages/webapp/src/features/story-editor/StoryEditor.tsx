@@ -6,52 +6,25 @@ import {
   selectStory,
   updateStoryAsync,
 } from "./storyEditorSlice";
-import React, { useCallback, useEffect, useState } from "react";
-import { Form, FormControl, FormGroup, Schema, Toggle } from "rsuite";
+import React, { useEffect, useState } from "react";
+import { Form, FormControl, FormGroup, Schema } from "rsuite";
 import { AuthorsPicker } from "../authors/AuthorsPicker";
 import { GenresPicker } from "../genres/GenresPicker";
 
 import "./storyEditor.less";
-import { CreateStoryDto, mergeObjects } from "@evergarden/shared";
+import { CreateStoryDto, mergeObjects, StoryStatus } from "@evergarden/shared";
 import { useHistory } from "react-router-dom";
 import { ThumbnailUploader } from "../../components/ThumbnailUploader";
 import { EditorForm, validateModel } from "../../components/EditorForm";
+import {
+  EnhancedCheckbox,
+  SingleCheckboxFormAccepter,
+} from "../../components/EnhancedCheckbox";
+import { useIntl } from "react-intl";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 
 const REQUIRED_FIELD = "This field is required";
-
-function PublishedFormControl({ value, ...rest }: any) {
-  return (
-    <Toggle
-      {...rest}
-      checked={!!value}
-      checkedChildren={<span>Published</span>}
-      unCheckedChildren={<span>Unpublished</span>}
-    />
-  );
-}
-
-function StatusFormControl({ value, onChange, ...rest }: any) {
-  const handleChange = useCallback(
-    (checked) => {
-      if (onChange) {
-        onChange(checked ? "full" : "ongoing");
-      }
-    },
-    [onChange],
-  );
-
-  return (
-    <Toggle
-      {...rest}
-      onChange={handleChange}
-      checked={value === "full"}
-      checkedChildren={<span>Full</span>}
-      unCheckedChildren={<span>Ongoing</span>}
-    />
-  );
-}
 
 function wrapItems(keyName: string, items?: any[]): any {
   return items
@@ -64,9 +37,7 @@ function wrapItems(keyName: string, items?: any[]): any {
 const model = Schema.Model({
   title: StringType().isRequired(REQUIRED_FIELD).minLength(4).maxLength(255),
   description: StringType(),
-  status: StringType()
-    .isRequired(REQUIRED_FIELD)
-    .pattern(/ongoing|full/s, "Status must be either ongoing or full"),
+  isFull: BooleanType(),
   authors: ArrayType(),
   genres: ArrayType(),
   published: BooleanType(),
@@ -78,13 +49,16 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   const fetchingStatus = useAppSelector(selectFetchingStatus);
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const [value, setValue] = useState<CreateStoryDto>({
+  const intl = useIntl();
+  const [formData, setFormData] = useState<
+    Omit<CreateStoryDto, "status"> & { isFull: boolean }
+  >({
     title: "",
     genres: [],
     authors: [],
     published: false,
     description: "",
-    status: "ongoing",
+    isFull: false,
   });
 
   const [uploadFile, setUploadFile] = useState<
@@ -94,7 +68,15 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   useEffect(() => {
     if (story) {
       if (mode === "update") {
-        setValue((prevState) => mergeObjects(story, prevState));
+        setFormData((prevState) => ({
+          ...mergeObjects(story, prevState),
+          isFull: story.status === "full",
+        }));
+      } else {
+        setFormData((prevState) => ({
+          ...prevState,
+          isFull: story.status === "full",
+        }));
       }
       if (story.cover) {
         setUploadFile(story.cover);
@@ -111,11 +93,13 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
   }, [history, mode, savingStatus, story]);
 
   function handleSave() {
+    const { isFull, ...rest } = formData;
     const payload = {
       story: {
-        ...value,
-        authors: wrapItems("name", value.authors),
-        genres: wrapItems("id", value.genres),
+        ...rest,
+        status: (isFull ? "full" : "ongoing") as StoryStatus,
+        authors: wrapItems("name", formData.authors),
+        genres: wrapItems("id", formData.genres),
       },
       uploadFile: typeof uploadFile === "object" ? uploadFile : undefined,
     };
@@ -139,7 +123,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
 
   return (
     <EditorForm
-      disabled={!validateModel(model, value)}
+      disabled={!validateModel(model, formData)}
       savingStatus={savingStatus}
       fetchingStatus={fetchingStatus}
       mode={mode}
@@ -150,8 +134,8 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
         model={model}
         fluid
         className="story-editor-container"
-        formValue={value}
-        onChange={setValue as any}
+        formValue={formData}
+        onChange={setFormData as any}
       >
         <FormGroup>
           <FormControl name="title" placeholder="Title" />
@@ -177,9 +161,25 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
             onChange={setUploadFile}
           />
         </FormGroup>
-        <FormGroup className="form-group-inline">
-          <FormControl name="status" accepter={StatusFormControl} />
-          <FormControl name="published" accepter={PublishedFormControl} />
+        <FormGroup>
+          <FormControl name="isFull" accepter={SingleCheckboxFormAccepter}>
+            <EnhancedCheckbox
+              description={intl.formatMessage({
+                id: "storyFormFullStoryDescription",
+              })}
+            >
+              {intl.formatMessage({ id: "storyFormFullStoryTitle" })}
+            </EnhancedCheckbox>
+          </FormControl>
+          <FormControl name="published" accepter={SingleCheckboxFormAccepter}>
+            <EnhancedCheckbox
+              description={intl.formatMessage({
+                id: "storyFormPublishDescription",
+              })}
+            >
+              {intl.formatMessage({ id: "storyFormPublishTitle" })}
+            </EnhancedCheckbox>
+          </FormControl>
         </FormGroup>
       </Form>
     </EditorForm>

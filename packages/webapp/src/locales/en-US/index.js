@@ -31,4 +31,10 @@ export default {
   processSavingLabel: "Saving...",
   processUpdatingLabel: "Updating...",
   processFetchingLabel: "Fetching...",
+  storyFormFullStoryTitle: "Full story",
+  storyFormFullStoryDescription: "This story is completed, no more chapters are added",
+  storyFormPublishTitle: "Published",
+  storyFormPublishDescription: "Everyone else can read this story",
+  chapterFormPublishTitle: "Published",
+  chapterFormPublishDescription: "Everyone else can read this chapter",
 };
