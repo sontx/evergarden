@@ -1,7 +1,10 @@
 import {
   IsArray,
   IsBoolean,
-  IsEmail, IsJWT, IsNumber,
+  IsDateString,
+  IsEmail,
+  IsJWT,
+  IsNumber,
   IsOptional,
   IsString,
   Matches,
@@ -213,8 +216,7 @@ export class CreateChapterDto {
   published?: boolean;
 }
 
-export class UpdateChapterDto extends CreateChapterDto {
-}
+export class UpdateChapterDto extends CreateChapterDto {}
 
 export interface PaginationOptions {
   page: number;
@@ -269,6 +271,10 @@ export class UpdateReadingHistoryDto {
   @IsOptional()
   @IsBoolean()
   isFollowing?: boolean;
+
+  @IsOptional()
+  @IsDateString()
+  date?: string;
 }
 
 export interface StorySearchBody {

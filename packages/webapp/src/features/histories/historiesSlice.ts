@@ -17,6 +17,9 @@ const initialState: HistoriesState = {
 export const updateStoryHistoryAsync = createAsyncThunk(
   "histories/update",
   async (history: UpdateReadingHistoryDto) => {
+    if (!history.date) {
+      history.date = (new Date()).toISOString();
+    }
     updateStoryHistory(history).then();
     return history;
   },
