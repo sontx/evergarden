@@ -22,7 +22,7 @@ import { RolesGuard } from "../auth/role/roles.guard";
 import { StoryService } from "../story/story.service";
 import { isOwnerOrGod } from "../utils";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
-import {Chapter} from "./chapter.entity";
+import { Chapter } from "./chapter.entity";
 
 @Controller()
 export class ChapterController {
@@ -33,7 +33,7 @@ export class ChapterController {
   @Get("chapters/:id")
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
-  async getChapter(@Param("id", ParseIntPipe) id: number, @Req() req,) {
+  async getChapter(@Param("id", ParseIntPipe) id: number, @Req() req) {
     const chapter = await this.chapterService.getChapterById(id);
     if (!chapter) {
       throw new NotFoundException();
@@ -58,15 +58,13 @@ export class ChapterController {
     }
 
     let chapter: Chapter;
-    if (storyId && chapterNo >= 0) {
-      try {
-        chapter = await this.chapterService.getChapterByNo(storyId, chapterNo, isOwnerOrGod(req, story));
-      } catch (e) {
-        this.logger.warn(`Error while finding chapter by its No: storyId = ${storyId}, chapterNo = ${chapterNo}`, e);
-        throw new BadRequestException();
-      }
+    if (storyId && chapterNo > 0) {
+      chapter = await this.chapterService.getChapterByNo(storyId, chapterNo);
       if (!chapter) {
         throw new NotFoundException();
+      }
+      if (!chapter.published && !isOwnerOrGod(req, story)) {
+        throw new ForbiddenException();
       }
 
       return this.chapterService.toDto(chapter);
@@ -132,7 +130,7 @@ export class ChapterController {
     @Body() chapter: UpdateChapterDto,
     @Req() req,
   ): Promise<GetChapterDto> {
-    const currentChapter = await this.chapterService.getChapterByNo(storyId, chapterNo, true);
+    const currentChapter = await this.chapterService.getChapterByNo(storyId, chapterNo);
     if (!currentChapter) {
       throw new NotFoundException();
     }

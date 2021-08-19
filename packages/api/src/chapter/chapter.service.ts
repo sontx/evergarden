@@ -27,12 +27,11 @@ export class ChapterService {
     return this.chapterRepository.findOne(chapterId);
   }
 
-  async getChapterByNo(storyId: number, chapterNo: number, includesUnpublished?: boolean): Promise<Chapter | null> {
+  async getChapterByNo(storyId: number, chapterNo: number): Promise<Chapter | null> {
     return await this.chapterRepository.findOne({
       where: {
         chapterNo,
         storyId,
-        ...(!includesUnpublished ? { published: true } : {}),
       },
     });
   }
@@ -97,12 +96,10 @@ export class ChapterService {
       updated: new Date(),
     };
     await this.chapterRepository.update(currentChapter.id, updatedChapter);
-    return this.toDto(
-      {
-        ...currentChapter,
-        ...updatedChapter,
-      },
-    );
+    return this.toDto({
+      ...currentChapter,
+      ...updatedChapter,
+    });
   }
 
   toDto(chapter: Chapter): GetChapterDto {
