@@ -5,10 +5,13 @@ import { RolesGuard } from "../auth/role/roles.guard";
 import { Role } from "../auth/role/roles.decorator";
 import { UpdateReadingHistoryDto } from "@evergarden/shared";
 import { ReadingHistory } from "./reading-history.entity";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
+import { HistoryChangedEvent } from "../events/history-changed.event";
 
 @Controller("histories")
 export class ReadingHistoryController {
-  constructor(private readingHistoryService: ReadingHistoryService) {}
+  constructor(private readingHistoryService: ReadingHistoryService, private eventEmitter: EventEmitter2) {}
 
   @Get()
   @UseGuards(JwtGuard, RolesGuard)
@@ -35,11 +38,10 @@ export class ReadingHistoryController {
   }
 
   @Put()
-  @UseGuards(JwtGuard, RolesGuard)
-  @Role("user")
+  @UseGuards(JwtGuard)
+  @JwtConfig({ anonymous: true })
   async updateStoryHistory(@Req() req, @Body() storyHistory: UpdateReadingHistoryDto) {
     const { id } = req.user || {};
-    await this.readingHistoryService.updateStoryHistory(id, storyHistory);
-    // TODO: calculate new reading count
+    this.eventEmitter.emitAsync(HistoryChangedEvent.name, new HistoryChangedEvent(storyHistory, new Date(), id)).then();
   }
 }

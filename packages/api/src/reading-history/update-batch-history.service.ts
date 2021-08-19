@@ -7,11 +7,17 @@ import { UserService } from "../user/user.service";
 import { StoryService } from "../story/story.service";
 import { calculateVoteCount, VoteType } from "@evergarden/shared";
 import { ConfigService } from "@nestjs/config";
-import { InternalUpdateReadingHistoryDto } from "./internal-update-reading-history.dto";
 import { VoteService } from "../story/vote.service";
+import { HistoryChangedEvent } from "../events/history-changed.event";
+import { OnEvent } from "@nestjs/event-emitter";
+import { UpdateReadingHistoryDto } from "@evergarden/shared/lib/common-types";
+
+class HistoryChange extends UpdateReadingHistoryDto {
+  lastVisit: Date;
+}
 
 @Injectable()
-export class UpdateReadingHistoryService extends DelayedQueueService<number> {
+export class UpdateBatchHistoryService extends DelayedQueueService<number> {
   constructor(
     @InjectRepository(ReadingHistory) private readingHistoryRepository: Repository<ReadingHistory>,
     @Inject(forwardRef(() => UserService))
@@ -25,7 +31,12 @@ export class UpdateReadingHistoryService extends DelayedQueueService<number> {
     super();
   }
 
-  protected async onExecute(id: number, value: InternalUpdateReadingHistoryDto[]): Promise<void> {
+  @OnEvent(HistoryChangedEvent.name, { async: true })
+  async handleHistoryChangedEvent(event: HistoryChangedEvent) {
+    await this.enqueue(event.userId, { ...event.change, lastVisit: event.triggerAt });
+  }
+
+  protected async onExecute(id: number, value: HistoryChange[]): Promise<void> {
     await this.readingHistoryRepository.manager.transaction(async (entityManager) => {
       for (const updateItem of value) {
         const foundHistory = await entityManager.findOne(ReadingHistory, {
@@ -50,7 +61,7 @@ export class UpdateReadingHistoryService extends DelayedQueueService<number> {
     });
   }
 
-  protected onMerge(current: any, newValue: InternalUpdateReadingHistoryDto): any {
+  protected onMerge(current: any, newValue: HistoryChange): any {
     if (!current) {
       return [newValue];
     }
@@ -60,7 +71,7 @@ export class UpdateReadingHistoryService extends DelayedQueueService<number> {
     return this.mergeArray([current], newValue);
   }
 
-  private mergeArray(current: InternalUpdateReadingHistoryDto[], newValue: InternalUpdateReadingHistoryDto) {
+  private mergeArray(current: HistoryChange[], newValue: HistoryChange) {
     const foundIndex = current.findIndex((item) => item.storyId === newValue.storyId);
     if (foundIndex >= 0) {
       current[foundIndex] = { ...current[foundIndex], ...newValue };

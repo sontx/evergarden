@@ -4,11 +4,6 @@ import { Repository } from "typeorm";
 import { ReadingHistory } from "./reading-history.entity";
 import { UserService } from "../user/user.service";
 import { StoryService } from "../story/story.service";
-import { ConfigService } from "@nestjs/config";
-import { UpdateReadingHistoryDto } from "@evergarden/shared";
-import { UpdateReadingHistoryService } from "./update-reading-history.service";
-import { InternalUpdateReadingHistoryDto } from "./internal-update-reading-history.dto";
-import { ViewCountIdentity, ViewCountService } from "../story/view-count.service";
 
 @Injectable()
 export class ReadingHistoryService {
@@ -18,27 +13,10 @@ export class ReadingHistoryService {
     private userService: UserService,
     @Inject(forwardRef(() => StoryService))
     private storyService: StoryService,
-    private configService: ConfigService,
-    private updateReadingService: UpdateReadingHistoryService,
-    @Inject(forwardRef(() => ViewCountService))
-    private viewCountService: ViewCountService,
   ) {}
 
   async deleteReadingHistory(id: number) {
     await this.readingHistoryRepository.delete(id);
-  }
-
-  async updateStoryHistory(userId: number, storyHistory: UpdateReadingHistoryDto) {
-    const newHistory: InternalUpdateReadingHistoryDto = {
-      ...storyHistory,
-      lastVisit: new Date(),
-    };
-    this.updateReadingService.enqueue(userId, newHistory);
-    if (isFinite(storyHistory.currentChapterNo)) {
-      this.viewCountService.enqueue(new ViewCountIdentity(userId, storyHistory.storyId), {
-        triggerAt: newHistory.lastVisit,
-      });
-    }
   }
 
   async getStoryHistory(userId: number, storyId: number): Promise<ReadingHistory> {
