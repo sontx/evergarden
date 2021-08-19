@@ -2,6 +2,7 @@ export default {
   id: 'en-US',
   error404: 'What you’re looking for may have been misplaced in Long Term Memory.',
   error500: 'Sadly, the website had a bad day.',
+  error403: "Go back! you don't have power here.",
   description: "Let's explore mysterious worlds",
   pageTitleHome: "Home",
   pageTitleLogin: "Login",
@@ -37,4 +38,5 @@ export default {
   storyFormPublishDescription: "Everyone else can read this story",
   chapterFormPublishTitle: "Published",
   chapterFormPublishDescription: "Everyone else can read this chapter",
+  goBackButton: "Go back"
 };
