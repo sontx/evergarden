@@ -1,6 +1,6 @@
 import { ReadingMobile } from "../../features/chapter/ReadingMobile";
-import { useHistory, useParams } from "react-router-dom";
-import React, { useCallback, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchStoryAsync, selectStory } from "../../features/story/storySlice";
 import {
@@ -9,8 +9,12 @@ import {
   selectErrorMessage,
   selectStatus,
 } from "../../features/chapter/chapterSlice";
+import {
+  selectErrorMessage as selectStoryErrorMessage,
+  selectStatus as selectStoryStatus,
+} from "../../features/story/storySlice";
 import { AppHeader } from "../../components/AppHeader";
-import { Button, Content, Icon } from "rsuite";
+import { Button, Content } from "rsuite";
 import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -21,10 +25,18 @@ import { selectIsLoggedIn } from "../../features/auth/authSlice";
 import { withCachedNextChapter } from "./withCachedNextChapter";
 import { withReadingHistorySync } from "./withReadingHistorySync";
 import { withTracker } from "./withTracker";
-import { openModal } from "../../components/EnhancedModal";
+import { withHttpErrorCatch } from "../../HOCs/withHttpErrorCatch";
 
 const CachedReading = withCachedNextChapter(withTracker(ReadingMobile));
 const ReadingWrapper = withReadingHistorySync(CachedReading);
+function ErrorPanel({ goBack }: { goBack: () => void }) {
+  return (
+    <Button className="center-thing" onClick={goBack} appearance="primary">
+      <FormattedMessage id="goBackButton" />
+    </Button>
+  );
+}
+const WrapperErrorPanel = withHttpErrorCatch(ErrorPanel);
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
@@ -34,9 +46,10 @@ export function Reading() {
   const readingFont = useAppSelector(selectReadingFont);
   const chapter = useAppSelector(selectChapter);
   const story = useAppSelector(selectStory);
-  const status = useAppSelector(selectStatus);
-  const errorMessage = useAppSelector(selectErrorMessage);
-  const history = useHistory();
+  const chapterStatus = useAppSelector(selectStatus);
+  const chapterErrorMessage = useAppSelector(selectErrorMessage);
+  const storyStatus = useAppSelector(selectStoryStatus);
+  const storyErrorMessage = useAppSelector(selectStoryErrorMessage);
 
   useEffect(() => {
     if (!story || story.url !== url) {
@@ -50,30 +63,6 @@ export function Reading() {
       ? chapter
       : undefined;
 
-  const goBack = useCallback(() => {
-    history.goBack()
-  }, [history]);
-
-  useEffect(() => {
-    if (status === "error" && errorMessage) {
-      openModal({
-        title: errorMessage.code,
-        message: errorMessage.prettierMessage,
-        ok: intl.formatMessage({ id: "goBackButton" }),
-        className: "model--mobile",
-        icon: (
-          <Icon
-            icon="remind"
-            style={{
-              color: "#ffb300",
-            }}
-          />
-        ),
-        onOk: goBack,
-      });
-    }
-  }, [status, errorMessage, intl, history, goBack]);
-
   useEffect(() => {
     if (showStory) {
       dispatch(fetchChapterAsync({ storyId: showStory.id, chapterNo }));
@@ -85,16 +74,21 @@ export function Reading() {
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppHeader />
       <Content>
-        {status !== "error" ? (
+        {chapterStatus !== "error" && storyStatus !== "error" ? (
           isLoggedIn ? (
             <ReadingWrapper story={showStory} chapter={showChapter} />
           ) : (
             <CachedReading story={showStory} chapter={showChapter} />
           )
         ) : (
-          <Button className="center-thing" onClick={goBack} appearance="primary">
-            <FormattedMessage id="goBackButton" />
-          </Button>
+          <WrapperErrorPanel
+            status="error"
+            errorMessage={
+              chapterStatus === "error"
+                ? chapterErrorMessage
+                : storyErrorMessage
+            }
+          />
         )}
       </Content>
       <AppFooter />

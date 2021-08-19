@@ -2,7 +2,12 @@ import { StoryPreviewMobile } from "../../features/story/StoryPreviewMobile";
 import { useParams } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchStoryAsync, selectStory } from "../../features/story/storySlice";
+import {
+  fetchStoryAsync,
+  selectErrorMessage,
+  selectStatus,
+  selectStory,
+} from "../../features/story/storySlice";
 import { AppHeader } from "../../components/AppHeader";
 import { Content } from "rsuite";
 import { AppFooter } from "../../components/AppFooter";
@@ -10,6 +15,9 @@ import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
 import { useStoryHistory } from "../../features/histories/useStoryHistory";
+import { withHttpErrorCatch } from "../../HOCs/withHttpErrorCatch";
+
+const WrapperStoryPreview = withHttpErrorCatch(StoryPreviewMobile);
 
 export function Story() {
   const { url } = useParams() as any;
@@ -17,6 +25,8 @@ export function Story() {
   const intl = useIntl();
   const fetchedStory = useAppSelector(selectStory);
   const story = useStoryHistory(fetchedStory);
+  const status = useAppSelector(selectStatus);
+  const errorMessage = useAppSelector(selectErrorMessage);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,7 +40,11 @@ export function Story() {
       <SEO title={intl.formatMessage({ id: "pageTitleStory" })} />
       <AppHeader />
       <Content>
-        <StoryPreviewMobile story={showStory} />
+        <WrapperStoryPreview
+          story={showStory}
+          status={status}
+          errorMessage={errorMessage}
+        />
       </Content>
       <AppFooter />
     </AppContainer>
