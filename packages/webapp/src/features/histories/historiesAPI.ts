@@ -5,7 +5,10 @@ import {
 } from "@evergarden/shared";
 
 export async function updateStoryHistory(history: UpdateReadingHistoryDto) {
-  await api.put("/api/histories", history);
+  const blob = new Blob([JSON.stringify(history)], {
+    type: "application/json",
+  });
+  navigator.sendBeacon("/api/histories", blob);
 }
 
 export async function fetchReadingHistories(): Promise<GetReadingHistoryDto[]> {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Put, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Param, ParseIntPipe, Post, Req, UseGuards } from "@nestjs/common";
 import { ReadingHistoryService } from "./reading-history.service";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
@@ -6,7 +6,6 @@ import { Role } from "../auth/role/roles.decorator";
 import { UpdateReadingHistoryDto } from "@evergarden/shared";
 import { ReadingHistory } from "./reading-history.entity";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { HistoryChangedEvent } from "../events/history-changed.event";
 
 @Controller("histories")
@@ -37,9 +36,9 @@ export class ReadingHistoryController {
     return history;
   }
 
-  @Put()
+  @Post()
   @UseGuards(JwtGuard)
-  @JwtConfig({ anonymous: true })
+  @Role("user")
   async updateStoryHistory(@Req() req, @Body() storyHistory: UpdateReadingHistoryDto) {
     const { id } = req.user || {};
     this.eventEmitter.emitAsync(HistoryChangedEvent.name, new HistoryChangedEvent(storyHistory, new Date(), id)).then();
