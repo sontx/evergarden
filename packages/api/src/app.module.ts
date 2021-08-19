@@ -20,8 +20,15 @@ import { Author } from "./author/author.entity";
 import { Genre } from "./genre/genre.entity";
 import { ReadingHistory } from "./reading-history/reading-history.entity";
 import { StorageModule } from "./storage/storage.module";
-import { RedisModule } from "nestjs-redis";
+import { RedisModule, RedisService } from "nestjs-redis";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { NestSessionOptions, SessionModule } from "nestjs-session";
+import * as ConnectRedis from "connect-redis";
+import * as session from "express-session";
+import { nanoid } from "nanoid";
+import ms = require("ms");
+
+const RedisStore = ConnectRedis(session);
 
 @Module({
   imports: [
@@ -61,6 +68,27 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
           host: configService.get("database.redis.host"),
           port: configService.get("database.redis.port"),
           name: "evergarden",
+        };
+      },
+    }),
+    SessionModule.forRootAsync({
+      imports: [ConfigModule, RedisModule],
+      inject: [ConfigService, RedisService],
+      useFactory: async (configService: ConfigService, redisService: RedisService): Promise<NestSessionOptions> => {
+        return {
+          session: {
+            secret: configService.get("session.secret"),
+            store: new RedisStore({
+              client: redisService.getClient("evergarden"),
+              disableTouch: true,
+              ttl: ms(configService.get<string>("session.ttl")) / 1000,
+            }),
+            saveUninitialized: false,
+            resave: false,
+            genid(): string {
+              return nanoid();
+            },
+          },
         };
       },
     }),

@@ -45,13 +45,17 @@ export default () => ({
   },
   jwt: {
     auth: {
-      secret: "you never know",
-      expires: "60m",
+      secret: process.env.JWT_AUTH_SECRET || "you never know",
+      expires: process.env.JWT_AUTH_EXPIRES || "60m",
     },
     refresh: {
-      secret: "now you know",
-      expires: "180 days",
+      secret: process.env.JWT_REFRESH_SECRET || "now you know",
+      expires: process.env.JWT_REFRESH_EXPIRES || "180 days",
     },
+  },
+  session: {
+    secret: process.env.SESSION_SECRET || "you have just known",
+    ttl: process.env.SESSION_TTL || "1d"
   },
   settings: {
     sizing: {
@@ -74,5 +78,6 @@ export default () => ({
       minReading: "20s",
       minReadingInterval: "60m",
     },
+
   },
 });

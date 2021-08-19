@@ -1,12 +1,9 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
-import JwtGuard from "./auth/jwt/jwt.guard";
-import { RolesGuard } from "./auth/role/roles.guard";
+import { Controller, Get, Session } from "@nestjs/common";
 
 @Controller()
 export class AppController {
-  @UseGuards(JwtGuard, RolesGuard)
-  @Get("hello")
-  getHello(): string {
-    return "hello";
+  @Get("ping")
+  getHello(@Session() session: Record<string, any>): string {
+    return "pong";
   }
 }
