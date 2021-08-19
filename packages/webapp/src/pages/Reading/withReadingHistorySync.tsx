@@ -1,15 +1,13 @@
 import React, { ElementType, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectChapter } from "../../features/chapter/chapterSlice";
-import { selectStory } from "../../features/story/storySlice";
 import { useEndOfSessionWatch } from "../../hooks/useEndOfSessionWatch";
 import { updateStoryHistoryAsync } from "../../features/histories/historiesSlice";
 
 export function withReadingHistorySync(Component: ElementType) {
-  return (props: any) => {
+  return ({ story, ...rest }: any) => {
     const dispatch = useAppDispatch();
     const chapter = useAppSelector(selectChapter);
-    const story = useAppSelector(selectStory);
     const isEndOfSession = useEndOfSessionWatch();
 
     useEffect(() => {
@@ -23,7 +21,7 @@ export function withReadingHistorySync(Component: ElementType) {
                 window.scrollY / document.documentElement.scrollHeight,
             }),
           );
-        }
+        };
 
         if (isEndOfSession) {
           updateHistory();
@@ -54,6 +52,6 @@ export function withReadingHistorySync(Component: ElementType) {
       }
     }, [chapter, dispatch, story]);
 
-    return <Component {...props} />;
+    return <Component {...rest} story={story} />;
   };
 }

@@ -1,9 +1,9 @@
-import { Controller, Get, Session } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 
 @Controller()
 export class AppController {
   @Get("ping")
-  getHello(@Session() session: Record<string, any>): string {
+  getHello(): string {
     return "pong";
   }
 }

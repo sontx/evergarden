@@ -73,11 +73,4 @@ export default () => ({
       readingLineSpacing: "M",
     },
   },
-  policy: {
-    viewCount: {
-      minReading: "20s",
-      minReadingInterval: "60m",
-    },
-
-  },
 });

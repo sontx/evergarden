@@ -9,7 +9,6 @@ import { SearchModule } from "../search/search.module";
 import { AuthorModule } from "../author/author.module";
 import { GenreModule } from "../genre/genre.module";
 import { StorageModule } from "../storage/storage.module";
-import { ViewCountService } from "./view-count.service";
 import { VoteService } from "./vote.service";
 
 @Module({
@@ -23,7 +22,7 @@ import { VoteService } from "./vote.service";
     StorageModule,
   ],
   controllers: [StoryController],
-  providers: [StoryService, ViewCountService, VoteService],
-  exports: [StoryService, VoteService, ViewCountService],
+  providers: [StoryService, VoteService],
+  exports: [StoryService, VoteService],
 })
 export class StoryModule {}

@@ -18,8 +18,9 @@ import { selectReadingFont } from "../../features/settings/settingsSlice";
 import { selectIsLoggedIn } from "../../features/auth/authSlice";
 import { withCachedNextChapter } from "./withCachedNextChapter";
 import { withReadingHistorySync } from "./withReadingHistorySync";
+import { withTracker } from "./withTracker";
 
-const CachedReading = withCachedNextChapter(ReadingMobile);
+const CachedReading = withCachedNextChapter(withTracker(ReadingMobile));
 const ReadingWrapper = withReadingHistorySync(CachedReading);
 
 export function Reading() {

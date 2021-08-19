@@ -26,6 +26,8 @@ import { NestSessionOptions, SessionModule } from "nestjs-session";
 import * as ConnectRedis from "connect-redis";
 import * as session from "express-session";
 import { nanoid } from "nanoid";
+import { ViewcountModule } from './viewcount/viewcount.module';
+import { TrackerModule } from './tracker/tracker.module';
 import ms = require("ms");
 
 const RedisStore = ConnectRedis(session);
@@ -102,6 +104,8 @@ const RedisStore = ConnectRedis(session);
     AuthorModule,
     GenreModule,
     StorageModule,
+    ViewcountModule,
+    TrackerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
