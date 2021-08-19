@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Logger, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Response } from "express";
 import { AuthService } from "./auth.service";
 import JwtRefreshGuard from "./jwt-refresh/jwt-refresh.guard";
@@ -9,10 +9,12 @@ import { UserService } from "../user/user.service";
 
 @Controller("auth")
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private authService: AuthService, private userService: UserService) {}
 
   @Post()
-  async login(@Body() auth: Auth2Body | UserPass, @Res() res: Response) {
+  async login(@Body() auth: Auth2Body | UserPass, @Req() req, @Res() res: Response) {
     const user = this.isUserPass(auth) ? await this.authService.login(auth) : await this.loginWithAuth2(auth);
 
     if (!user) {
@@ -23,8 +25,13 @@ export class AuthController {
     await this.userService.setCurrentRefreshToken(refreshToken, user.id);
     const accessTokenCookie = this.authService.getAccessTokenCookie(user);
 
-    res.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
-    res.send(this.authService.getAuthenticatedUser(user));
+    req.session.regenerate(err => {
+      if (err) {
+        this.logger.error(`Error while regenerate new session: ${err}`);
+      }
+      res.setHeader("Set-Cookie", [accessTokenCookie, refreshTokenCookie]);
+      res.send(this.authService.getAuthenticatedUser(user));
+    });
   }
 
   private async loginWithAuth2(auth: Auth2Body): Promise<User> {
@@ -73,8 +80,14 @@ export class AuthController {
 
   @Post("logout")
   @UseGuards(JwtGuard)
-  async logout(@Req() req, @Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req, @Res() res: Response) {
     await this.userService.removeRefreshToken(req.user.id);
-    res.setHeader("Set-Cookie", this.authService.getCookiesForLogOut());
+    req.session.regenerate((err) => {
+      if (err) {
+        this.logger.error(`Error while regenerate new session: ${err}`);
+      }
+      res.setHeader("Set-Cookie", this.authService.getCookiesForLogOut());
+      res.send();
+    });
   }
 }
