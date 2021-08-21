@@ -5,7 +5,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  Post,
   Put,
   Req,
   UnauthorizedException,
@@ -13,7 +12,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import { GetUserDto, mergeObjects, UpdateUserSettingsDto } from "@evergarden/shared";
+import { GetUserDto, mergeObjects, UpdateUserDto, UpdateUserSettingsDto } from "@evergarden/shared";
 import { UserService } from "./user.service";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
@@ -22,7 +21,6 @@ import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserStorageService } from "../storage/user-storage.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
-import { UpdateUserDto } from "@evergarden/shared";
 
 @Controller("users")
 export class UserController {
@@ -74,7 +72,7 @@ export class UserController {
     await this.userService.updateUser(user);
   }
 
-  @Post("avatar")
+  @Put("avatar")
   @UseInterceptors(FileInterceptor("file"))
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
