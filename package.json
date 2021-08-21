@@ -6,12 +6,13 @@
   "scripts": {
     "install": "lerna bootstrap",
     "build": "lerna run build && node copy.js",
+    "build:api": "lerna run build --ignore=@evergarden/webapp --parallel",
     "clean": "lerna run clean",
     "compile": "lerna run compile",
     "start": "lerna run start:dev --no-sort --parallel",
     "start:api": "lerna run start:dev --ignore=@evergarden/webapp --parallel",
     "start:webapp": "lerna run start:dev --ignore=@evergarden/api --parallel",
-    "docker:dev": "lerna run docker:dev --parallel",
+    "docker:dev": "npm run build:api && lerna run docker:dev --parallel",
     "publish": "lerna publish",
     "test": "lerna run test",
     "killnode": "taskkill /im node.exe /f /t"
