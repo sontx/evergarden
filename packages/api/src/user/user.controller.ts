@@ -3,7 +3,6 @@ import {
   Controller,
   ForbiddenException,
   Get,
-  Logger,
   NotFoundException,
   Param,
   Put,
@@ -20,8 +19,6 @@ import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 
 @Controller("users")
 export class UserController {
-  private readonly logger = new Logger(UserController.name);
-
   constructor(private userService: UserService) {}
 
   @Get(":id")
@@ -41,7 +38,7 @@ export class UserController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Role("user")
-  @Put("current/settings")
+  @Put("settings")
   async updateUserSettings(@Req() req, @Body() settings: UpdateUserSettingsDto) {
     const { id } = req.user || {};
     const user = await this.userService.getById(id);
