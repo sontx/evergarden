@@ -135,14 +135,6 @@ export class CreateStoryDto {
   @IsOptional()
   description?: string;
 
-  @IsOptional()
-  @IsString()
-  thumbnail?: string;
-
-  @IsOptional()
-  @IsString()
-  cover?: string;
-
   @IsString()
   @Matches(/ongoing|full/s)
   status: StoryStatus;
@@ -169,14 +161,6 @@ export class UpdateStoryDto {
   @IsString()
   @IsOptional()
   description?: string;
-
-  @IsOptional()
-  @IsString()
-  thumbnail?: string;
-
-  @IsOptional()
-  @IsString()
-  cover?: string;
 
   @IsString()
   @IsOptional()

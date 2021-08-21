@@ -21,7 +21,6 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { StoryUpdatedEvent } from "../events/story-updated.event";
 import { StoryDeletedEvent } from "../events/story-deleted.event";
 import { StoryCreatedEvent } from "../events/story-created.event";
-import { StoryStorageService } from "../storage/story-storage.service";
 
 @Injectable()
 export class StoryService {
@@ -33,7 +32,6 @@ export class StoryService {
     private storySearchService: StorySearchService,
     private authorService: AuthorService,
     private genreService: GenreService,
-    private storageService: StoryStorageService,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private eventEmitter: EventEmitter2,
@@ -170,9 +168,6 @@ export class StoryService {
     const user = await this.userService.getById(userId);
     const authors = await this.authorService.syncAuthors(updateStory.authors || []);
     const genres = await this.genreService.getValidGenres(updateStory.genres || []);
-    if (currentStory.thumbnail && updateStory.thumbnail === "") {
-      await this.storageService.remove(currentStory.id);
-    }
     await this.storyRepository.save({
       ...updateStory,
       id: currentStory.id,

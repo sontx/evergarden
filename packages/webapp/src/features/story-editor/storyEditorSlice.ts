@@ -5,7 +5,12 @@ import {
 } from "@evergarden/shared";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ProcessingStatus } from "../../utils/types";
-import { createStory, updateStory, uploadThumbnail } from "./storyEditorAPI";
+import {
+  createStory,
+  deleteStoryCover,
+  updateStory,
+  updateStoryCover,
+} from "./storyEditorAPI";
 import { RootState } from "../../app/store";
 import { fetchStory } from "../story/storyAPI";
 import { catchRequestError } from "../../utils/api";
@@ -38,11 +43,7 @@ export const createStoryAsync = createAsyncThunk(
       async () => {
         const newStory = await createStory(story);
         if (uploadFile) {
-          const uploadedFile = await uploadThumbnail(newStory.id, uploadFile);
-          return await updateStory(newStory.id, {
-            thumbnail: uploadedFile.thumbnail,
-            cover: uploadedFile.cover,
-          });
+          return await updateStoryCover(newStory.id, uploadFile);
         }
         return newStory;
       },
@@ -68,22 +69,13 @@ export const updateStoryAsync = createAsyncThunk(
   ) => {
     return catchRequestError(
       async () => {
+        const updatedStory = await updateStory(id, story);
         if (uploadFile) {
-          const uploadedFile = await uploadThumbnail(id, uploadFile);
-          return await updateStory(id, {
-            ...story,
-            thumbnail: uploadedFile.thumbnail,
-            cover: uploadedFile.cover,
-          });
-        }
-        if (uploadFile === null) {
-          return await updateStory(id, {
-            ...story,
-            thumbnail: "",
-            cover: "",
-          });
+          return await updateStoryCover(id, uploadFile);
+        } else if (uploadFile === null) {
+          return await deleteStoryCover(id);
         } else {
-          return await updateStory(id, story);
+          return updatedStory;
         }
       },
       rejectWithValue,

@@ -10,12 +10,15 @@ import {
   NotFoundException,
   Param,
   ParseArrayPipe,
+  ParseIntPipe,
   Post,
   Put,
   Query,
   Req,
   UnauthorizedException,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { StoryService } from "./story.service";
 import {
@@ -23,6 +26,7 @@ import {
   GetStoryDto,
   PaginationResult,
   StoryCategory,
+  StorySearchBody,
   toInt,
   UpdateStoryDto,
 } from "@evergarden/shared";
@@ -33,7 +37,10 @@ import { ReadingHistoryService } from "../reading-history/reading-history.servic
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
 import { isGod, isNumber, isOwnerOrGod } from "../utils";
-import { StorySearchBody } from "@evergarden/shared";
+import { StoryStorageService } from "../storage/story-storage.service";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { BufferedFile } from "../storage/file.model";
+import { Story } from "./story.entity";
 
 @Controller("stories")
 export class StoryController {
@@ -41,6 +48,7 @@ export class StoryController {
     private readonly storyService: StoryService,
     @Inject(forwardRef(() => ReadingHistoryService)) private readingHistoryService: ReadingHistoryService,
     @Inject(forwardRef(() => UserService)) private userService: UserService,
+    private storyStorageService: StoryStorageService,
   ) {}
 
   @Get()
@@ -136,26 +144,20 @@ export class StoryController {
   @Put(":id")
   @Role("user")
   @UseGuards(JwtGuard, RolesGuard)
-  async updateStory(@Param("id") id: number, @Body() story: UpdateStoryDto, @Req() req): Promise<GetStoryDto> {
+  async updateStory(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() story: UpdateStoryDto,
+    @Req() req,
+  ): Promise<GetStoryDto> {
     if (isNumber(story.title)) {
       throw new BadRequestException("Story title can't only contain numbers");
     }
-    const currentStory = await this.storyService.getStory(id);
-    if (currentStory) {
-      if (isOwnerOrGod(req, currentStory)) {
-        const storyData = await this.storyService.updateStory(currentStory, story, req.user);
-        return this.storyService.toDto(storyData);
-      }
-      throw new ForbiddenException();
-    } else {
-      throw new NotFoundException();
-    }
+    const currentStory = await this.getAndCheckStoryPermission(id, req);
+    const storyData = await this.storyService.updateStory(currentStory, story, req.user);
+    return this.storyService.toDto(storyData);
   }
 
-  @Delete(":id")
-  @Role("user")
-  @UseGuards(JwtGuard, RolesGuard)
-  async deleteStory(@Param("id") id: number, @Req() req) {
+  private async getAndCheckStoryPermission(id: number, req): Promise<Story> {
     const story = await this.storyService.getStory(id);
     if (!story) {
       throw new NotFoundException();
@@ -165,6 +167,40 @@ export class StoryController {
       throw new ForbiddenException();
     }
 
+    return story;
+  }
+
+  @Delete(":id")
+  @Role("user")
+  @UseGuards(JwtGuard, RolesGuard)
+  async deleteStory(@Param("id", ParseIntPipe) id: number, @Req() req) {
+    const story = await this.getAndCheckStoryPermission(id, req);
     await this.storyService.deleteStory(story.id);
+  }
+
+  @Put(":id/cover")
+  @Role("user")
+  @UseGuards(JwtGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor("file"))
+  async updateCover(@Param("id", ParseIntPipe) id: number, @UploadedFile() file: BufferedFile, @Req() req) {
+    const story = await this.getAndCheckStoryPermission(id, req);
+    const uploadedData = await this.storyStorageService.upload(file, id);
+    story.thumbnail = uploadedData.thumbnail;
+    story.cover = uploadedData.cover;
+    await this.storyService.updateStory(story, story, req.user);
+    return this.storyService.toDto(story);
+  }
+
+  @Delete(":id/cover")
+  @Role("user")
+  @UseGuards(JwtGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor("file"))
+  async deleteCover(@Param("id", ParseIntPipe) id: number, @Req() req) {
+    const story = await this.getAndCheckStoryPermission(id, req);
+    await this.storyStorageService.remove(id);
+    story.thumbnail = "";
+    story.cover = "";
+    await this.storyService.updateStory(story, story, req.user);
+    return this.storyService.toDto(story);
   }
 }

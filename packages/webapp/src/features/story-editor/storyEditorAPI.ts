@@ -18,16 +18,21 @@ export async function updateStory(
   return response.data;
 }
 
-export async function uploadThumbnail(
+export async function updateStoryCover(
   storyId: number,
   file: File,
 ): Promise<{ thumbnail: string; cover: string }> {
   const formData = new FormData();
   formData.append("file", file);
-  const response = await api.post(`/api/storage/stories/${storyId}`, formData, {
+  const response = await api.put(`/api/stories/${storyId}/cover`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+  return response.data;
+}
+
+export async function deleteStoryCover(id: number): Promise<GetStoryDto> {
+  const response = await api.delete(`/api/stories/${id}/cover`);
   return response.data;
 }
