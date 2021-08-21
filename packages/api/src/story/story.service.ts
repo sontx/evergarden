@@ -15,13 +15,13 @@ import {
 import StorySearchService from "../search/story-search.service";
 import { AuthorService } from "../author/author.service";
 import { GenreService } from "../genre/genre.service";
-import { StorageService } from "../storage/storage.service";
 import { User } from "../user/user.entity";
 import { UserService } from "../user/user.service";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { StoryUpdatedEvent } from "../events/story-updated.event";
 import { StoryDeletedEvent } from "../events/story-deleted.event";
 import { StoryCreatedEvent } from "../events/story-created.event";
+import { StoryStorageService } from "../storage/story-storage.service";
 
 @Injectable()
 export class StoryService {
@@ -33,7 +33,7 @@ export class StoryService {
     private storySearchService: StorySearchService,
     private authorService: AuthorService,
     private genreService: GenreService,
-    private storageService: StorageService,
+    private storageService: StoryStorageService,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private eventEmitter: EventEmitter2,

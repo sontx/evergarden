@@ -5,7 +5,6 @@ import genresDataset from "./genres.dataset";
 import { GenreService } from "./genre/genre.service";
 import { UserService } from "./user/user.service";
 import { ConfigService } from "@nestjs/config";
-import { StorageService } from "./storage/storage.service";
 import { Role } from "@evergarden/shared";
 import AuthorSearchService from "./search/author-search.service";
 import { AuthorService } from "./author/author.service";
@@ -22,7 +21,6 @@ export class AppService implements OnApplicationBootstrap {
     private authorService: AuthorService,
     private userService: UserService,
     private configService: ConfigService,
-    private storageService: StorageService,
   ) {}
 
   async onApplicationBootstrap() {
@@ -37,19 +35,15 @@ export class AppService implements OnApplicationBootstrap {
     this.logger.debug("Synchronizing initial users...");
     await this.initializeUsers();
     this.logger.debug("Synchronized initial users!");
-
-    this.logger.debug("Initializing storage service...");
-    await this.storageService.initialize();
-    this.logger.debug("Initialized storage service!");
   }
 
   private async initializeSearchEngine() {
-    if (!await this.storySearchService.indexExists()) {
+    if (!(await this.storySearchService.indexExists())) {
       const stories = await this.storyService.getAll();
       await this.storySearchService.createIndex(stories);
     }
 
-    if (!await this.authorSearchService.indexExists()) {
+    if (!(await this.authorSearchService.indexExists())) {
       const authors = await this.authorService.getAll();
       await this.authorSearchService.createIndex(authors);
     }

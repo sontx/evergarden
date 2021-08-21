@@ -1,25 +1,20 @@
-import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import { BadRequestException, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import * as sharp from "sharp";
-import { Sharp } from "sharp";
-import imageSize from "image-size";
 import * as imagemin from "imagemin";
 import * as imageminJpegtran from "imagemin-jpegtran";
 import imageminPngquant from "imagemin-pngquant";
 import { Client } from "minio";
 import { BufferedFile } from "./file.model";
-import { ISizeCalculationResult } from "image-size/dist/types/interface";
+import { Sharp } from "sharp";
 
 const DEFAULT_REGION = "ap-southeast-1";
-const THUMBNAIL_BUCKET = "thumbnails";
-const COVER_BUCKET = "covers";
 
-@Injectable()
-export class StorageService {
+export abstract class StorageService {
   private readonly logger = new Logger(StorageService.name);
-  private readonly client: Client;
+  protected readonly client: Client;
+  private initialized = false;
 
-  constructor(private configService: ConfigService) {
+  protected constructor(protected readonly configService: ConfigService) {
     this.client = new Client({
       endPoint: configService.get("storage.minio.host"),
       port: configService.get("storage.minio.port"),
@@ -29,87 +24,16 @@ export class StorageService {
     });
   }
 
-  async initialize() {
-    await this.createBucket(THUMBNAIL_BUCKET, true);
-    await this.createBucket(COVER_BUCKET, true);
-  }
+  protected abstract onInitialize(): Promise<void>;
 
-  async upload(
-    file: BufferedFile,
-    storyId: number,
-  ): Promise<{
-    thumbnail: string;
-    cover: string;
-  }> {
-    if (!(file.mimetype.includes("jpeg") || file.mimetype.includes("png"))) {
-      throw new BadRequestException("File type not supported");
-    }
-
-    const info = imageSize(file.buffer);
-    let originSharp = sharp(file.buffer);
-    let coverSharp: Sharp;
-    let thumbnailSharp: Sharp;
-
-    try {
-      // Convert file to jpg if needed
-      if (info.type === "png") {
-        originSharp = originSharp.toFormat("jpg");
-      }
-
-      const fileName = this.makeFileName(storyId);
-      const metaData = {
-        "Content-Type": "image/jpeg",
-      };
-
-      coverSharp = await this.saveCover(originSharp, info, fileName, metaData);
-      thumbnailSharp = await this.saveThumbnail(originSharp, fileName, metaData);
-
-      return {
-        cover: `${COVER_BUCKET}/${fileName}`,
-        thumbnail: `${THUMBNAIL_BUCKET}/${fileName}`,
-      };
-    } catch (e) {
-      console.log(e);
-      throw new BadRequestException("Error uploading file");
-    } finally {
-      originSharp?.destroy();
-      coverSharp?.destroy();
-      thumbnailSharp?.destroy();
+  protected async initializeIfNeeded() {
+    if (this.initialized) {
+      this.initialized = true;
+      await this.onInitialize();
     }
   }
 
-  private makeFileName(storyId: number): string {
-    return `${storyId}.jpg`;
-  }
-
-  private async saveCover(originSharp: Sharp, info: ISizeCalculationResult, fileName: string, metaData: any) {
-    const maxCoverWidth = this.configService.get<number>("settings.sizing.cover.maxWidth");
-    const coverSharp =
-      info.width > maxCoverWidth
-        ? originSharp.jpeg({ quality: 100, progressive: true }).resize({
-            width: maxCoverWidth,
-            height: Math.round((info.height * maxCoverWidth) / info.width),
-          })
-        : originSharp;
-    const coverBuffer = await this.optimizeImage(await coverSharp.toBuffer());
-    await this.client.putObject(COVER_BUCKET, fileName, coverBuffer, metaData);
-    return coverSharp;
-  }
-
-  private async saveThumbnail(originSharp: Sharp, fileName: string, metaData: any) {
-    const thumbnailWidth = this.configService.get<number>("settings.sizing.thumbnail.width");
-    const thumbnailHeight = this.configService.get<number>("settings.sizing.thumbnail.height");
-    const thumbnailSharp = originSharp.resize({
-      width: thumbnailWidth,
-      height: thumbnailHeight,
-      fit: "cover",
-    });
-    const thumbnailBuffer = await this.optimizeImage(await thumbnailSharp.toBuffer());
-    await this.client.putObject(THUMBNAIL_BUCKET, fileName, thumbnailBuffer, metaData);
-    return thumbnailSharp;
-  }
-
-  private async optimizeImage(content: Buffer): Promise<Buffer> {
+  protected async optimizeImage(content: Buffer): Promise<Buffer> {
     return await imagemin.buffer(content, {
       plugins: [
         imageminJpegtran(),
@@ -120,7 +44,33 @@ export class StorageService {
     });
   }
 
-  private async createBucket(name: string, publish: boolean) {
+  protected validateFileImage(file: BufferedFile) {
+    if (!(file.mimetype.includes("jpeg") || file.mimetype.includes("png"))) {
+      throw new BadRequestException("File type not supported");
+    }
+  }
+
+  protected async resizeImage(sharp: Sharp, preferWidth: number, preferHeight?: number): Promise<Sharp> {
+    const metadata = await sharp.metadata();
+    if (preferHeight === undefined) {
+      return metadata.width > preferWidth
+        ? sharp.resize({
+            width: preferWidth,
+            height: Math.round((metadata.height * preferWidth) / metadata.width),
+          })
+        : sharp;
+    }
+    return sharp.resize({ width: preferWidth, height: preferHeight });
+  }
+
+  protected async saveImage(bucket: string, fileName: string, sharp: Sharp): Promise<void> {
+    const buffer = await this.optimizeImage(await sharp.toBuffer());
+    await this.client.putObject(bucket, fileName, buffer, {
+      "Content-Type": "image/jpeg",
+    });
+  }
+
+  protected async createBucketIfNeeded(name: string, publish: boolean) {
     if (await this.client.bucketExists(name)) {
       return;
     }
@@ -143,11 +93,5 @@ export class StorageService {
     }
 
     this.logger.debug(`Create new bucket ${name}, public policy: ${publish}`);
-  }
-
-  async remove(storyId: number) {
-    const fileName = this.makeFileName(storyId);
-    await this.client.removeObject(THUMBNAIL_BUCKET, fileName);
-    await this.client.removeObject(COVER_BUCKET, fileName);
   }
 }
