@@ -6,6 +6,12 @@ services:
     container_name: mysqldb
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 100M
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=evergarden
@@ -25,6 +31,14 @@ services:
       memlock:
         soft: -1
         hard: -1
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2G
+        reservations:
+          cpus: '0.25'
+          memory: 500M
     volumes:
       - ./data/elastic:/usr/share/elasticsearch/data
     ports:
@@ -37,6 +51,12 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elastic:9200
       ELASTICSEARCH_HOSTS: '["http://elastic:9200"]'
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 100M
   redis:
     image: redis:6.2.4-alpine
     command: redis-server
@@ -48,6 +68,12 @@ services:
       - ./data/redis/config:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+        reservations:
+          memory: 20M
   minio:
     image: minio/minio
     ports:
@@ -59,6 +85,12 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
       - ./data/minio:/data
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+        reservations:
+          memory: 50M
   api:
     build:
       context: .
@@ -73,6 +105,7 @@ services:
       - mysql
       - elastic
       - redis
+      - minio
     stdin_open: true
     tty: true
     ports:
