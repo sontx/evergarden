@@ -3,6 +3,5 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "webpack": false
-  },
-  "entryFile": "api/src/main.js"
+  }
 }

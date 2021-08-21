@@ -1,4 +1,4 @@
-import { UpdateReadingHistoryDto } from "@evergarden/shared/lib/common-types";
+import { UpdateReadingHistoryDto } from "@evergarden/shared";
 
 export class HistoryChangedEvent {
   constructor(

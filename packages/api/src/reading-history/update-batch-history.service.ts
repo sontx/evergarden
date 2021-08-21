@@ -9,7 +9,7 @@ import { ConfigService } from "@nestjs/config";
 import { VoteService } from "../story/vote.service";
 import { HistoryChangedEvent } from "../events/history-changed.event";
 import { OnEvent } from "@nestjs/event-emitter";
-import { UpdateReadingHistoryDto } from "@evergarden/shared/lib/common-types";
+import { UpdateReadingHistoryDto } from "@evergarden/shared";
 
 class HistoryChange extends UpdateReadingHistoryDto {
   lastVisit: Date;

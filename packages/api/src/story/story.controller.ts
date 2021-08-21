@@ -33,7 +33,7 @@ import { ReadingHistoryService } from "../reading-history/reading-history.servic
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
 import { isGod, isNumber, isOwnerOrGod } from "../utils";
-import { StorySearchBody } from "@evergarden/shared/lib/common-types";
+import { StorySearchBody } from "@evergarden/shared";
 
 @Controller("stories")
 export class StoryController {
