@@ -107,13 +107,30 @@ export abstract class StorageService {
     this.logger.debug(`Create new bucket ${name}, public policy: ${publish}`);
   }
 
-  protected removeFolder(name: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const pipe = this.client.listObjects(this.bucket, `${name}/`, true);
+  protected async removeFolder(name: string): Promise<void> {
+    const files = await this.getFiles(name);
+    for (const file of files) {
+      await this.client.removeObject(this.bucket, file);
+    }
+  }
+
+  protected async removeOldFilesAfterAction<T>(folderName: string, action: () => Promise<T>): Promise<T> {
+    const files = await this.getFiles(folderName);
+    const result = await action();
+    for (const file of files) {
+      await this.client.removeObject(this.bucket, file);
+    }
+    return result;
+  }
+
+  private getFiles(folderName: string): Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
+      const pipe = this.client.listObjects(this.bucket, `${folderName}/`, true);
+      const files = [];
       pipe.on("data", async (item) => {
-        await this.client.removeObject(this.bucket, item.name);
+        files.push(item.name);
       });
-      pipe.on("end", resolve);
+      pipe.on("end", () => resolve(files));
       pipe.on("error", reject);
     });
   }

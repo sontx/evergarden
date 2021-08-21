@@ -16,12 +16,15 @@ export class UserStorageService extends StorageService {
 
     const sharpObj = sharp(file.buffer);
     try {
-      const width = this.configService.get<number>("settings.sizing.avatar.width");
-      const height = this.configService.get<number>("settings.sizing.avatar.height");
-      const resizedSharp = await this.resizeImage(sharpObj, width, height);
-      const fileName = `${userId}/${this.randomImageFileName()}`;
-      await this.saveImage(fileName, resizedSharp);
-      return this.buildUrl(`${this.bucket}/${fileName}`);
+      const avatarFolder = `${userId}/avatar`;
+      return await this.removeOldFilesAfterAction(avatarFolder, async () => {
+        const width = this.configService.get<number>("settings.sizing.avatar.width");
+        const height = this.configService.get<number>("settings.sizing.avatar.height");
+        const resizedSharp = await this.resizeImage(sharpObj, width, height);
+        const fileName = `${avatarFolder}/${this.randomImageFileName()}`;
+        await this.saveImage(fileName, resizedSharp);
+        return this.buildUrl(`${this.bucket}/${fileName}`);
+      });
     } catch (e) {
       console.log(e);
       throw new BadRequestException("Error uploading file");
