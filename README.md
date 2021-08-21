@@ -53,7 +53,7 @@ MINIO_ROOT_PASSWORD=<password>
 ```
 Then
 ```bash
-docker-compose -f .\docker-compose.dev.yml up
+docker-compose -f docker-compose.dev.yml --compatibility up api
 ```
 The recommended way is start backend services by UI, see the image below:
 
