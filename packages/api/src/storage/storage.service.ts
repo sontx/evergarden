@@ -6,15 +6,18 @@ import imageminPngquant from "imagemin-pngquant";
 import { Client } from "minio";
 import { BufferedFile } from "./file.model";
 import { Sharp } from "sharp";
+import { nanoid } from "nanoid";
 
 const DEFAULT_REGION = "ap-southeast-1";
 
 export abstract class StorageService {
   private readonly logger = new Logger(StorageService.name);
   protected readonly client: Client;
+  protected readonly bucket: string;
+  private readonly publishBucket;
   private initialized = false;
 
-  protected constructor(protected readonly configService: ConfigService) {
+  protected constructor(protected readonly configService: ConfigService, bucket: string, publishBucket = true) {
     this.client = new Client({
       endPoint: configService.get("storage.minio.host"),
       port: configService.get("storage.minio.port"),
@@ -22,14 +25,19 @@ export abstract class StorageService {
       accessKey: configService.get("storage.minio.accessKey"),
       secretKey: configService.get("storage.minio.secretKey"),
     });
+    this.bucket = bucket;
+    this.publishBucket = publishBucket;
   }
 
-  protected abstract onInitialize(): Promise<void>;
+  protected buildUrl(name: string): string {
+    const host = this.configService.get("storage.host");
+    return `${host}/${name}`;
+  }
 
   protected async initializeIfNeeded() {
-    if (this.initialized) {
+    if (!this.initialized) {
       this.initialized = true;
-      await this.onInitialize();
+      await this.createBucketIfNeeded(this.bucket, this.publishBucket);
     }
   }
 
@@ -63,14 +71,18 @@ export abstract class StorageService {
     return sharp.resize({ width: preferWidth, height: preferHeight });
   }
 
-  protected async saveImage(bucket: string, fileName: string, sharp: Sharp): Promise<void> {
+  protected async saveImage(fileName: string, sharp: Sharp): Promise<void> {
     const buffer = await this.optimizeImage(await sharp.toBuffer());
-    await this.client.putObject(bucket, fileName, buffer, {
+    await this.client.putObject(this.bucket, fileName, buffer, {
       "Content-Type": "image/jpeg",
     });
   }
 
-  protected async createBucketIfNeeded(name: string, publish: boolean) {
+  protected randomImageFileName(): string {
+    return `${nanoid()}.jpg`;
+  }
+
+  private async createBucketIfNeeded(name: string, publish: boolean) {
     if (await this.client.bucketExists(name)) {
       return;
     }
@@ -93,5 +105,16 @@ export abstract class StorageService {
     }
 
     this.logger.debug(`Create new bucket ${name}, public policy: ${publish}`);
+  }
+
+  protected removeFolder(name: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const pipe = this.client.listObjects(this.bucket, `${name}/`, true);
+      pipe.on("data", async (item) => {
+        await this.client.removeObject(this.bucket, item.name);
+      });
+      pipe.on("end", resolve);
+      pipe.on("error", reject);
+    });
   }
 }

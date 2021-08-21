@@ -66,6 +66,10 @@ export default () => ({
       cover: {
         maxWidth: 768,
       },
+      avatar: {
+        width: 128,
+        height: 128
+      },
     },
     user: {
       readingFont: "Roboto",

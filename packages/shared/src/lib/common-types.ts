@@ -49,6 +49,13 @@ export interface GetUserDto {
   photoUrl?: string;
 }
 
+export class UpdateUserDto {
+  @IsString()
+  @MinLength(3)
+  @MaxLength(50)
+  fullName: string;
+}
+
 export type SizeType = 'S' | 'M' | 'L' | 'XL';
 
 export interface GetUserSettingsDto {

@@ -1,4 +1,4 @@
-import { GetUserDto, Role, OAuth2Provider } from "@evergarden/shared";
+import { GetUserDto, OAuth2Provider, Role } from "@evergarden/shared";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
@@ -41,6 +41,8 @@ export class UserService {
       user && {
         id: user.id,
         fullName: user.fullName,
+        email: user.email,
+        photoUrl: user.photoUrl,
       }
     );
   }
@@ -66,7 +68,7 @@ export class UserService {
   }
 
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number): Promise<User | undefined> {
-    const user = await this.userRepository.findOne({where: {id: userId}, select: ["id", "refreshToken"]})
+    const user = await this.userRepository.findOne({ where: { id: userId }, select: ["id", "refreshToken"] });
     if (!user || !user.refreshToken || !refreshToken) {
       return null;
     }

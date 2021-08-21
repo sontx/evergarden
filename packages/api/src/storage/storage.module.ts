@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
-import { StorageService } from "./storage.service";
 import { StorageController } from "./storage.controller";
 import { StoryStorageService } from "./story-storage.service";
+import { UserStorageService } from "./user-storage.service";
 
 @Module({
   imports: [],
-  providers: [StoryStorageService],
+  providers: [StoryStorageService, UserStorageService],
   controllers: [StorageController],
-  exports: [StoryStorageService],
+  exports: [StoryStorageService, UserStorageService],
 })
 export class StorageModule {}

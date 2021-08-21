@@ -6,18 +6,10 @@ import * as sharp from "sharp";
 import { Sharp } from "sharp";
 import { StorageService } from "./storage.service";
 
-const THUMBNAIL_BUCKET = "thumbnails";
-const COVER_BUCKET = "covers";
-
 @Injectable()
 export class StoryStorageService extends StorageService {
   constructor(configService: ConfigService) {
-    super(configService);
-  }
-
-  protected async onInitialize(): Promise<void> {
-    await this.createBucketIfNeeded(THUMBNAIL_BUCKET, true);
-    await this.createBucketIfNeeded(COVER_BUCKET, true);
+    super(configService, "stories");
   }
 
   async upload(
@@ -41,13 +33,14 @@ export class StoryStorageService extends StorageService {
         originSharp = originSharp.toFormat("jpg");
       }
 
-      const fileName = this.makeFileName(storyId);
-      coverSharp = await this.saveCover(originSharp, fileName);
-      thumbnailSharp = await this.saveThumbnail(originSharp, fileName);
+      const coverName = `${storyId}/${this.randomImageFileName()}`;
+      coverSharp = await this.saveCover(originSharp, coverName);
+      const thumbnailName = `${storyId}/${this.randomImageFileName()}`;
+      thumbnailSharp = await this.saveThumbnail(originSharp, thumbnailName);
 
       return {
-        cover: `${COVER_BUCKET}/${fileName}`,
-        thumbnail: `${THUMBNAIL_BUCKET}/${fileName}`,
+        cover: this.buildUrl(`${this.bucket}/${coverName}`),
+        thumbnail: this.buildUrl(`${this.bucket}/${thumbnailName}`),
       };
     } catch (e) {
       console.log(e);
@@ -59,14 +52,10 @@ export class StoryStorageService extends StorageService {
     }
   }
 
-  private makeFileName(storyId: number): string {
-    return `${storyId}.jpg`;
-  }
-
   private async saveCover(originSharp: Sharp, fileName: string) {
     const maxCoverWidth = this.configService.get<number>("settings.sizing.cover.maxWidth");
     const coverSharp = await this.resizeImage(originSharp, maxCoverWidth);
-    await this.saveImage(COVER_BUCKET, fileName, coverSharp);
+    await this.saveImage(fileName, coverSharp);
     return coverSharp;
   }
 
@@ -74,15 +63,12 @@ export class StoryStorageService extends StorageService {
     const thumbnailWidth = this.configService.get<number>("settings.sizing.thumbnail.width");
     const thumbnailHeight = this.configService.get<number>("settings.sizing.thumbnail.height");
     const thumbnailSharp = await this.resizeImage(originSharp, thumbnailWidth, thumbnailHeight);
-    await this.saveImage(THUMBNAIL_BUCKET, fileName, thumbnailSharp);
+    await this.saveImage(fileName, thumbnailSharp);
     return thumbnailSharp;
   }
 
   async remove(storyId: number) {
     await this.initializeIfNeeded();
-
-    const fileName = this.makeFileName(storyId);
-    await this.client.removeObject(THUMBNAIL_BUCKET, fileName);
-    await this.client.removeObject(COVER_BUCKET, fileName);
+    await this.removeFolder(`${storyId}`);
   }
 }
