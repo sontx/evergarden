@@ -126,7 +126,9 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
       disabled={!validateModel(model, formData)}
       savingStatus={savingStatus}
       fetchingStatus={fetchingStatus}
-      mode={mode}
+      actionLabel={intl.formatMessage({
+        id: mode === "create" ? "formSaveButtonLabel" : "formUpdateButtonLabel",
+      })}
       handleSave={handleSave}
     >
       <Form

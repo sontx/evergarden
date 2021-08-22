@@ -13,7 +13,7 @@ import {
 } from "./storyEditorAPI";
 import { RootState } from "../../app/store";
 import { fetchStory } from "../story/storyAPI";
-import { catchRequestError } from "../../utils/api";
+import api, { catchRequestError } from "../../utils/api";
 
 interface StoryEditorState {
   story?: GetStoryDto;

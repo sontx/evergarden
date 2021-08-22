@@ -1,5 +1,5 @@
 import { TextEditor } from "../../components/TextEditor";
-import { Form, FormControl, FormGroup, Schema, Toggle } from "rsuite";
+import { Form, FormControl, FormGroup, Schema } from "rsuite";
 import React, { useCallback, useEffect, useState } from "react";
 import { CreateChapterDto, mergeObjects } from "@evergarden/shared";
 import { EditorForm, validateModel } from "../../components/EditorForm";
@@ -103,7 +103,9 @@ export function ChapterEditor({
           : "none"
       }
       savingStatus={savingStatus}
-      mode={mode}
+      actionLabel={intl.formatMessage({
+        id: mode === "create" ? "formSaveButtonLabel" : "formUpdateButtonLabel",
+      })}
       handleSave={isValid ? handleSave : undefined}
     >
       <Form

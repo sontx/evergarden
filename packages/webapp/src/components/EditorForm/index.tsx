@@ -26,14 +26,14 @@ export function EditorForm({
   savingStatus,
   fetchingStatus,
   handleSave,
-  mode,
+  actionLabel,
   children,
   disabled,
 }: {
   savingStatus: ProcessingStatus;
   fetchingStatus?: ProcessingStatus;
   handleSave?: () => void;
-  mode: "create" | "update";
+  actionLabel: string;
   children: ReactNode;
   disabled?: boolean;
 }) {
@@ -50,10 +50,7 @@ export function EditorForm({
         appearance="primary"
         loading={savingStatus === "processing"}
       >
-        {intl.formatMessage({
-          id:
-            mode === "create" ? "formSaveButtonLabel" : "formUpdateButtonLabel",
-        })}
+        {actionLabel}
       </Button>
       {fetchingStatus === "processing" && (
         <LoadingPanel
