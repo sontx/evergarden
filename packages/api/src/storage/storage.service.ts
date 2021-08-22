@@ -30,8 +30,8 @@ export abstract class StorageService {
   }
 
   protected buildUrl(name: string): string {
-    const host = this.configService.get("storage.host");
-    return `${host}/${name}`;
+    const host = this.configService.get<string>("storage.host");
+    return host.endsWith("/") ? `${host}${name}` : `${host}/${name}`;
   }
 
   protected async initializeIfNeeded() {
