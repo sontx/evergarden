@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React, { useCallback, useState, useEffect, useRef } from 'react'
-
+import Logger from "js-logger"
 import { Button, Avatar, Uploader, Icon, Drawer } from "rsuite"
-import { SettingPanel } from "../settings/SettingPanel"
+import { SettingPanel } from "../../components/SettingPanel"
 import { FormattedMessage } from "react-intl"
 import "./index.less"
 import { selectUser } from "../auth/authSlice"
@@ -13,6 +13,12 @@ import {
   updateAvatarAsync,
   deleteAvatarAsync,
 } from "../auth/authSlice"
+import {
+  updateSettingsAsync,
+  setReadingFont,
+  setReadingFontSize,
+  setReadingLineSpacing,
+} from "../settings/settingsSlice";
 
 export function UserProfile({
   show,
@@ -24,11 +30,13 @@ export function UserProfile({
   const user = useAppSelector(selectUser)
   const dispatch = useAppDispatch()
   const [uploadFile, setUploadFile] = useState<string | File | null | undefined>()
+  const [settings, setSettings] = useState({})
   const fullNameRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (user) {
       setUploadFile(user.photoUrl)
+      setSettings(user.settings)
     }
   }, [user])
 
@@ -46,25 +54,41 @@ export function UserProfile({
     dispatch(updateFullNameAsync(name))
   }
 
-  const updateAvatar = () => {
-    if(user.photoUrl !== uploadFile) {
-      if(uploadFile) {
-        dispatch(updateAvatarAsync(uploadFile)).then(res => {
-          if(res.meta && res.meta.requestStatus === "fulfilled") {
-            onHide()
-          }
-        })
-        return
-      }
-
-      dispatch(deleteAvatarAsync()).then(res => {
-        if(res.meta && res.meta.requestStatus === "fulfilled") {
-          onHide()
+  const updateAvatar = async() => {
+    try {
+      if(user.photoUrl !== uploadFile) {
+        if(uploadFile) {
+          await dispatch(updateAvatarAsync(uploadFile))
+        } else {
+          await dispatch(deleteAvatarAsync())
         }
-      })
+      }
+  
+      if (JSON.stringify(user?.settings) !== JSON.stringify(settings)) {
+        const res = await dispatch(updateSettingsAsync(settings))
+
+        if(res?.meta?.requestStatus === "fulfilled") {
+          dispatch(setReadingFont(settings?.readingFont))
+          dispatch(setReadingFontSize(settings?.readingFontSize))
+          dispatch(setReadingLineSpacing(settings?.readingLineSpacing))
+        }
+      }
+  
+      onHide()
+    } catch (error) {
+      Logger.error(error);
     }
-    onHide()
   }
+
+  const onChangeSettings = useCallback(
+    (value: string, key: string) => {
+      setSettings({
+        ...settings,
+        [key]: value.name || value
+      })
+    },
+    [settings],
+  )
 
   return (
     <Drawer full show={show} onHide={onHide} size="xs" placement="bottom">
@@ -123,7 +147,11 @@ export function UserProfile({
             </span>
             <input className="rs-input" defaultValue={user?.fullName} ref={fullNameRef} onBlur={updateFullName}/>
           </div>
-          <SettingPanel />
+          <SettingPanel
+            handleSizeChange={value => onChangeSettings(value, 'readingFontSize')}
+            handleFontChange={value => onChangeSettings(value, 'readingFont')}
+            handleLineSpacingChange={value => onChangeSettings(value, 'readingLineSpacing')}
+          />
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: '30px' }}>
           <Button onClick={() => updateAvatar()} appearance="subtle">
