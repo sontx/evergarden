@@ -1,10 +1,12 @@
 import {
   Body,
-  Controller, Delete,
+  Controller,
+  Delete,
   ForbiddenException,
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Put,
   Req,
   UnauthorizedException,
@@ -29,7 +31,7 @@ export class UserController {
   @Get(":id")
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
-  async getUser(@Param("id") id: number, @Req() req): Promise<GetUserDto> {
+  async getUser(@Param("id", ParseIntPipe) id: number, @Req() req): Promise<GetUserDto> {
     const user = await this.userService.getById(id);
     if (!user) {
       throw new NotFoundException();
