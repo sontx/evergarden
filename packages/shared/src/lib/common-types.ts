@@ -313,5 +313,5 @@ export class CreateReportChapterDto {
 
 export interface ReportChapterDto {
   type: string;
-  detail: string;
+  detail?: string;
 }

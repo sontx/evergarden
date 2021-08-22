@@ -15,7 +15,10 @@ const initialState: LoginState = {
 
 export const loginOAuth2Async = createAsyncThunk(
   "auth/loginOAuth2",
-  async (data: { token: string; provider: string }, { rejectWithValue, dispatch }) => {
+  async (
+    data: { token: string; provider: string },
+    { rejectWithValue, dispatch },
+  ) => {
     return catchRequestError(
       async () => {
         const response = await loginOAuth2(data.token, data.provider);
@@ -39,7 +42,9 @@ export const logoutAsync = createAsyncThunk(
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logoutAction: (state) => {},
+  },
   extraReducers: {
     [`${loginOAuth2Async.pending}`]: (state) => {
       state.status = "processing";
@@ -52,6 +57,8 @@ export const authSlice = createSlice({
     },
   },
 });
+
+export const { logoutAction } = authSlice.actions;
 
 export const selectStatus = (state: RootState) => state.login.status;
 

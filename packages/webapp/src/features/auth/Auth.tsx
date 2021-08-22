@@ -5,8 +5,8 @@ import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props
 import "./auth.less";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { loginOAuth2Async, selectStatus } from "./authSlice";
-import { useCallback, useEffect, useMemo } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { isMobile } from "react-device-detect";
 import GoogleLogin, {
   GoogleLoginResponse,
@@ -36,10 +36,14 @@ export function Auth() {
   const location = useLocation();
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const [isLoading, setLoading] = useState(false);
+  const [isDisabledFacebook, setDisableFacebook] = useState(false);
+  const [isDisabledGoogle, setDisableGoogle] = useState(false);
 
   const handleLoginGoogleSuccess = useCallback(
     (data: GoogleLoginResponse | GoogleLoginResponseOffline) => {
       if (isGoogleLoginResponse(data)) {
+        setDisableFacebook(true);
         dispatch(loginOAuth2Async({ token: data.tokenId, provider: "google" }));
       }
     },
@@ -47,7 +51,10 @@ export function Auth() {
   );
 
   const handleLoginGoogleFailure = useCallback((error) => {
-    if (process.env.NODE_ENV === "development" && error !== "popup_closed_by_user") {
+    if (
+      process.env.NODE_ENV === "development" &&
+      error !== "popup_closed_by_user"
+    ) {
       console.log(error);
       Alert.error(error.details, 5000);
     }
@@ -56,6 +63,7 @@ export function Auth() {
   const handleLoginFacebook = useCallback(
     (data) => {
       if (data.accessToken) {
+        setDisableGoogle(true);
         dispatch(
           loginOAuth2Async({ token: data.accessToken, provider: "facebook" }),
         );
@@ -116,8 +124,8 @@ export function Auth() {
             render={(renderProps: any) => (
               <Button
                 onClick={renderProps.onClick}
-                disabled={renderProps.isDisabled}
-                loading={renderProps.isProcessing}
+                disabled={renderProps.isDisabled || isDisabledFacebook}
+                loading={isLoading && !isDisabledFacebook}
                 color="blue"
                 size="sm"
                 block
@@ -131,11 +139,12 @@ export function Auth() {
             clientId={GOOGLE_CLIENT_ID}
             render={(renderProps) => (
               <Button
-                disabled={renderProps.disabled}
+                disabled={renderProps.disabled || isDisabledGoogle}
                 color="red"
                 size="sm"
                 block
                 onClick={renderProps.onClick}
+                loading={isLoading && !isDisabledGoogle}
               >
                 <Icon icon="google-plus" />{" "}
                 <FormattedMessage id="loginWithGoogle" />
