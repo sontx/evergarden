@@ -33,6 +33,11 @@ export class UserStorageService extends StorageService {
     }
   }
 
+  async removeAvatar(userId: number) {
+    await this.initializeIfNeeded();
+    await this.removeFolder(`${userId}/avatar`);
+  }
+
   async remove(userId: number) {
     await this.initializeIfNeeded();
     await this.removeFolder(`${userId}`);

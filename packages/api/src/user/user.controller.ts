@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   ForbiddenException,
   Get,
   NotFoundException,
@@ -84,6 +84,22 @@ export class UserController {
     }
 
     user.photoUrl = await this.userStorageService.upload(file, id);
+    await this.userService.updateUser(user);
+    return this.userService.toDto(user);
+  }
+
+  @Delete("avatar")
+  @Role("user")
+  @UseGuards(JwtGuard, RolesGuard)
+  async deleteAvatar(@Req() req): Promise<GetUserDto> {
+    const { id } = req.user || {};
+    const user = await this.userService.getById(id);
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    await this.userStorageService.removeAvatar(id);
+    user.photoUrl = "";
     await this.userService.updateUser(user);
     return this.userService.toDto(user);
   }
