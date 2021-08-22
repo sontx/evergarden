@@ -108,19 +108,20 @@ export function UserProfile({
               </span>
             )}
           </div>
-          <div style={{
-          display: "grid",
-          gridTemplateColumns: "min-content auto",
-          alignItems: "center",
-          gridGap: "40px",
-          whiteSpace: "nowrap",
-          margin: '30px 0'
-        }}>
-          <span>
-            <FormattedMessage id="profileName" />
-          </span>
-          <input className="rs-input" defaultValue={user?.fullName} ref={fullNameRef} onBlur={updateFullName}/>
-          
+          <div
+            style={{
+            display: "grid",
+            gridTemplateColumns: "min-content auto",
+            alignItems: "center",
+            gridGap: "40px",
+            whiteSpace: "nowrap",
+            margin: '30px 0'
+            }}
+          >
+            <span>
+              <FormattedMessage id="profileName" />
+            </span>
+            <input className="rs-input" defaultValue={user?.fullName} ref={fullNameRef} onBlur={updateFullName}/>
           </div>
           <SettingPanel />
         </div>
