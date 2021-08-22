@@ -2,6 +2,7 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react'
 
 import { Button, Avatar, Uploader, Icon, Drawer } from "rsuite"
+import { SettingPanel } from "../settings/SettingPanel"
 import { FormattedMessage } from "react-intl"
 import "./index.less"
 import { selectUser } from "../auth/authSlice"
@@ -66,7 +67,7 @@ export function UserProfile({
   }
 
   return (
-    <Drawer show={show} onHide={onHide} size="xs" placement="top" style={{ marginTop: '55px', height: '210px' }}>
+    <Drawer full show={show} onHide={onHide} size="xs" placement="bottom">
       <Drawer.Header />
       <Drawer.Body>
         <div className="profile">
@@ -107,13 +108,21 @@ export function UserProfile({
               </span>
             )}
           </div>
-          <div>
-          <p className="profile--form--label">
+          <div style={{
+          display: "grid",
+          gridTemplateColumns: "min-content auto",
+          alignItems: "center",
+          gridGap: "40px",
+          whiteSpace: "nowrap",
+          margin: '30px 0'
+        }}>
+          <span>
             <FormattedMessage id="profileName" />
-          </p>
+          </span>
           <input className="rs-input" defaultValue={user?.fullName} ref={fullNameRef} onBlur={updateFullName}/>
+          
           </div>
-         
+          <SettingPanel />
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: '30px' }}>
           <Button onClick={() => updateAvatar()} appearance="subtle">
