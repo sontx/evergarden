@@ -5,6 +5,8 @@ import { loginOAuth2, logout } from "./authApi";
 import { setUser } from "../user/userSlice";
 import { catchRequestError } from "../../utils/api";
 
+import { fetchAuthenticatedUser, loginOAuth2, logout, updateFullName, updateAvatar, deleteAvatar } from "./authApi";
+
 export interface LoginState {
   status: ProcessingStatus;
 }
@@ -36,6 +38,31 @@ export const logoutAsync = createAsyncThunk(
   },
 );
 
+export const updateFullNameAsync = createAsyncThunk(
+  "auth/updateFullName",
+  async (name: string, { rejectWithValue }) => {
+    return catchRequestError(
+      async () => await updateFullName(name),
+      rejectWithValue,
+      true,
+    );
+  },
+);
+
+export const updateAvatarAsync = createAsyncThunk(
+  "auth/updateAvatar",
+  async (file: File, { rejectWithValue }) => {
+    return catchRequestError(async () =>await updateAvatar(file),rejectWithValue, true)
+  },
+);
+
+export const deleteAvatarAsync = createAsyncThunk(
+  "auth/updateAvatar",
+  async (_, { rejectWithValue }) => {
+    return catchRequestError(async () => await deleteAvatar(),rejectWithValue, true)
+  },
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -48,6 +75,27 @@ export const authSlice = createSlice({
       state.status = "success";
     },
     [`${loginOAuth2Async.rejected}`]: (state) => {
+      state.status = "error";
+    },
+    [`${updateFullNameAsync.fulfilled}`]: (state, { payload }) => {
+      state.user = payload;
+      state.status = "success";
+    },
+    [`${updateFullNameAsync.rejected}`]: (state, { payload }) => {
+      state.status = "error";
+    },
+    [`${updateAvatarAsync.fulfilled}`]: (state, { payload }) => {
+      state.user = payload;
+      state.status = "success";
+    },
+    [`${updateAvatarAsync.rejected}`]: (state, { payload }) => {
+      state.status = "error";
+    },
+    [`${deleteAvatarAsync.fulfilled}`]: (state, { payload }) => {
+      state.user = payload;
+      state.status = "success";
+    },
+    [`${deleteAvatarAsync.rejected}`]: (state, { payload }) => {
       state.status = "error";
     },
   },
