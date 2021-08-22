@@ -1,7 +1,7 @@
-import { GetChapterDto } from "@evergarden/shared";
+import { GetChapterDto, ReportChapterDto } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchChapter } from "./chapterAPI";
+import { fetchChapter, reportBugChapter } from "./chapterAPI";
 import { RootState } from "../../app/store";
 import { catchRequestError, RequestError } from "../../utils/api";
 
@@ -44,6 +44,28 @@ export const fetchNextChapterAsync = createAsyncThunk(
   },
 );
 
+export const reportChapterAsync = createAsyncThunk(
+  "reportChapter/create",
+  async (
+    {
+      storyId,
+      chapterId,
+      report,
+    }: {
+      storyId: number;
+      chapterId: number;
+      report: ReportChapterDto;
+    },
+    { rejectWithValue },
+  ) => {
+    return catchRequestError(
+      async () => await reportBugChapter(storyId, chapterId, report),
+      rejectWithValue,
+      true,
+    );
+  },
+);
+
 export const chapterSlice = createSlice({
   name: "chapter",
   initialState,
@@ -68,6 +90,16 @@ export const chapterSlice = createSlice({
       state.errorMessage = payload;
       state.status = "error";
     },
+    [`${reportChapterAsync.pending}`]: (state) => {
+      state.status = "processing";
+    },
+    [`${reportChapterAsync.fulfilled}`]: (state, { payload }) => {
+      state.status = "success";
+      state.chapter = payload;
+    },
+    [`${reportChapterAsync.rejected}`]: (state, { payload }) => {
+      state.status = "error";
+    },
   },
 });
 
@@ -75,6 +107,7 @@ export const { setChapter } = chapterSlice.actions;
 
 export const selectChapter = (state: RootState) => state.chapter.chapter;
 export const selectStatus = (state: RootState) => state.chapter.status;
-export const selectErrorMessage = (state: RootState) => state.chapter.errorMessage;
+export const selectErrorMessage = (state: RootState) =>
+  state.chapter.errorMessage;
 
 export default chapterSlice.reducer;

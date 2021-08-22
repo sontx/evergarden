@@ -7,6 +7,7 @@ import { useAppDispatch } from "../../app/hooks";
 import { openStory } from "../story/storySlice";
 import { useHistory } from "react-router-dom";
 import { withFollowSync } from "../story/withFollowSync";
+import { FormReportBug } from "./FormReportBug";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -42,6 +43,7 @@ export function ReadingNavigationTop(props: {
 }) {
   const { story, chapter } = props;
   const [showMore, setShowMore] = useState(false);
+  const [showFormReport, setShowFormReport] = useState(false);
   const intl = useIntl();
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -61,6 +63,10 @@ export function ReadingNavigationTop(props: {
       dispatch(openStory(history, story, { focusTo: "comment" }));
     }
   }, [dispatch, history, story]);
+
+  const handleShowFormReportBug = useCallback(() => {
+    setShowFormReport((prevState) => !prevState);
+  }, []);
 
   return (
     <div className="reading-nav reading-nav--top">
@@ -97,10 +103,18 @@ export function ReadingNavigationTop(props: {
             </Button>
             {story && story.history && <FollowButtonWrapper story={story} />}
             <Button>
-              <Icon icon="bug" />
+              <Icon icon="bug" onClick={handleShowFormReportBug} />
             </Button>
           </ButtonGroup>
         </ButtonToolbar>
+      )}
+      {showFormReport && (
+        <FormReportBug
+          story={story}
+          chapter={chapter}
+          show={showFormReport}
+          onClose={handleShowFormReportBug}
+        ></FormReportBug>
       )}
     </div>
   );

@@ -310,3 +310,8 @@ export class CreateReportChapterDto {
   @MaxLength(500)
   detail?: string;
 }
+
+export interface ReportChapterDto {
+  type: string;
+  detail: string;
+}
