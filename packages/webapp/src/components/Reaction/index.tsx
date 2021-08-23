@@ -7,9 +7,9 @@ import classNames from "classnames";
 import { abbreviateNumber } from "../../utils/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ReactElement, useState } from "react";
-import { selectUser } from "../../features/auth/authSlice";
 import { useAutoFlushDebounce } from "../../hooks/useAutoFlushDebounce";
 import { updateStoryHistoryAsync } from "../../features/histories/historiesSlice";
+import { selectUser } from "../../features/user/userSlice";
 
 function VoteButton({
   icon,

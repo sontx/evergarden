@@ -1,7 +1,7 @@
-import {GetChapterDto, GetStoryDto, SizeType} from "@evergarden/shared";
-import {Animation, Panel} from "rsuite";
-import {useIntl} from "react-intl";
-import {Link} from "react-router-dom";
+import { GetChapterDto, GetStoryDto, SizeType } from "@evergarden/shared";
+import { Animation, Panel } from "rsuite";
+import { useIntl } from "react-intl";
+import { Link } from "react-router-dom";
 
 import "./readingMobile.less";
 import {
@@ -13,22 +13,18 @@ import {
   useState,
 } from "react";
 import moment from "moment";
-import {ReadingPanel} from "../../components/ReadingPanel";
-import {ReadingNavigationBottom} from "./ReadingNavigationBottom";
+import { ReadingPanel } from "../../components/ReadingPanel";
+import { ReadingNavigationBottom } from "./ReadingNavigationBottom";
 import {
   getChapterDisplayName,
   ReadingNavigationTop,
 } from "./ReadingNavigationTop";
-import {useAppSelector} from "../../app/hooks";
-import {
-  getFont,
-  selectReadingFont,
-  selectReadingFontSize,
-  selectReadingLineSpacing,
-} from "../settings/settingsSlice";
-import {selectStatus as selectChapterStatus} from "./chapterSlice";
-import {selectStatus as selectStoryStatus} from "../story/storySlice";
-import {ReadingLoader} from "../../components/ReadingLoader";
+import { useAppSelector } from "../../app/hooks";
+import { selectStatus as selectChapterStatus } from "./chapterSlice";
+import { selectStatus as selectStoryStatus } from "../story/storySlice";
+import { ReadingLoader } from "../../components/ReadingLoader";
+import { selectUserSettings } from "../user/userSlice";
+import { defaultUserSettings, getFont } from "../../utils/user-settings-config";
 
 const ReadingFooter = forwardRef(
   (props: { chapter: GetChapterDto | undefined }, ref: any) => {
@@ -52,9 +48,7 @@ export function ReadingMobile(props: {
   const intl = useIntl();
   const footerRef = useRef<HTMLDivElement>(null);
   const [showNavigation, setShowNavigation] = useState(false);
-  const readingFont = useAppSelector(selectReadingFont);
-  const readingFontSize = useAppSelector(selectReadingFontSize);
-  const readingLineSpacing = useAppSelector(selectReadingLineSpacing);
+  const settings = useAppSelector(selectUserSettings) || defaultUserSettings;
   const fetchChapterStatus = useAppSelector(selectChapterStatus);
   const fetchStoryStatus = useAppSelector(selectStoryStatus);
 
@@ -65,8 +59,8 @@ export function ReadingMobile(props: {
       L: "1.25em",
       XL: "1.75em",
     };
-    return config[readingFontSize] || "1em";
-  }, [readingFontSize]);
+    return config[settings.readingFontSize] || "1em";
+  }, [settings.readingFontSize]);
 
   const lineSpacingClass = useMemo(() => {
     const config: { [x in SizeType]: string } = {
@@ -75,8 +69,8 @@ export function ReadingMobile(props: {
       L: "line-spacing--l",
       XL: "line-spacing--xl",
     };
-    return config[readingLineSpacing] || "1em";
-  }, [readingLineSpacing]);
+    return config[settings.readingLineSpacing] || "1em";
+  }, [settings.readingLineSpacing]);
 
   useEffect(() => {
     const getCurrentScrollTop = () =>
@@ -106,7 +100,7 @@ export function ReadingMobile(props: {
     setShowNavigation((prevState) => !prevState);
   }, []);
 
-  const font = getFont(readingFont);
+  const font = getFont(settings.readingFont);
   const isFetchingStory = fetchStoryStatus === "processing";
   const isFetchingChapter = fetchChapterStatus === "processing";
   const isStoryReady = !isFetchingStory && story;

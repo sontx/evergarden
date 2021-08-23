@@ -6,7 +6,7 @@ import React, { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectCurrentTab, setCurrentTab } from "../../features/settings/settingsSlice";
 import { isMobile } from "react-device-detect";
-import {selectUser} from "../../features/auth/authSlice";
+import { selectUser } from "../../features/user/userSlice";
 
 export function AppNav() {
   const currentTab = useAppSelector(selectCurrentTab);

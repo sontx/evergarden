@@ -1,6 +1,6 @@
 import { ReactElement, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchAuthenticatedUserAsync, selectIsLoggedIn } from "./authSlice";
+import { fetchUserAsync, selectIsLoggedIn } from "../user/userSlice";
 
 export function AuthSync({ children }: { children: ReactElement }) {
   const dispatch = useAppDispatch();
@@ -8,7 +8,7 @@ export function AuthSync({ children }: { children: ReactElement }) {
 
   useEffect(() => {
     if (isLogged) {
-      dispatch(fetchAuthenticatedUserAsync());
+      dispatch(fetchUserAsync());
     }
   }, [dispatch, isLogged]);
 

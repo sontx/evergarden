@@ -12,7 +12,7 @@ import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
 import { FollowingStories } from "../../features/following/FollowingStories";
 import { StoryList } from "../../features/stories/StoryList";
-import { selectIsLoggedIn } from "../../features/auth/authSlice";
+import { selectIsLoggedIn } from "../../features/user/userSlice";
 
 export function Home() {
   const currentTab = useAppSelector(selectCurrentTab);

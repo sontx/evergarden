@@ -67,14 +67,14 @@ export interface GetUserSettingsDto {
 export class UpdateUserSettingsDto {
   @IsString()
   @Matches(/S|M|L|XL/s)
-  readingFontSize: string;
+  readingFontSize: SizeType;
 
   @IsString()
   readingFont: string;
 
   @IsString()
   @Matches(/S|M|L|XL/s)
-  readingLineSpacing: string;
+  readingLineSpacing: SizeType;
 }
 
 export interface JwtPayload {

@@ -2,17 +2,18 @@ import { ReadingMobile } from "../../features/chapter/ReadingMobile";
 import { useParams } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchStoryAsync, selectStory } from "../../features/story/storySlice";
+import {
+  fetchStoryAsync,
+  selectErrorMessage as selectStoryErrorMessage,
+  selectStatus as selectStoryStatus,
+  selectStory,
+} from "../../features/story/storySlice";
 import {
   fetchChapterAsync,
   selectChapter,
   selectErrorMessage,
   selectStatus,
 } from "../../features/chapter/chapterSlice";
-import {
-  selectErrorMessage as selectStoryErrorMessage,
-  selectStatus as selectStoryStatus,
-} from "../../features/story/storySlice";
 import { AppHeader } from "../../components/AppHeader";
 import { Button, Content } from "rsuite";
 import { AppFooter } from "../../components/AppFooter";
@@ -20,12 +21,15 @@ import { SEO } from "../../components/SEO";
 import { FormattedMessage, useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
 import { Helmet } from "react-helmet";
-import { selectReadingFont } from "../../features/settings/settingsSlice";
-import { selectIsLoggedIn } from "../../features/auth/authSlice";
 import { withCachedNextChapter } from "./withCachedNextChapter";
 import { withReadingHistorySync } from "./withReadingHistorySync";
 import { withTracker } from "./withTracker";
 import { withHttpErrorCatch } from "../../HOCs/withHttpErrorCatch";
+import {
+  selectIsLoggedIn,
+  selectUserSettings,
+} from "../../features/user/userSlice";
+import { defaultUserSettings } from "../../utils/user-settings-config";
 
 const CachedReading = withCachedNextChapter(withTracker(ReadingMobile));
 const ReadingWrapper = withReadingHistorySync(CachedReading);
@@ -43,7 +47,7 @@ export function Reading() {
   const dispatch = useAppDispatch();
   const intl = useIntl();
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
-  const readingFont = useAppSelector(selectReadingFont);
+  const settings = useAppSelector(selectUserSettings) || defaultUserSettings;
   const chapter = useAppSelector(selectChapter);
   const story = useAppSelector(selectStory);
   const chapterStatus = useAppSelector(selectStatus);
@@ -94,7 +98,7 @@ export function Reading() {
       <AppFooter />
       <Helmet>
         <link
-          href={`https://fonts.googleapis.com/css?family=${readingFont}`}
+          href={`https://fonts.googleapis.com/css?family=${settings.readingFont}`}
           rel="stylesheet"
         />
       </Helmet>

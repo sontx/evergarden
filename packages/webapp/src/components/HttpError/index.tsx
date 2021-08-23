@@ -4,8 +4,8 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
 import { useAppSelector } from "../../app/hooks";
-import { selectIsLoggedIn } from "../../features/auth/authSlice";
 import { IntlShape, useIntl } from "react-intl";
+import { selectIsLoggedIn } from "../../features/user/userSlice";
 
 // I know it's a bad way but it works
 export let globalIntl: IntlShape;

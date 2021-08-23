@@ -30,9 +30,11 @@ import authorsReducer from "../features/authors/authorsSlice";
 import genresReducer from "../features/genres/genresSlice";
 import userStoriesReducer from "../features/user-stories/userStoriesSlice";
 import historiesReducer from "../features/histories/historiesSlice";
+import userReducer from "../features/user/userSlice";
 
 const reducers = combineReducers({
   counter: counterReducer,
+  user: userReducer,
   followingStories: followingReducer,
   story: storyReducer,
   stories: storiesReducer,

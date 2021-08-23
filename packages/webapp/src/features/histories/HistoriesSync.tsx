@@ -1,8 +1,8 @@
 import { ReactElement, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchReadingHistoriesAsync, setHistories } from "./historiesSlice";
-import { selectIsLoggedIn } from "../auth/authSlice";
 import { setFollowingStories } from "../following/followingSlice";
+import { selectIsLoggedIn } from "../user/userSlice";
 
 export function HistoriesSync({ children }: { children: ReactElement }) {
   const dispatch = useAppDispatch();

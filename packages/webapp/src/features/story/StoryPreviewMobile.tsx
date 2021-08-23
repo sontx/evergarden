@@ -17,7 +17,7 @@ import { withFollowSync } from "./withFollowSync";
 
 import defaultThumbnail from "../../images/default-cover.png";
 import { ReadingLoader } from "../../components/ReadingLoader";
-import { selectIsLoggedIn } from "../auth/authSlice";
+import { selectIsLoggedIn } from "../user/userSlice";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (

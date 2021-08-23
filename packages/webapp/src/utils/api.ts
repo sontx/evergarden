@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios";
 import { Alert } from "rsuite";
-import React from "react";
 import { globalIntl } from "../components/HttpError";
 
 const api = axios.create({});

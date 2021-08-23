@@ -2,11 +2,11 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Avatar, Badge, Dropdown, Icon, Nav } from "rsuite";
 
 import "./index.less";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { isDesktop } from "react-device-detect";
 import { useHistory } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
-import { logoutAsync, selectUser } from "../../features/auth/authSlice";
+import { logoutAsync } from "../../features/auth/authSlice";
 import { SearchBox } from "../../features/search/SearchBox";
 import { StorySearchBody } from "@evergarden/shared";
 import { openStoryByUrl } from "../../features/story/storySlice";
@@ -14,6 +14,7 @@ import {
   selectShowSearchBox,
   setShowSearchBox,
 } from "../../features/settings/settingsSlice";
+import { selectUser } from "../../features/user/userSlice";
 
 export function UserToolbar() {
   const showSearch = useAppSelector(selectShowSearchBox);

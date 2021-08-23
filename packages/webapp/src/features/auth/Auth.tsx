@@ -4,16 +4,10 @@ import { FormattedMessage, useIntl } from "react-intl";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import "./auth.less";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  loginOAuth2Async,
-  selectLoginError,
-  selectStatus,
-  selectUser,
-} from "./authSlice";
+import { loginOAuth2Async, selectStatus } from "./authSlice";
 import { useCallback, useEffect, useMemo } from "react";
-import { useHistory, useLocation, Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { isMobile } from "react-device-detect";
-import { setUserSettings } from "../settings/settingsSlice";
 import GoogleLogin, {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
@@ -39,8 +33,6 @@ export function Auth() {
   const intl = useIntl();
 
   const status = useAppSelector(selectStatus);
-  const loginError = useAppSelector(selectLoginError);
-  const user = useAppSelector(selectUser);
   const location = useLocation();
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -55,7 +47,7 @@ export function Auth() {
   );
 
   const handleLoginGoogleFailure = useCallback((error) => {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === "development" && error !== "popup_closed_by_user") {
       console.log(error);
       Alert.error(error.details, 5000);
     }
@@ -73,26 +65,18 @@ export function Auth() {
   );
 
   useEffect(() => {
-    if (status === "error") {
-      Alert.error(
-        loginError || intl.formatMessage({ id: "loginFailedMessage" }),
-        5000,
-      );
-    } else if (status === "success") {
-      if (user) {
-        dispatch(setUserSettings(user.settings));
-        const prevPath: string =
-          (location.state && (location.state as any).prevPathName) || "/";
-        const redirectPath =
-          NOT_SUPPORTED_REDIRECT_ROUTES.findIndex((route) =>
-            prevPath.startsWith(route),
-          ) >= 0
-            ? "/"
-            : prevPath;
-        history.push(redirectPath);
-      }
+    if (status === "success") {
+      const prevPath: string =
+        (location.state && (location.state as any).prevPathName) || "/";
+      const redirectPath =
+        NOT_SUPPORTED_REDIRECT_ROUTES.findIndex((route) =>
+          prevPath.startsWith(route),
+        ) >= 0
+          ? "/"
+          : prevPath;
+      history.push(redirectPath);
     }
-  }, [dispatch, history, intl, loginError, status, user, location]);
+  }, [dispatch, history, intl, status, location]);
 
   const isFacebookApp = useMemo(() => {
     const ua = navigator.userAgent || navigator.vendor || (window as any).opera;

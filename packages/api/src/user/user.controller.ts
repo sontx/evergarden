@@ -23,6 +23,7 @@ import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserStorageService } from "../storage/user-storage.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
+import { GetUserSettingsDto } from "@evergarden/shared";
 
 @Controller("users")
 export class UserController {
@@ -63,7 +64,7 @@ export class UserController {
   @Put("settings")
   @UseGuards(JwtGuard, RolesGuard)
   @Role("user")
-  async updateSettings(@Req() req, @Body() settings: UpdateUserSettingsDto) {
+  async updateSettings(@Req() req, @Body() settings: UpdateUserSettingsDto): Promise<GetUserSettingsDto> {
     const { id } = req.user || {};
     const user = await this.userService.getById(id);
     if (!user) {
@@ -72,6 +73,8 @@ export class UserController {
 
     user.settings = mergeObjects(settings, user.settings || {});
     await this.userService.updateUser(user);
+
+    return user.settings;
   }
 
   @Put("avatar")

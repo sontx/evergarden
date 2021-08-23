@@ -1,13 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { AuthUser } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
-import { fetchAuthenticatedUser, loginOAuth2, logout } from "./authApi";
+import { loginOAuth2, logout } from "./authApi";
+import { setUser } from "../user/userSlice";
+import { catchRequestError } from "../../utils/api";
 
 export interface LoginState {
   status: ProcessingStatus;
-  loginError?: string;
-  user?: AuthUser;
 }
 
 const initialState: LoginState = {
@@ -16,20 +15,24 @@ const initialState: LoginState = {
 
 export const loginOAuth2Async = createAsyncThunk(
   "auth/loginOAuth2",
-  async (data: { token: string; provider: string }) => {
-    return await loginOAuth2(data.token, data.provider);
+  async (data: { token: string; provider: string }, { rejectWithValue, dispatch }) => {
+    return catchRequestError(
+      async () => {
+        const response = await loginOAuth2(data.token, data.provider);
+        dispatch(setUser(response));
+        return response;
+      },
+      rejectWithValue,
+      true,
+    );
   },
 );
 
-export const logoutAsync = createAsyncThunk("auth/logout", async () => {
-  await logout();
-  window.location.reload();
-});
-
-export const fetchAuthenticatedUserAsync = createAsyncThunk(
-  "auth/fetch",
-  async () => {
-    return await fetchAuthenticatedUser();
+export const logoutAsync = createAsyncThunk(
+  "auth/logout",
+  async (_, { dispatch }) => {
+    logout().then();
+    dispatch(setUser(undefined));
   },
 );
 
@@ -39,41 +42,17 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: {
     [`${loginOAuth2Async.pending}`]: (state) => {
-      state.loginError = undefined;
       state.status = "processing";
     },
-    [`${loginOAuth2Async.fulfilled}`]: (state, { payload }) => {
-      if (payload) {
-        state.status = "success";
-        state.user = payload;
-      } else {
-        state.status = "none";
-      }
+    [`${loginOAuth2Async.fulfilled}`]: (state) => {
+      state.status = "success";
     },
-    [`${loginOAuth2Async.rejected}`]: (state, { payload }) => {
+    [`${loginOAuth2Async.rejected}`]: (state) => {
       state.status = "error";
-      state.loginError = payload;
-    },
-    [`${logoutAsync.fulfilled}`]: (state) => {
-      state.user = undefined;
-      state.status = "none";
-    },
-    [`${logoutAsync.rejected}`]: (state) => {
-      state.user = undefined;
-      state.status = "none";
-    },
-    [`${fetchAuthenticatedUserAsync.fulfilled}`]: (state, { payload }) => {
-      state.user = payload;
-    },
-    [`${fetchAuthenticatedUserAsync.rejected}`]: (state, { payload }) => {
-      state.user = undefined;
     },
   },
 });
 
 export const selectStatus = (state: RootState) => state.login.status;
-export const selectLoginError = (state: RootState) => state.login.loginError;
-export const selectUser = (state: RootState) => state.login.user;
-export const selectIsLoggedIn = (state: RootState) => !!state.login.user;
 
 export default authSlice.reducer;
