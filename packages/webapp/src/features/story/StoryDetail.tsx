@@ -116,7 +116,7 @@ export function StoryDetail(props: { story: GetStoryDto }) {
           <label>Last chapter</label>
           <span>
             <a onClick={handleLastChapterClick}>
-              {story.lastChapter} <Icon icon="arrow-right-line" />
+              {story.lastChapter}
             </a>
           </span>
         </>
