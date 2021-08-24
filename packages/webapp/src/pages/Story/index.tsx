@@ -36,7 +36,7 @@ export function Story() {
   const showStory = story && story.url === url ? story : undefined;
 
   return (
-    <AppContainer>
+    <AppContainer backgroundEffect>
       <SEO title={intl.formatMessage({ id: "pageTitleStory" })} />
       <AppHeader />
       <Content>
