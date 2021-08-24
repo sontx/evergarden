@@ -2,7 +2,7 @@ import { Icon, Uploader } from "rsuite";
 import React, { useCallback } from "react";
 
 import "./index.less";
-import { EnhancedImage } from "../../features/EnhancedImage";
+import { EnhancedImage } from "../EnhancedImage";
 
 export function ThumbnailUploader({
   thumbnail,
