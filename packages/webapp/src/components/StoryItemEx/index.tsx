@@ -9,6 +9,7 @@ import { useIntl } from "react-intl";
 
 import "./index.less";
 import { useStoryHistory } from "../../features/histories/useStoryHistory";
+import { LazyImageEx } from "../LazyImageEx";
 
 export interface StoryItemExProps extends StandardProps {
   story: GetStoryDto;
@@ -57,7 +58,12 @@ export const StoryItemEx = forwardRef(
           })}
         >
           <div>
-            <img src={story.thumbnail || defaultThumbnail} alt={story.title} />
+            <LazyImageEx
+              alt={story.title}
+              src={story.thumbnail}
+              defaultSrc={defaultThumbnail}
+              debounceDurationMs={800}
+            />
           </div>
           <div>
             <div className="title">{story.title}</div>

@@ -1,0 +1,20 @@
+import { LazyImage, LazyImageProps } from "react-lazy-images";
+
+export function LazyImageEx({
+  alt,
+  src,
+  defaultSrc,
+  ...rest
+}: Partial<LazyImageProps> & { defaultSrc?: string }) {
+  return (
+    <LazyImage
+      {...rest}
+      alt={alt}
+      src={src || defaultSrc || ""}
+      actual={({ imageProps }) => <img {...imageProps} />}
+      placeholder={({ ref }) => <div ref={ref} />}
+      loading={() => <img src={defaultSrc} alt={alt} />}
+      error={() => <img src={defaultSrc} alt={alt} />}
+    />
+  );
+}

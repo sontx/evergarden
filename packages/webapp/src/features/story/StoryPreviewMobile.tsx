@@ -18,6 +18,7 @@ import { withFollowSync } from "./withFollowSync";
 import defaultThumbnail from "../../images/default-cover.png";
 import { ReadingLoader } from "../../components/ReadingLoader";
 import { selectIsLoggedIn } from "../user/userSlice";
+import { LazyImageEx } from "../../components/LazyImageEx";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -83,14 +84,18 @@ export function StoryPreviewMobile({ story }: { story?: GetStoryDto }) {
   return story ? (
     <div className="story-preview-mobile-container">
       <Panel bodyFill>
-        <img src={story.cover || defaultThumbnail} alt={story.title} />
+        <LazyImageEx
+          src={story.cover}
+          defaultSrc={defaultThumbnail}
+          alt={story.title}
+        />
         <Panel header={story.title}>
           <div className="sub-header">
             <span>
               {intl.formatNumber(story.view)} readings |{" "}
               {intl.formatDate(story.created)}
             </span>
-            <Reaction story={story}/>
+            <Reaction story={story} />
           </div>
           <Divider style={{ margin: "10px 0 15px 0" }} />
           <div className="story-preview-mobile-description">
@@ -116,29 +121,32 @@ export function StoryPreviewMobile({ story }: { story?: GetStoryDto }) {
         justified
       >
         {story && isLoggedIn && <FollowButtonWrapper story={story} />}
-        {story && (!story.history || story.history.currentChapterNo === undefined) && (
-          <IconButton
-            placement="right"
-            icon={<Icon icon="angle-right" />}
-            style={{ fontSize: "small" }}
-            size="sm"
-            onClick={handleRead}
-          >
-            Read
-          </IconButton>
-        )}
-        {story && story.history && story.history.currentChapterNo !== undefined && (
-          <IconButton
-            onClick={handleContinue}
-            placement="right"
-            icon={<Icon icon="angle-double-right" />}
-            style={{ fontSize: "small" }}
-            size="sm"
-            appearance="primary"
-          >
-            {`Continue (${story.history.currentChapterNo})`}
-          </IconButton>
-        )}
+        {story &&
+          (!story.history || story.history.currentChapterNo === undefined) && (
+            <IconButton
+              placement="right"
+              icon={<Icon icon="angle-right" />}
+              style={{ fontSize: "small" }}
+              size="sm"
+              onClick={handleRead}
+            >
+              Read
+            </IconButton>
+          )}
+        {story &&
+          story.history &&
+          story.history.currentChapterNo !== undefined && (
+            <IconButton
+              onClick={handleContinue}
+              placement="right"
+              icon={<Icon icon="angle-double-right" />}
+              style={{ fontSize: "small" }}
+              size="sm"
+              appearance="primary"
+            >
+              {`Continue (${story.history.currentChapterNo})`}
+            </IconButton>
+          )}
       </ButtonGroup>
       <Panel
         onEntered={handleExpandPanel}
