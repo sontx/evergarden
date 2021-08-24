@@ -185,11 +185,15 @@ export function ReadingMobile(props: {
       {!showNavigation && isReady && window.scrollY > 0 && (
         <ReadingFooter chapter={chapter} ref={footerRef} />
       )}
-      {showNavigation && isReady && (
-        <>
-          <ReadingNavigationTop chapter={chapter} story={story} />
-          <ReadingNavigationBottom chapter={chapter} story={story} />
-        </>
+      {isReady && (
+        <Animation.Fade in={showNavigation} unmountOnExit>
+          {(props1, ref1) => (
+            <div {...props1} ref={ref1}>
+              <ReadingNavigationTop chapter={chapter} story={story} />
+              <ReadingNavigationBottom chapter={chapter} story={story} />
+            </div>
+          )}
+        </Animation.Fade>
       )}
     </>
   );

@@ -49,7 +49,7 @@ export function ReadingNavigationBottom(props: {
 
   return (
     <div className="reading-nav reading-nav--bottom">
-      <Animation.Collapse in={showSettingsPopup}>
+      <Animation.Collapse in={showSettingsPopup} unmountOnExit>
         {(props, ref) => (
           <div {...props} ref={ref}>
             <div style={{ padding: "20px" }}>
