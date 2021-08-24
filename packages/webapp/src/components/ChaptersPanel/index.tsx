@@ -15,13 +15,13 @@ import classNames from "classnames";
 export function ChapterSub({ chapter }: { chapter: GetChapterDto }) {
   return (
     <div className="chapter-sub">
-      <span>{moment(chapter.updated).fromNow()}</span>
       {chapter.title && (
         <>
-          <Divider vertical />
           <span>{chapter.title}</span>
+          <Divider vertical />
         </>
       )}
+      <span>{moment(chapter.updated).fromNow()}</span>
     </div>
   );
 }
