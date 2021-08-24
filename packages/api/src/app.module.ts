@@ -26,8 +26,10 @@ import { NestSessionOptions, SessionModule } from "nestjs-session";
 import * as ConnectRedis from "connect-redis";
 import * as session from "express-session";
 import { nanoid } from "nanoid";
-import { ViewcountModule } from './viewcount/viewcount.module';
-import { TrackerModule } from './tracker/tracker.module';
+import { ViewcountModule } from "./viewcount/viewcount.module";
+import { TrackerModule } from "./tracker/tracker.module";
+import { SendMailModule } from "./send-mail/send-mail.module";
+import { BullModule } from "@nestjs/bull";
 import ms = require("ms");
 
 const RedisStore = ConnectRedis(session);
@@ -94,6 +96,24 @@ const RedisStore = ConnectRedis(session);
         };
       },
     }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          redis: {
+            host: configService.get("database.redis.host"),
+            port: configService.get("database.redis.port"),
+            name: "evergarden",
+          },
+          defaultJobOptions: {
+            attempts: 3,
+            removeOnComplete: true,
+            removeOnFail: true
+          }
+        };
+      },
+    }),
     EventEmitterModule.forRoot({ global: true }),
     AuthModule,
     UserModule,
@@ -106,6 +126,7 @@ const RedisStore = ConnectRedis(session);
     StorageModule,
     ViewcountModule,
     TrackerModule,
+    SendMailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

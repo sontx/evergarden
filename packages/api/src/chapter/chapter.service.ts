@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Chapter } from "./chapter.entity";
@@ -12,6 +12,10 @@ import {
 import { Story } from "../story/story.entity";
 import { StoryService } from "../story/story.service";
 import { UserService } from "../user/user.service";
+import { CreateReportChapterDto } from "@evergarden/shared";
+import { User } from "../user/user.entity";
+import { SendMailService } from "../send-mail/send-mail.service";
+import * as moment from "moment";
 
 @Injectable()
 export class ChapterService {
@@ -19,6 +23,7 @@ export class ChapterService {
     @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
     private storyService: StoryService,
     private userService: UserService,
+    private sendMailService: SendMailService,
   ) {
     this.toDto = this.toDto.bind(this);
   }
@@ -117,5 +122,41 @@ export class ChapterService {
         published: chapter.published,
       }
     );
+  }
+
+  async report(chapter: Chapter, report: CreateReportChapterDto, userId?: number) {
+    const to = chapter.updatedBy.email?.toLowerCase();
+    if (!to) {
+      return;
+    }
+
+    let user: User;
+    if (userId) {
+      user = await this.userService.getById(userId);
+    }
+
+    const story = await this.storyService.getStory(chapter.storyId);
+
+    if (!story) {
+      throw new NotFoundException(`Story was not found`);
+    }
+
+    const cc = [chapter.createdBy.email, story.createdBy.email, story.updatedBy.email].filter(
+      (email) => !!email && email.toLowerCase() !== to,
+    );
+    const from = user ? `Report from <strong>${user.fullName}</strong>` : "Report from guest";
+    await this.sendMailService.sendMail({
+      to,
+      cc: cc.join(", "),
+      subject: `[${story.title}] report chapter ${chapter.chapterNo}` + (chapter.title ? ` - ${chapter.title}` : ""),
+      htmlBody: `
+${from}
+<ul>
+<li>Type: ${report.type}</li>
+<li>Detail: ${report.detail || "No Detail"}</li>
+<li>Report at: ${moment().add("hours", 7).format("HH:mm DD/MM/YYYY")}</li>
+</ul>
+</ul>`,
+    });
   }
 }

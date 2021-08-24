@@ -27,7 +27,7 @@ export default () => ({
       useSSL: process.env.MINIO_USE_SSL || false,
       accessKey: process.env.MINIO_ROOT_USER,
       secretKey: process.env.MINIO_ROOT_PASSWORD,
-    }
+    },
   },
   credentials: {
     google: {
@@ -55,7 +55,7 @@ export default () => ({
   },
   session: {
     secret: process.env.SESSION_SECRET || "you have just known",
-    ttl: process.env.SESSION_TTL || "1d"
+    ttl: process.env.SESSION_TTL || "1d",
   },
   settings: {
     sizing: {
@@ -68,7 +68,7 @@ export default () => ({
       },
       avatar: {
         width: 128,
-        height: 128
+        height: 128,
       },
     },
     user: {
@@ -76,5 +76,11 @@ export default () => ({
       readingFontSize: "M",
       readingLineSpacing: "M",
     },
+  },
+  sendMail: {
+    host: process.env.SENDMAIL_HOST,
+    username: process.env.SENDMAIL_USERNAME,
+    password: process.env.SENDMAIL_PASSWORD,
+    defaultFrom: process.env.SENDMAIL_DEFAULTFROM,
   },
 });

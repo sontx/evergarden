@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
   MinLength,
-} from 'class-validator';
+} from "class-validator";
 
 export type OAuth2Provider = 'google' | 'facebook';
 
@@ -290,6 +290,13 @@ export interface AuthorSearchBody {
   name: string;
 }
 
-export interface ThumbnailUploadResponse {
-  tempFileName: string;
+export class CreateReportChapterDto {
+  @IsString()
+  @Matches(/wrongContent|spellingMistake|wrongChapter|wrongTranslation|chaptersAreNotDisplayed|containsSensitiveVulgarLanguage/s)
+  type: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  detail?: string;
 }

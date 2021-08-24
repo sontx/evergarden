@@ -23,6 +23,7 @@ import { StoryService } from "../story/story.service";
 import { isOwnerOrGod } from "../utils";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { Chapter } from "./chapter.entity";
+import { CreateReportChapterDto } from "@evergarden/shared";
 
 @Controller()
 export class ChapterController {
@@ -155,5 +156,22 @@ export class ChapterController {
     }
 
     return story;
+  }
+
+  @Post("chapters/:chapterId/report")
+  @JwtConfig({ anonymous: true })
+  @UseGuards(JwtGuard, RolesGuard)
+  async reportChapter(
+    @Param("chapterId", ParseIntPipe) chapterId: number,
+    @Body() report: CreateReportChapterDto,
+    @Req() req,
+  ) {
+    const chapter = await this.chapterService.getChapterById(chapterId);
+    if (!chapter) {
+      throw new NotFoundException();
+    }
+
+    const {id} = req.user || {};
+    await this.chapterService.report(chapter, report, id);
   }
 }
