@@ -10,12 +10,12 @@ import { fetchStories } from "./storiesAPI";
 import { openStory } from "../story/storySlice";
 
 import "./storyList.less";
-import { withAnimation } from "../../components/StoryItemEx/withAnimation";
-import { StoryItemEx } from "../../components/StoryItemEx";
 import { abbreviateNumber } from "../../utils/types";
 import { StoryItemLoading } from "../../components/StoryItemLoading";
+import { withAnimation } from "../../components/StoryList/StoryItem/withAnimation";
+import { StoryItem } from "../../components/StoryList/StoryItem";
 
-const StoryItemWrapper = withAnimation(StoryItemEx);
+const StoryItemWrapper = withAnimation(StoryItem);
 
 function ViewCountSub({ story }: { story: GetStoryDto }) {
   return <span>{abbreviateNumber(story.view)} views</span>;

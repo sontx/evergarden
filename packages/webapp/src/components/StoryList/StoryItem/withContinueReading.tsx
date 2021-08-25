@@ -1,7 +1,7 @@
 import { ElementType, useCallback } from "react";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../../app/hooks";
 import { useHistory } from "react-router-dom";
-import { openReading } from "../../features/story/storySlice";
+import { openReading } from "../../../features/story/storySlice";
 
 export function withContinueReading(Component: ElementType) {
   return (props: any) => {

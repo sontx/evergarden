@@ -1,6 +1,7 @@
 @import "~rsuite/lib/styles/themes/dark/index.less";
+@import "../../../../variables.less";
 
-.story-item-ex-container {
+.story-item--compact {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -36,7 +37,7 @@
   }
 
   .sub {
-    color: rgba(255, 255, 255, 0.45);
+    color: @secondary-text-color;
     font-size: @font-size-base - 2;
   }
 

@@ -1,0 +1,26 @@
+@import "../../../../variables.less";
+
+.story-item--vertical {
+  margin: 0;
+  width: min-content;
+
+  .info {
+    text-align: center;
+
+    .title {
+      font-size: .8125rem;
+      line-height: 1.25;
+      overflow: hidden;
+      max-height: 2.125rem;
+      margin: .5rem 0 .125rem;
+    }
+
+    .author {
+      font-size: .75rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: @secondary-text-color;
+    }
+  }
+}

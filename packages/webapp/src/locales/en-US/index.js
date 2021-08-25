@@ -39,6 +39,8 @@ export default {
   chapterFormPublishTitle: "Published",
   chapterFormPublishDescription: "Everyone else can read this chapter",
   goBackButton: "Go back",
+  storyFullStatus: "Full",
+  storyOngoingStatus: "Ongoing",
   storyType: "Type",
   storyTypeConvert: "Convert",
   storyTypeTranslate: "Translate",

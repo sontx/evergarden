@@ -1,0 +1,65 @@
+@import "../../../../variables.less";
+
+.story-item--horizontal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+
+  img {
+    flex: 1;
+    margin-right: .5rem;
+  }
+
+  .info {
+    .title {
+      font-size: 100%;
+      line-height: 1.4;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .desc {
+      font-size: .875rem;
+      line-height: 1.1875rem;
+      display: -webkit-box;
+      height: 2.25rem;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      margin: .375rem 0;
+      color: @secondary-text-color;
+    }
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: .8125rem;
+    align-items: center;
+    color: @secondary-text-color;
+
+    > :first-child {
+      flex: 1;
+    }
+
+    .author {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .rs-icon {
+      margin-right: .1875rem;
+    }
+    .rs-tag + .rs-tag {
+      margin-left: 5px;
+    }
+    .rs-tag {
+      padding: 0 6px;
+    }
+    .rs-tag-group > .rs-tag {
+      margin-top: 9px;
+    }
+  }
+}

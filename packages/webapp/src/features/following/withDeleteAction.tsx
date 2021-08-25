@@ -1,12 +1,12 @@
 import { ElementType, SyntheticEvent, useCallback, useRef } from "react";
-import { withAction } from "../../components/StoryItemEx/withAction";
-import { withAnimation } from "../../components/StoryItemEx/withAnimation";
 import { Icon } from "rsuite";
 import { useAppDispatch } from "../../app/hooks";
 import { removeStory } from "./followingSlice";
 
 import "./withDeleteAction.less";
 import { updateStoryHistoryAsync } from "../histories/historiesSlice";
+import { withAnimation } from "../../components/StoryList/StoryItem/withAnimation";
+import { withAction } from "../../components/StoryList/StoryItem/withAction";
 
 export function withDeleteAction(Component: ElementType) {
   const Wrapper = withAnimation(withAction(Component));

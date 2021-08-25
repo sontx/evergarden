@@ -5,14 +5,14 @@ import { useIntl } from "react-intl";
 import { selectHistories } from "../../features/histories/historiesSlice";
 import { useAppSelector } from "../../app/hooks";
 import { UserListStories } from "../../components/UserListStories";
-import { withContinueReading } from "../../components/StoryItemEx/withContinueReading";
-import { withAnimation } from "../../components/StoryItemEx/withAnimation";
-import { StoryItemEx } from "../../components/StoryItemEx";
 import { fetchStoriesByIds } from "../../features/stories/storiesAPI";
 import { GetStoryDto } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
+import { withContinueReading } from "../../components/StoryList/StoryItem/withContinueReading";
+import { withAnimation } from "../../components/StoryList/StoryItem/withAnimation";
+import { StoryItem } from "../../components/StoryList/StoryItem";
 
-const StoryItemWrapper = withContinueReading(withAnimation(StoryItemEx));
+const StoryItemWrapper = withContinueReading(withAnimation(StoryItem));
 
 export function History() {
   const intl = useIntl();

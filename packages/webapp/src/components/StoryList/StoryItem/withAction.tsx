@@ -1,11 +1,11 @@
 import { ElementType, ReactNode, useEffect, useRef } from "react";
-import { StoryItemExProps } from "./index";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   selectShowingAction,
   setShowingAction,
-} from "../../features/following/followingSlice";
+} from "../../../features/following/followingSlice";
 import { useSwipeable } from "react-swipeable";
+import { CompactStoryItemProps } from "./CompactStoryItem";
 
 export function withAction(Component: ElementType) {
   return ({
@@ -13,7 +13,7 @@ export function withAction(Component: ElementType) {
     story,
     onActionClick,
     ...rest
-  }: StoryItemExProps & { action: ReactNode; onActionClick: () => void }) => {
+  }: CompactStoryItemProps & { action: ReactNode; onActionClick: () => void }) => {
     const dispatch = useAppDispatch();
     const showingAction = useAppSelector(selectShowingAction);
     const actionRef = useRef<HTMLDivElement>(null);
@@ -27,7 +27,7 @@ export function withAction(Component: ElementType) {
         }, 400);
         return () => window.clearTimeout(timeoutId);
       }
-    }, [actionRef, actionRef.current]);
+    }, [actionRef]);
 
     useEffect(() => {
       if (showingAction !== story && actionRef.current) {

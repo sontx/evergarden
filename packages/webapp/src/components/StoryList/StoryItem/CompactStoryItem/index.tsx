@@ -1,5 +1,5 @@
 import { GetStoryDto } from "@evergarden/shared";
-import defaultThumbnail from "../../images/logo.png";
+import defaultThumbnail from "../../../../images/logo.png";
 import moment from "moment";
 import { Divider } from "rsuite";
 import classNames from "classnames";
@@ -8,10 +8,10 @@ import { ElementType, forwardRef, ReactNode, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import "./index.less";
-import { useStoryHistory } from "../../features/histories/useStoryHistory";
-import { LazyImageEx } from "../LazyImageEx";
+import { useStoryHistory } from "../../../../features/histories/useStoryHistory";
+import { LazyImageEx } from "../../../LazyImageEx";
 
-export interface StoryItemExProps extends StandardProps {
+export interface CompactStoryItemProps extends StandardProps {
   story: GetStoryDto;
   children?: ReactNode;
   RightSub?: ElementType<{ story: GetStoryDto }>;
@@ -21,7 +21,7 @@ export interface StoryItemExProps extends StandardProps {
   onClick?: (story: GetStoryDto) => void;
 }
 
-export const StoryItemEx = forwardRef(
+export const CompactStoryItem = forwardRef(
   (
     {
       story: passStory,
@@ -31,8 +31,9 @@ export const StoryItemEx = forwardRef(
       mainNoWrap,
       additionPadding,
       onClick,
+      className,
       ...rest
-    }: StoryItemExProps,
+    }: CompactStoryItemProps,
     ref: any,
   ) => {
     const story = useStoryHistory(passStory);
@@ -46,7 +47,7 @@ export const StoryItemEx = forwardRef(
 
     return (
       <div
-        className="story-item-ex-container"
+        className={classNames("story-item--compact", className)}
         onClick={handleClick}
         {...rest}
         ref={ref}

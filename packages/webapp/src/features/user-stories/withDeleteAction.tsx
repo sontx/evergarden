@@ -6,9 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { withAction } from "../../components/StoryItemEx/withAction";
-import { withAnimation } from "../../components/StoryItemEx/withAnimation";
-import { Button, Icon, Loader, Message, Modal } from "rsuite";
+import { Button, Icon, Modal } from "rsuite";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 import "./withDeleteAction.less";
@@ -17,14 +15,17 @@ import {
   resetStatus,
   selectStatus,
 } from "./userStoriesSlice";
+import { withAnimation } from "../../components/StoryList/StoryItem/withAnimation";
+import { withAction } from "../../components/StoryList/StoryItem/withAction";
 
 export function withDeleteAction(Component: ElementType) {
   const Wrapper = withAnimation(withAction(Component));
 
   return ({ story, ...rest }: any) => {
     const dispatch = useAppDispatch();
-    const showHandlerRef =
-      useRef<((show: boolean) => void) | undefined>(undefined);
+    const showHandlerRef = useRef<((show: boolean) => void) | undefined>(
+      undefined,
+    );
     const [showConfirm, setShowConfirm] = useState(false);
     const status = useAppSelector(selectStatus);
 

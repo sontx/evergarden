@@ -3,12 +3,12 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useEffect } from "react";
 import { UserListItemsChildrenProps } from "../../components/UserListStoriesPage";
 import { withDeleteAction } from "./withDeleteAction";
-import { StoryItemEx } from "../../components/StoryItemEx";
 import { UserListStories } from "../../components/UserListStories";
-import { withContinueReading } from "../../components/StoryItemEx/withContinueReading";
 import { selectHistories } from "../histories/historiesSlice";
+import { withContinueReading } from "../../components/StoryList/StoryItem/withContinueReading";
+import { StoryItem } from "../../components/StoryList/StoryItem";
 
-const FollowingItemWrapper = withContinueReading(withDeleteAction(StoryItemEx));
+const FollowingItemWrapper = withContinueReading(withDeleteAction(StoryItem));
 
 export function FollowingStories(props: UserListItemsChildrenProps) {
   const dispatch = useAppDispatch();
