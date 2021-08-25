@@ -42,6 +42,12 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
 import { Story } from "./story.entity";
 
+const SimpleParseArrayPipe = new ParseArrayPipe({
+  separator: ",",
+  items: Number,
+  optional: true,
+});
+
 @Controller("stories")
 export class StoryController {
   constructor(
@@ -59,16 +65,10 @@ export class StoryController {
     @Query("skip") skip,
     @Query("limit") limit,
     @Query("category") category: StoryCategory,
-    @Query(
-      "ids",
-      new ParseArrayPipe({
-        separator: ",",
-        items: Number,
-        optional: true,
-      }),
-    )
-    ids: number[],
+    @Query("ids", SimpleParseArrayPipe) ids: number[],
     @Query("search") search: string,
+    @Query("genres", SimpleParseArrayPipe) genres: number[],
+    @Query("authors", SimpleParseArrayPipe) authors: number[],
     @Req() req,
   ): Promise<PaginationResult<GetStoryDto> | GetStoryDto[] | StorySearchBody[]> {
     limit = toInt(limit);
@@ -79,6 +79,7 @@ export class StoryController {
     };
 
     const imGod = isGod(req);
+    const isDefinedArray = (arr: number[]) => !!arr && arr.length > 0;
 
     switch (category) {
       case "updated":
@@ -91,8 +92,8 @@ export class StoryController {
         }
         return await this.storyService.getUserStories(req.user.id);
       default:
-        if (ids && ids.length > 0) {
-          const result = await this.storyService.getStoriesByIds(ids || []);
+        if (isDefinedArray(ids)) {
+          const result = await this.storyService.getStoriesByIds(ids);
           if (imGod) {
             return result;
           }
@@ -101,7 +102,17 @@ export class StoryController {
             throw new ForbiddenException(`Story ${unpublishedStory.id} isn't published yet`);
           }
           return result;
-        } else if (search) {
+        }
+
+        if (isDefinedArray(genres)) {
+          return this.storyService.getStoriesByGenres(genres, pagination, imGod);
+        }
+
+        if (isDefinedArray(authors)) {
+          return this.storyService.getStoriesByAuthors(authors, pagination, imGod);
+        }
+
+        if (search) {
           return await this.storyService.search(search.trim());
         }
         return [];

@@ -58,9 +58,14 @@ export class StoryService {
       ...rest,
       where: includeUnpublished ? where : { published: true, ...where },
       take: options.limit,
-      skip: isFinite(options.skip) ? options.skip : options.page * options.limit,
+      skip: StoryService.getQuerySkip(options),
     });
     return this.toPaginationResult(options, result);
+  }
+
+  private static getQuerySkip(options: PaginationOptions): number {
+    const value = isFinite(options.skip) ? options.skip : options.page * options.limit;
+    return isFinite(value) ? value : 0;
   }
 
   private toPaginationResult(options: PaginationOptions, result: [Story[], number]): PaginationResult<GetStoryDto> {
@@ -74,6 +79,36 @@ export class StoryService {
         totalPages: Math.ceil(result[1] / options.limit),
       },
     };
+  }
+
+  async getStoriesByGenres(genres: number[], options: PaginationOptions, includeUnpublished?: boolean) {
+    return this.getStoriesByJoin(genres, "genres", options, includeUnpublished);
+  }
+
+  async getStoriesByAuthors(authors: number[], options: PaginationOptions, includeUnpublished?: boolean) {
+    return this.getStoriesByJoin(authors, "authors", options, includeUnpublished);
+  }
+
+  private async getStoriesByJoin(
+    joinIds: number[],
+    joinTable: "genres" | "authors",
+    options: PaginationOptions,
+    includeUnpublished?: boolean,
+  ) {
+    let query = this.storyRepository
+      .createQueryBuilder("story")
+      .innerJoin(`story.${joinTable}`, joinTable)
+      .take(options.limit)
+      .skip(StoryService.getQuerySkip(options))
+      .orderBy("story.updated", "DESC");
+    query = includeUnpublished
+      ? query.where(`story.published = 1 and ${joinTable}.id in (:...joinIds)`, { joinIds })
+      : query.where(`${joinTable}.id in (:...joinIds)`, { joinIds });
+    if (options.page !== undefined) {
+      const result = await query.getManyAndCount();
+      return this.toPaginationResult(options, result);
+    }
+    return await query.getMany();
   }
 
   async getLastUpdatedStories(
