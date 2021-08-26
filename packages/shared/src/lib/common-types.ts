@@ -86,6 +86,7 @@ export interface JwtPayload {
 export type Role = 'guest' | 'user' | 'mod' | 'admin';
 
 export type StoryStatus = 'ongoing' | 'full';
+export type StoryType = 'convert' | 'translate' | 'self-composed'
 
 export interface GetAuthorDto {
   id: number;
@@ -116,7 +117,7 @@ export interface GetStoryDto {
   published?: boolean;
   createdBy: GetUserDto;
   updatedBy: GetUserDto;
-
+  type: StoryType;
   history?: GetReadingHistoryDto;
 }
 
@@ -138,6 +139,10 @@ export class CreateStoryDto {
   @IsString()
   @Matches(/ongoing|full/s)
   status: StoryStatus;
+
+  @IsString()
+  @Matches(/convert|translate|self-composed/s)
+  type: StoryType;
 
   @IsArray()
   @IsOptional()
@@ -166,6 +171,11 @@ export class UpdateStoryDto {
   @IsOptional()
   @Matches(/ongoing|full/s)
   status?: StoryStatus;
+
+  @IsString()
+  @IsOptional()
+  @Matches(/convert|translate|self-composed/s)
+  type?: StoryType;
 
   @IsArray()
   @IsOptional()

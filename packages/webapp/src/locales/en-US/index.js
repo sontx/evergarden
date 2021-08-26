@@ -38,5 +38,12 @@ export default {
   storyFormPublishDescription: "Everyone else can read this story",
   chapterFormPublishTitle: "Published",
   chapterFormPublishDescription: "Everyone else can read this chapter",
-  goBackButton: "Go back"
+  goBackButton: "Go back",
+  storyType: "Type",
+  storyTypeConvert: "Convert",
+  storyTypeTranslate: "Translate",
+  storyTypeSelfComposed: "Self-composed",
+  storyTypeConvertDescription: "The story is translated by the tool",
+  storyTypeTranslateDescription: "The story is translated by the translator",
+  storyTypeSelfComposedDescription: "The story written by you",
 };

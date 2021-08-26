@@ -46,7 +46,7 @@ export default () => ({
   jwt: {
     auth: {
       secret: process.env.JWT_AUTH_SECRET || "you never know",
-      expires: process.env.JWT_AUTH_EXPIRES || "60m",
+      expires: process.env.JWT_AUTH_EXPIRES || "1d",
     },
     refresh: {
       secret: process.env.JWT_REFRESH_SECRET || "now you know",

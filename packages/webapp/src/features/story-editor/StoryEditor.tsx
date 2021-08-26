@@ -12,7 +12,6 @@ import {
   Form,
   FormControl,
   FormGroup,
-  Radio,
   RadioGroup,
   Schema,
 } from "rsuite";
@@ -24,9 +23,10 @@ import { CreateStoryDto, mergeObjects, StoryStatus } from "@evergarden/shared";
 import { useHistory } from "react-router-dom";
 import { ThumbnailUploader } from "../../components/ThumbnailUploader";
 import { EditorForm, validateModel } from "../../components/EditorForm";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { SingleCheckboxFormAccepter } from "../../components/EnhancedCheckbox/SingleCheckboxFormAccepter";
 import { SingleCheckboxForm } from "../../components/EnhancedCheckbox/SingleCheckboxForm";
+import { EnhancedRadio } from "../../components/EnhancedRadio";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 
@@ -66,7 +66,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
     published: false,
     description: "",
     isFull: false,
-    type: "translate"
+    type: "translate",
   });
 
   const [uploadFile, setUploadFile] = useState<
@@ -172,30 +172,53 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
           />
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Type</ControlLabel>
+          <ControlLabel>
+            <FormattedMessage id="storyType" />
+          </ControlLabel>
           <FormControl name="type" accepter={RadioGroup}>
-            <Radio value="translate">Translate</Radio>
-            <Radio value="convert">Convert</Radio>
-            <Radio value="self-composed">Self-composed</Radio>
+            <EnhancedRadio
+              value="translate"
+              description={
+                <FormattedMessage id="storyTypeTranslateDescription" />
+              }
+            >
+              <FormattedMessage id="storyTypeTranslate" />
+            </EnhancedRadio>
+            <EnhancedRadio
+              value="convert"
+              description={
+                <FormattedMessage id="storyTypeConvertDescription" />
+              }
+            >
+              <FormattedMessage id="storyTypeConvert" />
+            </EnhancedRadio>
+            <EnhancedRadio
+              value="self-composed"
+              description={
+                <FormattedMessage id="storyTypeSelfComposedDescription" />
+              }
+            >
+              <FormattedMessage id="storyTypeSelfComposed" />
+            </EnhancedRadio>
           </FormControl>
         </FormGroup>
         <FormGroup>
           <FormControl name="isFull" accepter={SingleCheckboxFormAccepter}>
             <SingleCheckboxForm
-              description={intl.formatMessage({
-                id: "storyFormFullStoryDescription",
-              })}
+              description={
+                <FormattedMessage id="storyFormFullStoryDescription" />
+              }
             >
-              {intl.formatMessage({ id: "storyFormFullStoryTitle" })}
+              <FormattedMessage id="storyFormFullStoryTitle" />
             </SingleCheckboxForm>
           </FormControl>
           <FormControl name="published" accepter={SingleCheckboxFormAccepter}>
             <SingleCheckboxForm
-              description={intl.formatMessage({
-                id: "storyFormPublishDescription",
-              })}
+              description={
+                <FormattedMessage id="storyFormPublishDescription" />
+              }
             >
-              {intl.formatMessage({ id: "storyFormPublishTitle" })}
+              <FormattedMessage id="storyFormPublishTitle" />
             </SingleCheckboxForm>
           </FormControl>
         </FormGroup>

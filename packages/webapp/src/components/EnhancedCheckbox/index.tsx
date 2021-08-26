@@ -3,9 +3,9 @@ import { Checkbox } from "rsuite";
 
 import "./index.less";
 import classNames from "classnames";
-import React from "react";
+import React, { ReactNode } from "react";
 
-export type EnhancedCheckboxProps = CheckboxProps & { description?: string };
+export type EnhancedCheckboxProps = CheckboxProps & { description?: ReactNode };
 
 export function EnhancedCheckbox({
   children,

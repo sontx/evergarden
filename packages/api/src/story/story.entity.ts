@@ -1,5 +1,5 @@
 import { Check, Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
-import { StoryStatus } from "@evergarden/shared";
+import { StoryStatus, StoryType } from "@evergarden/shared";
 import { Author } from "../author/author.entity";
 import { Genre } from "../genre/genre.entity";
 import { Chapter } from "../chapter/chapter.entity";
@@ -34,6 +34,14 @@ export class Story extends AbstractEntity {
     default: "ongoing",
   })
   status: StoryStatus;
+
+  @Column({
+    type: "enum",
+    enum: ["convert", "translate", "self-composed"],
+    nullable: false,
+    default: "translate",
+  })
+  type: StoryType;
 
   @ManyToMany(() => Author, (author) => author.stories, { cascade: true, eager: true })
   @JoinTable()
