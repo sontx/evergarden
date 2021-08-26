@@ -16,11 +16,9 @@ import {
   selectStory,
 } from "../story-editor/storyEditorSlice";
 import { useHistory } from "react-router-dom";
-import {
-  EnhancedCheckbox,
-  SingleCheckboxFormAccepter,
-} from "../../components/EnhancedCheckbox";
 import { useIntl } from "react-intl";
+import { SingleCheckboxFormAccepter } from "../../components/EnhancedCheckbox/SingleCheckboxFormAccepter";
+import { SingleCheckboxForm } from "../../components/EnhancedCheckbox/SingleCheckboxForm";
 
 const { StringType, BooleanType } = Schema.Types;
 
@@ -128,13 +126,13 @@ export function ChapterEditor({
         </FormGroup>
         <FormGroup>
           <FormControl name="published" accepter={SingleCheckboxFormAccepter}>
-            <EnhancedCheckbox
+            <SingleCheckboxForm
               description={intl.formatMessage({
                 id: "chapterFormPublishDescription",
               })}
             >
               {intl.formatMessage({ id: "chapterFormPublishTitle" })}
-            </EnhancedCheckbox>
+            </SingleCheckboxForm>
           </FormControl>
         </FormGroup>
       </Form>

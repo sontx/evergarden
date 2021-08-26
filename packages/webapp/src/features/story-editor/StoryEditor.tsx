@@ -7,7 +7,15 @@ import {
   updateStoryAsync,
 } from "./storyEditorSlice";
 import React, { useEffect, useState } from "react";
-import { Form, FormControl, FormGroup, Schema } from "rsuite";
+import {
+  ControlLabel,
+  Form,
+  FormControl,
+  FormGroup,
+  Radio,
+  RadioGroup,
+  Schema,
+} from "rsuite";
 import { AuthorsPicker } from "../authors/AuthorsPicker";
 import { GenresPicker } from "../genres/GenresPicker";
 
@@ -16,11 +24,9 @@ import { CreateStoryDto, mergeObjects, StoryStatus } from "@evergarden/shared";
 import { useHistory } from "react-router-dom";
 import { ThumbnailUploader } from "../../components/ThumbnailUploader";
 import { EditorForm, validateModel } from "../../components/EditorForm";
-import {
-  EnhancedCheckbox,
-  SingleCheckboxFormAccepter,
-} from "../../components/EnhancedCheckbox";
 import { useIntl } from "react-intl";
+import { SingleCheckboxFormAccepter } from "../../components/EnhancedCheckbox/SingleCheckboxFormAccepter";
+import { SingleCheckboxForm } from "../../components/EnhancedCheckbox/SingleCheckboxForm";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 
@@ -38,6 +44,7 @@ const model = Schema.Model({
   title: StringType().isRequired(REQUIRED_FIELD).minLength(4).maxLength(255),
   description: StringType(),
   isFull: BooleanType(),
+  type: StringType(),
   authors: ArrayType(),
   genres: ArrayType(),
   published: BooleanType(),
@@ -59,6 +66,7 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
     published: false,
     description: "",
     isFull: false,
+    type: "translate"
   });
 
   const [uploadFile, setUploadFile] = useState<
@@ -164,23 +172,31 @@ export function StoryEditor({ mode }: { mode: "create" | "update" }) {
           />
         </FormGroup>
         <FormGroup>
+          <ControlLabel>Type</ControlLabel>
+          <FormControl name="type" accepter={RadioGroup}>
+            <Radio value="translate">Translate</Radio>
+            <Radio value="convert">Convert</Radio>
+            <Radio value="self-composed">Self-composed</Radio>
+          </FormControl>
+        </FormGroup>
+        <FormGroup>
           <FormControl name="isFull" accepter={SingleCheckboxFormAccepter}>
-            <EnhancedCheckbox
+            <SingleCheckboxForm
               description={intl.formatMessage({
                 id: "storyFormFullStoryDescription",
               })}
             >
               {intl.formatMessage({ id: "storyFormFullStoryTitle" })}
-            </EnhancedCheckbox>
+            </SingleCheckboxForm>
           </FormControl>
           <FormControl name="published" accepter={SingleCheckboxFormAccepter}>
-            <EnhancedCheckbox
+            <SingleCheckboxForm
               description={intl.formatMessage({
                 id: "storyFormPublishDescription",
               })}
             >
               {intl.formatMessage({ id: "storyFormPublishTitle" })}
-            </EnhancedCheckbox>
+            </SingleCheckboxForm>
           </FormControl>
         </FormGroup>
       </Form>
