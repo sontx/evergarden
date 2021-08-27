@@ -8,6 +8,10 @@ import { VerticalStoryItem } from "./VerticalStoryItem";
 import { forwardRef } from "react";
 import { CompactStoryItem } from "./CompactStoryItem";
 
+export interface StoryItemBaseProps extends StandardProps {
+  story: GetStoryDto;
+}
+
 export const StoryItem = forwardRef(
   (
     {
@@ -16,9 +20,8 @@ export const StoryItem = forwardRef(
       className,
       ...rest
     }: {
-      story: GetStoryDto;
       layout?: "vertical" | "horizontal" | "compact";
-    } & StandardProps,
+    } & StoryItemBaseProps,
     ref,
   ) => {
     const Renderer =

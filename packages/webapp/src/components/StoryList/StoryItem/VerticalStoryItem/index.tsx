@@ -1,5 +1,3 @@
-import { StandardProps } from "rsuite/es/@types/common";
-import { GetStoryDto } from "@evergarden/shared";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch } from "../../../../app/hooks";
 import classNames from "classnames";
@@ -10,16 +8,10 @@ import defaultThumbnail from "../../../../images/logo.png";
 import "./index.less";
 import { forwardRef } from "react";
 import { useStoryHistory } from "../../../../features/histories/useStoryHistory";
+import { StoryItemBaseProps } from "../index";
 
 export const VerticalStoryItem = forwardRef(
-  (
-    {
-      story: passStory,
-      className,
-      ...rest
-    }: { story: GetStoryDto } & StandardProps,
-    ref,
-  ) => {
+  ({ story: passStory, className, ...rest }: StoryItemBaseProps, ref) => {
     const story = useStoryHistory(passStory);
     const history = useHistory();
     const dispatch = useAppDispatch();

@@ -13,6 +13,7 @@ import { AppContainer } from "../../components/AppContainer";
 import { FollowingStories } from "../../features/following/FollowingStories";
 import { StoryList } from "../../features/stories/StoryList";
 import { selectIsLoggedIn } from "../../features/user/userSlice";
+import { PreviewList } from "../../features/last-updated-preview/PreviewList";
 
 export function Home() {
   const currentTab = useAppSelector(selectCurrentTab);
@@ -34,7 +35,7 @@ export function Home() {
         style={{ padding: "10px", display: "flex", flexDirection: "column" }}
       >
         <AppNav />
-        {currentTab === "updated" && <StoryList category="updated" />}
+        {currentTab === "updated" && <PreviewList />}
         {currentTab === "hot" && <StoryList category="hot" />}
         {currentTab === "following" && <FollowingStories />}
       </Content>

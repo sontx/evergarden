@@ -1,19 +1,13 @@
-import { ElementType, ReactNode, useEffect, useRef } from "react";
+import { ElementType, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   selectShowingAction,
   setShowingAction,
 } from "../../../features/following/followingSlice";
 import { useSwipeable } from "react-swipeable";
-import { CompactStoryItemProps } from "./CompactStoryItem";
 
 export function withAction(Component: ElementType) {
-  return ({
-    action,
-    story,
-    onActionClick,
-    ...rest
-  }: CompactStoryItemProps & { action: ReactNode; onActionClick: () => void }) => {
+  return ({ action, story, onActionClick, ...rest }: any) => {
     const dispatch = useAppDispatch();
     const showingAction = useAppSelector(selectShowingAction);
     const actionRef = useRef<HTMLDivElement>(null);

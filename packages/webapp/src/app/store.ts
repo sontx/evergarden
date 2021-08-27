@@ -31,6 +31,7 @@ import genresReducer from "../features/genres/genresSlice";
 import userStoriesReducer from "../features/user-stories/userStoriesSlice";
 import historiesReducer from "../features/histories/historiesSlice";
 import userReducer from "../features/user/userSlice";
+import previewLastUpdatedReducer from "../features/last-updated-preview/previewLastUpdated";
 
 const reducers = combineReducers({
   counter: counterReducer,
@@ -49,6 +50,7 @@ const reducers = combineReducers({
   authors: authorsReducer,
   genres: genresReducer,
   userStories: userStoriesReducer,
+  previewLastUpdated: previewLastUpdatedReducer
 });
 
 const persistConfig: PersistConfig<any> = {

@@ -8,11 +8,11 @@ import { UserListStories } from "../../components/UserListStories";
 import { fetchStoriesByIds } from "../../features/stories/storiesAPI";
 import { GetStoryDto } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
-import { withContinueReading } from "../../components/StoryList/StoryItem/withContinueReading";
+import { withHistory } from "../../components/StoryList/StoryItem/withHistory";
 import { withAnimation } from "../../components/StoryList/StoryItem/withAnimation";
 import { StoryItem } from "../../components/StoryList/StoryItem";
 
-const StoryItemWrapper = withContinueReading(withAnimation(StoryItem));
+const StoryItemWrapper = withHistory(withAnimation(StoryItem));
 
 export function History() {
   const intl = useIntl();

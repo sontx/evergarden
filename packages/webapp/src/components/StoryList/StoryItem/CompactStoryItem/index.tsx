@@ -3,16 +3,15 @@ import defaultThumbnail from "../../../../images/logo.png";
 import moment from "moment";
 import { Divider } from "rsuite";
 import classNames from "classnames";
-import { StandardProps } from "rsuite/es/@types/common";
 import { ElementType, forwardRef, ReactNode, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import "./index.less";
 import { useStoryHistory } from "../../../../features/histories/useStoryHistory";
 import { LazyImageEx } from "../../../LazyImageEx";
+import { StoryItemBaseProps } from "../index";
 
-export interface CompactStoryItemProps extends StandardProps {
-  story: GetStoryDto;
+export interface CompactStoryItemProps extends StoryItemBaseProps {
   children?: ReactNode;
   RightSub?: ElementType<{ story: GetStoryDto }>;
   BottomSub?: ElementType<{ story: GetStoryDto }>;

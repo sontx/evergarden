@@ -1,27 +1,19 @@
 import defaultThumbnail from "../../../../images/logo.png";
 import { LazyImageEx } from "../../../LazyImageEx";
-import { GetStoryDto } from "@evergarden/shared";
 
 import "./index.less";
 import { Icon, Tag, TagGroup } from "rsuite";
 import { Link, useHistory } from "react-router-dom";
-import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { abbreviateNumber } from "../../../../utils/types";
 import { openReading, openStory } from "../../../../features/story/storySlice";
 import { useAppDispatch } from "../../../../app/hooks";
 import { forwardRef } from "react";
 import { useStoryHistory } from "../../../../features/histories/useStoryHistory";
+import { StoryItemBaseProps } from "../index";
 
 export const HorizontalStoryItem = forwardRef(
-  (
-    {
-      story: passStory,
-      className,
-      ...rest
-    }: { story: GetStoryDto } & StandardProps,
-    ref,
-  ) => {
+  ({ story: passStory, className, ...rest }: StoryItemBaseProps, ref) => {
     const story = useStoryHistory(passStory);
     const history = useHistory();
     const dispatch = useAppDispatch();

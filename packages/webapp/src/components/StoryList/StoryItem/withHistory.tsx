@@ -2,11 +2,14 @@ import { ElementType, useCallback } from "react";
 import { useAppDispatch } from "../../../app/hooks";
 import { useHistory } from "react-router-dom";
 import { openReading } from "../../../features/story/storySlice";
+import { StoryItemBaseProps } from "./index";
+import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 
-export function withContinueReading(Component: ElementType) {
-  return (props: any) => {
+export function withHistory(Component: ElementType<StoryItemBaseProps>) {
+  return ({story: passStory, ...rest}: StoryItemBaseProps) => {
     const dispatch = useAppDispatch();
     const history = useHistory();
+    const story = useStoryHistory(passStory);
 
     const handleClick = useCallback(
       (story) => {
@@ -17,6 +20,6 @@ export function withContinueReading(Component: ElementType) {
       [dispatch, history],
     );
 
-    return <Component {...props} onClick={handleClick} />;
+    return <Component {...rest} story={story} onClick={handleClick} />;
   };
 }
