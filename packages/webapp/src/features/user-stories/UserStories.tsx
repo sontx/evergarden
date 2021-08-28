@@ -10,10 +10,10 @@ import {
 import { withDeleteAction } from "./withDeleteAction";
 import { withCustomizedItem } from "./withCustomizedItem";
 import { withEditUserStory } from "./withEditUserStory";
-import { StoryItem } from "../../components/StoryList/StoryItem";
+import { CompactStoryItem } from "../../components/StoryItem";
 
 const StoryItemWrapper = withEditUserStory(
-  withCustomizedItem(withDeleteAction(StoryItem)),
+  withCustomizedItem(withDeleteAction(CompactStoryItem)),
 );
 
 export function UserStories(props: UserListItemsChildrenProps) {

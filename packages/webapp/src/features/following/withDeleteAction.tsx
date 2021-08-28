@@ -5,8 +5,8 @@ import { removeStory } from "./followingSlice";
 
 import "./withDeleteAction.less";
 import { updateStoryHistoryAsync } from "../histories/historiesSlice";
-import { withAnimation } from "../../components/StoryList/StoryItem/withAnimation";
-import { withAction } from "../../components/StoryList/StoryItem/withAction";
+import { withAnimation } from "../../components/StoryItem/withAnimation";
+import { withAction } from "../../components/StoryItem/withAction";
 
 export function withDeleteAction(Component: ElementType) {
   const Wrapper = withAnimation(withAction(Component));

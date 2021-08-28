@@ -1,5 +1,5 @@
-@import "~rsuite/lib/styles/themes/dark/index.less";
-@import "../../../../variables.less";
+@import "node_modules/rsuite/lib/styles/themes/dark/index.less";
+@import "../../../variables.less";
 
 .story-item--compact {
   display: flex;
@@ -13,10 +13,24 @@
     overflow: hidden;
 
     img {
-      width: 30px;
-      height: 40px;
+      width: @thumbnail-width--compact;
+      min-width: @thumbnail-width--compact;
+      max-width: @thumbnail-width--compact;
+      height: @thumbnail-height--compact;
+      min-height: @thumbnail-height--compact;
+      max-height: @thumbnail-height--compact;
       margin-right: 8px;
       object-fit: cover;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .title {
+      line-height: 100%;
     }
   }
 
@@ -56,7 +70,7 @@
     align-items: center;
     opacity: 0;
     height: 100%;
-    width: 42px;
+    width: (@thumbnail-height--compact + 2);
     justify-content: center;
   }
 }

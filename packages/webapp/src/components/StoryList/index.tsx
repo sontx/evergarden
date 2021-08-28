@@ -1,23 +1,56 @@
-import { ReactNode } from "react";
-import { GetStoryDto } from "@evergarden/shared";
-import { StandardProps } from "rsuite/es/@types/common";
+import { StoryListBaseProps } from "./index.api";
+import { withAnimation } from "../StoryItem/withAnimation";
+import {
+  CompactStoryItem,
+  CompactStoryItemSkeleton,
+  HorizontalStoryItem,
+  HorizontalStoryItemSkeleton,
+  VerticalStoryItem,
+  VerticalStoryItemSkeleton,
+} from "../StoryItem";
+import { withHistory } from "../StoryItem/withHistory";
 import { InfiniteStoryList } from "./InfiniteStoryList";
+import { VerticalStoryList } from "./VerticalStoryList";
+import { ElementType } from "react";
+import { StoryItemBaseProps } from "../StoryItem/index.api";
+import classNames from "classnames";
 
-export interface StoryListBaseProps extends StandardProps {
-  loadNext?: () => void;
-  stories?: GetStoryDto[];
-  loader?: ReactNode;
-  hasMore?: boolean;
-  dataLength?: number;
-  renderItem: (story: GetStoryDto) => ReactNode;
-  renderSkeleton?: () => ReactNode;
+import "./index.less";
+import { HorizontalStoryList } from "./HorizontalStoryList";
+
+const CompactItem = withHistory(withAnimation(CompactStoryItem));
+const HorizontalItem = withHistory(withAnimation(HorizontalStoryItem));
+const VerticalItem = withHistory(VerticalStoryItem);
+
+export interface StoryListProps
+  extends Omit<StoryListBaseProps, "renderSkeleton" | "renderItem"> {
+  layout: "infinite" | "vertical" | "horizontal";
 }
 
-export function StoryList({
-  layout,
-  stories,
-  ...rest
-}: StoryListBaseProps & { layout?: "infinite" | "vertical" | "horizontal" }) {
-  const Renderer = InfiniteStoryList;
-  return <Renderer {...rest} stories={stories}/>;
+export function StoryList({ layout, className, ...rest }: StoryListProps) {
+  let ListComponent: ElementType<StoryListBaseProps>;
+  let ItemComponent: ElementType<StoryItemBaseProps>;
+  let SkeletonComponent: ElementType;
+  if (layout === "infinite") {
+    ListComponent = InfiniteStoryList;
+    ItemComponent = CompactItem;
+    SkeletonComponent = CompactStoryItemSkeleton;
+  } else if (layout === "vertical") {
+    ListComponent = VerticalStoryList;
+    ItemComponent = HorizontalItem;
+    SkeletonComponent = HorizontalStoryItemSkeleton;
+  } else {
+    ListComponent = HorizontalStoryList;
+    ItemComponent = VerticalItem;
+    SkeletonComponent = VerticalStoryItemSkeleton;
+  }
+
+  return (
+    <ListComponent
+      className={classNames("story-list", className)}
+      renderItem={(story) => <ItemComponent story={story} />}
+      renderSkeleton={() => <SkeletonComponent />}
+      {...rest}
+    />
+  );
 }

@@ -1,9 +1,9 @@
 import { ElementType, useCallback } from "react";
-import { useAppDispatch } from "../../../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import { useHistory } from "react-router-dom";
-import { openReading } from "../../../features/story/storySlice";
-import { StoryItemBaseProps } from "./index";
-import { useStoryHistory } from "../../../features/histories/useStoryHistory";
+import { openReading } from "../../features/story/storySlice";
+import { useStoryHistory } from "../../features/histories/useStoryHistory";
+import { StoryItemBaseProps } from "./index.api";
 
 export function withHistory(Component: ElementType<StoryItemBaseProps>) {
   return ({story: passStory, ...rest}: StoryItemBaseProps) => {
@@ -20,6 +20,6 @@ export function withHistory(Component: ElementType<StoryItemBaseProps>) {
       [dispatch, history],
     );
 
-    return <Component {...rest} story={story} onClick={handleClick} />;
+    return <Component {...rest} story={story} onClick={handleClick}/>;
   };
 }

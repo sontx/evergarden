@@ -1,5 +1,4 @@
-import { GetStoryDto } from "@evergarden/shared";
-import defaultThumbnail from "../../../../images/logo.png";
+import defaultThumbnail from "../../../images/logo.png";
 import moment from "moment";
 import { Divider } from "rsuite";
 import classNames from "classnames";
@@ -7,9 +6,10 @@ import { ElementType, forwardRef, ReactNode, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import "./index.less";
-import { useStoryHistory } from "../../../../features/histories/useStoryHistory";
-import { LazyImageEx } from "../../../LazyImageEx";
-import { StoryItemBaseProps } from "../index";
+import { useStoryHistory } from "../../../features/histories/useStoryHistory";
+import { LazyImageEx } from "../../LazyImageEx";
+import { StoryItemBaseProps } from "../index.api";
+import { GetStoryDto } from "@evergarden/shared";
 
 export interface CompactStoryItemProps extends StoryItemBaseProps {
   children?: ReactNode;
@@ -46,7 +46,7 @@ export const CompactStoryItem = forwardRef(
 
     return (
       <div
-        className={classNames("story-item--compact", className)}
+        className={classNames("story-item story-item--compact", className)}
         onClick={handleClick}
         {...rest}
         ref={ref}
@@ -65,7 +65,7 @@ export const CompactStoryItem = forwardRef(
               debounceDurationMs={800}
             />
           </div>
-          <div>
+          <div className="info">
             <div className="title">{story.title}</div>
             {BottomSub ? (
               <div className="sub">

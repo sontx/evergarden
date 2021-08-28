@@ -1,9 +1,9 @@
 import { ElementType, useEffect, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectShowingAction,
   setShowingAction,
-} from "../../../features/following/followingSlice";
+} from "../../features/following/followingSlice";
 import { useSwipeable } from "react-swipeable";
 
 export function withAction(Component: ElementType) {

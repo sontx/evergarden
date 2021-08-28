@@ -32,6 +32,7 @@ import userStoriesReducer from "../features/user-stories/userStoriesSlice";
 import historiesReducer from "../features/histories/historiesSlice";
 import userReducer from "../features/user/userSlice";
 import previewLastUpdatedReducer from "../features/last-updated-preview/previewLastUpdated";
+import { QueryClient } from "react-query";
 
 const reducers = combineReducers({
   counter: counterReducer,
@@ -98,3 +99,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+export const queryClient = new QueryClient({});

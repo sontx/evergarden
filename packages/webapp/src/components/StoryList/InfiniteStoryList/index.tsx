@@ -1,12 +1,20 @@
-import { forwardRef } from "react";
+import { forwardRef, ReactNode } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { StoryListBaseProps } from "../index";
 import { GetStoryDto } from "@evergarden/shared";
 import classNames from "classnames";
 
 import "./index.less";
 import { List, Loader } from "rsuite";
 import { FormattedMessage } from "react-intl";
+import { StoryListBaseProps } from "../index.api";
+
+export interface InfiniteStoryListProps extends StoryListBaseProps {
+  loadNext?: () => void;
+  loader?: ReactNode;
+  hasMore?: boolean;
+  dataLength?: number;
+  renderItem: (story: GetStoryDto) => ReactNode;
+}
 
 export const InfiniteStoryList = forwardRef(
   (
@@ -20,7 +28,7 @@ export const InfiniteStoryList = forwardRef(
       className,
       renderSkeleton,
       ...rest
-    }: StoryListBaseProps,
+    }: InfiniteStoryListProps,
     ref,
   ) => {
     return (
@@ -38,7 +46,7 @@ export const InfiniteStoryList = forwardRef(
           >
             <List>
               {stories.map((story: GetStoryDto) => (
-                <List.Item key={story.id}>renderItem(story)</List.Item>
+                <List.Item key={story.id}>{renderItem(story)}</List.Item>
               ))}
             </List>
           </InfiniteScroll>

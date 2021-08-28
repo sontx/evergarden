@@ -1,6 +1,6 @@
 import { ElementType, useEffect, useState } from "react";
 import { Animation } from "rsuite";
-import { StoryItemBaseProps } from "./index";
+import { StoryItemBaseProps } from "./index.api";
 
 export function withAnimation(Component: ElementType<StoryItemBaseProps>) {
   return ({ onExitedAnimation, showHandler, ...rest }: StoryItemBaseProps) => {

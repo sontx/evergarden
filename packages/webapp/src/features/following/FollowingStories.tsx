@@ -5,10 +5,10 @@ import { UserListItemsChildrenProps } from "../../components/UserListStoriesPage
 import { withDeleteAction } from "./withDeleteAction";
 import { UserListStories } from "../../components/UserListStories";
 import { selectHistories } from "../histories/historiesSlice";
-import { withContinueReading } from "../../components/StoryList/StoryItem/withContinueReading";
-import { StoryItem } from "../../components/StoryList/StoryItem";
+import { withHistory } from "../../components/StoryItem/withHistory";
+import { CompactStoryItem } from "../../components/StoryItem";
 
-const FollowingItemWrapper = withContinueReading(withDeleteAction(StoryItem));
+const FollowingItemWrapper = withHistory(withDeleteAction(CompactStoryItem));
 
 export function FollowingStories(props: UserListItemsChildrenProps) {
   const dispatch = useAppDispatch();
