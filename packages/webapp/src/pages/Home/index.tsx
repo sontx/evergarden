@@ -24,7 +24,7 @@ export function Home() {
     <AppContainer>
       <SEO title={intl.formatMessage({ id: "pageTitleHome" })} />
       <AppHeader fixedHeader />
-      <AppContent flexFlow>
+      <AppContent flexFlow noPadding>
         <div>
           <SpotlightBanner />
           {isLoggedIn && <RecommendStories/>}
