@@ -13,9 +13,10 @@ import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { hasUnreadChapter, StoryItemBaseProps } from "../index.api";
 import { ImageMark } from "../../ImageMark";
 import { AuthorLink } from "../../AuthorLink";
+import { StoryItemMark } from "../StoryItemMark";
 
 export const HorizontalStoryItem = forwardRef(
-  ({ story: passStory, mark, className, ...rest }: StoryItemBaseProps, ref) => {
+  ({ story: passStory, className, ...rest }: StoryItemBaseProps, ref) => {
     const story = useStoryHistory(passStory);
     const history = useHistory();
     const dispatch = useAppDispatch();
@@ -34,14 +35,7 @@ export const HorizontalStoryItem = forwardRef(
             defaultSrc={defaultThumbnail}
             src={story.thumbnail}
           />
-          {mark && (
-            <ImageMark
-              backgroundColor={mark.backgroundColor}
-              spotlight={mark.spotlight}
-            >
-              {mark.text}
-            </ImageMark>
-          )}
+          {story.mark && <StoryItemMark mark={story.mark}/>}
         </div>
         <div className="info">
           <h5 className="title">{story.title}</h5>

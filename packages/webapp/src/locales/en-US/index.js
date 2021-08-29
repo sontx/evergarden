@@ -48,4 +48,13 @@ export default {
   storyTypeConvertDescription: "The story is translated by the tool",
   storyTypeTranslateDescription: "The story is translated by the translator",
   storyTypeSelfComposedDescription: "The story written by you",
+  homeLastUpdated: "Last updated",
+  homeEditorSuggestions: "Editor's Choice",
+  homeNewStories: "New stories",
+  homeHotStories: "Hot Stories",
+  homeTopViewsStories: "Top Views",
+  homeTopViewsStoriesAll: "All",
+  homeTopViewsStoriesWeek: "Week",
+  homeTopViewsStoriesMonth: "Month",
+  homeTopViewsStoriesYear: "Year",
 };

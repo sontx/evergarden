@@ -236,7 +236,7 @@ export interface PaginationResult<T> {
   };
 }
 
-export type StoryCategory = 'updated' | 'hot' | 'user';
+export type StoryCategory = 'updated' | 'hot' | 'user' | 'spotlight' | 'suggestions' | 'recommend' | 'new';
 export type VoteType = 'upvote' | 'downvote' | 'none';
 
 export interface GetReadingHistoryDto {

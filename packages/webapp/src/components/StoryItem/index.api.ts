@@ -4,6 +4,8 @@ import { GetStoryDto } from "@evergarden/shared";
 import { ReactNode } from "react";
 import { Property } from "csstype";
 
+export type GetStoryDtoEx = GetStoryDto & { mark?: StoryItemMarkOptions };
+
 export interface StoryItemMarkOptions {
   text: ReactNode;
   backgroundColor: Property.BackgroundColor;
@@ -11,8 +13,7 @@ export interface StoryItemMarkOptions {
 }
 
 export interface StoryItemBaseProps extends StandardProps {
-  story: GetStoryDto;
-  mark?: StoryItemMarkOptions;
+  story: GetStoryDtoEx;
 }
 
 export function hasUnreadChapter(story: GetStoryDto): boolean {

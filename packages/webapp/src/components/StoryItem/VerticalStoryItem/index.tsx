@@ -10,10 +10,10 @@ import "./index.less";
 import { forwardRef } from "react";
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { StoryItemBaseProps } from "../index.api";
-import { ImageMark } from "../../ImageMark";
+import { StoryItemMark } from "../StoryItemMark";
 
 export const VerticalStoryItem = forwardRef(
-  ({ story: passStory, mark, className, ...rest }: StoryItemBaseProps, ref) => {
+  ({ story: passStory, className, ...rest }: StoryItemBaseProps, ref) => {
     const story = useStoryHistory(passStory);
     const history = useHistory();
     const dispatch = useAppDispatch();
@@ -42,14 +42,7 @@ export const VerticalStoryItem = forwardRef(
             />
           )}
         </div>
-        {mark && (
-          <ImageMark
-            backgroundColor={mark.backgroundColor}
-            spotlight={mark.spotlight}
-          >
-            {mark.text}
-          </ImageMark>
-        )}
+        {story.mark && <StoryItemMark mark={story.mark} />}
       </figure>
     );
   },

@@ -19,7 +19,7 @@ export default function useLastUpdatedStories(
   options?: UseQueryOptions<GetStoryDto[]>,
 ) {
   return useQuery<GetStoryDto[]>(
-    ["last-updated", page],
+    ["last-updated-stories", page],
     () => fetchLastUpdatedStories(page * MAX_STORIES, MAX_STORIES),
     options,
   );

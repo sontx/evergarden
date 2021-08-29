@@ -1,31 +1,19 @@
-import { AppNav } from "../../components/AppNav";
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  selectCurrentTab,
-  setCurrentTab,
-} from "../../features/settings/settingsSlice";
+import React from "react";
 import { AppHeader } from "../../components/AppHeader";
 import { Content } from "rsuite";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
-import { FollowingStories } from "../../features/following/FollowingStories";
-import { StoryList } from "../../features/stories/StoryList";
-import { selectIsLoggedIn } from "../../features/user/userSlice";
-import { PreviewList } from "../../features/last-updated-preview/PreviewList";
+import { SpotlightBanner } from "../../features/spotlight/SpotlightBanner";
+import { LastUpdatedPreview } from "../../features/last-updated/LastUpdatedPreview";
+import { EditorSuggestions } from "../../features/editor-suggestions/EditorSuggestions";
+import { NewStoriesPreview } from "../../features/new-stories/NewStoriesPreview";
+import { AppFooter } from "../../components/AppFooter";
+import { HotStoriesPreview } from "../../features/hot-stories/HotStoriesPreview";
+import { StopViewsPreview } from "../../features/top-views/TopViewPreview";
 
 export function Home() {
-  const currentTab = useAppSelector(selectCurrentTab);
-  const isLoggedIn = useAppSelector(selectIsLoggedIn);
-  const dispatch = useAppDispatch();
   const intl = useIntl();
-
-  useEffect(() => {
-    if (!isLoggedIn && currentTab === "following") {
-      dispatch(setCurrentTab("updated"));
-    }
-  }, [currentTab, dispatch, isLoggedIn]);
 
   return (
     <AppContainer>
@@ -34,11 +22,16 @@ export function Home() {
       <Content
         style={{ padding: "10px", display: "flex", flexDirection: "column" }}
       >
-        <AppNav />
-        {currentTab === "updated" && <PreviewList />}
-        {currentTab === "hot" && <StoryList category="hot" />}
-        {currentTab === "following" && <FollowingStories />}
+        <div>
+          <SpotlightBanner />
+          <LastUpdatedPreview />
+          <HotStoriesPreview />
+          <StopViewsPreview />
+          <EditorSuggestions />
+          <NewStoriesPreview />
+        </div>
       </Content>
+      <AppFooter />
     </AppContainer>
   );
 }
