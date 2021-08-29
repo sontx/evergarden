@@ -4,8 +4,7 @@ import classNames from "classnames";
 import { openStory } from "../../../features/story/storySlice";
 import { LazyImageEx } from "../../LazyImageEx";
 import defaultThumbnail from "../../../images/logo.png";
-// @ts-ignore
-import LinesEllipsis from "react-lines-ellipsis";
+import TextTruncate from "react-text-truncate";
 
 import "./index.less";
 import { forwardRef } from "react";
@@ -33,12 +32,12 @@ export const VerticalStoryItem = forwardRef(
         />
         <div className="info">
           <figcaption className="title">
-            <LinesEllipsis maxLine={2} text={story.title} />
+            <TextTruncate line={2} text={story.title} />
           </figcaption>
           {story.authors && story.authors.length > 0 && (
-            <LinesEllipsis
-              className="author"
-              maxLine={2}
+            <TextTruncate
+              containerClassName="author"
+              line={2}
               text={story.authors[0].name}
             />
           )}

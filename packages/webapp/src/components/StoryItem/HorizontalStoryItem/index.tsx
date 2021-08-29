@@ -1,7 +1,6 @@
 import defaultThumbnail from "../../../images/logo.png";
 import { LazyImageEx } from "../../LazyImageEx";
-// @ts-ignore
-import LinesEllipsis from "react-lines-ellipsis";
+import TextTruncate from "react-text-truncate";
 import "./index.less";
 import { Icon, Tag, TagGroup } from "rsuite";
 import { Link, useHistory } from "react-router-dom";
@@ -13,6 +12,7 @@ import { forwardRef } from "react";
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { hasUnreadChapter, StoryItemBaseProps } from "../index.api";
 import { ImageMark } from "../../ImageMark";
+import { AuthorLink } from "../../AuthorLink";
 
 export const HorizontalStoryItem = forwardRef(
   ({ story: passStory, mark, className, ...rest }: StoryItemBaseProps, ref) => {
@@ -46,18 +46,10 @@ export const HorizontalStoryItem = forwardRef(
         <div className="info">
           <h5 className="title">{story.title}</h5>
           <div className="desc">
-            <LinesEllipsis text={story.description} maxLine={2} />
+            <TextTruncate text={story.description} line={2} />
           </div>
           <div className="meta">
-            {story.authors && story.authors.length > 0 && (
-              <Link
-                className="author"
-                to={{ pathname: `/author/${story.authors[0].id}` }}
-              >
-                <Icon icon="user" />
-                {story.authors[0].name}
-              </Link>
-            )}
+            <AuthorLink story={story} className="author"/>
             <div>
               <TagGroup>
                 {story.genres && story.genres.length > 0 && (
