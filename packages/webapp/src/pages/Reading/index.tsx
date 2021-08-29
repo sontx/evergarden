@@ -15,7 +15,7 @@ import {
   selectStatus,
 } from "../../features/chapter/chapterSlice";
 import { AppHeader } from "../../components/AppHeader";
-import { Button, Content } from "rsuite";
+import { Button } from "rsuite";
 import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -30,6 +30,7 @@ import {
   selectUserSettings,
 } from "../../features/user/userSlice";
 import { defaultUserSettings } from "../../utils/user-settings-config";
+import { AppContent } from "../../components/AppContent";
 
 const CachedReading = withCachedNextChapter(withTracker(ReadingMobile));
 const ReadingWrapper = withReadingHistorySync(CachedReading);
@@ -77,7 +78,7 @@ export function Reading() {
     <AppContainer className="reading-theme--dark1">
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppHeader />
-      <Content>
+      <AppContent noPadding>
         {chapterStatus !== "error" && storyStatus !== "error" ? (
           isLoggedIn ? (
             <ReadingWrapper story={showStory} chapter={showChapter} />
@@ -94,7 +95,7 @@ export function Reading() {
             }
           />
         )}
-      </Content>
+      </AppContent>
       <AppFooter />
       <Helmet>
         <link

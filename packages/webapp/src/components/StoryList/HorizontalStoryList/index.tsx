@@ -21,7 +21,7 @@ export const HorizontalStoryList = forwardRef(
         className={classNames(className, "story-list--horizontal")}
         {...rest}
         slidesPerView="auto"
-        spaceBetween={10}
+        spaceBetween={15}
         freeMode
       >
         {stories

@@ -9,13 +9,13 @@ import {
   selectStory,
 } from "../../features/story/storySlice";
 import { AppHeader } from "../../components/AppHeader";
-import { Content } from "rsuite";
 import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
 import { useStoryHistory } from "../../features/histories/useStoryHistory";
 import { withHttpErrorCatch } from "../../HOCs/withHttpErrorCatch";
+import { AppContent } from "../../components/AppContent";
 
 const WrapperStoryPreview = withHttpErrorCatch(StoryPreviewMobile);
 
@@ -39,13 +39,13 @@ export function Story() {
     <AppContainer backgroundEffect>
       <SEO title={intl.formatMessage({ id: "pageTitleStory" })} />
       <AppHeader />
-      <Content>
+      <AppContent noPadding>
         <WrapperStoryPreview
           story={showStory}
           status={status}
           errorMessage={errorMessage}
         />
-      </Content>
+      </AppContent>
       <AppFooter />
     </AppContainer>
   );

@@ -34,14 +34,14 @@ function TypeButton({
 
 export function StopViewsPreview() {
   const type = useAppSelector(selectType);
-  const { data, isFetching } = useTopViewsStories(0, type);
+  const { data, isFetching, isStale } = useTopViewsStories(0, type);
   const stories = useStoriesWithMark(data);
 
   return (
     <PreviewPanel
       layout="horizontal"
       title={<FormattedMessage id="homeTopViewsStories" />}
-      stories={isFetching ? undefined : stories}
+      stories={isFetching && !isStale ? undefined : stories}
       onShowMore={() => {}}
       subHeader={
         <ButtonToolbar>

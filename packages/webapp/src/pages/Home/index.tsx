@@ -1,6 +1,5 @@
 import React from "react";
 import { AppHeader } from "../../components/AppHeader";
-import { Content } from "rsuite";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
@@ -11,6 +10,7 @@ import { NewStoriesPreview } from "../../features/new-stories/NewStoriesPreview"
 import { AppFooter } from "../../components/AppFooter";
 import { HotStoriesPreview } from "../../features/hot-stories/HotStoriesPreview";
 import { StopViewsPreview } from "../../features/top-views/TopViewPreview";
+import { AppContent } from "../../components/AppContent";
 
 export function Home() {
   const intl = useIntl();
@@ -19,9 +19,7 @@ export function Home() {
     <AppContainer>
       <SEO title={intl.formatMessage({ id: "pageTitleHome" })} />
       <AppHeader />
-      <Content
-        style={{ padding: "10px", display: "flex", flexDirection: "column" }}
-      >
+      <AppContent flexFlow>
         <div>
           <SpotlightBanner />
           <LastUpdatedPreview />
@@ -30,7 +28,7 @@ export function Home() {
           <EditorSuggestions />
           <NewStoriesPreview />
         </div>
-      </Content>
+      </AppContent>
       <AppFooter />
     </AppContainer>
   );

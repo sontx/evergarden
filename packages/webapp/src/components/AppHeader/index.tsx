@@ -81,7 +81,7 @@ export function AppHeader() {
               onClick={handleClickLogo}
               style={{ display: "flex", alignItems: "center" }}
             >
-              <Avatar style={{ margin: "8px" }} src={logo} />
+              <Avatar style={{ margin: "0 10px" }} src={logo} />
               <h4>Evergarden</h4>
             </Navbar.Header>
             <Navbar.Body>
