@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import { isDesktop } from "react-device-detect";
 import { useHistory } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
-import { logoutAsync, logoutAction } from "../../features/auth/authSlice";
+import { logoutAsync } from "../../features/auth/authSlice";
 import { SearchBox } from "../../features/search/SearchBox";
 import { StorySearchBody } from "@evergarden/shared";
 import { openStoryByUrl } from "../../features/story/storySlice";
@@ -31,7 +31,6 @@ export function UserToolbar() {
   }, [history]);
 
   const handleLogout = useCallback(() => {
-    dispatch(logoutAction());
     dispatch(logoutAsync());
   }, [dispatch]);
 

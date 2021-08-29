@@ -42,9 +42,7 @@ export const logoutAsync = createAsyncThunk(
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    logoutAction: (state) => {},
-  },
+  reducers: {},
   extraReducers: {
     [`${loginOAuth2Async.pending}`]: (state) => {
       state.status = "processing";
@@ -55,11 +53,11 @@ export const authSlice = createSlice({
     [`${loginOAuth2Async.rejected}`]: (state) => {
       state.status = "error";
     },
+    [`${logoutAsync.fulfilled}`]: (state) => {
+      state.status = "none";
+    },
   },
 });
-
-export const { logoutAction } = authSlice.actions;
-
 export const selectStatus = (state: RootState) => state.login.status;
 
 export default authSlice.reducer;
