@@ -12,6 +12,7 @@ import GoogleLogin, {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
+import { AuthLoading } from "./AuthLoading";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
 const FACEBOOK_CLIENT_ID = process.env.REACT_APP_FACEBOOK_CLIENT_ID || "";
@@ -37,13 +38,10 @@ export function Auth() {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const [isLoading, setLoading] = useState(false);
-  const [isDisabledFacebook, setDisableFacebook] = useState(false);
-  const [isDisabledGoogle, setDisableGoogle] = useState(false);
 
   const handleLoginGoogleSuccess = useCallback(
     (data: GoogleLoginResponse | GoogleLoginResponseOffline) => {
       if (isGoogleLoginResponse(data)) {
-        setDisableFacebook(true);
         dispatch(loginOAuth2Async({ token: data.tokenId, provider: "google" }));
       }
     },
@@ -63,7 +61,6 @@ export function Auth() {
   const handleLoginFacebook = useCallback(
     (data) => {
       if (data.accessToken) {
-        setDisableGoogle(true);
         dispatch(
           loginOAuth2Async({ token: data.accessToken, provider: "facebook" }),
         );
@@ -83,6 +80,8 @@ export function Auth() {
           ? "/"
           : prevPath;
       history.push(redirectPath);
+    } else if (status === "processing") {
+      setLoading(true);
     }
   }, [dispatch, history, intl, status, location]);
 
@@ -97,65 +96,71 @@ export function Auth() {
 
   return (
     <div className="login-container">
-      <Panel
-        className="panel"
-        style={isMobile ? { border: "unset" } : {}}
-        bordered
-        header={
-          <div className="title">
-            <Link to={{ pathname: "/" }}>
-              <h3>
-                <FormattedMessage id="loginWelcome" />
-              </h3>
-            </Link>
-            <span>
-              <FormattedMessage id="loginSlogan" />
-            </span>
-          </div>
-        }
-      >
-        <div className="button-container">
-          <FacebookLogin
-            appId={FACEBOOK_CLIENT_ID}
-            fields="name,email,picture"
-            callback={handleLoginFacebook}
-            autoLoad={isFacebookApp}
-            disableMobileRedirect={!isFacebookApp}
-            render={(renderProps: any) => (
-              <Button
-                onClick={renderProps.onClick}
-                disabled={renderProps.isDisabled || isDisabledFacebook}
-                loading={isLoading && !isDisabledFacebook}
-                color="blue"
-                size="sm"
-                block
-              >
-                <Icon icon="facebook" />{" "}
-                <FormattedMessage id="loginWithFacebook" />
-              </Button>
-            )}
-          />
-          <GoogleLogin
-            clientId={GOOGLE_CLIENT_ID}
-            render={(renderProps) => (
-              <Button
-                disabled={renderProps.disabled || isDisabledGoogle}
-                color="red"
-                size="sm"
-                block
-                onClick={renderProps.onClick}
-                loading={isLoading && !isDisabledGoogle}
-              >
-                <Icon icon="google-plus" />{" "}
-                <FormattedMessage id="loginWithGoogle" />
-              </Button>
-            )}
-            onSuccess={handleLoginGoogleSuccess}
-            onFailure={handleLoginGoogleFailure}
-            cookiePolicy={"single_host_origin"}
-          />
+      {!isLoading ? (
+        <div className="panel-login">
+          <Panel
+            className="panel"
+            style={isMobile ? { border: "unset" } : {}}
+            bordered
+            header={
+              <div className="title">
+                <Link to={{ pathname: "/" }}>
+                  <h3>
+                    <FormattedMessage id="loginWelcome" />
+                  </h3>
+                </Link>
+                <span>
+                  <FormattedMessage id="loginSlogan" />
+                </span>
+              </div>
+            }
+          >
+            <div className="button-container">
+              <FacebookLogin
+                appId={FACEBOOK_CLIENT_ID}
+                fields="name,email,picture"
+                callback={handleLoginFacebook}
+                autoLoad={isFacebookApp}
+                disableMobileRedirect={!isFacebookApp}
+                render={(renderProps: any) => (
+                  <Button
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.isDisabled}
+                    loading={isLoading}
+                    color="blue"
+                    size="sm"
+                    block
+                  >
+                    <Icon icon="facebook" />{" "}
+                    <FormattedMessage id="loginWithFacebook" />
+                  </Button>
+                )}
+              />
+              <GoogleLogin
+                clientId={GOOGLE_CLIENT_ID}
+                render={(renderProps) => (
+                  <Button
+                    disabled={renderProps.disabled}
+                    color="red"
+                    size="sm"
+                    block
+                    onClick={renderProps.onClick}
+                    loading={isLoading}
+                  >
+                    <Icon icon="google-plus" />{" "}
+                    <FormattedMessage id="loginWithGoogle" />
+                  </Button>
+                )}
+                onSuccess={handleLoginGoogleSuccess}
+                onFailure={handleLoginGoogleFailure}
+                cookiePolicy={"single_host_origin"}
+              />
+            </div>
+          </Panel>
         </div>
-      </Panel>
+      ) : (
+        <AuthLoading title="Welcome" />
+      )}
     </div>
   );
 }
