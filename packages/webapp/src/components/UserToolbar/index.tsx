@@ -1,30 +1,24 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Avatar, Badge, Dropdown, Icon, Nav } from "rsuite";
 
-import "./index.less";
 import { useCallback } from "react";
-import { isDesktop } from "react-device-detect";
 import { useHistory } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import { logoutAsync } from "../../features/auth/authSlice";
-import { StorySearchBody } from "@evergarden/shared";
-import { openStoryByUrl } from "../../features/story/storySlice";
 import {
   selectShowSearchBox,
   setShowSearchBox,
 } from "../../features/settings/settingsSlice";
 import { selectUser } from "../../features/user/userSlice";
+
+import "./index.less";
 import { SearchBox } from "../../features/search/SearchBox";
 
 export function UserToolbar() {
-  const showSearch = useAppSelector(selectShowSearchBox);
   const user = useAppSelector(selectUser);
+  const showSearchBox = useAppSelector(selectShowSearchBox);
   const history = useHistory();
   const dispatch = useAppDispatch();
-
-  const handleShowSearch = useCallback(() => {
-    dispatch(setShowSearchBox(!showSearch));
-  }, [dispatch, showSearch]);
 
   const handleLogin = useCallback(() => {
     history.push("/login");
@@ -33,14 +27,6 @@ export function UserToolbar() {
   const handleLogout = useCallback(() => {
     dispatch(logoutAsync());
   }, [dispatch]);
-
-  const handleSelectSearchResult = useCallback(
-    (story: StorySearchBody) => {
-      setShowSearchBox(false);
-      dispatch(openStoryByUrl(history, story.url));
-    },
-    [dispatch, history],
-  );
 
   const handleShowFollowing = useCallback(() => {
     history.push("/following");
@@ -57,26 +43,22 @@ export function UserToolbar() {
   return (
     <>
       <Nav pullRight className="user-toolbar-container">
-        {isDesktop ? (
-          <SearchBox onSelectStory={handleSelectSearchResult} />
-        ) : (
-          <Nav.Item
-            active={showSearch}
-            className="nav-icon"
-            onSelect={handleShowSearch}
-          >
-            <Icon size="lg" icon={showSearch ? "compress" : "search"} />
-          </Nav.Item>
-        )}
+        <Nav.Item
+          active={showSearchBox}
+          className="nav-icon"
+          onSelect={() => dispatch(setShowSearchBox(!showSearchBox))}
+        >
+          <Icon size="lg" icon={showSearchBox ? "compress" : "search"} />
+        </Nav.Item>
         {user ? (
           <>
-            <Nav.Item disabled={showSearch} className="nav-icon">
+            <Nav.Item disabled={showSearchBox} className="nav-icon">
               <Badge content={false}>
                 <Icon size="lg" icon="bell" />
               </Badge>
             </Nav.Item>
             <Dropdown
-              disabled={showSearch}
+              disabled={showSearchBox}
               menuStyle={{ minWidth: "200px" }}
               placement="bottomEnd"
               renderTitle={() => (
@@ -112,7 +94,7 @@ export function UserToolbar() {
         ) : (
           <>
             <Nav.Item
-              disabled={showSearch}
+              disabled={showSearchBox}
               className="nav-icon"
               onSelect={handleLogin}
             >
@@ -121,12 +103,7 @@ export function UserToolbar() {
           </>
         )}
       </Nav>
-      {showSearch && (
-        <SearchBox
-          onSelectStory={handleSelectSearchResult}
-          onClose={handleShowSearch}
-        />
-      )}
+      <SearchBox/>
     </>
   );
 }

@@ -1,4 +1,5 @@
 @import "node_modules/rsuite/lib/styles/themes/dark/index.less";
+@import "../../../variables.less";
 
 .searchbox-container {
   display: inline-block;
@@ -18,32 +19,30 @@
     opacity: 0.8;
   }
 }
+
 .searchbox-menu {
   width: calc(100% - 20px);
   z-index: 1000 !important;
-}
 
-.searchbox-menu ul {
-  max-height: calc(100vh - 114px);
-  overflow-y: scroll;
-}
+  ul {
+    max-height: 60vh;
+    overflow-y: scroll;
+  }
 
-.searchbox-menu .searchbox-menu-item {
-  flex: 1;
-  display: flex;
-}
+  .searchbox-menu-item {
+    flex: 1;
+    display: flex;
 
-.searchbox-menu .searchbox-menu-item img {
-  width: 40px;
-  height: 50px;
-  margin-right: 8px;
-  object-fit: cover;
-}
+    img {
+      width: 40px;
+      height: 50px;
+      margin-right: 8px;
+      object-fit: cover;
+    }
+  }
 
-.searchbox-menu .searchbox-menu-item--sub {
-  color: rgba(255, 255, 255, 0.45);
-  font-size: @font-size-base - 2;
-  height: 30px;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  .searchbox-menu-item--sub {
+    color: @secondary-text-color;
+    font-size: @font-size-base - 2;
+  }
 }
