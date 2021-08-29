@@ -1,0 +1,36 @@
+@import "~rsuite/lib/styles/themes/dark/index.less";
+@import "../../variables.less";
+
+.story-list-header {
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  text-transform: uppercase;
+
+  .title {
+    font-size: 100%;
+    &::before {
+      display: inline-block;
+      box-sizing: border-box;
+      width: .625rem;
+      height: 1em;
+      content: '';
+      vertical-align: -.22ex;
+      color: transparent;
+      border-left: 2px solid @primary-color;
+    }
+  }
+
+  .subtitle {
+    color: @secondary-text-color;
+    margin-left: .625rem;
+    font-size: 80%;
+  }
+
+  .action {
+    color: @secondary-text-color;
+    a {
+      color: inherit;
+    }
+  }
+}

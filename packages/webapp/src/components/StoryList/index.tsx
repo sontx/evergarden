@@ -24,14 +24,14 @@ const VerticalItem = withHistory(VerticalStoryItem);
 
 export interface StoryListProps
   extends Omit<StoryListBaseProps, "renderSkeleton" | "renderItem"> {
-  layout: "infinite" | "vertical" | "horizontal";
+  layout: "compact" | "vertical" | "horizontal";
 }
 
 export function StoryList({ layout, className, ...rest }: StoryListProps) {
   let ListComponent: ElementType<StoryListBaseProps>;
   let ItemComponent: ElementType<StoryItemBaseProps>;
   let SkeletonComponent: ElementType;
-  if (layout === "infinite") {
+  if (layout === "compact") {
     ListComponent = InfiniteStoryList;
     ItemComponent = CompactItem;
     SkeletonComponent = CompactStoryItemSkeleton;
