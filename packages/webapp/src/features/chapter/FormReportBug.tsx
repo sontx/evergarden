@@ -1,15 +1,9 @@
-import {
-  GetChapterDto,
-  GetStoryDto,
-  mergeObjects,
-  ReportChapterDto,
-} from "@evergarden/shared";
-import { useCallback, useEffect, useState } from "react";
+import { GetChapterDto, CreateReportChapterDto } from "@evergarden/shared";
+import { useCallback, useState } from "react";
+import { useIntl } from "react-intl";
 import {
   Modal,
-  Button,
   SelectPicker,
-  Input,
   Form,
   Schema,
   FormGroup,
@@ -17,35 +11,35 @@ import {
 } from "rsuite";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { EditorForm, validateModel } from "src/components/EditorForm";
-import { reportChapterAsync, selectStatus } from "./chapterSlice";
+import { reportChapterAsync, selectStatusReport } from "./chapterSlice";
 import "./formReportBug.less";
 
-const { StringType, BooleanType } = Schema.Types;
+const { StringType } = Schema.Types;
 
 export const TYPES: { value: string; label: string }[] = [
   {
     value: "wrongContent",
-    label: "Wrong content",
+    label: "wrongContent",
   },
   {
     value: "spellingMistake",
-    label: "Spelling mistake",
+    label: "spellingMistake",
   },
   {
     value: "wrongChapter",
-    label: "Wrong chapter",
+    label: "wrongChapter",
   },
   {
     value: "wrongTranslation",
-    label: "Wrong translation",
+    label: "wrongTranslation",
   },
   {
     value: "chaptersAreNotDisplayed",
-    label: "Chapters are not displayed",
+    label: "chaptersAreNotDisplayed",
   },
   {
     value: "containsSensitiveVulgarLanguage",
-    label: "Contains sensitive, vulgar language",
+    label: "containsSensitiveVulgarLanguage",
   },
 ];
 
@@ -55,33 +49,36 @@ const model = Schema.Model({
 });
 
 export function FormReportBug(props: {
-  story: GetStoryDto | undefined;
   chapter: GetChapterDto | undefined;
   show?: boolean;
   onClose?: () => void;
 }) {
-  const { story, chapter, show, onClose } = props;
+  const { chapter, show, onClose } = props;
   const dispatch = useAppDispatch();
-  const [form, setForm] = useState<ReportChapterDto>({
+  const [form, setForm] = useState<CreateReportChapterDto>({
     type: "",
     detail: "",
   });
-  const savingStatus = useAppSelector(selectStatus);
+  const savingStatus = useAppSelector(selectStatusReport);
+  const intl = useIntl();
 
   const handleSubmit = useCallback(() => {
-    if (story && chapter) {
+    if (chapter) {
       dispatch(
         reportChapterAsync({
-          storyId: story.id,
           chapterId: chapter.id,
           report: {
-            type: form.type || "",
+            type: form.type,
             detail: form.detail || "",
           },
         }),
-      );
+      ).then(() => {
+        if (onClose) {
+          onClose();
+        }
+      });
     }
-  }, [form]);
+  }, [form, chapter]);
 
   const isValid = validateModel(model, form);
 
@@ -93,14 +90,16 @@ export function FormReportBug(props: {
       onHide={onClose}
     >
       <Modal.Header>
-        <Modal.Title>How can we improve in chapter?</Modal.Title>
+        <Modal.Title>
+          {intl.formatMessage({ id: "titleFormReportBug" })}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <EditorForm
           disabled={!validateModel(model, form)}
           savingStatus={savingStatus}
-          mode="create"
-          handleSave={isValid ? handleSubmit : undefined}
+          actionLabel={intl.formatMessage({ id: "formSaveButtonLabel" })}
+          handleSave={isValid && form?.type ? handleSubmit : undefined}
         >
           <Form
             readOnly={savingStatus === "processing"}
@@ -112,11 +111,16 @@ export function FormReportBug(props: {
             <FormGroup>
               <FormControl
                 name="type"
-                placeholder="Choose type"
+                placeholder={intl.formatMessage({ id: "chooseType" })}
                 searchable={false}
                 cleanable={false}
                 block
-                data={TYPES}
+                data={TYPES.map((i) => {
+                  return {
+                    ...i,
+                    label: intl.formatMessage({ id: i.label }),
+                  };
+                })}
                 accepter={SelectPicker}
               />
             </FormGroup>
@@ -125,7 +129,9 @@ export function FormReportBug(props: {
                 name="detail"
                 rows={5}
                 componentClass="textarea"
-                placeholder="Details ..."
+                placeholder={intl.formatMessage({
+                  id: "details",
+                })}
               />
             </FormGroup>
           </Form>

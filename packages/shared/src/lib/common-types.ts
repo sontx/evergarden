@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
   MinLength,
-} from "class-validator";
+} from 'class-validator';
 
 export type OAuth2Provider = 'google' | 'facebook';
 
@@ -86,7 +86,7 @@ export interface JwtPayload {
 export type Role = 'guest' | 'user' | 'mod' | 'admin';
 
 export type StoryStatus = 'ongoing' | 'full';
-export type StoryType = 'convert' | 'translate' | 'self-composed'
+export type StoryType = 'convert' | 'translate' | 'self-composed';
 
 export interface GetAuthorDto {
   id: number;
@@ -302,16 +302,13 @@ export interface AuthorSearchBody {
 
 export class CreateReportChapterDto {
   @IsString()
-  @Matches(/wrongContent|spellingMistake|wrongChapter|wrongTranslation|chaptersAreNotDisplayed|containsSensitiveVulgarLanguage/s)
+  @Matches(
+    /wrongContent|spellingMistake|wrongChapter|wrongTranslation|chaptersAreNotDisplayed|containsSensitiveVulgarLanguage/s
+  )
   type: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  detail?: string;
-}
-
-export interface ReportChapterDto {
-  type: string;
   detail?: string;
 }

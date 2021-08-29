@@ -1,7 +1,8 @@
 export default {
-  id: 'en-US',
-  error404: 'What you’re looking for may have been misplaced in Long Term Memory.',
-  error500: 'Sadly, the website had a bad day.',
+  id: "en-US",
+  error404:
+    "What you’re looking for may have been misplaced in Long Term Memory.",
+  error500: "Sadly, the website had a bad day.",
   error403: "Go back! you don't have power here.",
   description: "Let's explore mysterious worlds",
   pageTitleHome: "Home",
@@ -33,7 +34,8 @@ export default {
   processUpdatingLabel: "Updating...",
   processFetchingLabel: "Fetching...",
   storyFormFullStoryTitle: "Full story",
-  storyFormFullStoryDescription: "This story is completed, no more chapters are added",
+  storyFormFullStoryDescription:
+    "This story is completed, no more chapters are added",
   storyFormPublishTitle: "Published",
   storyFormPublishDescription: "Everyone else can read this story",
   chapterFormPublishTitle: "Published",
@@ -46,4 +48,13 @@ export default {
   storyTypeConvertDescription: "The story is translated by the tool",
   storyTypeTranslateDescription: "The story is translated by the translator",
   storyTypeSelfComposedDescription: "The story written by you",
+  details: "Details",
+  titleFormReportBug: "How can we improve in chapter?",
+  wrongContent: "Wrong content",
+  spellingMistake: "Spelling mistake",
+  wrongChapter: "Wrong chapter",
+  wrongTranslation: "Wrong translation",
+  chaptersAreNotDisplayed: "Chapters are not displayed",
+  containsSensitiveVulgarLanguage: "Contains sensitive, vulgar language",
+  chooseType: "Choose type",
 };

@@ -1,4 +1,4 @@
-import { GetChapterDto, ReportChapterDto } from "@evergarden/shared";
+import { GetChapterDto, CreateReportChapterDto } from "@evergarden/shared";
 import { ProcessingStatus } from "../../utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchChapter, reportBugChapter } from "./chapterAPI";
@@ -10,11 +10,13 @@ let cachedNextChapter: GetChapterDto;
 export interface ChapterState {
   chapter?: GetChapterDto;
   status: ProcessingStatus;
+  statusReport: ProcessingStatus;
   errorMessage?: RequestError;
 }
 
 const initialState: ChapterState = {
   status: "none",
+  statusReport: "none",
 };
 
 export const fetchChapterAsync = createAsyncThunk(
@@ -45,21 +47,19 @@ export const fetchNextChapterAsync = createAsyncThunk(
 );
 
 export const reportChapterAsync = createAsyncThunk(
-  "reportChapter/create",
+  "chapter/report",
   async (
     {
-      storyId,
       chapterId,
       report,
     }: {
-      storyId: number;
       chapterId: number;
-      report: ReportChapterDto;
+      report: CreateReportChapterDto;
     },
     { rejectWithValue },
   ) => {
     return catchRequestError(
-      async () => await reportBugChapter(storyId, chapterId, report),
+      async () => await reportBugChapter(chapterId, report),
       rejectWithValue,
       true,
     );
@@ -91,14 +91,13 @@ export const chapterSlice = createSlice({
       state.status = "error";
     },
     [`${reportChapterAsync.pending}`]: (state) => {
-      state.status = "processing";
+      state.statusReport = "processing";
     },
-    [`${reportChapterAsync.fulfilled}`]: (state, { payload }) => {
-      state.status = "success";
-      state.chapter = payload;
+    [`${reportChapterAsync.fulfilled}`]: (state) => {
+      state.statusReport = "success";
     },
-    [`${reportChapterAsync.rejected}`]: (state, { payload }) => {
-      state.status = "error";
+    [`${reportChapterAsync.rejected}`]: (state) => {
+      state.statusReport = "error";
     },
   },
 });
@@ -107,6 +106,8 @@ export const { setChapter } = chapterSlice.actions;
 
 export const selectChapter = (state: RootState) => state.chapter.chapter;
 export const selectStatus = (state: RootState) => state.chapter.status;
+export const selectStatusReport = (state: RootState) =>
+  state.chapter.statusReport;
 export const selectErrorMessage = (state: RootState) =>
   state.chapter.errorMessage;
 

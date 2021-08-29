@@ -102,15 +102,14 @@ export function ReadingNavigationTop(props: {
               <Icon icon="commenting" />
             </Button>
             {story && story.history && <FollowButtonWrapper story={story} />}
-            <Button>
-              <Icon icon="bug" onClick={handleShowFormReportBug} />
+            <Button onClick={handleShowFormReportBug}>
+              <Icon icon="bug" />
             </Button>
           </ButtonGroup>
         </ButtonToolbar>
       )}
       {showFormReport && (
         <FormReportBug
-          story={story}
           chapter={chapter}
           show={showFormReport}
           onClose={handleShowFormReportBug}
