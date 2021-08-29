@@ -14,11 +14,13 @@ export function PreviewPanel({
   onShowMore,
   layout,
   subHeader,
+  skeletonCount,
   ...rest
 }: {
   stories?: GetStoryDtoEx[];
   title: ReactNode;
   subHeader?: ReactNode;
+  skeletonCount?: number;
   onShowMore?: () => void;
   layout?: "vertical" | "horizontal";
 } & StandardProps) {
@@ -29,7 +31,11 @@ export function PreviewPanel({
         action={onShowMore && <NavigateAction onClick={onShowMore} />}
       />
       {subHeader && <div className="subHeader">{subHeader}</div>}
-      <StoryList layout={layout || "horizontal"} stories={stories} />
+      <StoryList
+        layout={layout || "horizontal"}
+        skeletonCount={skeletonCount}
+        stories={stories}
+      />
     </div>
   );
 }

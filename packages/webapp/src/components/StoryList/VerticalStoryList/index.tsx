@@ -12,6 +12,7 @@ export const VerticalStoryList = forwardRef(
       stories,
       renderItem,
       renderSkeleton,
+      skeletonCount,
       ...rest
     }: StoryListBaseProps,
     ref,
@@ -26,7 +27,7 @@ export const VerticalStoryList = forwardRef(
           ? stories.map((story) => (
               <List.Item key={story.id}>{renderItem(story)}</List.Item>
             ))
-          : Array.from(Array(10).keys()).map((value) => (
+          : Array.from(Array(skeletonCount || 10).keys()).map((value) => (
               <List.Item className="story-item-container" key={value}>{renderSkeleton()}</List.Item>
             ))}
       </List>

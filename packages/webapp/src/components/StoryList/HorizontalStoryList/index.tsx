@@ -12,6 +12,7 @@ export const HorizontalStoryList = forwardRef(
       stories,
       renderItem,
       renderSkeleton,
+      skeletonCount,
       ...rest
     }: StoryListBaseProps,
     ref,
@@ -28,7 +29,7 @@ export const HorizontalStoryList = forwardRef(
           ? stories.map((story) => (
               <SwiperSlide key={story.id}>{renderItem(story)}</SwiperSlide>
             ))
-          : Array.from(Array(10).keys()).map((value) => (
+          : Array.from(Array(skeletonCount || 10).keys()).map((value) => (
               <SwiperSlide className="story-item-container" key={value}>
                 {renderSkeleton()}
               </SwiperSlide>

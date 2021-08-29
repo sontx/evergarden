@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 
 export interface StoryListBaseProps extends StandardProps {
   stories?: GetStoryDto[];
+  skeletonCount?: number;
   renderItem: (story: GetStoryDto) => ReactNode;
   renderSkeleton: () => ReactNode;
 }

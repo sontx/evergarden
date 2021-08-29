@@ -27,6 +27,7 @@ export const InfiniteStoryList = forwardRef(
       renderItem,
       className,
       renderSkeleton,
+      skeletonCount,
       ...rest
     }: InfiniteStoryListProps,
     ref,
@@ -52,7 +53,7 @@ export const InfiniteStoryList = forwardRef(
           </InfiniteScroll>
         ) : renderSkeleton ? (
           <List>
-            {Array.from(Array(10).keys()).map((value) => (
+            {Array.from(Array(skeletonCount || 10).keys()).map((value) => (
               <List.Item key={value}>{renderSkeleton()}</List.Item>
             ))}
           </List>
