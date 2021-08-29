@@ -12,9 +12,13 @@ import { HotStoriesPreview } from "../../features/hot-stories/HotStoriesPreview"
 import { StopViewsPreview } from "../../features/top-views/TopViewPreview";
 import { AppContent } from "../../components/AppContent";
 import { BackTop } from "../../components/BackTop";
+import { useAppSelector } from "../../app/hooks";
+import { selectIsLoggedIn } from "../../features/user/userSlice";
+import { RecommendStories } from "../../features/recommend/RecommendStories";
 
 export function Home() {
   const intl = useIntl();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
 
   return (
     <AppContainer>
@@ -23,6 +27,7 @@ export function Home() {
       <AppContent flexFlow>
         <div>
           <SpotlightBanner />
+          {isLoggedIn && <RecommendStories/>}
           <LastUpdatedPreview />
           <HotStoriesPreview />
           <StopViewsPreview />

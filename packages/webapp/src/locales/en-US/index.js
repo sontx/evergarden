@@ -52,6 +52,7 @@ export default {
   homeLastUpdated: "Last updated",
   homeEditorSuggestions: "Editor's Choice",
   homeNewStories: "New stories",
+  homeRecommendedStories: "Recommend to you",
   homeHotStories: "Hot Stories",
   homeTopViewsStories: "Top Views",
   homeTopViewsStoriesAll: "All",
