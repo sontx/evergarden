@@ -7,7 +7,6 @@ import { isDesktop } from "react-device-detect";
 import { useHistory } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import { logoutAsync } from "../../features/auth/authSlice";
-import { SearchBox } from "../../features/search/SearchBox";
 import { StorySearchBody } from "@evergarden/shared";
 import { openStoryByUrl } from "../../features/story/storySlice";
 import {
@@ -15,6 +14,7 @@ import {
   setShowSearchBox,
 } from "../../features/settings/settingsSlice";
 import { selectUser } from "../../features/user/userSlice";
+import { SearchBox } from "../../features/search/SearchBox";
 
 export function UserToolbar() {
   const showSearch = useAppSelector(selectShowSearchBox);

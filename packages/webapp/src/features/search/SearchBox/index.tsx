@@ -1,22 +1,24 @@
 import { Animation, AutoComplete, DOMHelper, Icon, InputGroup } from "rsuite";
 import { useDebouncedCallback } from "use-debounce";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   clear,
   searchStoriesAsync,
   selectStatus,
   selectStories,
-} from "./searchSlice";
+} from "../searchSlice";
 import React, { useCallback, useEffect, useState } from "react";
 // @ts-ignore
 import BarLoader from "react-bar-loader";
-import { trimText } from "../../utils/types";
+import { trimText } from "../../../utils/types";
 
-import "./searchBox.less";
+import "./index.less";
 
-import defaultThumbnail from "../../images/logo.png";
-import { StorySearchBody } from "@evergarden/shared";
+import defaultThumbnail from "../../../images/logo.png";
 import classNames from "classnames";
+import { EnhancedImage } from "../../../components/EnhancedImage";
+import { useIntl } from "react-intl";
+import { StorySearchBody } from "@evergarden/shared";
 
 export function SearchBox({
   onSelectStory,
@@ -29,6 +31,7 @@ export function SearchBox({
   const stories = useAppSelector(selectStories);
   const status = useAppSelector(selectStatus);
   const [searchText, setSearchText] = useState("");
+  const intl = useIntl();
 
   useEffect(() => {
     dispatch(clear());
@@ -86,7 +89,7 @@ export function SearchBox({
             <AutoComplete
               autoFocus
               value={searchText}
-              placeholder="Search story..."
+              placeholder={intl.formatMessage({ id: "globalSearchHint" })}
               onExit={handleHide}
               onEnter={handleShow}
               menuClassName="searchbox-menu"
@@ -103,7 +106,10 @@ export function SearchBox({
                 return (
                   <div className="searchbox-menu-item">
                     <div>
-                      <img src={data.origin.thumbnail || defaultThumbnail} />
+                      <EnhancedImage
+                        src={data.origin.thumbnail || defaultThumbnail}
+                        defaultSrc={defaultThumbnail}
+                      />
                     </div>
                     <div>
                       <div>{data.origin.title}</div>

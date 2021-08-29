@@ -8,9 +8,11 @@ type HTMLImageProps = React.DetailedHTMLProps<
 export function EnhancedImage({
   src,
   noCache,
+  defaultSrc,
   ...rest
 }: Omit<HTMLImageProps, "src"> & {
   src: string | File | undefined;
+  defaultSrc?: string;
   noCache?: boolean;
 }) {
   const [dataSrc, setDataSrc] = useState<string | undefined>();
@@ -39,5 +41,15 @@ export function EnhancedImage({
     }
   }, [src, noCache]);
 
-  return <img {...rest} src={dataSrc} />;
+  return (
+    <img
+      {...rest}
+      src={dataSrc}
+      onError={() => {
+        if (defaultSrc) {
+          setDataSrc(defaultSrc);
+        }
+      }}
+    />
+  );
 }

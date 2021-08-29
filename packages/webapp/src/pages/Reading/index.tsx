@@ -14,7 +14,6 @@ import {
   selectErrorMessage,
   selectStatus,
 } from "../../features/chapter/chapterSlice";
-import { AppHeader } from "../../components/AppHeader";
 import { Button } from "rsuite";
 import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
@@ -77,7 +76,6 @@ export function Reading() {
   return (
     <AppContainer className="reading-theme--dark1">
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
-      <AppHeader />
       <AppContent noPadding>
         {chapterStatus !== "error" && storyStatus !== "error" ? (
           isLoggedIn ? (

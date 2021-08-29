@@ -48,6 +48,7 @@ export default {
   storyTypeConvertDescription: "The story is translated by the tool",
   storyTypeTranslateDescription: "The story is translated by the translator",
   storyTypeSelfComposedDescription: "The story written by you",
+  globalSearchHint: "Search story...",
   homeLastUpdated: "Last updated",
   homeEditorSuggestions: "Editor's Choice",
   homeNewStories: "New stories",

@@ -11,6 +11,7 @@ import { AppFooter } from "../../components/AppFooter";
 import { HotStoriesPreview } from "../../features/hot-stories/HotStoriesPreview";
 import { StopViewsPreview } from "../../features/top-views/TopViewPreview";
 import { AppContent } from "../../components/AppContent";
+import { BackTop } from "../../components/BackTop";
 
 export function Home() {
   const intl = useIntl();
@@ -18,7 +19,7 @@ export function Home() {
   return (
     <AppContainer>
       <SEO title={intl.formatMessage({ id: "pageTitleHome" })} />
-      <AppHeader />
+      <AppHeader fixedHeader />
       <AppContent flexFlow>
         <div>
           <SpotlightBanner />
@@ -28,6 +29,7 @@ export function Home() {
           <EditorSuggestions />
           <NewStoriesPreview />
         </div>
+        <BackTop/>
       </AppContent>
       <AppFooter />
     </AppContainer>

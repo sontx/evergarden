@@ -1,23 +1,26 @@
-@import "~rsuite/lib/styles/themes/dark/index.less";
+@import "node_modules/rsuite/lib/styles/themes/dark/index.less";
 
 .searchbox-container {
   display: inline-block;
-  padding: 10px;
   width: 100%;
   position: absolute;
   z-index: 100;
-  top: 56px;
-  background: #0f131a;
+  top: @nav-bar-height;
   left: 0;
+  padding: 0 10px 10px;
+
+  .rs-input {
+    background-color: fade(@input-bg, 50%);
+  }
 
   .backdrop {
-    height: calc(100vh - 56px);
+    height: calc(100vh - @nav-bar-height);
     opacity: 0.8;
   }
 }
 .searchbox-menu {
   width: calc(100% - 20px);
-  z-index: 101 !important;
+  z-index: 1000 !important;
 }
 
 .searchbox-menu ul {
