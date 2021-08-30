@@ -1,6 +1,6 @@
-@import '~rsuite/lib/styles/themes/dark/index.less';
+@import (reference) "../../../variables";
 
-.user-toolbar-container {
+.toolbar-container {
   .nav-sub {
     font-size: @font-size-base - 2;
     color: rgba(255,255,255,0.65);
@@ -15,12 +15,16 @@
     margin-right: 0 !important;
   }
 
-  .rs-dropdown-disabled .rs-nav-item-content,
-  .rs-nav-item-disabled .rs-nav-item-content {
-    //background-color: @body-bg !important;
-  }
-
   .rs-dropdown-menu {
     z-index: 100 !important;
+  }
+}
+
+.user-grid-menu {
+  .logout {
+    color: @error-color;
+  }
+  .contact {
+    color: @info-color;
   }
 }

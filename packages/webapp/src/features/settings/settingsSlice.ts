@@ -2,24 +2,26 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 export interface SettingsSliceState {
-  fixedHeader: boolean;
+  isFloatingHeader: boolean;
   currentNavTab: "updated" | "hot" | "following" | "collection";
-  limitCountPerPage: number;
   showSearchBox?: boolean;
+  showMenu?: boolean;
 }
 
 const initialState: SettingsSliceState = {
-  fixedHeader: true,
+  isFloatingHeader: false,
   currentNavTab: "updated",
-  limitCountPerPage: 10,
 };
 
 export const settingsSlice = createSlice({
   name: "settings",
   initialState,
   reducers: {
-    setFixedHeader: (state, { payload }) => {
-      state.fixedHeader = payload;
+    setFloatingHeader: (state, { payload }) => {
+      state.isFloatingHeader = payload;
+    },
+    setShowMenu: (state, {payload}) => {
+      state.showMenu = payload;
     },
     setShowSearchBox: (state, { payload }) => {
       state.showSearchBox = !!payload;
@@ -30,18 +32,19 @@ export const settingsSlice = createSlice({
   },
 });
 
-export const selectFixedHeader = (state: RootState) =>
-  state.settings.fixedHeader;
+export const selectIsFloatingHeader = (state: RootState) =>
+  state.settings.isFloatingHeader;
 export const selectShowSearchBox = (state: RootState) =>
   state.settings.showSearchBox;
+export const selectShowMenu = (state: RootState) =>
+  state.settings.showMenu;
 export const selectCurrentTab = (state: RootState) =>
   state.settings.currentNavTab;
-export const selectLimitCountPerPage = (state: RootState) =>
-  state.settings.limitCountPerPage;
 
 export const {
-  setFixedHeader,
+  setFloatingHeader,
   setShowSearchBox,
+  setShowMenu,
   setCurrentTab,
 } = settingsSlice.actions;
 

@@ -1,46 +1,46 @@
-import { Avatar, DOMHelper, Header, Navbar } from "rsuite";
-import logo from "../../images/logo.png";
+import { Header, Navbar } from "rsuite";
 import React, { useEffect } from "react";
-import { UserToolbar } from "../UserToolbar";
 
 import "./index.less";
-import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  selectIsFloatingHeader,
+  setFloatingHeader,
+} from "../../features/settings/settingsSlice";
+import { AppLogo } from "./AppLogo";
+import { Toolbar } from "./Toolbar";
 
 export function AppHeader({ fixedHeader }: { fixedHeader?: boolean }) {
+  const dispatch = useAppDispatch();
+  const isFloatingHeader = useAppSelector(selectIsFloatingHeader);
   useEffect(() => {
     if (fixedHeader) {
-      const header = document.getElementsByClassName("app-header").item(0);
+      const scrollTop = () =>
+        window.pageYOffset || document.documentElement.scrollTop;
+      dispatch(setFloatingHeader(scrollTop() > 0));
       const handleScroll = () => {
-        if (header) {
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          if (scrollTop > 0) {
-            DOMHelper.addClass(header, "app-header--float");
-          } else {
-            DOMHelper.removeClass(header, "app-header--float");
-          }
-        }
+        dispatch(setFloatingHeader(scrollTop() > 0));
       };
       window.addEventListener("scroll", handleScroll);
       return () => window.removeEventListener("scroll", handleScroll);
     }
-  }, [fixedHeader]);
+  }, [dispatch, fixedHeader]);
+
   return (
     <>
       <Header
         className={classNames("app-header", {
           "app-header--fixed": fixedHeader,
+          "app-header--float": isFloatingHeader,
         })}
       >
         <Navbar appearance="subtle">
-          <Link to={{ pathname: "/" }}>
-            <Navbar.Header style={{ display: "flex", alignItems: "center" }}>
-              <Avatar style={{ margin: "0 10px" }} src={logo} />
-              <h4>Evergarden</h4>
-            </Navbar.Header>
-          </Link>
+          <Navbar.Header>
+            <AppLogo />
+          </Navbar.Header>
           <Navbar.Body>
-            <UserToolbar />
+            <Toolbar />
           </Navbar.Body>
         </Navbar>
       </Header>

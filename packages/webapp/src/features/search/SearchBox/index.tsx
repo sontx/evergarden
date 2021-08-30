@@ -25,6 +25,7 @@ import {
 } from "../../settings/settingsSlice";
 import { openStoryByUrl } from "../../story/storySlice";
 import { useHistory } from "react-router-dom";
+import { Backdrop } from "../../../components/Backdrop";
 
 export function SearchBox() {
   const dispatch = useAppDispatch();
@@ -142,10 +143,7 @@ export function SearchBox() {
               {status === "processing" && (
                 <BarLoader color="#169de0" height="1" />
               )}
-              <div
-                onClick={() => dispatch(setShowSearchBox(false))}
-                className="rs-modal-backdrop backdrop"
-              />
+              <Backdrop onClick={() => dispatch(setShowSearchBox(false))} />
             </div>
           )}
         </Animation.Bounce>

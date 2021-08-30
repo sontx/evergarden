@@ -1,0 +1,27 @@
+@import (reference) "../../../variables";
+
+.grid-menu-item {
+  padding: 20px 10px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+
+  background-color: @btn-default-bg;
+
+  &:active {
+    background-color: @btn-default-focus-bg;
+  }
+
+  .menu-item-icon {
+    .rs-icon {
+      font-size: 1.33333333em;
+    }
+    margin-bottom: 5px;
+  }
+
+  .menu-item-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

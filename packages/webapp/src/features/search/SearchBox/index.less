@@ -1,5 +1,4 @@
-@import "node_modules/rsuite/lib/styles/themes/dark/index.less";
-@import "../../../variables.less";
+@import (reference) "../../../variables";
 
 .searchbox-container {
   display: inline-block;
@@ -12,11 +11,6 @@
 
   .rs-input {
     background-color: fade(@input-bg, 50%);
-  }
-
-  .backdrop {
-    height: calc(100vh - @nav-bar-height);
-    opacity: 0.8;
   }
 }
 
