@@ -9,6 +9,7 @@ import { Icon } from "rsuite";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination, Parallax } from "swiper";
 import { abbreviateNumber } from "../../utils/types";
+import { useEffect } from "react";
 
 SwiperCore.use([Navigation, Pagination, Parallax]);
 
@@ -17,6 +18,17 @@ export function SpotlightList({
   className,
   ...rest
 }: StandardProps & { stories?: GetStoryDto[] }) {
+  useEffect(() => {
+    document.querySelectorAll(".spotlight-list .title").forEach((title) => {
+      title.setAttribute("data-swiper-parallax", "-300");
+    });
+    document
+      .querySelectorAll(".spotlight-list .description")
+      .forEach((description) => {
+        description.setAttribute("data-swiper-parallax", "-100");
+      });
+  }, [stories]);
+
   return (
     <Swiper
       className={classNames(className, "spotlight-list")}
@@ -39,7 +51,7 @@ export function SpotlightList({
             line={1}
             element="h5"
           />
-          <div className="subtitle">
+          <div className="subtitle" data-swiper-parallax="-200">
             <AuthorLink story={story} className="author" />
             <div className="meta">
               <span>
@@ -50,7 +62,11 @@ export function SpotlightList({
               </span>
             </div>
           </div>
-          <TextTruncate containerClassName="description" text={story.description} line={3} />
+          <TextTruncate
+            containerClassName="description"
+            text={story.description}
+            line={3}
+          />
         </SwiperSlide>
       ))}
     </Swiper>
