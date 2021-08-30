@@ -118,7 +118,9 @@ export function SearchBox() {
                           />
                         </div>
                         <div>
-                          <div>{data.origin.title}</div>
+                          <div>
+                            <TextTruncate text={data.origin.title} line={1} />
+                          </div>
                           <div className="searchbox-menu-item--sub">
                             <TextTruncate
                               text={data.origin.description || "Coming soon ;)"}
