@@ -1,6 +1,5 @@
 import { StandardProps } from "rsuite/es/@types/common";
 import { GetStoryDto } from "@evergarden/shared";
-import TextTruncate from "react-text-truncate";
 import classNames from "classnames";
 
 import "./index.less";
@@ -10,6 +9,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination, Parallax } from "swiper";
 import { abbreviateNumber } from "../../utils/types";
 import { useEffect } from "react";
+import { textTruncateAssistant } from "../../utils/text-truncate-assistant";
 
 SwiperCore.use([Navigation, Pagination, Parallax]);
 
@@ -45,28 +45,21 @@ export function SpotlightList({
       />
       {(stories || []).map((story) => (
         <SwiperSlide key={story.id}>
-          <TextTruncate
-            containerClassName="title"
-            text={story.title}
-            line={1}
-            element="h5"
-          />
-          <div className="subtitle" data-swiper-parallax="-200">
-            <AuthorLink story={story} className="author" />
-            <div className="meta">
-              <span>
-                <Icon icon="eye" /> {abbreviateNumber(story.view)}
-              </span>
-              <span>
-                <Icon icon="thumbs-up" /> {abbreviateNumber(story.upvote)}
-              </span>
+          <div className="spotlight-content">
+            <h5 className="title">{story.title}</h5>
+            <div className="subtitle" data-swiper-parallax="-200">
+              <AuthorLink story={story} className="author" />
+              <div className="meta">
+                <span>
+                  <Icon icon="eye" /> {abbreviateNumber(story.view)}
+                </span>
+                <span>
+                  <Icon icon="thumbs-up" /> {abbreviateNumber(story.upvote)}
+                </span>
+              </div>
             </div>
+            <div ref={textTruncateAssistant} className="description">{story.description}</div>
           </div>
-          <TextTruncate
-            containerClassName="description"
-            text={story.description}
-            line={3}
-          />
         </SwiperSlide>
       ))}
     </Swiper>
