@@ -1,7 +1,7 @@
 import { useInfiniteQuery, UseInfiniteQueryOptions } from "react-query";
 import { GetStoryDto } from "@evergarden/shared";
 
-const MAX_STORIES_PER_PAGE = 10;
+const MAX_STORIES_PER_PAGE = 20;
 
 export function useInfinitePageQuery(
   name: string,

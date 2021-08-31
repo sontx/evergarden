@@ -1,7 +1,6 @@
 import useLastUpdatedStories from "../hooks/useLastUpdatedStories";
 import { FormattedMessage } from "react-intl";
 import { PreviewPanel } from "../../../components/PreviewPanel";
-import { useTwoDimensionsArray } from "../../../hooks/useTwoDimensionsArray";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   selectShowLastUpdatedStories,
@@ -15,14 +14,13 @@ const Wrapper = withInfiniteList(FullPanel);
 export function LastUpdatedPreview() {
   const { data } = useLastUpdatedStories(0);
   const dispatch = useAppDispatch();
-  const stories = useTwoDimensionsArray(data?.pages);
   const showFull = useAppSelector(selectShowLastUpdatedStories);
 
   return (
     <>
       <PreviewPanel
         title={<FormattedMessage id="homeLastUpdated" />}
-        stories={stories}
+        stories={data?.pages && data.pages[0]}
         onShowMore={() => dispatch(setShowFullLastUpdatedStories(true))}
       />
       {showFull && (

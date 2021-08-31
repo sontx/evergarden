@@ -1,7 +1,6 @@
 import { FormattedMessage } from "react-intl";
 import { PreviewPanel } from "../../../components/PreviewPanel";
 import useHotStories from "../hooks/useHotStories";
-import { useTwoDimensionsArray } from "../../../hooks/useTwoDimensionsArray";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 
 import { withInfiniteList } from "../../../components/FullPanel/withInfiniteList";
@@ -18,8 +17,10 @@ const Wrapper = withInfiniteList(FullPanel);
 export function HotStoriesPreview() {
   const { data } = useHotStories(0);
   const dispatch = useAppDispatch();
-  const stories = useTwoDimensionsArray(data?.pages);
-  const markedStories = useTransformItems(stories, decorateWithRanking);
+  const markedStories = useTransformItems(
+    data?.pages && data.pages[0],
+    decorateWithRanking,
+  );
   const showFull = useAppSelector(selectShowFullHotStories);
 
   return (
