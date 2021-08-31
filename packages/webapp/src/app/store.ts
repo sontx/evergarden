@@ -31,7 +31,8 @@ import genresReducer from "../features/genres/genresSlice";
 import userStoriesReducer from "../features/user-stories/userStoriesSlice";
 import historiesReducer from "../features/histories/historiesSlice";
 import userReducer from "../features/user/userSlice";
-import previewLastUpdatedReducer from "../features/last-updated/previewLastUpdated";
+import lastUpdatedReducer from "../features/last-updated/lastUpdatedSlice";
+import hotStoriesReducer from "../features/hot-stories/hotStoriesSlice";
 import topViewsReducer from "../features/top-views/topViewsSlice";
 
 import { QueryClient } from "react-query";
@@ -53,8 +54,9 @@ const reducers = combineReducers({
   authors: authorsReducer,
   genres: genresReducer,
   userStories: userStoriesReducer,
-  previewLastUpdated: previewLastUpdatedReducer,
-  topViews: topViewsReducer
+  topViews: topViewsReducer,
+  lastUpdated: lastUpdatedReducer,
+  hotStories: hotStoriesReducer,
 });
 
 const persistConfig: PersistConfig<any> = {
@@ -70,6 +72,7 @@ const persistConfig: PersistConfig<any> = {
     "storyEditor",
     "chapterEditor",
     "authors",
+    "lastUpdated",
   ],
   migrate: (state: any) => {
     state = state || {};
@@ -103,4 +106,10 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   Action<string>
 >;
 
-export const queryClient = new QueryClient({});
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});

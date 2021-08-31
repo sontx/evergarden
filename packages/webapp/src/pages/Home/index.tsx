@@ -18,7 +18,7 @@ import { RecommendStories } from "../../features/recommend/RecommendStories";
 
 export function Home() {
   const intl = useIntl();
-  const isLoggedIn = useAppSelector(selectIsLoggedIn)
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
 
   return (
     <AppContainer>
@@ -27,14 +27,14 @@ export function Home() {
       <AppContent flexFlow noPadding>
         <div>
           <SpotlightBanner />
-          {isLoggedIn && <RecommendStories/>}
+          {isLoggedIn && <RecommendStories />}
           <LastUpdatedPreview />
           <HotStoriesPreview />
           <StopViewsPreview />
           <EditorSuggestions />
           <NewStoriesPreview />
         </div>
-        <BackTop/>
+        <BackTop />
       </AppContent>
       <AppFooter />
     </AppContainer>

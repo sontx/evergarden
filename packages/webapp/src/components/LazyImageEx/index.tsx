@@ -12,7 +12,7 @@ export function LazyImageEx({
       alt={alt}
       src={src || defaultSrc || ""}
       actual={({ imageProps }) => <img {...imageProps} />}
-      placeholder={({ ref }) => <div ref={ref} />}
+      placeholder={({ ref }) => <div className="lazy-image-placeholder" ref={ref} />}
       loading={() => <img src={defaultSrc} alt={alt} />}
       error={() => <img src={defaultSrc} alt={alt} />}
     />

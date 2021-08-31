@@ -1,0 +1,42 @@
+@import (reference) "../../variables";
+
+.full-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: @panel-bg-color;
+  padding: 10px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .panel-header {
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+
+    .rs-icon {
+      margin-right: 5px;
+    }
+
+    .header-btn-back {
+      padding-right: 18px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+  }
+
+  > .rs-divider {
+    margin: 10px 0 0;
+  }
+
+  .panel-body {
+    flex: 1;
+
+    .story-list {
+      height: 100%;
+    }
+  }
+}

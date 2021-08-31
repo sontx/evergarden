@@ -1,19 +1,18 @@
 import { forwardRef, ReactNode } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { GetStoryDto } from "@evergarden/shared";
 import classNames from "classnames";
 
 import "./index.less";
-import { List, Loader } from "rsuite";
-import { FormattedMessage } from "react-intl";
+import { List } from "rsuite";
 import { StoryListBaseProps } from "../index.api";
+import { EnhancedInfiniteLoader } from "../../EnhancedInfiniteLoader";
 
 export interface InfiniteStoryListProps extends StoryListBaseProps {
-  loadNext?: () => void;
-  loader?: ReactNode;
-  hasMore?: boolean;
-  dataLength?: number;
+  loadNext: (start: number, stop: number) => Promise<void> | null;
+  hasMore: boolean;
   renderItem: (story: GetStoryDto) => ReactNode;
+  itemHeight: number;
+  isNextPageLoading: boolean;
 }
 
 export const InfiniteStoryList = forwardRef(
@@ -21,13 +20,13 @@ export const InfiniteStoryList = forwardRef(
     {
       loadNext,
       stories,
-      loader,
       hasMore,
-      dataLength,
       renderItem,
       className,
       renderSkeleton,
       skeletonCount,
+      itemHeight,
+      isNextPageLoading,
       ...rest
     }: InfiniteStoryListProps,
     ref,
@@ -38,32 +37,25 @@ export const InfiniteStoryList = forwardRef(
         ref={ref as any}
         className={classNames(className, "story-list--infinite")}
       >
-        {stories ? (
-          <InfiniteScroll
-            next={loadNext as () => void}
-            loader={loader}
-            hasMore={!!hasMore}
-            dataLength={dataLength !== undefined ? dataLength : stories.length}
-          >
-            <List>
-              {stories.map((story: GetStoryDto) => (
-                <List.Item key={story.id}>{renderItem(story)}</List.Item>
+        <EnhancedInfiniteLoader
+          items={stories || []}
+          itemHeight={itemHeight}
+          loadNextPage={loadNext}
+          renderItem={(index, story, style) => (
+            <List.Item key={story.id} style={style}>
+              {renderItem(story)}
+            </List.Item>
+          )}
+          hasNextPage={hasMore}
+          isNextPageLoading={isNextPageLoading}
+          renderLoader={(style) => (
+            <div style={style}>
+              {Array.from(Array(skeletonCount || 10).keys()).map((value) => (
+                <List.Item key={value}>{renderSkeleton()}</List.Item>
               ))}
-            </List>
-          </InfiniteScroll>
-        ) : renderSkeleton ? (
-          <List>
-            {Array.from(Array(skeletonCount || 10).keys()).map((value) => (
-              <List.Item key={value}>{renderSkeleton()}</List.Item>
-            ))}
-          </List>
-        ) : (
-          <Loader
-            backdrop
-            content={<FormattedMessage id="loadingText" />}
-            vertical
-          />
-        )}
+            </div>
+          )}
+        />
       </div>
     );
   },

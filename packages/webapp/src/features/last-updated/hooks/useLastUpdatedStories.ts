@@ -1,26 +1,29 @@
 import api from "../../../utils/api";
 import { GetStoryDto, PaginationResult } from "@evergarden/shared";
-import { useQuery, UseQueryOptions } from "react-query";
-
-const MAX_STORIES = 10;
+import { UseInfiniteQueryOptions } from "react-query";
+import { useInfinitePageQuery } from "../../../hooks/useInfinitePageQuery";
 
 async function fetchLastUpdatedStories(
   skip: number,
   limit: number,
 ): Promise<GetStoryDto[]> {
-  const response = await api.get<PaginationResult<GetStoryDto>>("/api/stories", {
-    params: { skip, limit, category: "updated" },
-  });
+  const response = await api.get<PaginationResult<GetStoryDto>>(
+    "/api/stories",
+    {
+      params: { skip, limit, category: "updated" },
+    },
+  );
   return response.data.items;
 }
 
 export default function useLastUpdatedStories(
   page: number,
-  options?: UseQueryOptions<GetStoryDto[]>,
+  options?: UseInfiniteQueryOptions<GetStoryDto[]>,
 ) {
-  return useQuery<GetStoryDto[]>(
-    ["last-updated-stories", page],
-    () => fetchLastUpdatedStories(page * MAX_STORIES, MAX_STORIES),
+  return useInfinitePageQuery(
+    "last-updated-stories",
+    page,
+    fetchLastUpdatedStories,
     options,
   );
 }

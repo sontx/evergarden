@@ -11,6 +11,12 @@
     display: flex;
     overflow: hidden;
 
+    .lazy-image-placeholder {
+      width: @thumbnail-width--compact;
+      height: @thumbnail-height--compact;
+      margin-right: 8px;
+    }
+
     img {
       width: @thumbnail-width--compact;
       min-width: @thumbnail-width--compact;
@@ -26,10 +32,14 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      min-width: 0;
     }
 
     .title {
       line-height: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 
