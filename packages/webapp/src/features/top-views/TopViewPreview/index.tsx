@@ -2,10 +2,11 @@ import { PreviewPanel } from "../../../components/PreviewPanel";
 import { FormattedMessage } from "react-intl";
 import useTopViewsStories from "../hooks/useTopViewsStories";
 import { Button, ButtonGroup, ButtonToolbar } from "rsuite";
-import { useStoriesWithMark } from "../../hot-stories/hooks/useStoriesWithMark";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectType, setType } from "../topViewsSlice";
 import { ReactNode, useCallback } from "react";
+import { useTransformItems } from "../../../hooks/useTransformItems";
+import { decorateWithRanking } from "../../../utils/story-ranking";
 
 function TypeButton({
   children,
@@ -35,7 +36,7 @@ function TypeButton({
 export function StopViewsPreview() {
   const type = useAppSelector(selectType);
   const { data, isFetching, isStale } = useTopViewsStories(0, type);
-  const stories = useStoriesWithMark(data);
+  const stories = useTransformItems(data, decorateWithRanking);
 
   return (
     <PreviewPanel

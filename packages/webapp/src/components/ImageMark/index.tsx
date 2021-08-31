@@ -1,18 +1,36 @@
-import { ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
 import { Property } from "csstype";
+
+import "./index.less";
 
 export function ImageMark({
   children,
   backgroundColor,
   color,
   spotlight,
+  compact,
 }: {
   children: ReactNode;
   backgroundColor: Property.BackgroundColor;
   color?: Property.Color;
   spotlight?: boolean;
+  compact?: boolean;
 }) {
-  return (
+  return compact ? (
+    <span
+      className="image-mark--compact"
+      style={
+        {
+          backgroundColor: backgroundColor,
+          fontWeight: spotlight ? "bold" : "unset",
+          color: color ? color : "unset",
+          "--image-mark-bg-color": backgroundColor,
+        } as CSSProperties
+      }
+    >
+      {children}
+    </span>
+  ) : (
     <span
       style={{
         fontSize: 10,

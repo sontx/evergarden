@@ -9,6 +9,7 @@ export type GetStoryDtoEx = GetStoryDto & { mark?: StoryItemMarkOptions };
 export interface StoryItemMarkOptions {
   text: ReactNode;
   backgroundColor: Property.BackgroundColor;
+  value: number;
   spotlight?: boolean;
 }
 

@@ -10,6 +10,8 @@ import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { LazyImageEx } from "../../LazyImageEx";
 import { StoryItemBaseProps } from "../index.api";
 import { GetStoryDto } from "@evergarden/shared";
+import { ImageMark } from "../../ImageMark";
+import { StoryItemMark } from "../StoryItemMark";
 
 export interface CompactStoryItemProps extends StoryItemBaseProps {
   children?: ReactNode;
@@ -58,6 +60,7 @@ export const CompactStoryItem = memo(function ({
             src={story.thumbnail}
             defaultSrc={defaultThumbnail}
           />
+          {story.mark && <StoryItemMark mark={story.mark} compact/>}
         </div>
         <div className="info">
           <div className="title">{story.title}</div>
