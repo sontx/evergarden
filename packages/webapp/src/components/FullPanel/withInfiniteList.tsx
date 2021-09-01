@@ -11,17 +11,21 @@ import { useQueryElement } from "../../hooks/useQueryElement";
 export function withInfiniteList(Component: ComponentType<any>) {
   return ({
     query,
+    initialQueryKey,
     transformItems,
     ...rest
   }: Omit<FullPanelProps, "children"> & {
     onClose: () => void;
     transformItems?: (items?: GetStoryDto[]) => GetStoryDto[] | undefined;
     query: (
-      page: number,
+      queryKey: unknown[],
       options?: UseInfiniteQueryOptions<GetStoryDto[]>,
     ) => UseInfiniteQueryResult<GetStoryDto[]>;
+    initialQueryKey: unknown[];
   }) => {
-    const { data, isFetchingNextPage, hasNextPage, fetchNextPage } = query(0);
+    const { data, isFetchingNextPage, hasNextPage, fetchNextPage } = query(
+      initialQueryKey,
+    );
     const stories = useTwoDimensionsArray(data?.pages);
     const transformedStories = useTransformItems(stories, transformItems);
     const [listRef, setListRef] = useQueryElement(

@@ -9,6 +9,7 @@ import { useOverlay } from "../../hooks/useOverlay";
 
 export interface FullPanelProps extends StandardProps {
   title: ReactNode;
+  subtitle?: ReactNode;
   children: ReactNode;
   onClose?: () => void;
 }
@@ -16,6 +17,7 @@ export interface FullPanelProps extends StandardProps {
 export function FullPanel({
   className,
   title,
+  subtitle,
   onClose,
   children,
   ...rest
@@ -36,7 +38,10 @@ export function FullPanel({
             <a onClick={onClose} className="header-btn-back no-link">
               <Icon icon="left" />
             </a>
-            <span className="panel-title">{title}</span>
+            <span className="header-right">
+              <span className="panel-title">{title}</span>
+              {subtitle && <span className="panel-subtitle">{subtitle}</span>}
+            </span>
           </div>
           <Divider />
           <div className="panel-body">{children}</div>

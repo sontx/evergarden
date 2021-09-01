@@ -12,7 +12,7 @@ import { FullPanel } from "../../../components/FullPanel";
 const Wrapper = withInfiniteList(FullPanel);
 
 export function LastUpdatedPreview() {
-  const { data } = useLastUpdatedStories(0);
+  const { data } = useLastUpdatedStories([0]);
   const dispatch = useAppDispatch();
   const showFull = useAppSelector(selectShowLastUpdatedStories);
 
@@ -26,6 +26,7 @@ export function LastUpdatedPreview() {
       {showFull && (
         <Wrapper
           query={useLastUpdatedStories}
+          initialQueryKey={[0]}
           title={<FormattedMessage id="homeLastUpdated" />}
           onClose={() => dispatch(setShowFullLastUpdatedStories(false))}
         />

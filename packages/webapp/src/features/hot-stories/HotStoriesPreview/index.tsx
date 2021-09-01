@@ -15,7 +15,7 @@ import { decorateWithRanking } from "../../../utils/story-ranking";
 const Wrapper = withInfiniteList(FullPanel);
 
 export function HotStoriesPreview() {
-  const { data } = useHotStories(0);
+  const { data } = useHotStories([0]);
   const dispatch = useAppDispatch();
   const markedStories = useTransformItems(
     data?.pages && data.pages[0],
@@ -33,6 +33,7 @@ export function HotStoriesPreview() {
       {showFull && (
         <Wrapper
           query={useHotStories}
+          initialQueryKey={[0]}
           title={<FormattedMessage id="homeHotStories" />}
           onClose={() => dispatch(setShowFullHotStories(false))}
           transformItems={(items) => decorateWithRanking(items, 10)}

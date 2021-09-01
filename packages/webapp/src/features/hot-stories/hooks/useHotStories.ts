@@ -17,8 +17,9 @@ async function fetchHotStories(
 }
 
 export default function useHotStories(
-  page: number,
+  queryKey: unknown[],
   options?: UseInfiniteQueryOptions<GetStoryDto[]>,
 ) {
-  return useInfinitePageQuery("hot-stories", page, fetchHotStories, options);
+  const [page] = queryKey;
+  return useInfinitePageQuery(["hot-stories", page], fetchHotStories, options);
 }

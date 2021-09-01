@@ -13,7 +13,6 @@
   flex-direction: column;
 
   .panel-header {
-    text-transform: uppercase;
     display: flex;
     align-items: center;
 
@@ -25,6 +24,25 @@
       padding-right: 18px;
       padding-top: 5px;
       padding-bottom: 5px;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .panel-title {
+        text-transform: uppercase;
+      }
+
+      .panel-subtitle {
+        color: @secondary-text-color;
+        font-size: 70%;
+      }
+
+      .rs-divider-vertical {
+        margin: 0 6px;
+      }
     }
   }
 

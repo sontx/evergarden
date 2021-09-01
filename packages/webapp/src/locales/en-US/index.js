@@ -57,8 +57,8 @@ export default {
   homeRecommendedStories: "Recommend to you",
   homeHotStories: "Hot Stories",
   homeTopViewsStories: "Top Views",
-  homeTopViewsStoriesAll: "All",
   homeTopViewsStoriesWeek: "Week",
   homeTopViewsStoriesMonth: "Month",
   homeTopViewsStoriesYear: "Year",
+  homeTopViewsStoriesToday: "Today",
 };

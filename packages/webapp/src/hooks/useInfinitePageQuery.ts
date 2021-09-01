@@ -4,16 +4,19 @@ import { GetStoryDto } from "@evergarden/shared";
 const MAX_STORIES_PER_PAGE = 20;
 
 export function useInfinitePageQuery(
-  name: string,
-  page: number,
-  queryFn: (skip: number, limit: number) => Promise<GetStoryDto[]>,
+  queryKey: readonly unknown[],
+  queryFn: (
+    skip: number,
+    limit: number,
+    queryKey?: readonly unknown[],
+  ) => Promise<GetStoryDto[]>,
   options?: UseInfiniteQueryOptions<GetStoryDto[]>,
   itemPerPage?: number,
 ) {
   const max = itemPerPage === undefined ? MAX_STORIES_PER_PAGE : itemPerPage;
   return useInfiniteQuery<GetStoryDto[]>(
-    [name, page],
-    ({ pageParam = 0 }) => queryFn(pageParam * max, max),
+    queryKey,
+    ({ pageParam = 0, queryKey }) => queryFn(pageParam * max, max, queryKey),
     {
       ...(options || {}),
       getNextPageParam: (lastPage, allPages) =>

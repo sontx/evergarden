@@ -2,11 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 interface TopViewsState {
-  type: "all" | "week" | "month" | "year"
+  type: "today" | "week" | "month" | "year";
+  showFullTopViewStories?: boolean;
 }
 
 const initialState: TopViewsState = {
-  type: "all"
+  type: "today"
 }
 
 export const topViewsSlice = createSlice({
@@ -15,12 +16,16 @@ export const topViewsSlice = createSlice({
   reducers: {
     setType: (state, {payload}) => {
       state.type = payload;
+    },
+    setShowFullTopViewStories: (state, {payload}) => {
+      state.showFullTopViewStories = payload;
     }
   }
 })
 
-export const {setType} = topViewsSlice.actions;
+export const {setType, setShowFullTopViewStories} = topViewsSlice.actions;
 
 export const selectType = (state: RootState) => state.topViews.type;
+export const selectShowFullTopViewStories = (state: RootState) => state.topViews.showFullTopViewStories;
 
 export default topViewsSlice.reducer;

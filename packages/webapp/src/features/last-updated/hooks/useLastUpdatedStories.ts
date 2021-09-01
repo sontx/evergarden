@@ -17,12 +17,12 @@ async function fetchLastUpdatedStories(
 }
 
 export default function useLastUpdatedStories(
-  page: number,
+  queryKey: unknown[],
   options?: UseInfiniteQueryOptions<GetStoryDto[]>,
 ) {
+  const [page] = queryKey;
   return useInfinitePageQuery(
-    "last-updated-stories",
-    page,
+    ["last-updated-stories", page],
     fetchLastUpdatedStories,
     options,
   );
