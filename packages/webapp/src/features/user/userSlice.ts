@@ -56,7 +56,7 @@ export const deleteAvatarAsync = createAsyncThunk(
   "user/deleteAvatar",
   async (_, { rejectWithValue }) => {
     return catchRequestError(
-      async () => await deleteAvatar,
+      async () => await deleteAvatar(),
       rejectWithValue,
       true,
     );
@@ -137,6 +137,13 @@ export const userSlice = createSlice({
       state.updateStatus = "success";
     },
     [`${updateUserAsync.rejected}`]: (state) => {
+      state.updateStatus = "error";
+    },
+    [`${updateAvatarAsync.fulfilled}`]: (state, { payload }) => {
+      state.user = { ...(state.user || {}), ...(payload || {}) };
+      state.updateStatus = "success";
+    },
+    [`${updateAvatarAsync.rejected}`]: (state) => {
       state.updateStatus = "error";
     },
   },

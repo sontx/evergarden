@@ -46,7 +46,9 @@ export default {
   storyTypeConvertDescription: "The story is translated by the tool",
   storyTypeTranslateDescription: "The story is translated by the translator",
   storyTypeSelfComposedDescription: "The story written by you",
-  profileDone: "Done",
-  profileName: "Full name",
   userProfile: "Profile",
+  uploadPhoto: 'Upload photo',
+  saveBtn: "Save",
+  cancelBtn: "Cancel",
+  updateAvatar: "Update avatar"
 };

@@ -8,7 +8,6 @@ import { useHistory } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import { logoutAsync } from "../../features/auth/authSlice";
 import { SearchBox } from "../../features/search/SearchBox";
-import { UserProfile } from '../../features/profile'
 import { StorySearchBody } from "@evergarden/shared";
 import { openStoryByUrl } from "../../features/story/storySlice";
 import {
@@ -22,8 +21,6 @@ export function UserToolbar() {
   const user = useAppSelector(selectUser);
   const history = useHistory();
   const dispatch = useAppDispatch();
-
-  const [showProfile, setShowProfile] = useState(false)
 
   const handleShowSearch = useCallback(() => {
     dispatch(setShowSearchBox(!showSearch));
@@ -57,6 +54,10 @@ export function UserToolbar() {
     history.push("/user/story");
   }, [history]);
 
+  const handleShowUserProfile = useCallback(() => {
+    history.push("/user");
+  }, [history]);
+
   return (
     <>
       <Nav pullRight className="user-toolbar-container">
@@ -88,7 +89,7 @@ export function UserToolbar() {
                 </Nav.Item>
               )}
             >
-              <Dropdown.Item>
+              <Dropdown.Item onSelect={handleShowUserProfile}>
                 <div>{user.fullName}</div>
                 <span className="nav-sub">{user.email}</span>
               </Dropdown.Item>
@@ -106,10 +107,6 @@ export function UserToolbar() {
                 <FormattedMessage id="userMenuMyStories" />
               </Dropdown.Item>
               <Dropdown.Item divider />
-              <Dropdown.Item onSelect={() => setShowProfile(true)}>
-                <Icon icon="cog" />{" "}
-                <FormattedMessage id="userProfile" />
-              </Dropdown.Item>
               <Dropdown.Item onSelect={handleLogout}>
                 <Icon icon="sign-out" />{" "}
                 <FormattedMessage id="userMenuLogout" />
@@ -134,7 +131,6 @@ export function UserToolbar() {
           onClose={handleShowSearch}
         />
       )}
-      <UserProfile show={showProfile} onHide={() => setShowProfile(false)}/>
     </>
   );
 }

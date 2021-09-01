@@ -27,23 +27,3 @@ export async function loginOAuth2(token: string, provider: string): Promise<Auth
   return response.data;
 }
 
-export async function updateFullName(name: string): Promise<AuthUser> {
-  const response = await api.put("/api/users", { fullName: name });
-  return response.data;
-}
-
-export async function updateAvatar(file: File): Promise<AuthUser> {
-  const formData = new FormData();
-  formData.append("file", file);
-  const response = await api.put("/api/users/avatar", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response.data;
-}
-
-export async function deleteAvatar(): Promise<AuthUser> {
-  const response = await api.delete("/api/users/avatar")
-  return response.data;
-}

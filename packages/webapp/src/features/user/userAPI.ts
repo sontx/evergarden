@@ -17,11 +17,12 @@ export async function updateAvatar(file: File): Promise<GetUserDto> {
 }
 
 export async function deleteAvatar(): Promise<GetUserDto> {
-  const response = await api.delete("/api/users/avatar");
+  const response = await api.delete("/api/users/avatar/");
   return response.data;
 }
 
 export async function updateUser(user: UpdateUserDto): Promise<GetUserDto> {
+  console.log('user', user)
   const response = await api.put("/api/users", user);
   return response.data;
 }

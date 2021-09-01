@@ -19,6 +19,7 @@ import { UserStoriesPage } from "./pages/UserStories";
 import { UserChaptersPage } from "./pages/UserChapters";
 import { ChapterEditorPage } from "./pages/ChapterEditor";
 import { HistoriesSync } from "./features/histories/HistoriesSync";
+import { UserProfile } from './pages/UserProfile'
 
 const App = () => (
   <IntlProvider locale="en" messages={locales.en}>
@@ -48,6 +49,11 @@ const App = () => (
               <Route exact path="/history">
                 <AuthRequired>
                   <History />
+                </AuthRequired>
+              </Route>
+              <Route exact path="/user">
+                <AuthRequired>
+                  <UserProfile />
                 </AuthRequired>
               </Route>
               <Route exact path="/user/story">
