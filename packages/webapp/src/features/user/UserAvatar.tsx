@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import Logger from "js-logger"
 import { Button, Avatar, Icon, Drawer, Loader } from "rsuite"
@@ -23,7 +22,7 @@ export function UserAvatar() {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const [uploadFile, setUploadFile] = useState<string | undefined>();
-  const imgRef = useRef<HTMLImageElement>(null);
+  let imgRef = useRef<HTMLImageElement | null >(null);
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
@@ -70,14 +69,16 @@ export function UserAvatar() {
       event.preventDefault()
       event.stopPropagation()
       setUploadFile("")
-      imgRef.current = null
+      imgRef = {
+        current: null,
+      }
     },
     [],
   );
 
   return (
     <>
-      <Avatar className="profile_avatar" src={user.photoUrl} onClick={() => setShow(true)} />
+      <Avatar className="profile_avatar" src={user?.photoUrl} onClick={() => setShow(true)} />
       <Drawer show={show} onHide={() => setShow(false)} size="xs" placement="top" style={{ height: 'auto' }}>
         <Drawer.Header style={{ textAlign: 'center', fontSize: "21px", fontWeight: "bold" }}>
           <FormattedMessage id="updateAvatar" />
@@ -86,7 +87,7 @@ export function UserAvatar() {
           <div className="avatar_main">
             <div className="avatar_upload">
               <span>
-                <Icon size="md" icon="plus" className="avatar_upload_icon" />
+                <Icon icon="plus" className="avatar_upload_icon" />
                 <FormattedMessage id="uploadPhoto" />
               </span>
               <input type="file" onChange={onChange} />

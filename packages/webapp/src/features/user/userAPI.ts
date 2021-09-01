@@ -5,7 +5,7 @@ import {
   UpdateUserSettingsDto,
 } from "@evergarden/shared";
 
-export async function updateAvatar(file: File): Promise<GetUserDto> {
+export async function updateAvatar(file: File | Blob): Promise<GetUserDto> {
   const formData = new FormData();
   formData.append("file", file);
   const response = await api.put("/api/users/avatar", formData, {

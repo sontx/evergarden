@@ -7,7 +7,7 @@ export function ImageCropper({ style, image, cropperRef } : {
   style?: object,
   image: string,
   cropperRef: {
-    current: HTMLImageElement
+    current: HTMLImageElement | null
   }
 }){
   return (

@@ -43,7 +43,7 @@ export const fetchUserAsync = createAsyncThunk(
 
 export const updateAvatarAsync = createAsyncThunk(
   "user/updateAvatar",
-  async (file: File, { rejectWithValue }) => {
+  async (file: File | Blob, { rejectWithValue }) => {
     return catchRequestError(
       async () => await updateAvatar(file),
       rejectWithValue,
