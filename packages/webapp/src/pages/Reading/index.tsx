@@ -74,7 +74,7 @@ export function Reading() {
   }, [chapterNo, dispatch, showStory]);
 
   return (
-    <AppContainer className="reading-theme--dark1">
+    <AppContainer className="reading-theme--dark1" showBackTop>
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppContent noPadding>
         {chapterStatus !== "error" && storyStatus !== "error" ? (
