@@ -1,8 +1,7 @@
 import api from "../../../utils/api";
 import { GetStoryDto, PaginationResult } from "@evergarden/shared";
-import { useQuery, UseQueryOptions } from "react-query";
-
-const MAX_STORIES = 10;
+import { UseInfiniteQueryOptions } from "react-query";
+import { useInfinitePageQuery } from "../../../hooks/useInfinitePageQuery";
 
 async function fetchNewStories(
   skip: number,
@@ -18,14 +17,14 @@ async function fetchNewStories(
 }
 
 export default function useNewStories(
-  page: number,
-  max?: number,
-  options?: UseQueryOptions<GetStoryDto[]>,
+  queryKey: unknown[],
+  options?: UseInfiniteQueryOptions<GetStoryDto[]>,
 ) {
-  const maxStories = max !== undefined ? max : MAX_STORIES;
-  return useQuery<GetStoryDto[]>(
-    ["new-stories", page],
-    () => fetchNewStories(page * maxStories, maxStories),
+  const [page, max] = queryKey;
+  return useInfinitePageQuery(
+    [page],
+    (skip, limit) =>
+      fetchNewStories(skip, max === undefined ? limit : (max as number)),
     options,
   );
 }

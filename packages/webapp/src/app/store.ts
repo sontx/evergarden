@@ -34,6 +34,7 @@ import userReducer from "../features/user/userSlice";
 import lastUpdatedReducer from "../features/last-updated/lastUpdatedSlice";
 import hotStoriesReducer from "../features/hot-stories/hotStoriesSlice";
 import topViewsReducer from "../features/top-views/topViewsSlice";
+import newStoriesReducer from "../features/new-stories/newStoriesSlice";
 
 import { QueryClient } from "react-query";
 
@@ -57,6 +58,7 @@ const reducers = combineReducers({
   topViews: topViewsReducer,
   lastUpdated: lastUpdatedReducer,
   hotStories: hotStoriesReducer,
+  newStories: newStoriesReducer,
 });
 
 const persistConfig: PersistConfig<any> = {
@@ -73,6 +75,8 @@ const persistConfig: PersistConfig<any> = {
     "chapterEditor",
     "authors",
     "lastUpdated",
+    "newStories",
+    "hotStories",
     "global",
   ],
   migrate: (state: any) => {
