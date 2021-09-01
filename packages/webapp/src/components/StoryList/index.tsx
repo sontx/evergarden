@@ -11,7 +11,7 @@ import {
 import { withHistory } from "../StoryItem/withHistory";
 import { InfiniteStoryList } from "./InfiniteStoryList";
 import { VerticalStoryList } from "./VerticalStoryList";
-import { ElementType } from "react";
+import { ElementType, forwardRef } from "react";
 import { StoryItemBaseProps } from "../StoryItem/index.api";
 import classNames from "classnames";
 
@@ -27,7 +27,7 @@ export interface StoryListProps
   layout: "compact" | "vertical" | "horizontal";
 }
 
-export function StoryList({ layout, className, ...rest }: StoryListProps) {
+export const StoryList = forwardRef(({ layout, className, ...rest }: StoryListProps, ref) => {
   let ListComponent: ElementType<StoryListBaseProps>;
   let ItemComponent: ElementType<StoryItemBaseProps>;
   let SkeletonComponent: ElementType;
@@ -47,10 +47,11 @@ export function StoryList({ layout, className, ...rest }: StoryListProps) {
 
   return (
     <ListComponent
+      ref={ref}
       className={classNames("story-list", className)}
       renderItem={(story) => <ItemComponent story={story} />}
       renderSkeleton={() => <SkeletonComponent />}
       {...rest}
     />
   );
-}
+})
