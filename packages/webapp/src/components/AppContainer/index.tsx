@@ -5,16 +5,23 @@ import { StandardProps } from "rsuite/es/@types/common";
 import "./firefly.less";
 import { useAppSelector } from "../../app/hooks";
 import { selectIsShowingOverlay } from "../../features/global/globalSlice";
+import { BackTop } from "../BackTop";
 
-export function AppContainer(
-  props: { children: ReactNode; backgroundEffect?: boolean } & StandardProps,
-) {
-  const { children, backgroundEffect, ...rest } = props;
+export function AppContainer({
+  children,
+  backgroundEffect,
+  showBackTop,
+  ...rest
+}: {
+  children: ReactNode;
+  backgroundEffect?: boolean;
+  showBackTop?: boolean;
+} & StandardProps) {
   const isShowingOverlay = useAppSelector(selectIsShowingOverlay);
 
   return (
     <Container style={{ minHeight: "100vh" }} {...rest}>
-      {props.children}
+      {children}
       {backgroundEffect && !isShowingOverlay && (
         <>
           <div className="firefly" />
@@ -34,6 +41,7 @@ export function AppContainer(
           <div className="firefly" />
         </>
       )}
+      {showBackTop && !isShowingOverlay && <BackTop />}
     </Container>
   );
 }

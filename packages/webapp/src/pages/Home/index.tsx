@@ -11,7 +11,6 @@ import { AppFooter } from "../../components/AppFooter";
 import { HotStoriesPreview } from "../../features/hot-stories/HotStoriesPreview";
 import { StopViewsPreview } from "../../features/top-views/TopViewPreview";
 import { AppContent } from "../../components/AppContent";
-import { BackTop } from "../../components/BackTop";
 import { useAppSelector } from "../../app/hooks";
 import { selectIsLoggedIn } from "../../features/user/userSlice";
 import { RecommendStories } from "../../features/recommend/RecommendStories";
@@ -21,7 +20,7 @@ export function Home() {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
 
   return (
-    <AppContainer>
+    <AppContainer showBackTop>
       <SEO title={intl.formatMessage({ id: "pageTitleHome" })} />
       <AppHeader fixedHeader />
       <AppContent flexFlow noPadding>
@@ -34,7 +33,6 @@ export function Home() {
           <EditorSuggestions />
           <NewStoriesPreview />
         </div>
-        <BackTop />
       </AppContent>
       <AppFooter />
     </AppContainer>
