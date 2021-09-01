@@ -5,6 +5,7 @@ import classNames from "classnames";
 import "./index.less";
 import { Animation, Divider, Icon } from "rsuite";
 import { useNoBodyScrolling } from "../../hooks/useNoBodyScrolling";
+import { useOverlay } from "../../hooks/useOverlay";
 
 export interface FullPanelProps extends StandardProps {
   title: ReactNode;
@@ -20,6 +21,7 @@ export function FullPanel({
   ...rest
 }: FullPanelProps) {
   useNoBodyScrolling();
+  useOverlay();
 
   return (
     <Animation.Slide in>
