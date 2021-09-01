@@ -4,12 +4,13 @@ import React, { useEffect } from "react";
 import "./index.less";
 import classNames from "classnames";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+
+import { AppLogo } from "./AppLogo";
+import { Toolbar } from "./Toolbar";
 import {
   selectIsFloatingHeader,
   setFloatingHeader,
-} from "../../features/settings/settingsSlice";
-import { AppLogo } from "./AppLogo";
-import { Toolbar } from "./Toolbar";
+} from "../../features/global/globalSlice";
 
 export function AppHeader({ fixedHeader }: { fixedHeader?: boolean }) {
   const dispatch = useAppDispatch();

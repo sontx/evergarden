@@ -1,4 +1,4 @@
-import { Animation, AutoComplete, DOMHelper, Icon, InputGroup } from "rsuite";
+import { Animation, AutoComplete, Icon, InputGroup } from "rsuite";
 import { useDebouncedCallback } from "use-debounce";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
@@ -19,28 +19,25 @@ import { EnhancedImage } from "../../../components/EnhancedImage";
 import { useIntl } from "react-intl";
 import TextTruncate from "react-text-truncate";
 import "./index.less";
-import {
-  selectShowSearchBox,
-  setShowSearchBox,
-} from "../../settings/settingsSlice";
 import { openStoryByUrl } from "../../story/storySlice";
 import { useHistory } from "react-router-dom";
 import { Backdrop } from "../../../components/Backdrop";
+import { useOverlay } from "../../../hooks/useOverlay";
+import { useNoBodyScrolling } from "../../../hooks/useNoBodyScrolling";
 
-export function SearchBox() {
+export function SearchBox({ onClose }: { onClose: () => void }) {
   const dispatch = useAppDispatch();
   const stories = useAppSelector(selectStories);
   const status = useAppSelector(selectStatus);
-  const showSearchBox = useAppSelector(selectShowSearchBox);
   const [searchText, setSearchText] = useState("");
   const intl = useIntl();
   const history = useHistory();
 
+  useNoBodyScrolling();
+  useOverlay();
+
   useEffect(() => {
     dispatch(clear());
-    return () => {
-      DOMHelper.removeClass(document.body, "noscroll");
-    };
   }, [dispatch]);
 
   const callSearchDebounce = useDebouncedCallback((text) => {
@@ -62,19 +59,11 @@ export function SearchBox() {
 
   const handleSelect = useCallback(
     (item) => {
-      dispatch(setShowSearchBox(false));
+      onClose();
       dispatch(openStoryByUrl(history, item.origin.url));
     },
-    [dispatch, history],
+    [dispatch, history, onClose],
   );
-
-  const handleShow = useCallback(() => {
-    DOMHelper.addClass(document.body, "noscroll");
-  }, []);
-
-  const handleHide = useCallback(() => {
-    DOMHelper.removeClass(document.body, "noscroll");
-  }, []);
 
   const handleClearSearchText = useCallback(() => {
     setSearchText("");
@@ -82,74 +71,66 @@ export function SearchBox() {
   }, [dispatch]);
 
   return (
-    <>
-      {showSearchBox && (
-        <Animation.Bounce in={true}>
-          {({ className, ...rest }, ref) => (
-            <div
-              className={classNames("searchbox-container", className)}
-              {...rest}
-              ref={ref}
-            >
-              <InputGroup inside>
-                <AutoComplete
-                  autoFocus
-                  value={searchText}
-                  placeholder={intl.formatMessage({ id: "globalSearchHint" })}
-                  onExit={handleHide}
-                  onEnter={handleShow}
-                  menuClassName="searchbox-menu"
-                  onChange={handleChange}
-                  onSelect={handleSelect}
-                  filterBy={() => true}
-                  data={stories.map((story) => ({
-                    label: story.title,
-                    value: story.title,
-                    origin: story,
-                  }))}
-                  renderItem={(item) => {
-                    const data = item as any;
-                    return (
-                      <div className="searchbox-menu-item">
-                        <div>
-                          <EnhancedImage
-                            src={data.origin.thumbnail || defaultThumbnail}
-                            defaultSrc={defaultThumbnail}
-                          />
-                        </div>
-                        <div>
-                          <div>
-                            <TextTruncate text={data.origin.title} line={1} />
-                          </div>
-                          <div className="searchbox-menu-item--sub">
-                            <TextTruncate
-                              text={data.origin.description || "Coming soon ;)"}
-                              line={2}
-                            />
-                          </div>
-                        </div>
+    <Animation.Bounce in={true}>
+      {({ className, ...rest }, ref) => (
+        <div
+          className={classNames("searchbox-container", className)}
+          {...rest}
+          ref={ref}
+        >
+          <InputGroup inside>
+            <AutoComplete
+              autoFocus
+              value={searchText}
+              placeholder={intl.formatMessage({ id: "globalSearchHint" })}
+              menuClassName="searchbox-menu"
+              onChange={handleChange}
+              onSelect={handleSelect}
+              filterBy={() => true}
+              data={stories.map((story) => ({
+                label: story.title,
+                value: story.title,
+                origin: story,
+              }))}
+              renderItem={(item) => {
+                const data = item as any;
+                return (
+                  <div className="searchbox-menu-item">
+                    <div>
+                      <EnhancedImage
+                        src={data.origin.thumbnail || defaultThumbnail}
+                        defaultSrc={defaultThumbnail}
+                      />
+                    </div>
+                    <div>
+                      <div>
+                        <TextTruncate text={data.origin.title} line={1} />
                       </div>
-                    );
-                  }}
-                />
-                {searchText ? (
-                  <InputGroup.Button onClick={handleClearSearchText}>
-                    <Icon icon="close" style={{ color: "red" }} />
-                  </InputGroup.Button>
-                ) : (
-                  <InputGroup.Addon>
-                    <Icon icon="search" />
-                  </InputGroup.Addon>
-                )}
-              </InputGroup>
-              {status === "processing" && (
-                <BarLoader color="#169de0" height="1" />
-              )}
-              <Backdrop onClick={() => dispatch(setShowSearchBox(false))} />
-            </div>
-          )}
-        </Animation.Bounce>
+                      <div className="searchbox-menu-item--sub">
+                        <TextTruncate
+                          text={data.origin.description || "Coming soon ;)"}
+                          line={2}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              }}
+            />
+            {searchText ? (
+              <InputGroup.Button onClick={handleClearSearchText}>
+                <Icon icon="close" style={{ color: "red" }} />
+              </InputGroup.Button>
+            ) : (
+              <InputGroup.Addon>
+                <Icon icon="search" />
+              </InputGroup.Addon>
+            )}
+          </InputGroup>
+          {status === "processing" && <BarLoader color="#169de0" height="1" />}
+          <Backdrop onClick={onClose} />
+        </div>
       )}
-    </>
+    </Animation.Bounce>
   );
 }

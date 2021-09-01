@@ -6,24 +6,24 @@ import "./index.less";
 import { Backdrop } from "../Backdrop";
 import { useNoBodyScrolling } from "../../hooks/useNoBodyScrolling";
 import { Animation } from "rsuite";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  selectIsFloatingHeader,
-  setShowMenu,
-} from "../../features/settings/settingsSlice";
+import { useAppSelector } from "../../app/hooks";
+import { useOverlay } from "../../hooks/useOverlay";
+import { selectIsFloatingHeader } from "../../features/global/globalSlice";
 
 export function GridMenu({
   className,
   children,
   cols,
+  onClose,
   ...rest
 }: StandardProps & {
   children: ReactNode;
   cols: number;
+  onClose?: () => void;
 }) {
   const isFloatingHeader = useAppSelector(selectIsFloatingHeader);
-  const dispatch = useAppDispatch();
   useNoBodyScrolling();
+  useOverlay();
 
   return (
     <div
@@ -31,7 +31,7 @@ export function GridMenu({
         "grid-menu--float": isFloatingHeader,
       })}
       {...rest}
-      onClick={() => dispatch(setShowMenu(false))}
+      onClick={onClose}
     >
       <Backdrop />
       <Animation.Slide unmountOnExit in>

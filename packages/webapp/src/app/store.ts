@@ -17,7 +17,7 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist/es/constants";
-import settingsReducer from "../features/settings/settingsSlice";
+import globalReducer from "../features/global/globalSlice";
 import storyReducer from "../features/story/storySlice";
 import storiesReducer from "../features/stories/storiesSlice";
 import chaptersReducer from "../features/chapters/chaptersSlice";
@@ -46,7 +46,7 @@ const reducers = combineReducers({
   chapters: chaptersReducer,
   chapter: chapterReducer,
   login: authReducer,
-  settings: settingsReducer,
+  global: globalReducer,
   histories: historiesReducer,
   search: searchReducer,
   storyEditor: storyEditorReducer,
@@ -73,14 +73,12 @@ const persistConfig: PersistConfig<any> = {
     "chapterEditor",
     "authors",
     "lastUpdated",
+    "global",
   ],
   migrate: (state: any) => {
     state = state || {};
     if (state.login) {
       state.login.status = "none";
-    }
-    if (state.settings) {
-      state.settings.showSearchBox = false;
     }
     return Promise.resolve(state);
   },

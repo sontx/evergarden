@@ -4,22 +4,18 @@ import { StandardProps } from "rsuite/es/@types/common";
 
 import "./firefly.less";
 import { useAppSelector } from "../../app/hooks";
-import {
-  selectShowMenu,
-  selectShowSearchBox,
-} from "../../features/settings/settingsSlice";
+import { selectIsShowingOverlay } from "../../features/global/globalSlice";
 
 export function AppContainer(
   props: { children: ReactNode; backgroundEffect?: boolean } & StandardProps,
 ) {
   const { children, backgroundEffect, ...rest } = props;
-  const showSearchBox = useAppSelector(selectShowSearchBox);
-  const showMenu = useAppSelector(selectShowMenu);
-  const isOverlayShown = showSearchBox || showMenu;
+  const isShowingOverlay = useAppSelector(selectIsShowingOverlay);
+
   return (
     <Container style={{ minHeight: "100vh" }} {...rest}>
       {props.children}
-      {backgroundEffect && !isOverlayShown && (
+      {backgroundEffect && !isShowingOverlay && (
         <>
           <div className="firefly" />
           <div className="firefly" />

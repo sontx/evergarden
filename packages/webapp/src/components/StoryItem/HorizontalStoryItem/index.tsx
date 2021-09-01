@@ -11,7 +11,6 @@ import { useAppDispatch } from "../../../app/hooks";
 import { forwardRef } from "react";
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { hasUnreadChapter, StoryItemBaseProps } from "../index.api";
-import { ImageMark } from "../../ImageMark";
 import { AuthorLink } from "../../AuthorLink";
 import { StoryItemMark } from "../StoryItemMark";
 
@@ -35,7 +34,7 @@ export const HorizontalStoryItem = forwardRef(
             defaultSrc={defaultThumbnail}
             src={story.thumbnail}
           />
-          {story.mark && <StoryItemMark mark={story.mark}/>}
+          {story.mark && <StoryItemMark mark={story.mark} />}
         </div>
         <div className="info">
           <h5 className="title">{story.title}</h5>
@@ -43,7 +42,7 @@ export const HorizontalStoryItem = forwardRef(
             <TextTruncate text={story.description} line={2} />
           </div>
           <div className="meta">
-            <AuthorLink story={story} className="author"/>
+            <AuthorLink story={story} className="author" />
             <div>
               <TagGroup>
                 {story.genres && story.genres.length > 0 && (
