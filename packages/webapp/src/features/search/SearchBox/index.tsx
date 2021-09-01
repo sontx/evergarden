@@ -24,12 +24,14 @@ import { useHistory } from "react-router-dom";
 import { Backdrop } from "../../../components/Backdrop";
 import { useOverlay } from "../../../hooks/useOverlay";
 import { useNoBodyScrolling } from "../../../hooks/useNoBodyScrolling";
+import { selectIsFloatingHeader } from "../../global/globalSlice";
 
 export function SearchBox({ onClose }: { onClose: () => void }) {
   const dispatch = useAppDispatch();
   const stories = useAppSelector(selectStories);
   const status = useAppSelector(selectStatus);
   const [searchText, setSearchText] = useState("");
+  const isFloatingHeader = useAppSelector(selectIsFloatingHeader);
   const intl = useIntl();
   const history = useHistory();
 
@@ -74,7 +76,9 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
     <Animation.Bounce in={true}>
       {({ className, ...rest }, ref) => (
         <div
-          className={classNames("searchbox-container", className)}
+          className={classNames(className, "searchbox-container", {
+            "searchbox-container--float": isFloatingHeader,
+          })}
           {...rest}
           ref={ref}
         >
@@ -106,7 +110,7 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
                       <div>
                         <TextTruncate text={data.origin.title} line={1} />
                       </div>
-                      <div className="searchbox-menu-item--sub">
+                      <div className="subtitle">
                         <TextTruncate
                           text={data.origin.description || "Coming soon ;)"}
                           line={2}
@@ -128,7 +132,7 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
             )}
           </InputGroup>
           {status === "processing" && <BarLoader color="#169de0" height="1" />}
-          <Backdrop onClick={onClose} />
+          <Backdrop onClick={onClose} className="searchbox-backdrop" />
         </div>
       )}
     </Animation.Bounce>

@@ -13,6 +13,7 @@ export function StoryItemMark({
       compact={compact}
       backgroundColor={mark.backgroundColor}
       spotlight={mark.spotlight}
+      color="white"
     >
       {compact ? mark.value : mark.text}
     </ImageMark>

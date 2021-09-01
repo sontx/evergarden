@@ -48,6 +48,10 @@
     align-items: center;
     color: @secondary-text-color;
 
+    .rs-tag-text {
+      color: @secondary-text-color !important;
+    }
+
     > :first-child {
       flex: 1;
     }
@@ -69,6 +73,8 @@
     }
     .rs-tag {
       padding: 0 6px;
+      background-color: unset;
+      border: 1px solid fade(@secondary-text-color, 20%);
     }
     .rs-tag-group > .rs-tag {
       margin-top: 9px;
