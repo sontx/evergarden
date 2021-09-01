@@ -23,23 +23,12 @@ export function AppContainer({
     <Container style={{ minHeight: "100vh" }} {...rest}>
       {children}
       {backgroundEffect && !isShowingOverlay && (
-        <>
+        <div>
           <div className="firefly" />
           <div className="firefly" />
           <div className="firefly" />
           <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-          <div className="firefly" />
-        </>
+        </div>
       )}
       {showBackTop && !isShowingOverlay && <BackTop />}
     </Container>
