@@ -24,6 +24,9 @@ const ModuleNotFoundPlugin = require("react-dev-utils/ModuleNotFoundPlugin");
 const ForkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpackPlugin");
 const typescriptFormatter = require("react-dev-utils/typescriptFormatter");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const IgnoreEmitPlugin = require("ignore-emit-webpack-plugin");
+const ExcludeAssetsPlugin = require("@ianwalter/exclude-assets-plugin");
+const HtmlInjectThemeMetadataPlugin = require("./html-inject-theme-metadata-plugin");
 
 const postcssNormalize = require("postcss-normalize");
 
@@ -75,6 +78,24 @@ const hasJsxRuntime = (() => {
     return false;
   }
 })();
+
+function recursiveIssuer(m, c) {
+  const issuer = m.issuer; //c.moduleGraph.getIssuer(m);
+  // For webpack@4 issuer = m.issuer
+
+  if (issuer) {
+    return recursiveIssuer(issuer, c);
+  }
+
+  const chunks = m._chunks; //c.chunkGraph.getModuleChunks(m);
+  // For webpack@4 chunks = m._chunks
+
+  for (const chunk of chunks) {
+    return chunk.name;
+  }
+
+  return false;
+}
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -198,6 +219,12 @@ module.exports = function (webpackEnv) {
             // initialization, it doesn't blow up the WebpackDevServer client, and
             // changing JS code would still trigger a refresh.
           ]
+        : isEnvProduction
+        ? {
+            main: paths.appIndexJs,
+            dark: paths.appDarkThemeJs,
+            light: paths.appLightThemeJs,
+          }
         : paths.appIndexJs,
     output: {
       // The build folder.
@@ -305,6 +332,36 @@ module.exports = function (webpackEnv) {
       splitChunks: {
         chunks: "all",
         name: isEnvDevelopment,
+        ...(isEnvProduction
+          ? {
+              cacheGroups: {
+                main: {
+                  name: "main",
+                  test: (m, c, entry = "main") =>
+                    m.constructor.name === "CssModule" &&
+                    recursiveIssuer(m, c) === entry,
+                  chunks: "all",
+                  enforce: true,
+                },
+                dark: {
+                  name: "dark",
+                  test: (m, c, entry = "dark") =>
+                    m.constructor.name === "CssModule" &&
+                    recursiveIssuer(m, c) === entry,
+                  chunks: "all",
+                  enforce: true,
+                },
+                light: {
+                  name: "light",
+                  test: (m, c, entry = "light") =>
+                    m.constructor.name === "CssModule" &&
+                    recursiveIssuer(m, c) === entry,
+                  chunks: "all",
+                  enforce: true,
+                },
+              },
+            }
+          : {}),
       },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
@@ -602,10 +659,12 @@ module.exports = function (webpackEnv) {
                   minifyCSS: true,
                   minifyURLs: true,
                 },
+                excludeAssets: [/(light)\.[a-z0-9].+\.css/],
               }
             : undefined,
         ),
       ),
+      isEnvProduction && new ExcludeAssetsPlugin(),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
@@ -760,6 +819,8 @@ module.exports = function (webpackEnv) {
             },
           },
         }),
+      // new IgnoreEmitPlugin(/(dark|light)\.[a-z0-9].+\.js/),
+      isEnvProduction && new HtmlInjectThemeMetadataPlugin(),
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell webpack to provide empty mocks for them so importing them works.

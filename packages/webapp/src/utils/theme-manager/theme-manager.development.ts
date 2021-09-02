@@ -1,15 +1,15 @@
-export class ThemeManager {
-  private static loaded = false;
-  private static dark: Element;
-  private static light: Element;
-  private static current: Element;
+import { IThemeManager } from "./theme-manager.interface";
 
-  private static load() {
-    if (this.loaded) {
-      return;
-    }
+export class ThemeManagerDevelopment implements IThemeManager {
+  private loaded = false;
+  private dark?: Element;
+  private light?: Element;
+  private current?: Element;
 
-    const themes = document.querySelectorAll(
+  private load() {
+    const head = document.head;
+
+    const themes = head.querySelectorAll(
       "style[theme-locator='__injected-theme']",
     );
     (Array.from(themes) as HTMLElement[]).forEach((theme) => {
@@ -31,14 +31,15 @@ export class ThemeManager {
     console.log(this.dark);
     console.log(this.light);
 
-    document.head.removeChild(this.dark);
-    document.head.removeChild(this.light);
-
-    this.loaded = true;
+    head.removeChild(this.dark);
+    head.removeChild(this.light);
   }
 
-  static setTheme(name: "dark" | "light") {
-    this.load();
+  setTheme(name: "dark" | "light") {
+    if (!this.loaded) {
+      this.load();
+      this.loaded = true;
+    }
 
     const theme = name === "dark" ? this.dark : this.light;
     if (!theme) {

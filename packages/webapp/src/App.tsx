@@ -27,14 +27,14 @@ import "./index.less";
 import "./styles/dark/index.less";
 
 import "./styles/light/index.less";
-import { ThemeManager } from "./utils/theme-manager";
 import { useAppSelector } from "./app/hooks";
 import { selectIsDarkMode } from "./features/global/globalSlice";
+import { ThemeManager } from "./utils/theme-manager/theme-manager";
 
 export default function App() {
   const isDarkMode = useAppSelector(selectIsDarkMode);
   useEffect(() => {
-    ThemeManager.setTheme(isDarkMode ? "dark" : "light");
+    ThemeManager.defaultInstance.setTheme(isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
 
   return (
