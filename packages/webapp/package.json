@@ -117,7 +117,7 @@
   },
   "scripts": {
     "start": "npm run start:dev",
-    "start:dev": "cross-env PORT=4000 node scripts/start.js",
+    "start:dev": "node scripts/start.js",
     "docker:dev": "npm run start:dev",
     "build": "node scripts/build.js"
   },
@@ -146,7 +146,6 @@
     "@types/react-window": "^1.8.3",
     "@types/react-window-infinite-loader": "^1.0.3",
     "@types/to-px": "^1.1.2",
-    "cross-env": "^7.0.3",
     "http-proxy-middleware": "^2.0.0",
     "less": "^4.1.1",
     "less-loader": "^7.2.1"
