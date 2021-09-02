@@ -51,9 +51,6 @@ export class ThemeManagerDevelopment implements IThemeManager {
       throw new Error("light-theme--locator was not found");
     }
 
-    console.log(this.dark);
-    console.log(this.light);
-
     head.removeChild(this.dark);
     head.removeChild(this.light);
   }

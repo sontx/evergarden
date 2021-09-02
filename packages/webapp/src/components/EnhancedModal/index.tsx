@@ -1,7 +1,7 @@
 import { Button, Modal } from "rsuite";
 
 import * as React from "react";
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import {
   AnimationEventProps,
   StandardProps,
@@ -10,6 +10,7 @@ import {
 
 import classNames from "classnames";
 import ReactDOM from "react-dom";
+import { waitElementExists } from "../../utils/wait-element-exists";
 
 interface EnhancedModalProps extends StandardProps, AnimationEventProps {
   show?: boolean;
@@ -19,6 +20,7 @@ interface EnhancedModalProps extends StandardProps, AnimationEventProps {
   children: ReactNode;
   title?: ReactNode;
   actions?: ReactNode;
+  mobile?: boolean;
 }
 
 export function EnhancedModal({
@@ -27,15 +29,23 @@ export function EnhancedModal({
   children,
   title,
   actions,
+  mobile,
   ...rest
 }: EnhancedModalProps) {
+
   return (
     <Modal
       backdrop="static"
       {...rest}
-      className={classNames(className, "enhanced-modal")}
+      className={classNames(className, "enhanced-modal", {
+        "enhanced-modal--mobile": mobile,
+      })}
     >
-      {title && <Modal.Title>{title}</Modal.Title>}
+      {title && (
+        <Modal.Header>
+          <Modal.Title>{title}</Modal.Title>
+        </Modal.Header>
+      )}
       <Modal.Body>
         {icon && <span className="modal-icon">{icon}</span>}
         {children}
