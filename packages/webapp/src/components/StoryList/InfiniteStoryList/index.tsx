@@ -2,7 +2,6 @@ import { forwardRef, ReactNode } from "react";
 import { GetStoryDto } from "@evergarden/shared";
 import classNames from "classnames";
 
-import "./index.less";
 import { List } from "rsuite";
 import { StoryListBaseProps } from "../index.api";
 import { EnhancedInfiniteLoader } from "../../EnhancedInfiniteLoader";

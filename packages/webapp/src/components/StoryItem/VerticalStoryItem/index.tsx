@@ -6,7 +6,6 @@ import { LazyImageEx } from "../../LazyImageEx";
 import defaultThumbnail from "../../../images/logo.png";
 import TextTruncate from "react-text-truncate";
 
-import "./index.less";
 import { forwardRef } from "react";
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { StoryItemBaseProps } from "../index.api";

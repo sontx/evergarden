@@ -15,7 +15,6 @@ import { ElementType, forwardRef } from "react";
 import { StoryItemBaseProps } from "../StoryItem/index.api";
 import classNames from "classnames";
 
-import "./index.less";
 import { HorizontalStoryList } from "./HorizontalStoryList";
 
 const CompactItem = withHistory(withAnimation(CompactStoryItem));

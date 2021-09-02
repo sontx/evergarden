@@ -3,8 +3,6 @@ import { ReactNode } from "react";
 import { Content } from "rsuite";
 import classNames from "classnames";
 
-import "./index.less";
-
 export function AppContent({
   className,
   children,

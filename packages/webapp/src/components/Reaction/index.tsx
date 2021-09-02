@@ -2,7 +2,6 @@ import { GetStoryDto, VoteType } from "@evergarden/shared";
 import { StandardProps } from "rsuite/es/@types/common";
 import { Icon, IconButton } from "rsuite";
 
-import "./index.less";
 import classNames from "classnames";
 import { abbreviateNumber } from "../../utils/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";

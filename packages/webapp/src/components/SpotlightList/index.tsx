@@ -2,7 +2,6 @@ import { StandardProps } from "rsuite/es/@types/common";
 import { GetStoryDto } from "@evergarden/shared";
 import classNames from "classnames";
 
-import "./index.less";
 import { AuthorLink } from "../AuthorLink";
 import { Icon } from "rsuite";
 import { Swiper, SwiperSlide } from "swiper/react";

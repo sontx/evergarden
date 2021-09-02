@@ -1,7 +1,6 @@
 import { NavigateAction, StoryListHeader } from "../StoryListHeader";
 import { StoryList } from "../StoryList";
 
-import "./index.less";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { ReactNode } from "react";

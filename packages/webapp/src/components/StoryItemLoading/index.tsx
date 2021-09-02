@@ -1,5 +1,3 @@
-import "./index.less";
-
 export function StoryItemLoading() {
   return (
     <div className="story-item-loading rs-placeholder rs-placeholder-paragraph">

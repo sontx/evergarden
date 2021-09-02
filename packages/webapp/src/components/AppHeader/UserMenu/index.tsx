@@ -2,20 +2,22 @@ import { GridMenuItem } from "../../GridMenu/GridMenuItem";
 import { Icon } from "rsuite";
 import { FormattedMessage } from "react-intl";
 import { GridMenu } from "../../GridMenu";
-
-import "./index.less";
+import DarkModeToggle from "react-dark-mode-toggle";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectUser } from "../../../features/user/userSlice";
 import { useCallback } from "react";
 import { logoutAsync } from "../../../features/auth/authSlice";
 import { useHistory } from "react-router-dom";
-import { useLogin } from "../hooks/useLogin";
+import {
+  selectIsDarkMode,
+  setDarkMode,
+} from "../../../features/global/globalSlice";
 
 export function UserMenu({ onClose }: { onClose: () => void }) {
   const user = useAppSelector(selectUser);
   const history = useHistory();
   const dispatch = useAppDispatch();
-  const handleLogin = useLogin();
+  const isDarkMode = useAppSelector(selectIsDarkMode);
 
   const handleLogout = useCallback(() => {
     dispatch(logoutAsync());
@@ -60,11 +62,14 @@ export function UserMenu({ onClose }: { onClose: () => void }) {
       <GridMenuItem icon={<Icon icon="info" />} className="contact">
         <FormattedMessage id="userMenuAbout" />
       </GridMenuItem>
-      {!user && (
-        <GridMenuItem icon={<Icon icon="hand-peace-o" />} onClick={handleLogin}>
-          <FormattedMessage id="userMenuJoinUs" />
-        </GridMenuItem>
-      )}
+      <GridMenuItem preventClick className="dark-theme-toggle">
+        <DarkModeToggle
+          onChange={(darkMode) => dispatch(setDarkMode(darkMode))}
+          checked={isDarkMode}
+          size={70}
+          speed={2}
+        />
+      </GridMenuItem>
       {user && (
         <GridMenuItem
           icon={<Icon icon="sign-out" />}

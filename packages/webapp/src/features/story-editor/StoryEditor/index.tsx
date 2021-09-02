@@ -1,11 +1,11 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   createStoryAsync,
   selectFetchingStatus,
   selectStatus,
   selectStory,
   updateStoryAsync,
-} from "./storyEditorSlice";
+} from "../storyEditorSlice";
 import React, { useEffect, useState } from "react";
 import {
   ControlLabel,
@@ -15,18 +15,17 @@ import {
   RadioGroup,
   Schema,
 } from "rsuite";
-import { AuthorsPicker } from "../authors/AuthorsPicker";
-import { GenresPicker } from "../genres/GenresPicker";
+import { AuthorsPicker } from "../../authors/AuthorsPicker";
+import { GenresPicker } from "../../genres/GenresPicker";
 
-import "./storyEditor.less";
 import { CreateStoryDto, mergeObjects, StoryStatus } from "@evergarden/shared";
 import { useHistory } from "react-router-dom";
-import { ThumbnailUploader } from "../../components/ThumbnailUploader";
-import { EditorForm, validateModel } from "../../components/EditorForm";
+import { ThumbnailUploader } from "../../../components/ThumbnailUploader";
+import { EditorForm, validateModel } from "../../../components/EditorForm";
 import { FormattedMessage, useIntl } from "react-intl";
-import { SingleCheckboxFormAccepter } from "../../components/EnhancedCheckbox/SingleCheckboxFormAccepter";
-import { SingleCheckboxForm } from "../../components/EnhancedCheckbox/SingleCheckboxForm";
-import { EnhancedRadio } from "../../components/EnhancedRadio";
+import { SingleCheckboxFormAccepter } from "../../../components/EnhancedCheckbox/SingleCheckboxFormAccepter";
+import { SingleCheckboxForm } from "../../../components/EnhancedCheckbox/SingleCheckboxForm";
+import { EnhancedRadio } from "../../../components/EnhancedRadio";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 

@@ -2,23 +2,22 @@ import { ButtonGroup, Divider, Icon, IconButton, Panel } from "rsuite";
 import { GetStoryDto } from "@evergarden/shared";
 // @ts-ignore
 import ShowMoreText from "react-show-more-text";
-import "./storyPreviewMobile.less";
 import { useIntl } from "react-intl";
-import { StoryDetail } from "./StoryDetail";
 import { useCallback } from "react";
-import { ChapterList } from "../chapters/ChapterList";
-import { Comment } from "../../components/Comment/Comment";
-import { CommentCount } from "../../components/Comment/CommentCount";
+import { Comment } from "../../../components/Comment/Comment";
+import { CommentCount } from "../../../components/Comment/CommentCount";
 import { useHistory, useLocation } from "react-router-dom";
-import { Reaction } from "../../components/Reaction";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { openReading } from "./storySlice";
-import { withFollowSync } from "./withFollowSync";
+import { Reaction } from "../../../components/Reaction";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { openReading } from "../storySlice";
+import { withFollowSync } from "../withFollowSync";
 
-import defaultThumbnail from "../../images/default-cover.png";
-import { ReadingLoader } from "../../components/ReadingLoader";
-import { selectIsLoggedIn } from "../user/userSlice";
-import { LazyImageEx } from "../../components/LazyImageEx";
+import defaultThumbnail from "../../../images/default-cover.png";
+import { ReadingLoader } from "../../../components/ReadingLoader";
+import { selectIsLoggedIn } from "../../user/userSlice";
+import { LazyImageEx } from "../../../components/LazyImageEx";
+import { StoryDetail } from "../StoryDetail";
+import { ChapterList } from "../../chapters/ChapterList";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (

@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 
-import "./index.less";
 import { Animation, Divider, Icon } from "rsuite";
 import { useNoBodyScrolling } from "../../hooks/useNoBodyScrolling";
 import { useOverlay } from "../../hooks/useOverlay";

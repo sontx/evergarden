@@ -1,6 +1,5 @@
 import { forwardRef } from "react";
 
-import "./index.less";
 import classNames from "classnames";
 import { StandardProps } from "rsuite/es/@types/common";
 

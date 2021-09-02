@@ -4,7 +4,6 @@ import { AppHeader } from "../AppHeader";
 import { AppFooter } from "../AppFooter";
 import { AppContainer } from "../AppContainer";
 
-import "./index.less";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { AppContent } from "../AppContent";

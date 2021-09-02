@@ -1,4 +1,3 @@
-import { StoryPreviewMobile } from "../../features/story/StoryPreviewMobile";
 import { useParams } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -16,6 +15,7 @@ import { AppContainer } from "../../components/AppContainer";
 import { useStoryHistory } from "../../features/histories/useStoryHistory";
 import { withHttpErrorCatch } from "../../HOCs/withHttpErrorCatch";
 import { AppContent } from "../../components/AppContent";
+import { StoryPreviewMobile } from "../../features/story/StoryPreviewMobile";
 
 const WrapperStoryPreview = withHttpErrorCatch(StoryPreviewMobile);
 

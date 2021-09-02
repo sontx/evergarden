@@ -1,6 +1,5 @@
 import { Footer, Icon } from "rsuite";
 
-import "./index.less";
 import classNames from "classnames";
 
 export function AppFooter({ float }: { float?: boolean }) {

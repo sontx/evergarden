@@ -6,7 +6,6 @@ import { FormattedMessage } from "react-intl";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { ReactNode, useEffect, useRef } from "react";
 
-import "./index.less";
 import InfiniteLoader from "react-window-infinite-loader";
 import { fetchRangeChapters } from "../../features/chapters/chaptersAPI";
 import { StandardProps } from "rsuite/es/@types/common";

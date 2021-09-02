@@ -18,7 +18,6 @@ import classNames from "classnames";
 import { EnhancedImage } from "../../../components/EnhancedImage";
 import { useIntl } from "react-intl";
 import TextTruncate from "react-text-truncate";
-import "./index.less";
 import { openStoryByUrl } from "../../story/storySlice";
 import { useHistory } from "react-router-dom";
 import { Backdrop } from "../../../components/Backdrop";

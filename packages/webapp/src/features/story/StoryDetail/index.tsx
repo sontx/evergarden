@@ -1,12 +1,10 @@
 import { GetStoryDto, GetUserDto } from "@evergarden/shared";
-import { Icon, Tag } from "rsuite";
+import { Tag } from "rsuite";
 import { Link, useHistory } from "react-router-dom";
 import moment from "moment";
-
-import "./storyDetail.less";
 import { useCallback } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import { openReading } from "./storySlice";
+import { useAppDispatch } from "../../../app/hooks";
+import { openReading } from "../storySlice";
 
 function Ongoing() {
   return <span className="story-preview-detail-status--ongoing">Ongoing</span>;
@@ -115,9 +113,7 @@ export function StoryDetail(props: { story: GetStoryDto }) {
         <>
           <label>Last chapter</label>
           <span>
-            <a onClick={handleLastChapterClick}>
-              {story.lastChapter}
-            </a>
+            <a onClick={handleLastChapterClick}>{story.lastChapter}</a>
           </span>
         </>
       )}

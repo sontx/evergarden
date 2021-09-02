@@ -2,8 +2,6 @@ import React from "react";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 
-import "./index.less";
-
 export function Backdrop({
   className,
   noHeader,

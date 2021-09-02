@@ -11,7 +11,6 @@ import { UserPage } from "../../components/UserPage";
 import { ChaptersPanel } from "../../components/ChaptersPanel";
 import { GetChapterDto } from "@evergarden/shared";
 
-import "./index.less";
 import { ChaptersToolBar } from "../../components/ChaptersToolBar";
 import { PublishSub } from "../../components/PublishSub";
 

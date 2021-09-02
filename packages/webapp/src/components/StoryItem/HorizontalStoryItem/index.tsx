@@ -1,7 +1,6 @@
 import defaultThumbnail from "../../../images/logo.png";
 import { LazyImageEx } from "../../LazyImageEx";
 import TextTruncate from "react-text-truncate";
-import "./index.less";
 import { Icon, Tag, TagGroup } from "rsuite";
 import { Link, useHistory } from "react-router-dom";
 import classNames from "classnames";

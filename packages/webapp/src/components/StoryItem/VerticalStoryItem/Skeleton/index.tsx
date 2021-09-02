@@ -1,7 +1,6 @@
 import { forwardRef } from "react";
 import { StandardProps } from "rsuite/es/@types/common";
 
-import "./index.less";
 import classNames from "classnames";
 
 export const Skeleton = forwardRef(

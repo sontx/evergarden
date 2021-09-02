@@ -1,7 +1,6 @@
 import { Header, Navbar } from "rsuite";
 import React, { useEffect } from "react";
 
-import "./index.less";
 import classNames from "classnames";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 

@@ -1,9 +1,6 @@
-import { GetChapterDto, GetStoryDto, SizeType } from "@evergarden/shared";
 import { Animation, Panel } from "rsuite";
 import { useIntl } from "react-intl";
 import { Link } from "react-router-dom";
-
-import "./readingMobile.less";
 import {
   forwardRef,
   useCallback,
@@ -13,18 +10,22 @@ import {
   useState,
 } from "react";
 import moment from "moment";
-import { ReadingPanel } from "../../components/ReadingPanel";
-import { ReadingNavigationBottom } from "./ReadingNavigationBottom";
+import { ReadingPanel } from "../../../components/ReadingPanel";
+import { ReadingNavigationBottom } from "../ReadingNavigationBottom";
 import {
   getChapterDisplayName,
   ReadingNavigationTop,
-} from "./ReadingNavigationTop";
-import { useAppSelector } from "../../app/hooks";
-import { selectStatus as selectChapterStatus } from "./chapterSlice";
-import { selectStatus as selectStoryStatus } from "../story/storySlice";
-import { ReadingLoader } from "../../components/ReadingLoader";
-import { selectUserSettings } from "../user/userSlice";
-import { defaultUserSettings, getFont } from "../../utils/user-settings-config";
+} from "../ReadingNavigationTop";
+import { useAppSelector } from "../../../app/hooks";
+import { selectStatus as selectChapterStatus } from "../chapterSlice";
+import { selectStatus as selectStoryStatus } from "../../story/storySlice";
+import { ReadingLoader } from "../../../components/ReadingLoader";
+import { selectUserSettings } from "../../user/userSlice";
+import {
+  defaultUserSettings,
+  getFont,
+} from "../../../utils/user-settings-config";
+import { GetChapterDto, GetStoryDto, SizeType } from "@evergarden/shared";
 
 const ReadingFooter = forwardRef(
   (props: { chapter: GetChapterDto | undefined }, ref: any) => {

@@ -1,4 +1,3 @@
-import { ReadingMobile } from "../../features/chapter/ReadingMobile";
 import { useParams } from "react-router-dom";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -30,6 +29,7 @@ import {
 } from "../../features/user/userSlice";
 import { defaultUserSettings } from "../../utils/user-settings-config";
 import { AppContent } from "../../components/AppContent";
+import { ReadingMobile } from "../../features/chapter/ReadingMobile";
 
 const CachedReading = withCachedNextChapter(withTracker(ReadingMobile));
 const ReadingWrapper = withReadingHistorySync(CachedReading);

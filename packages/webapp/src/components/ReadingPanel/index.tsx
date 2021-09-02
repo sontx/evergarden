@@ -1,7 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import { MouseEventHandler, useEffect, useState } from "react";
 
-import "./index.less";
 import { getAbsoluteSize } from "../../utils/dom-utils";
 import { useAppSelector } from "../../app/hooks";
 import { selectStatus } from "../../features/story/storySlice";

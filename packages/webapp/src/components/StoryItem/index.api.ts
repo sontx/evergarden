@@ -1,4 +1,3 @@
-import "./index.less";
 import { StandardProps } from "rsuite/es/@types/common";
 import { GetStoryDto } from "@evergarden/shared";
 import { ReactNode } from "react";

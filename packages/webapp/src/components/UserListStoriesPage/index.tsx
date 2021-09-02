@@ -1,7 +1,6 @@
 import React, { ElementType, ReactNode, useCallback, useState } from "react";
 import { ButtonGroup, Icon, IconButton, Input, InputGroup } from "rsuite";
 
-import "./index.less";
 import { UserPage } from "../UserPage";
 
 export type SortType = "none" | "new" | "recent" | "a-z" | "z-a";

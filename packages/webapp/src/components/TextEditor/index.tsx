@@ -3,7 +3,6 @@ import ReactMarkdown from "react-markdown";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import { useEffect, useRef, useState } from "react";
 
-import "./index.less";
 import { StandardProps } from "rsuite/es/@types/common";
 
 export function TextEditor({

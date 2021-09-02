@@ -10,9 +10,9 @@ import {
   Divider,
   Icon,
 } from "rsuite";
-import { ChapterListModal } from "../chapters/ChapterListModal";
 import { SettingPanel } from "../settings/SettingPanel";
 import { openReading } from "../story/storySlice";
+import { ChapterListModal } from "../chapters/ChapterListModal";
 
 export function ReadingNavigationBottom(props: {
   story: GetStoryDto | undefined;

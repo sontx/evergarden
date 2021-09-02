@@ -1,4 +1,3 @@
-import { StoryEditor } from "../../features/story-editor/StoryEditor";
 import React, { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectStory } from "../../features/story-editor/storyEditorSlice";
@@ -7,6 +6,7 @@ import { Icon, IconButton } from "rsuite";
 import { openStory } from "../../features/story/storySlice";
 import { withUpdateStory } from "./withUpdateStory";
 import { UserPage } from "../../components/UserPage";
+import { StoryEditor } from "../../features/story-editor/StoryEditor";
 
 const Wrapper = withUpdateStory(UserPage);
 

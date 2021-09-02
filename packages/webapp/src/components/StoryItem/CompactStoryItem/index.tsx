@@ -5,7 +5,6 @@ import classNames from "classnames";
 import { ElementType, memo, ReactNode, useCallback, useEffect } from "react";
 import { useIntl } from "react-intl";
 
-import "./index.less";
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { LazyImageEx } from "../../LazyImageEx";
 import { StoryItemBaseProps } from "../index.api";

@@ -1,8 +1,6 @@
-import error404 from "../../images/errors/404.svg";
-import error500 from "../../images/errors/500.svg";
+import error404 from "../../../images/errors/404.svg";
+import error500 from "../../../images/errors/500.svg";
 import { FormattedMessage } from "react-intl";
-
-import "./errorPanel.less";
 
 export function ErrorPanel({ code = "404" }: { code: "404" | "500" }) {
   return (

@@ -2,7 +2,6 @@ import { forwardRef } from "react";
 import classNames from "classnames";
 import { StoryListBaseProps } from "../index.api";
 
-import "./index.less";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 export const HorizontalStoryList = forwardRef(

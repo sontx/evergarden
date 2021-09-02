@@ -3,8 +3,6 @@ import logo from "../../../images/logo.png";
 import { Link } from "react-router-dom";
 import React from "react";
 
-import "./index.less";
-
 export function AppLogo() {
   return (
     <Link to={{ pathname: "/" }} className="app-logo no-link">

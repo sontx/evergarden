@@ -1,13 +1,12 @@
-import { Icon, IconButton, InputGroup, InputNumber, Modal } from "rsuite";
-import "./chapterListModal.less";
+import { Icon, Modal } from "rsuite";
 import { useCallback, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { openReading, selectStory } from "../story/storySlice";
-import { selectChapter } from "../chapter/chapterSlice";
-import { GetChapterDto } from "@evergarden/shared";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { openReading, selectStory } from "../../story/storySlice";
+import { selectChapter } from "../../chapter/chapterSlice";
 import { useHistory } from "react-router-dom";
-import { ChaptersPanel } from "../../components/ChaptersPanel";
-import { ChaptersToolBar } from "../../components/ChaptersToolBar";
+import { ChaptersPanel } from "../../../components/ChaptersPanel";
+import { ChaptersToolBar } from "../../../components/ChaptersToolBar";
+import { GetChapterDto } from "@evergarden/shared";
 
 export function ChapterListModal(props: {
   show?: boolean;

@@ -1,7 +1,6 @@
 import { Slider } from "rsuite";
 import { useCallback, useState } from "react";
 
-import "./index.less";
 import { StandardProps } from "rsuite/es/@types/common";
 
 export function CustomSlider({

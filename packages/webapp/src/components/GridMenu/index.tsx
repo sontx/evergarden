@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 
-import "./index.less";
 import { Backdrop } from "../Backdrop";
 import { useNoBodyScrolling } from "../../hooks/useNoBodyScrolling";
 import { Animation } from "rsuite";

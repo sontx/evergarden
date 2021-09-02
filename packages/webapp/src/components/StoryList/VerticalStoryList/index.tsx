@@ -2,7 +2,6 @@ import { forwardRef } from "react";
 import classNames from "classnames";
 import { StoryListBaseProps } from "../index.api";
 
-import "./index.less";
 import { List } from "rsuite";
 
 export const VerticalStoryList = forwardRef(

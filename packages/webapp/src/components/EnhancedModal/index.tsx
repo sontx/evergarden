@@ -8,7 +8,6 @@ import {
   TypeAttributes,
 } from "rsuite/lib/@types/common";
 
-import "./index.less";
 import classNames from "classnames";
 import ReactDOM from "react-dom";
 

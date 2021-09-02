@@ -1,7 +1,6 @@
 import { CheckboxProps } from "rsuite/lib/Checkbox/Checkbox";
 import { Checkbox } from "rsuite";
 
-import "./index.less";
 import classNames from "classnames";
 import React, { ReactNode } from "react";
 

@@ -1,4 +1,3 @@
-import "./index.less";
 
 export function ReadingLoader() {
   return (

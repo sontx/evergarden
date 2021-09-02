@@ -1,10 +1,8 @@
 import { useAppSelector } from "../../../app/hooks";
 import { Avatar, Icon, Nav } from "rsuite";
-
 import { useState } from "react";
 import { selectUser } from "../../../features/user/userSlice";
 
-import "./index.less";
 import { SearchBox } from "../../../features/search/SearchBox";
 import { useLogin } from "../hooks/useLogin";
 import { UserMenu } from "../UserMenu";

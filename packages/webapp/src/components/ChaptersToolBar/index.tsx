@@ -2,8 +2,6 @@ import { Icon, IconButton, InputGroup, InputNumber } from "rsuite";
 import { useCallback, useState } from "react";
 import { GetStoryDto } from "@evergarden/shared";
 
-import "./index.less"
-
 export function ChaptersToolBar({
   story,
   onJumpTo,

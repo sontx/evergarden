@@ -1,8 +1,6 @@
 import { CSSProperties, ReactNode } from "react";
 import { Property } from "csstype";
 
-import "./index.less";
-
 export function ImageMark({
   children,
   backgroundColor,

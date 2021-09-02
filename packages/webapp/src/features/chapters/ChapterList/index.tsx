@@ -1,6 +1,5 @@
 import { Loader, Message, Pagination, Placeholder } from "rsuite";
-import { GetStoryDto } from "@evergarden/shared";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   fetchChaptersAsync,
   resetChapters,
@@ -8,14 +7,14 @@ import {
   selectErrorMessage,
   selectStatus,
   selectTotalPage,
-} from "./chaptersSlice";
+} from "../chaptersSlice";
 import { useCallback, useEffect, useState } from "react";
 
-import "./chapterList.less";
 import { useIntl } from "react-intl";
-import { isEmpty } from "../../utils/types";
-import { openReading } from "../story/storySlice";
+import { isEmpty } from "../../../utils/types";
+import { openReading } from "../../story/storySlice";
 import { useHistory } from "react-router-dom";
+import { GetStoryDto } from "@evergarden/shared";
 
 export function ChapterList(props: { story: GetStoryDto }) {
   const { story } = props;

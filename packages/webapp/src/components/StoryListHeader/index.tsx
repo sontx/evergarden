@@ -1,6 +1,5 @@
 import { StandardProps } from "rsuite/es/@types/common";
 
-import "./index.less";
 import { ReactNode } from "react";
 import classNames from "classnames";
 import { Icon } from "rsuite";

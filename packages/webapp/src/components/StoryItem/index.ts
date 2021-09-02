@@ -1,4 +1,3 @@
-import "./index.less";
 
 export * from "./CompactStoryItem";
 export { Skeleton as CompactStoryItemSkeleton } from "./CompactStoryItem/Skeleton";

@@ -20,7 +20,6 @@ export default {
   userMenuHistory: "History",
   userMenuLogout: "Logout",
   userMenuAbout: "Contact",
-  userMenuJoinUs: "Join Us",
   homeNavUpdated: "Updated",
   homeNavHot: "Hot",
   homeNavCollection: "Collection",

@@ -1,6 +1,5 @@
 import { Radio, RadioProps } from "rsuite";
 import classNames from "classnames";
-import "./index.less";
 import { ReactNode } from "react";
 
 export function EnhancedRadio({
