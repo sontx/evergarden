@@ -4,18 +4,27 @@ import { MouseEventHandler, useEffect, useState } from "react";
 import { getAbsoluteSize } from "../../utils/dom-utils";
 import { useAppSelector } from "../../app/hooks";
 import { selectStatus } from "../../features/story/storySlice";
-import {StandardProps} from "rsuite/es/@types/common";
+import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 
-export function ReadingPanel(props: {
-  children: string | undefined;
-  onClick?: MouseEventHandler;
-  minHeightConfig?: {
-    selectors: string[];
-    containerVertPadding: number;
-  };
-} & StandardProps) {
-  const { children, onClick, minHeightConfig, style = {}, className, ...rest } = props;
+export function ReadingPanel(
+  props: {
+    children: string | undefined;
+    onClick?: MouseEventHandler;
+    minHeightConfig?: {
+      selectors: string[];
+      containerVertPadding: number;
+    };
+  } & StandardProps,
+) {
+  const {
+    children,
+    onClick,
+    minHeightConfig,
+    style = {},
+    className,
+    ...rest
+  } = props;
   const [minHeight, setMinHeight] = useState(0);
   const status = useAppSelector(selectStatus);
 
@@ -39,7 +48,7 @@ export function ReadingPanel(props: {
   return (
     <div
       {...rest}
-      style={{ minHeight: `calc(100vh - ${minHeight}px)`,  ...style}}
+      style={{ minHeight: `calc(100vh - ${minHeight}px)`, ...style }}
       className={classNames("reading-panel", className)}
       onClick={onClick}
     >

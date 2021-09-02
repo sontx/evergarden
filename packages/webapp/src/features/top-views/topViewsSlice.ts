@@ -7,25 +7,26 @@ interface TopViewsState {
 }
 
 const initialState: TopViewsState = {
-  type: "today"
-}
+  type: "today",
+};
 
 export const topViewsSlice = createSlice({
   name: "topViews",
   initialState,
   reducers: {
-    setType: (state, {payload}) => {
+    setType: (state, { payload }) => {
       state.type = payload;
     },
-    setShowFullTopViewStories: (state, {payload}) => {
+    setShowFullTopViewStories: (state, { payload }) => {
       state.showFullTopViewStories = payload;
-    }
-  }
-})
+    },
+  },
+});
 
-export const {setType, setShowFullTopViewStories} = topViewsSlice.actions;
+export const { setType, setShowFullTopViewStories } = topViewsSlice.actions;
 
 export const selectType = (state: RootState) => state.topViews.type;
-export const selectShowFullTopViewStories = (state: RootState) => state.topViews.showFullTopViewStories;
+export const selectShowFullTopViewStories = (state: RootState) =>
+  state.topViews.showFullTopViewStories;
 
 export default topViewsSlice.reducer;

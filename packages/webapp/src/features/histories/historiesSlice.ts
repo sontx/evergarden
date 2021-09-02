@@ -18,7 +18,7 @@ export const updateStoryHistoryAsync = createAsyncThunk(
   "histories/update",
   async (history: UpdateReadingHistoryDto) => {
     if (!history.date) {
-      history.date = (new Date()).toISOString();
+      history.date = new Date().toISOString();
     }
     updateStoryHistory(history).then();
     return history;
@@ -37,9 +37,13 @@ function setStoryHistory(
   readingHistory: GetReadingHistoryDto,
 ) {
   if (readingHistory) {
-    if (state.histories.find((item) => item.storyId === readingHistory.storyId)) {
+    if (
+      state.histories.find((item) => item.storyId === readingHistory.storyId)
+    ) {
       state.histories = state.histories.map((item) =>
-        item.storyId !== readingHistory.storyId ? item : { ...item, ...readingHistory },
+        item.storyId !== readingHistory.storyId
+          ? item
+          : { ...item, ...readingHistory },
       );
     } else {
       state.histories.push(readingHistory);

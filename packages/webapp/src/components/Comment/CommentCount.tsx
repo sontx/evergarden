@@ -1,5 +1,5 @@
 import Disqus from "disqus-react";
-import {GetStoryDto} from "@evergarden/shared";
+import { GetStoryDto } from "@evergarden/shared";
 
 export function CommentCount(props: { story: GetStoryDto }) {
   const { story } = props;

@@ -6,6 +6,29 @@ export class ThemeManagerDevelopment implements IThemeManager {
   private light?: Element;
   private current?: Element;
 
+  setTheme(name: "dark" | "light") {
+    if (!this.loaded) {
+      this.load();
+      this.loaded = true;
+    }
+
+    const theme = name === "dark" ? this.dark : this.light;
+    if (!theme) {
+      throw new Error(`Theme ${name} is not supported`);
+    }
+
+    if (theme === this.current) {
+      return;
+    }
+
+    const head = document.head;
+    head.appendChild(theme);
+    if (this.current) {
+      head.removeChild(this.current);
+    }
+    this.current = theme;
+  }
+
   private load() {
     const head = document.head;
 
@@ -33,28 +56,5 @@ export class ThemeManagerDevelopment implements IThemeManager {
 
     head.removeChild(this.dark);
     head.removeChild(this.light);
-  }
-
-  setTheme(name: "dark" | "light") {
-    if (!this.loaded) {
-      this.load();
-      this.loaded = true;
-    }
-
-    const theme = name === "dark" ? this.dark : this.light;
-    if (!theme) {
-      throw new Error(`Theme ${name} is not supported`);
-    }
-
-    if (theme === this.current) {
-      return;
-    }
-
-    const head = document.head;
-    head.appendChild(theme);
-    if (this.current) {
-      head.removeChild(this.current);
-    }
-    this.current = theme;
   }
 }

@@ -3,7 +3,9 @@ import { useAppSelector } from "../../app/hooks";
 import { selectHistories } from "./historiesSlice";
 import { useEffect, useState } from "react";
 
-export function useStoryHistory<T extends (GetStoryDto | undefined)>(story: T): T {
+export function useStoryHistory<T extends GetStoryDto | undefined>(
+  story: T,
+): T {
   const histories = useAppSelector(selectHistories);
   const [withHistory, setWithHistory] = useState<T>(story);
 
@@ -14,12 +16,12 @@ export function useStoryHistory<T extends (GetStoryDto | undefined)>(story: T): 
         setWithHistory({
           ...story,
           history: foundHistory,
-        })
+        });
       } else {
         setWithHistory(story);
       }
     }
-  }, [histories, story])
+  }, [histories, story]);
 
   return withHistory;
 }

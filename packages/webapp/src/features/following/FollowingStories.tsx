@@ -16,7 +16,9 @@ export function FollowingStories(props: UserListItemsChildrenProps) {
   const histories = useAppSelector(selectHistories);
 
   useEffect(() => {
-    const followings = histories.filter(item => item.isFollowing).map(item => item.storyId);
+    const followings = histories
+      .filter((item) => item.isFollowing)
+      .map((item) => item.storyId);
     dispatch(fetchFollowingStoriesAsync(followings));
   }, [dispatch, histories]);
 

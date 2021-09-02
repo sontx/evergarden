@@ -15,7 +15,10 @@ const initialState: LoginState = {
 
 export const loginOAuth2Async = createAsyncThunk(
   "auth/loginOAuth2",
-  async (data: { token: string; provider: string }, { rejectWithValue, dispatch }) => {
+  async (
+    data: { token: string; provider: string },
+    { rejectWithValue, dispatch },
+  ) => {
     return catchRequestError(
       async () => {
         const response = await loginOAuth2(data.token, data.provider);

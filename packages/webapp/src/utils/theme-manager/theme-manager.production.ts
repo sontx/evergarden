@@ -5,6 +5,21 @@ export class ThemeManagerProduction implements IThemeManager {
   private dark?: string;
   private light?: string;
 
+  setTheme(name: "dark" | "light"): void {
+    if (!this.loaded) {
+      this.load();
+      this.loaded = true;
+    }
+
+    const theme = name === "dark" ? this.dark : this.light;
+    if (!theme) {
+      throw new Error(`Theme ${name} is not supported`);
+    }
+
+    const current = this.getCurrent() as any;
+    current.href = theme;
+  }
+
   private getCurrent(): HTMLStyleElement {
     const head = document.head;
     const allStyles = head.querySelectorAll("link[rel='stylesheet']");
@@ -38,20 +53,5 @@ export class ThemeManagerProduction implements IThemeManager {
     if (!this.light) {
       throw new Error("Light theme was not found");
     }
-  }
-
-  setTheme(name: "dark" | "light"): void {
-    if (!this.loaded) {
-      this.load();
-      this.loaded = true;
-    }
-
-    const theme = name === "dark" ? this.dark : this.light;
-    if (!theme) {
-      throw new Error(`Theme ${name} is not supported`);
-    }
-
-    const current = this.getCurrent() as any;
-    current.href = theme;
   }
 }

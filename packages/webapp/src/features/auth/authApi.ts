@@ -19,10 +19,13 @@ export async function fetchAuthenticatedUser() {
   return response.data;
 }
 
-export async function loginOAuth2(token: string, provider: string): Promise<AuthUser> {
+export async function loginOAuth2(
+  token: string,
+  provider: string,
+): Promise<AuthUser> {
   const response = await api.post("/api/auth", {
     token,
-    provider
+    provider,
   });
   return response.data;
 }

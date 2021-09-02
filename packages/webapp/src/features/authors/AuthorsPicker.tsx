@@ -9,7 +9,7 @@ import "./authorsPicker.less";
 import { GetAuthorDto } from "@evergarden/shared";
 import { useDebouncedCallback } from "use-debounce";
 
-export function AuthorsPicker({ onChange, value: value, ...rest }: any) {
+export function AuthorsPicker({ onChange, value, ...rest }: any) {
   const status = useAppSelector(selectStatus);
   const authors = useAppSelector(selectAuthors);
   const dispatch = useAppDispatch();
@@ -40,13 +40,14 @@ export function AuthorsPicker({ onChange, value: value, ...rest }: any) {
     [onChange],
   );
 
-  const mergedAuthors: GetAuthorDto[] = (value || [] as any[]).map((item: any) =>
-    typeof item !== "object"
-      ? {
-          name: item,
-          id: "",
-        }
-      : item,
+  const mergedAuthors: GetAuthorDto[] = (value || ([] as any[])).map(
+    (item: any) =>
+      typeof item !== "object"
+        ? {
+            name: item,
+            id: "",
+          }
+        : item,
   );
 
   for (const author of authors) {

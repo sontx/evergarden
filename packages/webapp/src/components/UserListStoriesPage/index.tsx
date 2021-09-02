@@ -4,6 +4,7 @@ import { ButtonGroup, Icon, IconButton, Input, InputGroup } from "rsuite";
 import { UserPage } from "../UserPage";
 
 export type SortType = "none" | "new" | "recent" | "a-z" | "z-a";
+
 export interface UserListItemsChildrenProps {
   filter?: string;
   sort?: SortType;

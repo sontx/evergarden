@@ -1,7 +1,9 @@
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  id: 'en-US',
-  error404: 'What you’re looking for may have been misplaced in Long Term Memory.',
-  error500: 'Sadly, the website had a bad day.',
+  id: "en-US",
+  error404:
+    "What you’re looking for may have been misplaced in Long Term Memory.",
+  error500: "Sadly, the website had a bad day.",
   error403: "Go back! you don't have power here.",
   description: "Let's explore mysterious worlds",
   pageTitleHome: "Home",
@@ -34,7 +36,8 @@ export default {
   processUpdatingLabel: "Updating...",
   processFetchingLabel: "Fetching...",
   storyFormFullStoryTitle: "Full story",
-  storyFormFullStoryDescription: "This story is completed, no more chapters are added",
+  storyFormFullStoryDescription:
+    "This story is completed, no more chapters are added",
   storyFormPublishTitle: "Published",
   storyFormPublishDescription: "Everyone else can read this story",
   chapterFormPublishTitle: "Published",

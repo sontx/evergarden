@@ -12,8 +12,8 @@ export function useTwoDimensionsArray<T>(array2?: T[][]) {
       }
       setData(temp);
     } else {
-      setData(array2)
+      setData(array2);
     }
-  }, [array2])
+  }, [array2]);
   return data;
 }

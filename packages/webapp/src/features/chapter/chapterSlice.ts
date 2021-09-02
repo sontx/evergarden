@@ -27,7 +27,7 @@ export const fetchChapterAsync = createAsyncThunk(
       if (cachedNextChapter) {
         if (
           cachedNextChapter.storyId === storyId &&
-          cachedNextChapter.chapterNo == chapterNo
+          cachedNextChapter.chapterNo === chapterNo
         ) {
           return cachedNextChapter;
         }
@@ -56,7 +56,7 @@ export const chapterSlice = createSlice({
     },
   },
   extraReducers: {
-    [`${fetchChapterAsync.pending}`]: (state, action) => {
+    [`${fetchChapterAsync.pending}`]: (state) => {
       state.errorMessage = undefined;
       state.status = "processing";
     },
@@ -75,6 +75,7 @@ export const { setChapter } = chapterSlice.actions;
 
 export const selectChapter = (state: RootState) => state.chapter.chapter;
 export const selectStatus = (state: RootState) => state.chapter.status;
-export const selectErrorMessage = (state: RootState) => state.chapter.errorMessage;
+export const selectErrorMessage = (state: RootState) =>
+  state.chapter.errorMessage;
 
 export default chapterSlice.reducer;

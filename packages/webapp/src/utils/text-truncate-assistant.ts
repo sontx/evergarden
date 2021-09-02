@@ -29,6 +29,4 @@ export function textTruncateAssistant(ref: HTMLElement | null) {
   const bestFitHeight = bestFitLines * lineHeight;
   ref.style.webkitLineClamp = `${bestFitLines}`;
   ref.style.maxHeight = `${bestFitHeight}px`;
-
 }
-

@@ -26,31 +26,33 @@ export interface StoryListProps
   layout: "compact" | "vertical" | "horizontal";
 }
 
-export const StoryList = forwardRef(({ layout, className, ...rest }: StoryListProps, ref) => {
-  let ListComponent: ElementType<StoryListBaseProps>;
-  let ItemComponent: ElementType<StoryItemBaseProps>;
-  let SkeletonComponent: ElementType;
-  if (layout === "compact") {
-    ListComponent = InfiniteStoryList;
-    ItemComponent = CompactItem;
-    SkeletonComponent = CompactStoryItemSkeleton;
-  } else if (layout === "vertical") {
-    ListComponent = VerticalStoryList;
-    ItemComponent = HorizontalItem;
-    SkeletonComponent = HorizontalStoryItemSkeleton;
-  } else {
-    ListComponent = HorizontalStoryList;
-    ItemComponent = VerticalItem;
-    SkeletonComponent = VerticalStoryItemSkeleton;
-  }
+export const StoryList = forwardRef(
+  ({ layout, className, ...rest }: StoryListProps, ref) => {
+    let ListComponent: ElementType<StoryListBaseProps>;
+    let ItemComponent: ElementType<StoryItemBaseProps>;
+    let SkeletonComponent: ElementType;
+    if (layout === "compact") {
+      ListComponent = InfiniteStoryList;
+      ItemComponent = CompactItem;
+      SkeletonComponent = CompactStoryItemSkeleton;
+    } else if (layout === "vertical") {
+      ListComponent = VerticalStoryList;
+      ItemComponent = HorizontalItem;
+      SkeletonComponent = HorizontalStoryItemSkeleton;
+    } else {
+      ListComponent = HorizontalStoryList;
+      ItemComponent = VerticalItem;
+      SkeletonComponent = VerticalStoryItemSkeleton;
+    }
 
-  return (
-    <ListComponent
-      ref={ref}
-      className={classNames("story-list", className)}
-      renderItem={(story) => <ItemComponent story={story} />}
-      renderSkeleton={() => <SkeletonComponent />}
-      {...rest}
-    />
-  );
-})
+    return (
+      <ListComponent
+        ref={ref}
+        className={classNames("story-list", className)}
+        renderItem={(story) => <ItemComponent story={story} />}
+        renderSkeleton={() => <SkeletonComponent />}
+        {...rest}
+      />
+    );
+  },
+);

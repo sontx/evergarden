@@ -34,6 +34,7 @@ export function FullPanel({
           ref={ref1 as any}
         >
           <div className="panel-header">
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a onClick={onClose} className="header-btn-back no-link">
               <Icon icon="left" />
             </a>

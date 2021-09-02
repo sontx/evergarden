@@ -9,6 +9,7 @@ export function EnhancedImage({
   src,
   noCache,
   defaultSrc,
+  alt,
   ...rest
 }: Omit<HTMLImageProps, "src"> & {
   src: string | File | undefined;
@@ -50,6 +51,7 @@ export function EnhancedImage({
           setDataSrc(defaultSrc);
         }
       }}
+      alt={alt}
     />
   );
 }

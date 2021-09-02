@@ -33,6 +33,13 @@ export function withHttpErrorCatch(Component: ElementType) {
       }
     }, [status, errorMessage, intl, history, goBack]);
 
-    return <Component {...rest} status={status} errorMessage={errorMessage} goBack={goBack}/>;
+    return (
+      <Component
+        {...rest}
+        status={status}
+        errorMessage={errorMessage}
+        goBack={goBack}
+      />
+    );
   };
 }

@@ -11,8 +11,10 @@ export function LazyImageEx({
       {...rest}
       alt={alt}
       src={src || defaultSrc || ""}
-      actual={({ imageProps }) => <img {...imageProps} />}
-      placeholder={({ ref }) => <div className="lazy-image-placeholder" ref={ref} />}
+      actual={({ imageProps }) => <img {...imageProps} alt={alt} />}
+      placeholder={({ ref }) => (
+        <div className="lazy-image-placeholder" ref={ref} />
+      )}
       loading={() => <img src={defaultSrc} alt={alt} />}
       error={() => <img src={defaultSrc} alt={alt} />}
     />

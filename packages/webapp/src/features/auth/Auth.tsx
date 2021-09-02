@@ -47,7 +47,10 @@ export function Auth() {
   );
 
   const handleLoginGoogleFailure = useCallback((error) => {
-    if (process.env.NODE_ENV === "development" && error !== "popup_closed_by_user") {
+    if (
+      process.env.NODE_ENV === "development" &&
+      error !== "popup_closed_by_user"
+    ) {
       console.log(error);
       Alert.error(error.details, 5000);
     }

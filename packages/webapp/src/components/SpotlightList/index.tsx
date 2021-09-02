@@ -57,7 +57,9 @@ export function SpotlightList({
                 </span>
               </div>
             </div>
-            <div ref={textTruncateAssistant} className="description">{story.description}</div>
+            <div ref={textTruncateAssistant} className="description">
+              {story.description}
+            </div>
           </div>
         </SwiperSlide>
       ))}

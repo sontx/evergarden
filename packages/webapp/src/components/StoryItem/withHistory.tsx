@@ -6,7 +6,7 @@ import { useStoryHistory } from "../../features/histories/useStoryHistory";
 import { StoryItemBaseProps } from "./index.api";
 
 export function withHistory(Component: ElementType<StoryItemBaseProps>) {
-  return ({story: passStory, ...rest}: StoryItemBaseProps) => {
+  return ({ story: passStory, ...rest }: StoryItemBaseProps) => {
     const dispatch = useAppDispatch();
     const history = useHistory();
     const story = useStoryHistory(passStory);
@@ -20,6 +20,6 @@ export function withHistory(Component: ElementType<StoryItemBaseProps>) {
       [dispatch, history],
     );
 
-    return <Component {...rest} story={story} onClick={handleClick}/>;
+    return <Component {...rest} story={story} onClick={handleClick} />;
   };
 }

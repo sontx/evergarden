@@ -6,7 +6,7 @@ export function ErrorPanel({ code = "404" }: { code: "404" | "500" }) {
   return (
     <div className="error-page">
       <div className="item">
-        <img src={code === "404" ? error404 : error500} />
+        <img src={code === "404" ? error404 : error500} alt="404" />
         <div className="text">
           <h1 className="code">{code}</h1>
           <p>

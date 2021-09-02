@@ -11,7 +11,7 @@ export function useStoriesHistories(stories: GetStoryDto[]) {
     let changed = false;
     if (histories) {
       const newStories = stories.map((story) => {
-        const found = (histories).find((item) => item.storyId === story.id);
+        const found = histories.find((item) => item.storyId === story.id);
         if (found && found !== story.history) {
           changed = true;
           return {
@@ -25,7 +25,7 @@ export function useStoriesHistories(stories: GetStoryDto[]) {
         setWithHistories(newStories);
       }
     }
-  }, [histories, stories])
+  }, [histories, stories]);
 
   return withHistories;
 }

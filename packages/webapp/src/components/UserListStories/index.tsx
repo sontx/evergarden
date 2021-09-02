@@ -1,10 +1,9 @@
 import { GetStoryDto } from "@evergarden/shared";
 import { UserListItemsChildrenProps } from "../UserListStoriesPage";
 import { ElementType, useEffect, useState } from "react";
-import { List, Loader, Message } from "rsuite";
+import { List, Message } from "rsuite";
 import { isEmpty, ProcessingStatus } from "../../utils/types";
 import { useStoriesHistories } from "../../features/histories/useStoriesHistories";
-import { StoryItemLoading } from "../StoryItemLoading";
 import { StoryListLoading } from "../StoryListLoading";
 
 function sortNew(item1: GetStoryDto, item2: GetStoryDto) {

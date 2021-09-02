@@ -113,6 +113,7 @@ export function StoryDetail(props: { story: GetStoryDto }) {
         <>
           <label>Last chapter</label>
           <span>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a onClick={handleLastChapterClick}>{story.lastChapter}</a>
           </span>
         </>

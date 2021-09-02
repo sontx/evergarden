@@ -27,8 +27,10 @@ export function StoryListHeader({
   );
 }
 
-export function NavigateAction({children, ...rest}: StandardProps) {
-  return <a {...rest}>
-    {children || <FormattedMessage id="showMore"/>} <Icon icon="right"/>
-  </a>
+export function NavigateAction({ children, ...rest }: StandardProps) {
+  return (
+    <a {...rest}>
+      {children || <FormattedMessage id="showMore" />} <Icon icon="right" />
+    </a>
+  );
 }

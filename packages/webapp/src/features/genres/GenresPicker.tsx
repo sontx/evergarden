@@ -3,7 +3,7 @@ import { fetchAllGenresAsync, selectGenres, selectStatus } from "./genresSlice";
 import { TagPicker } from "rsuite";
 // @ts-ignore
 import BarLoader from "react-bar-loader";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import "./genresPicker.less";
 

@@ -2,14 +2,13 @@ import defaultThumbnail from "../../../images/logo.png";
 import moment from "moment";
 import { Divider } from "rsuite";
 import classNames from "classnames";
-import { ElementType, memo, ReactNode, useCallback, useEffect } from "react";
+import { ElementType, memo, ReactNode, useCallback } from "react";
 import { useIntl } from "react-intl";
 
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { LazyImageEx } from "../../LazyImageEx";
 import { StoryItemBaseProps } from "../index.api";
 import { GetStoryDto } from "@evergarden/shared";
-import { ImageMark } from "../../ImageMark";
 import { StoryItemMark } from "../StoryItemMark";
 
 export interface CompactStoryItemProps extends StoryItemBaseProps {
@@ -59,7 +58,7 @@ export const CompactStoryItem = memo(function ({
             src={story.thumbnail}
             defaultSrc={defaultThumbnail}
           />
-          {story.mark && <StoryItemMark mark={story.mark} compact/>}
+          {story.mark && <StoryItemMark mark={story.mark} compact />}
         </div>
         <div className="info">
           <div className="title">{story.title}</div>

@@ -58,6 +58,7 @@ export function ChapterList(props: { story: GetStoryDto }) {
         <div style={{ position: "relative" }}>
           <div className="chapter-list-container">
             {(chapters || []).map((chapter) => (
+              // eslint-disable-next-line jsx-a11y/anchor-is-valid
               <a key={chapter.id} onClick={() => handleChapterClick(chapter)}>
                 <span className="chapter-no">
                   {intl.formatMessage(

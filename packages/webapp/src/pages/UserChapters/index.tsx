@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import {Button, Icon, IconButton} from "rsuite";
+import { Icon, IconButton } from "rsuite";
 import { useHistory } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -12,7 +12,6 @@ import { ChaptersPanel } from "../../components/ChaptersPanel";
 import { GetChapterDto } from "@evergarden/shared";
 
 import { ChaptersToolBar } from "../../components/ChaptersToolBar";
-import { PublishSub } from "../../components/PublishSub";
 
 const Wrapper = withUpdateStory(UserPage);
 
@@ -60,8 +59,18 @@ export function UserChaptersPage() {
       }
       action={
         <>
-          <IconButton icon={<Icon icon="plus"/>} onClick={handleCreateNew} size="sm" appearance="link"/>
-          <IconButton icon={<Icon icon="close"/>} onClick={handleBack} appearance="link" size="sm"/>
+          <IconButton
+            icon={<Icon icon="plus" />}
+            onClick={handleCreateNew}
+            size="sm"
+            appearance="link"
+          />
+          <IconButton
+            icon={<Icon icon="close" />}
+            onClick={handleBack}
+            appearance="link"
+            size="sm"
+          />
         </>
       }
     >

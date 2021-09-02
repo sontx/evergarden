@@ -33,6 +33,7 @@ import { ReadingMobile } from "../../features/chapter/ReadingMobile";
 
 const CachedReading = withCachedNextChapter(withTracker(ReadingMobile));
 const ReadingWrapper = withReadingHistorySync(CachedReading);
+
 function ErrorPanel({ goBack }: { goBack: () => void }) {
   return (
     <Button className="center-thing" onClick={goBack} appearance="primary">
@@ -40,6 +41,7 @@ function ErrorPanel({ goBack }: { goBack: () => void }) {
     </Button>
   );
 }
+
 const WrapperErrorPanel = withHttpErrorCatch(ErrorPanel);
 
 export function Reading() {

@@ -18,12 +18,8 @@ export const Skeleton = forwardRef(
           <span className="rs-placeholder-paragraph-graph-inner" />
         </div>
         <div className="rs-placeholder-paragraph-rows">
-          <p
-            style={{ width: "64.4229%", height: "10px", marginTop: "3px" }}
-          />
-          <p
-            style={{ width: "47.1585%", height: "10px", marginTop: "12px" }}
-          />
+          <p style={{ width: "64.4229%", height: "10px", marginTop: "3px" }} />
+          <p style={{ width: "47.1585%", height: "10px", marginTop: "12px" }} />
         </div>
       </div>
     );

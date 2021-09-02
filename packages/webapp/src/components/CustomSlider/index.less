@@ -7,19 +7,22 @@
   cursor: pointer;
   border-radius: 2px;
   line-height: 16px;
-  -webkit-transition: -webkit-box-shadow .3s ease-in-out, -webkit-transform .3s ease-in-out;
-  transition: -webkit-box-shadow .3s ease-in-out, -webkit-transform .3s ease-in-out;
-  transition: box-shadow .3s ease-in-out, transform .3s ease-in-out;
-  transition: box-shadow .3s ease-in-out, transform .3s ease-in-out, -webkit-box-shadow .3s ease-in-out, -webkit-transform .3s ease-in-out
+  -webkit-transition: -webkit-box-shadow 0.3s ease-in-out,
+    -webkit-transform 0.3s ease-in-out;
+  transition: -webkit-box-shadow 0.3s ease-in-out,
+    -webkit-transform 0.3s ease-in-out;
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out,
+    -webkit-box-shadow 0.3s ease-in-out, -webkit-transform 0.3s ease-in-out;
 }
 
 .custom-slider .rs-slider-handle:hover {
-  -webkit-box-shadow: 0 0 0 4px rgba(204, 243, 255, .4);
-  box-shadow: 0 0 0 4px rgba(204, 243, 255, .4)
+  -webkit-box-shadow: 0 0 0 4px rgba(204, 243, 255, 0.4);
+  box-shadow: 0 0 0 4px rgba(204, 243, 255, 0.4);
 }
 
 .custom-slider .rs-slider-handle:before {
-  display: none
+  display: none;
 }
 
 .custom-slider.rs-slider-dragging .rs-slider-handle,
@@ -27,5 +30,5 @@
   -webkit-box-shadow: none;
   box-shadow: none;
   -webkit-transform: scale(1.2);
-  transform: scale(1.2)
+  transform: scale(1.2);
 }
