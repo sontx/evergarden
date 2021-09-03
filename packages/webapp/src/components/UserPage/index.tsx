@@ -35,7 +35,7 @@ export function UserPage({
       <AppHeader />
       <AppContent flexFlow={fullContent}>
         <div className="page-header">
-          {header ? header : <h5 className="page-title">{title}</h5>}
+          {header ? header : <span className="page-title">{title}</span>}
           {action && <div className="page-action">{action}</div>}
         </div>
         {children}
