@@ -1,15 +1,16 @@
 import { GetStoryDto } from "@evergarden/shared";
-import { useAppSelector } from "../../app/hooks";
-import { selectHistories } from "./historiesSlice";
 import { useEffect, useState } from "react";
+import { useReadingHistory } from "./hooks/useReadingHistory";
 
-export function useStoriesHistories(stories: GetStoryDto[]) {
-  const histories = useAppSelector(selectHistories);
-  const [withHistories, setWithHistories] = useState<GetStoryDto[]>(stories);
+export function useStoriesHistory(stories: GetStoryDto[] | undefined) {
+  const { data: histories } = useReadingHistory();
+  const [withHistories, setWithHistories] = useState<GetStoryDto[] | undefined>(
+    stories,
+  );
 
   useEffect(() => {
     let changed = false;
-    if (histories) {
+    if (histories && stories) {
       const newStories = stories.map((story) => {
         const found = histories.find((item) => item.storyId === story.id);
         if (found && found !== story.history) {
@@ -24,6 +25,8 @@ export function useStoriesHistories(stories: GetStoryDto[]) {
       if (changed) {
         setWithHistories(newStories);
       }
+    } else {
+      setWithHistories(stories);
     }
   }, [histories, stories]);
 

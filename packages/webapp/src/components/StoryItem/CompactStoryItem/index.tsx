@@ -1,15 +1,16 @@
 import defaultThumbnail from "../../../images/logo.png";
-import moment from "moment";
 import { Divider } from "rsuite";
 import classNames from "classnames";
 import { memo, ReactNode, useCallback } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { LazyImageEx } from "../../LazyImageEx";
 import { StoryItemBaseProps } from "../index.api";
 import { GetStoryDto } from "@evergarden/shared";
 import { StoryItemMark } from "../StoryItemMark";
+import { ChapterNumber } from "./ChapterNumber";
+import { UpdatedTime } from "./UpdatedTime";
 
 export interface CompactStoryItemProps extends StoryItemBaseProps {
   title?: (story: GetStoryDto) => ReactNode;
@@ -28,7 +29,6 @@ export const CompactStoryItem = memo(function ({
   ...rest
 }: CompactStoryItemProps) {
   const story = useStoryHistory(passStory);
-  const intl = useIntl();
 
   const handleClick = useCallback(() => {
     if (onClick) {
@@ -58,23 +58,11 @@ export const CompactStoryItem = memo(function ({
               subtitle(story)
             ) : (
               <>
-                {story.updated !== undefined && moment(story.updated).fromNow()}
+                {story.updated !== undefined && <UpdatedTime story={story} />}
                 {story.lastChapter !== undefined && story.lastChapter > 0 && (
                   <>
                     <Divider vertical={true} />
-                    <span
-                      className={classNames({
-                        "new-chapter":
-                          story.history &&
-                          story.history.isFollowing &&
-                          story.lastChapter > story.history.currentChapterNo,
-                      })}
-                    >
-                      {intl.formatMessage(
-                        { id: "chapterTitle" },
-                        { chapterNo: story.lastChapter },
-                      )}
-                    </span>
+                    <ChapterNumber story={story} />
                   </>
                 )}
               </>
