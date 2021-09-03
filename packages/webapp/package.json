@@ -97,6 +97,7 @@
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.7",
     "redux-persist": "^6.0.0",
+    "redux-persist-transform-filter": "0.0.20",
     "resolve": "1.18.1",
     "resolve-url-loader": "^3.1.2",
     "rsuite": "^4.10.2",

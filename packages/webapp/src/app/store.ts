@@ -17,6 +17,7 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist/es/constants";
+import { createFilter } from "redux-persist-transform-filter";
 import globalReducer from "../features/global/globalSlice";
 import storyReducer from "../features/story/storySlice";
 import storiesReducer from "../features/stories/storiesSlice";
@@ -61,31 +62,14 @@ const reducers = combineReducers({
   newStories: newStoriesReducer,
 });
 
+const saveGlobalFilter = createFilter("global", ["isDarkMode"]);
+
 const persistConfig: PersistConfig<any> = {
   key: "root",
   storage,
   debug: process.env.NODE_ENV === "development",
-  blacklist: [
-    "stories",
-    "chapters",
-    "chapter",
-    "story",
-    "search",
-    "storyEditor",
-    "chapterEditor",
-    "authors",
-    "lastUpdated",
-    "newStories",
-    "hotStories",
-    "global",
-  ],
-  migrate: (state: any) => {
-    state = state || {};
-    if (state.login) {
-      state.login.status = "none";
-    }
-    return Promise.resolve(state);
-  },
+  whitelist: ["global", "user"],
+  transforms: [saveGlobalFilter],
 };
 const persistedReducer = persistReducer(persistConfig, reducers);
 
