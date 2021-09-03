@@ -1,7 +1,7 @@
 import { Button, Modal } from "rsuite";
 
 import * as React from "react";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import {
   AnimationEventProps,
   StandardProps,
@@ -10,7 +10,6 @@ import {
 
 import classNames from "classnames";
 import ReactDOM from "react-dom";
-import { waitElementExists } from "../../utils/wait-element-exists";
 
 interface EnhancedModalProps extends StandardProps, AnimationEventProps {
   show?: boolean;
@@ -21,6 +20,7 @@ interface EnhancedModalProps extends StandardProps, AnimationEventProps {
   title?: ReactNode;
   actions?: ReactNode;
   mobile?: boolean;
+  center?: boolean;
 }
 
 export function EnhancedModal({
@@ -30,15 +30,16 @@ export function EnhancedModal({
   title,
   actions,
   mobile,
+  center,
   ...rest
 }: EnhancedModalProps) {
-
   return (
     <Modal
       backdrop="static"
       {...rest}
       className={classNames(className, "enhanced-modal", {
         "enhanced-modal--mobile": mobile,
+        "enhanced-modal--center": center,
       })}
     >
       {title && (

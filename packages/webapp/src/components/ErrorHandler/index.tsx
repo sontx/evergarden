@@ -2,9 +2,10 @@ import * as React from "react";
 import { ReactNode, useCallback } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { EnhancedModal } from "../EnhancedModal";
-import { Button, Icon } from "rsuite";
+import { Button, ButtonGroup, Icon } from "rsuite";
 import { FormattedMessage } from "react-intl";
 import { ErrorPanel } from "../HttpError/ErrorPanel";
+import { isMobile } from "react-device-detect";
 
 export function ErrorHandler({ children }: { children: ReactNode }) {
   const location = useLocation<{
@@ -16,16 +17,41 @@ export function ErrorHandler({ children }: { children: ReactNode }) {
   const { errorStatusCode, errorMessage } = location.state || {};
 
   const Error = () => {
-    switch (errorStatusCode) {
-      case 404:
-        return <ErrorPanel code="404" />;
-      case 500:
-        return <ErrorPanel code="500" />;
-      case 403:
-        return <FormattedMessage id="error403" />;
-      default:
-        return errorMessage;
+    if (errorStatusCode === 503) {
+      return (
+        <ErrorPanel
+          code={503}
+          className="error-503"
+          hideCode
+          errorMessage={
+            <div>
+              <span className="error-title">
+                <FormattedMessage id="error503_1" />
+              </span>
+              <span className="error-subtitle">
+                <FormattedMessage id="error503_2" />
+              </span>
+            </div>
+          }
+        />
+      );
     }
+
+    const message =
+      errorStatusCode !== 401 &&
+      errorStatusCode !== 403 &&
+      errorStatusCode !== 404 &&
+      errorStatusCode !== 500 &&
+      errorStatusCode !== 502 &&
+      errorStatusCode !== 504
+        ? errorMessage
+        : undefined;
+
+    return errorStatusCode !== undefined ? (
+      <ErrorPanel code={errorStatusCode} errorMessage={message} />
+    ) : (
+      <></>
+    );
   };
 
   const closeErrorPanel = useCallback(() => {
@@ -47,27 +73,22 @@ export function ErrorHandler({ children }: { children: ReactNode }) {
         <EnhancedModal
           className="error-handler"
           backdrop
-          mobile
+          center
+          mobile={isMobile}
           show
-          title={
-            errorStatusCode === 404 || errorStatusCode === 500 ? (
-              <></>
-            ) : (
-              errorStatusCode
-            )
-          }
+          title={<></>}
           onHide={closeErrorPanel}
           actions={
-            <>
-              <Button onClick={handleGoBack} appearance="primary">
+            <ButtonGroup block justified={isMobile}>
+              <Button size="sm" onClick={handleGoBack} appearance="primary">
                 <Icon icon="back-arrow" />
                 <FormattedMessage id="goBackButton" />
               </Button>
-              <Button onClick={handleReload} appearance="subtle">
+              <Button size="sm" onClick={handleReload} appearance="subtle">
                 <Icon icon="refresh2" />
                 <FormattedMessage id="refreshButton" />
               </Button>
-            </>
+            </ButtonGroup>
           }
         >
           {Error()}

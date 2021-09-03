@@ -7,7 +7,7 @@ import { useIntl } from "react-intl";
 import { AppContent } from "../../components/AppContent";
 import { ErrorPanel } from "../../components/HttpError/ErrorPanel";
 
-export function ErrorPage({ code }: { code: "404" | "500" }) {
+export function ErrorPage({ code }: { code: number }) {
   const intl = useIntl();
   return (
     <AppContainer>

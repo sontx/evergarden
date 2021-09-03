@@ -1,10 +1,15 @@
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   id: "en-US",
+  error401: "Hey, you! Stop right there. Authorization required.",
+  error403: "Go back! you don't have power here.",
   error404:
     "What you’re looking for may have been misplaced in Long Term Memory.",
   error500: "Sadly, the website had a bad day.",
-  error403: "Go back! you don't have power here.",
+  error502: "Evergarden is over capacity. Please wait a moment and try again.",
+  error503_1: "Makeover time",
+  error503_2: "Please come back later",
+  error504: "Oops! we broke something, our bad.",
   description: "Let's explore mysterious worlds",
   pageTitleHome: "Home",
   pageTitleLogin: "Login",

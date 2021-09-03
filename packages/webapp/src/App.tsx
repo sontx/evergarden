@@ -98,10 +98,10 @@ export default function App() {
                       </AuthRequired>
                     </Route>
                     <Route path="/500">
-                      <ErrorPage code="500" />
+                      <ErrorPage code={500} />
                     </Route>
                     <Route>
-                      <ErrorPage code="404" />
+                      <ErrorPage code={404} />
                     </Route>
                   </Switch>
                 </ErrorHandler>
