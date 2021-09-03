@@ -2,8 +2,8 @@ import defaultThumbnail from "../../../images/logo.png";
 import moment from "moment";
 import { Divider } from "rsuite";
 import classNames from "classnames";
-import { ElementType, memo, ReactNode, useCallback } from "react";
-import { useIntl } from "react-intl";
+import { memo, ReactNode, useCallback } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
 
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { LazyImageEx } from "../../LazyImageEx";
@@ -12,21 +12,17 @@ import { GetStoryDto } from "@evergarden/shared";
 import { StoryItemMark } from "../StoryItemMark";
 
 export interface CompactStoryItemProps extends StoryItemBaseProps {
-  children?: ReactNode;
-  RightSub?: ElementType<{ story: GetStoryDto }>;
-  BottomSub?: ElementType<{ story: GetStoryDto }>;
-  mainNoWrap?: boolean;
-  additionPadding?: boolean;
+  title?: (story: GetStoryDto) => ReactNode;
+  subtitle?: (story: GetStoryDto) => ReactNode;
+  rightSlot?: (story: GetStoryDto) => ReactNode;
   onClick?: (story: GetStoryDto) => void;
 }
 
 export const CompactStoryItem = memo(function ({
   story: passStory,
-  children,
-  RightSub,
-  BottomSub,
-  mainNoWrap,
-  additionPadding,
+  title,
+  subtitle,
+  rightSlot,
   onClick,
   className,
   ...rest
@@ -46,12 +42,7 @@ export const CompactStoryItem = memo(function ({
       onClick={handleClick}
       {...rest}
     >
-      <div
-        className={classNames("main", {
-          "main--padding": additionPadding,
-          "main--nowrap": mainNoWrap,
-        })}
-      >
+      <div className="slot--left">
         <div>
           <LazyImageEx
             alt={story.title}
@@ -61,49 +52,51 @@ export const CompactStoryItem = memo(function ({
           {story.mark && <StoryItemMark mark={story.mark} compact />}
         </div>
         <div className="info">
-          <div className="title">{story.title}</div>
-          {BottomSub ? (
-            <div className="sub">
-              <BottomSub story={story} />
-            </div>
-          ) : (
-            <span className="sub">
-              {story.updated !== undefined && moment(story.updated).fromNow()}
-              {story.lastChapter !== undefined && story.lastChapter > 0 && (
-                <>
-                  <Divider vertical={true} />
-                  <span
-                    className={classNames({
-                      "new-chapter":
-                        story.history &&
-                        story.history.isFollowing &&
-                        story.lastChapter > story.history.currentChapterNo,
-                    })}
-                  >
-                    {intl.formatMessage(
-                      { id: "chapterTitle" },
-                      { chapterNo: story.lastChapter },
-                    )}
-                  </span>
-                </>
-              )}
-            </span>
-          )}
+          <div className="title">{title ? title(story) : story.title}</div>
+          <span className="subtitle">
+            {subtitle ? (
+              subtitle(story)
+            ) : (
+              <>
+                {story.updated !== undefined && moment(story.updated).fromNow()}
+                {story.lastChapter !== undefined && story.lastChapter > 0 && (
+                  <>
+                    <Divider vertical={true} />
+                    <span
+                      className={classNames({
+                        "new-chapter":
+                          story.history &&
+                          story.history.isFollowing &&
+                          story.lastChapter > story.history.currentChapterNo,
+                      })}
+                    >
+                      {intl.formatMessage(
+                        { id: "chapterTitle" },
+                        { chapterNo: story.lastChapter },
+                      )}
+                    </span>
+                  </>
+                )}
+              </>
+            )}
+          </span>
         </div>
       </div>
-      {RightSub ? (
-        <div className="sub sub--left">
-          <RightSub story={story} />
-        </div>
+      {rightSlot ? (
+        <div className="slot--right">{rightSlot(story)}</div>
       ) : (
         story.history &&
         story.history.currentChapterNo > 0 && (
-          <span className="sub sub--left">
-            {`Continue ${story.history.currentChapterNo}`}
-          </span>
+          <div className="slot--right">
+            <span className="continue-reading">
+              <FormattedMessage
+                id="continueReadingText"
+                values={{ chapter: story.history.currentChapterNo }}
+              />
+            </span>
+          </div>
         )
       )}
-      {children}
     </div>
   );
 });

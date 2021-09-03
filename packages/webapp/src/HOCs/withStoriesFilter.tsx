@@ -1,9 +1,8 @@
+import { ElementType, useEffect, useState } from "react";
 import { GetStoryDto } from "@evergarden/shared";
-import { UserListItemsChildrenProps } from "../UserListStoriesPage";
-import { ElementType, ReactNode, useEffect, useState } from "react";
-import { ProcessingStatus } from "../../utils/types";
-import { StoryList } from "../StoryList";
-import { GetStoryDtoEx } from "../StoryItem/index.api";
+import { StoryListProps } from "../components/StoryList";
+
+export type SortType = "none" | "new" | "recent" | "a-z" | "z-a";
 
 function sortNew(item1: GetStoryDto, item2: GetStoryDto) {
   // @ts-ignore
@@ -25,31 +24,27 @@ function sortZA(item1: GetStoryDto, item2: GetStoryDto) {
   return item2.title.toLowerCase().localeCompare(item1.title.toLowerCase());
 }
 
-export function UserListStories({
-  filter,
-  sort,
-  stories,
-  skeletonCount = 10,
-  renderItem,
-  renderSkeleton,
-}: UserListItemsChildrenProps & {
-  StoryItem?: ElementType;
-  stories?: GetStoryDto[];
-  status?: ProcessingStatus;
-  errorMessage?: string;
-  hasAction?: boolean;
-  skeletonCount?: number;
-  renderItem?: (story: GetStoryDtoEx) => ReactNode;
-  renderSkeleton?: () => ReactNode;
-}) {
-  const [showStories, setShowStories] = useState<GetStoryDto[]>([]);
+export function withStoriesFilter(Component: ElementType<StoryListProps>) {
+  return ({
+    sort,
+    filter,
+    stories,
+    ...rest
+  }: {
+    sort?: SortType;
+    filter?: string;
+  } & StoryListProps) => {
+    const [showStories, setShowStories] = useState<GetStoryDto[]>();
 
-  useEffect(() => {
-    if (stories) {
+    useEffect(() => {
+      if (!stories) {
+        return;
+      }
+
       let temp;
       if (filter) {
         const filterValue = filter.toLowerCase();
-        temp = stories.filter((item) =>
+        temp = stories.filter((item: GetStoryDto) =>
           item.title.toLowerCase().includes(filterValue),
         );
       } else {
@@ -73,16 +68,8 @@ export function UserListStories({
         }
       }
       setShowStories(temp);
-    }
-  }, [filter, sort, stories]);
+    }, [filter, sort, stories]);
 
-  return (
-    <StoryList
-      layout="vertical"
-      stories={stories ? showStories : undefined}
-      skeletonCount={skeletonCount}
-      renderItem={renderItem}
-      renderSkeleton={renderSkeleton}
-    />
-  );
+    return <Component stories={showStories} {...rest} />;
+  };
 }

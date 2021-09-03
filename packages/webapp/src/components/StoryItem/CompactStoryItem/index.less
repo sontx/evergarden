@@ -1,10 +1,13 @@
+@import (reference) "../../../styles/variables";
+@import (reference) "../../../styles/common";
+
 .story-item--compact {
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
 
-  .main {
+  .slot--left {
     flex: 1;
     display: flex;
     overflow: hidden;
@@ -16,13 +19,11 @@
     }
 
     img {
-      width: @thumbnail-width--compact;
+      .lazy-image-placeholder();
       min-width: @thumbnail-width--compact;
       max-width: @thumbnail-width--compact;
-      height: @thumbnail-height--compact;
       min-height: @thumbnail-height--compact;
       max-height: @thumbnail-height--compact;
-      margin-right: 8px;
       object-fit: cover;
     }
 
@@ -31,58 +32,29 @@
       flex-direction: column;
       justify-content: space-between;
       min-width: 0;
-    }
 
-    .title {
-      line-height: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-  }
+      .title {
+        line-height: 100%;
+        .text-truncated();
+      }
 
-  .main--padding {
-    padding-top: 13px;
-    padding-bottom: 13px;
-  }
-
-  .main--nowrap {
-    div:nth-child(2) {
-      min-width: 0;
-    }
-
-    .title {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+      .subtitle {
+        .text-subtitle();
+        .rs-divider-vertical {
+          margin: 0 6px;
+        }
+      }
     }
   }
 
-  .sub {
-    color: @secondary-text-color;
-    font-size: @font-size-base - 2;
-
-    .rs-divider-vertical {
-      margin: 0 6px;
-    }
-  }
-
-  .sub--left {
+  .slot--right {
     margin-left: 10px;
+    .continue-reading {
+      .text-subtitle();
+    }
   }
 
   .new-chapter {
     color: @rate-selected-color;
-  }
-
-  .action {
-    position: absolute;
-    right: 0;
-    display: flex;
-    align-items: center;
-    opacity: 0;
-    height: 100%;
-    width: (@thumbnail-height--compact + 2);
-    justify-content: center;
   }
 }

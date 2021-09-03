@@ -11,8 +11,8 @@ import {
 import { withHistory } from "../StoryItem/withHistory";
 import { InfiniteStoryList } from "./InfiniteStoryList";
 import { VerticalStoryList } from "./VerticalStoryList";
-import { ElementType, forwardRef } from "react";
-import { StoryItemBaseProps } from "../StoryItem/index.api";
+import { ElementType, forwardRef, ReactNode } from "react";
+import { GetStoryDtoEx, StoryItemBaseProps } from "../StoryItem/index.api";
 import classNames from "classnames";
 
 import { HorizontalStoryList } from "./HorizontalStoryList";
@@ -23,15 +23,20 @@ const VerticalItem = withHistory(VerticalStoryItem);
 
 export interface StoryListProps
   extends Omit<StoryListBaseProps, "renderSkeleton" | "renderItem"> {
-  layout: "compact" | "vertical" | "horizontal";
+  layout: "infinite" | "vertical" | "horizontal";
+  renderItem?: (story: GetStoryDtoEx) => ReactNode;
+  renderSkeleton?: () => ReactNode;
 }
 
 export const StoryList = forwardRef(
-  ({ layout, className, ...rest }: StoryListProps, ref) => {
+  (
+    { layout, className, renderItem, renderSkeleton, ...rest }: StoryListProps,
+    ref,
+  ) => {
     let ListComponent: ElementType<StoryListBaseProps>;
     let ItemComponent: ElementType<StoryItemBaseProps>;
     let SkeletonComponent: ElementType;
-    if (layout === "compact") {
+    if (layout === "infinite") {
       ListComponent = InfiniteStoryList;
       ItemComponent = CompactItem;
       SkeletonComponent = CompactStoryItemSkeleton;
@@ -49,8 +54,10 @@ export const StoryList = forwardRef(
       <ListComponent
         ref={ref}
         className={classNames("story-list", className)}
-        renderItem={(story) => <ItemComponent story={story} />}
-        renderSkeleton={() => <SkeletonComponent />}
+        renderItem={(story) =>
+          renderItem ? renderItem(story) : <ItemComponent story={story} />
+        }
+        renderSkeleton={renderSkeleton || (() => <SkeletonComponent />)}
         {...rest}
       />
     );

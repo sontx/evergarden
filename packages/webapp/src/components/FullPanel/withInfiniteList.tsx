@@ -8,6 +8,8 @@ import { useTransformItems } from "../../hooks/useTransformItems";
 import { BackTop } from "../BackTop";
 import { useQueryElement } from "../../hooks/useQueryElement";
 
+const COMPACT_STORY_ITEM_HEIGHT = 66;
+
 export function withInfiniteList(Component: ComponentType<any>) {
   return ({
     query,
@@ -37,14 +39,14 @@ export function withInfiniteList(Component: ComponentType<any>) {
       <Component {...rest}>
         <StoryList
           ref={setListRef}
-          layout="compact"
+          layout="infinite"
           stories={transformedStories}
           loadNext={async () => {
             await fetchNextPage();
           }}
           hasMore={hasNextPage}
           isNextPageLoading={isFetchingNextPage}
-          itemHeight={66}
+          itemHeight={COMPACT_STORY_ITEM_HEIGHT}
         />
         <BackTop containerElement={listRef} />
       </Component>

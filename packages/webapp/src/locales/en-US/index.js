@@ -69,4 +69,6 @@ export default {
   homeTopViewsStoriesMonth: "Month",
   homeTopViewsStoriesYear: "Year",
   homeTopViewsStoriesToday: "Today",
+  continueReadingText: "Continue {chapter}",
+  unfollowSuccess: "Unfollowed",
 };

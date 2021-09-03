@@ -1,3 +1,5 @@
+@import (reference) "../../../styles/common";
+
 .reading-container {
   .rs-panel-body,
   .rs-panel-heading {
@@ -39,9 +41,7 @@
   bottom: 0;
   color: #a4a9b3;
   background: @body-bg;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+  .text-truncated();
 }
 
 .reading-nav {

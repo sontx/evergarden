@@ -1,3 +1,6 @@
+@import (reference) "../../../styles/variables";
+@import (reference) "../../../styles/common";
+
 .story-item--horizontal {
   display: flex;
   align-items: center;
@@ -19,9 +22,7 @@
       font-size: 100%;
       font-weight: 400;
       line-height: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      .text-truncated();
     }
 
     .desc {
@@ -56,9 +57,7 @@
     }
 
     .author {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      .text-truncated();
     }
 
     .unread-chapter {
