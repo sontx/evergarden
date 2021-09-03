@@ -7,25 +7,36 @@ import classNames from "classnames";
 import { abbreviateNumber } from "../../../utils/types";
 import { openReading, openStory } from "../../../features/story/storySlice";
 import { useAppDispatch } from "../../../app/hooks";
-import { forwardRef } from "react";
+import { forwardRef, useCallback } from "react";
 import { useStoryHistory } from "../../../features/histories/useStoryHistory";
 import { hasUnreadChapter, StoryItemBaseProps } from "../index.api";
 import { AuthorLink } from "../../AuthorLink";
 import { StoryItemMark } from "../StoryItemMark";
 
 export const HorizontalStoryItem = forwardRef(
-  ({ story: passStory, className, ...rest }: StoryItemBaseProps, ref) => {
+  (
+    { story: passStory, className, onClick, ...rest }: StoryItemBaseProps,
+    ref,
+  ) => {
     const story = useStoryHistory(passStory);
     const history = useHistory();
     const dispatch = useAppDispatch();
     const unreadChapter = hasUnreadChapter(story);
+
+    const handleClick = useCallback(() => {
+      if (onClick) {
+        onClick(story);
+      } else {
+        dispatch(openStory(history, story));
+      }
+    }, [dispatch, history, onClick, story]);
 
     return (
       <div
         ref={ref as any}
         className={classNames("story-item story-item--horizontal", className)}
         {...rest}
-        onClick={() => dispatch(openStory(history, story))}
+        onClick={handleClick}
       >
         <div>
           <LazyImageEx
@@ -41,7 +52,9 @@ export const HorizontalStoryItem = forwardRef(
             <TextTruncate text={story.description} line={2} />
           </div>
           <div className="meta">
-            <AuthorLink story={story} className="author" />
+            <div>
+              <AuthorLink story={story} className="author" />
+            </div>
             <div>
               <TagGroup>
                 {story.genres && story.genres.length > 0 && (

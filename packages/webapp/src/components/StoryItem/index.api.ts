@@ -14,6 +14,7 @@ export interface StoryItemMarkOptions {
 
 export interface StoryItemBaseProps extends StandardProps {
   story: GetStoryDtoEx;
+  onClick?(story: GetStoryDtoEx): void;
 }
 
 export function hasUnreadChapter(story: GetStoryDto): boolean {

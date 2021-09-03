@@ -4,7 +4,10 @@ import { StandardProps } from "rsuite/es/@types/common";
 
 import "./firefly.less";
 import { useAppSelector } from "../../app/hooks";
-import { selectIsShowingOverlay } from "../../features/global/globalSlice";
+import {
+  selectIsDarkMode,
+  selectIsShowingOverlay,
+} from "../../features/global/globalSlice";
 import { BackTop } from "../BackTop";
 
 export function AppContainer({
@@ -18,11 +21,12 @@ export function AppContainer({
   showBackTop?: boolean;
 } & StandardProps) {
   const isShowingOverlay = useAppSelector(selectIsShowingOverlay);
+  const isDarkMode = useAppSelector(selectIsDarkMode);
 
   return (
     <Container style={{ minHeight: "100vh" }} {...rest}>
       {children}
-      {backgroundEffect && !isShowingOverlay && (
+      {backgroundEffect && !isShowingOverlay && isDarkMode && (
         <div>
           <div className="firefly" />
           <div className="firefly" />
