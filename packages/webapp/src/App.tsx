@@ -91,9 +91,6 @@ export default function App() {
                           <ChapterEditorPage />
                         </AuthRequired>
                       </Route>
-                      <Route path="/500">
-                        <ErrorPage code={500} />
-                      </Route>
                       <Route>
                         <ErrorPage code={404} />
                       </Route>

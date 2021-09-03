@@ -1,8 +1,12 @@
 import axios, { AxiosError } from "axios";
 import { Alert } from "rsuite";
-import { globalIntl } from "../components/HttpError";
+import createAuthRefreshInterceptor from "axios-auth-refresh";
 
 const api = axios.create({});
+
+createAuthRefreshInterceptor(api, () => axios.get("/api/auth/refresh"), {
+  pauseInstanceWhileRefreshing: true,
+});
 
 export interface RequestError {
   message: string;
@@ -38,13 +42,13 @@ export async function catchRequestError<T>(
     return await doRequest();
   } catch (e: any) {
     const error = handleRequestError(e);
-    let prettierMessage;
+    let prettierMessage = "";
     if (error.message === "Not Found" && error.code === 404) {
-      prettierMessage = globalIntl.formatMessage({ id: "error404" });
+      // prettierMessage = globalIntl.formatMessage({ id: "error404" });
     } else if (error.message === "Forbidden" && error.code === 403) {
-      prettierMessage = globalIntl.formatMessage({ id: "error403" });
+      // prettierMessage = globalIntl.formatMessage({ id: "error403" });
     } else if (error.code === 500) {
-      prettierMessage = globalIntl.formatMessage({ id: "error500" });
+      // prettierMessage = globalIntl.formatMessage({ id: "error500" });
     } else {
       prettierMessage = error.message;
     }

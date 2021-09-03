@@ -4,7 +4,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { EnhancedModal } from "../EnhancedModal";
 import { Button, ButtonGroup, Icon } from "rsuite";
 import { FormattedMessage } from "react-intl";
-import { ErrorPanel } from "../HttpError/ErrorPanel";
+import { ErrorPanel } from "../ErrorPanel";
 import { isMobile } from "react-device-detect";
 
 export function ErrorHandler({ children }: { children: ReactNode }) {

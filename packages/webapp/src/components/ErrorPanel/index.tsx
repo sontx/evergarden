@@ -1,7 +1,7 @@
-import error404 from "../../../images/errors/404.svg";
-import error500 from "../../../images/errors/500.svg";
-import error503 from "../../../images/errors/503.png";
-import errorGeneral from "../../../images/errors/general.png";
+import error404 from "../../images/errors/404.svg";
+import error500 from "../../images/errors/500.svg";
+import error503 from "../../images/errors/503.png";
+import errorGeneral from "../../images/errors/general.png";
 import { FormattedMessage } from "react-intl";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
