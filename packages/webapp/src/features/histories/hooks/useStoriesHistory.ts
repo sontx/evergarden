@@ -1,6 +1,6 @@
 import { GetStoryDto } from "@evergarden/shared";
 import { useEffect, useState } from "react";
-import { useReadingHistory } from "./hooks/useReadingHistory";
+import { useReadingHistory } from "./useReadingHistory";
 
 export function useStoriesHistory(stories: GetStoryDto[] | undefined) {
   const { data: histories } = useReadingHistory();

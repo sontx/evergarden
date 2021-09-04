@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { memo, ReactNode, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 
-import { useStoryHistory } from "../../../features/histories/useStoryHistory";
+import { useStoryHistory } from "../../../features/histories/hooks/useStoryHistory";
 import { LazyImageEx } from "../../LazyImageEx";
 import { StoryItemBaseProps } from "../index.api";
 import { GetStoryDto } from "@evergarden/shared";

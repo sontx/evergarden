@@ -13,7 +13,7 @@ import { withStoriesFilter } from "../../../HOCs/withStoriesFilter";
 import { StoryList } from "../../../components/StoryList";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ChapterNumber } from "../../../components/StoryItem/CompactStoryItem/ChapterNumber";
-import { useStoriesHistory } from "../../histories/useStoriesHistory";
+import { useStoriesHistory } from "../../histories/hooks/useStoriesHistory";
 
 const StoryItem = withHistory(withAnimation(CompactStoryItem));
 const FilterStories = withStoriesFilter(StoryList);

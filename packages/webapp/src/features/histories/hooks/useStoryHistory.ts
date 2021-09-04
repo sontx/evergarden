@@ -1,6 +1,6 @@
 import { GetStoryDto } from "@evergarden/shared";
-import { useAppSelector } from "../../app/hooks";
-import { selectHistories } from "./historiesSlice";
+import { useAppSelector } from "../../../app/hooks";
+import { selectHistories } from "../historiesSlice";
 import { useEffect, useState } from "react";
 
 export function useStoryHistory<T extends GetStoryDto | undefined>(

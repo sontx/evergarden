@@ -2,7 +2,7 @@ import { ElementType, useCallback } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import { useHistory } from "react-router-dom";
 import { openReading, openStory } from "../../features/story/storySlice";
-import { useStoryHistory } from "../../features/histories/useStoryHistory";
+import { useStoryHistory } from "../../features/histories/hooks/useStoryHistory";
 import { StoryItemBaseProps } from "./index.api";
 
 export function withHistory(Component: ElementType<StoryItemBaseProps>) {

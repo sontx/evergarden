@@ -7,7 +7,7 @@ import defaultThumbnail from "../../../images/logo.png";
 import TextTruncate from "react-text-truncate";
 
 import { forwardRef } from "react";
-import { useStoryHistory } from "../../../features/histories/useStoryHistory";
+import { useStoryHistory } from "../../../features/histories/hooks/useStoryHistory";
 import { StoryItemBaseProps } from "../index.api";
 import { StoryItemMark } from "../StoryItemMark";
 

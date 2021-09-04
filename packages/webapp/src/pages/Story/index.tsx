@@ -12,7 +12,7 @@ import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
-import { useStoryHistory } from "../../features/histories/useStoryHistory";
+import { useStoryHistory } from "../../features/histories/hooks/useStoryHistory";
 import { withHttpErrorCatch } from "../../HOCs/withHttpErrorCatch";
 import { AppContent } from "../../components/AppContent";
 import { StoryPreviewMobile } from "../../features/story/StoryPreviewMobile";

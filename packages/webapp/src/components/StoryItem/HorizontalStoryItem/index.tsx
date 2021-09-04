@@ -8,7 +8,7 @@ import { abbreviateNumber } from "../../../utils/types";
 import { openReading, openStory } from "../../../features/story/storySlice";
 import { useAppDispatch } from "../../../app/hooks";
 import { forwardRef, useCallback } from "react";
-import { useStoryHistory } from "../../../features/histories/useStoryHistory";
+import { useStoryHistory } from "../../../features/histories/hooks/useStoryHistory";
 import { hasUnreadChapter, StoryItemBaseProps } from "../index.api";
 import { AuthorLink } from "../../AuthorLink";
 import { StoryItemMark } from "../StoryItemMark";
