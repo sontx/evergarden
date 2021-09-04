@@ -63,6 +63,8 @@
     "postcss-preset-env": "6.7.0",
     "postcss-safe-parser": "5.0.2",
     "prompts": "2.4.0",
+    "rc-resize-observer": "^1.0.1",
+    "rc-util": "^5.13.2",
     "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
     "react-bar-loader": "^1.0.0",
