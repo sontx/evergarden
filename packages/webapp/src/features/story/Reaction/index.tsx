@@ -36,14 +36,14 @@ const DebouncedVoteButton = withDebouncedClick(VoteButton);
 
 export function Reaction({ story }: { story: GetStoryDto }) {
   const isLogged = !!useAppSelector(selectUser);
-  const { mutate } = useVote();
+  const { mutate } = useVote(story.url);
   const currentVote = story.history?.vote;
 
   const changeVote = (targetVote: VoteType) => {
     if (story) {
-      const oldVote = currentVote || "none";
+      const oldVote = story.history?.vote || "none";
       const newVote = oldVote === targetVote ? "none" : targetVote;
-      mutate(story.id, newVote);
+      mutate(story, newVote);
     }
   };
 
@@ -56,18 +56,14 @@ export function Reaction({ story }: { story: GetStoryDto }) {
             onClick={() => changeVote("upvote")}
             selected={currentVote === "upvote"}
             icon={<Icon icon="thumbs-up" />}
-            count={abbreviateNumber(
-              (story.upvote || 0) + (currentVote === "upvote" ? 1 : 0),
-            )}
+            count={abbreviateNumber(story.upvote)}
           />
           <DebouncedVoteButton
             disabled={!isLogged}
             onClick={() => changeVote("downvote")}
             selected={currentVote === "downvote"}
             icon={<Icon icon="thumbs-down" />}
-            count={abbreviateNumber(
-              (story.downvote || 0) + (currentVote === "downvote" ? 1 : 0),
-            )}
+            count={abbreviateNumber(story.downvote)}
           />
         </div>
       )}

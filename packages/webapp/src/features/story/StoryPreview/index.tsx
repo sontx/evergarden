@@ -10,15 +10,13 @@ import { LazyImageEx } from "../../../components/LazyImageEx";
 import { InfoGrid } from "../InfoGrid";
 import { ChapterList } from "../../chapters/ChapterList";
 import { useStory } from "../hooks/useStory";
-import { useStoryHistory } from "../../histories/hooks/useStoryHistory";
 import { StorySubtitle } from "../StorySubtitle";
 import { StoryDescription } from "../StoryDescription";
 import { StoryAction } from "../StoryAction";
 import { FormattedMessage } from "react-intl";
 
 export function StoryPreview({ slug }: { slug: string }) {
-  const { data } = useStory(slug);
-  const story = useStoryHistory(data);
+  const { data: story } = useStory(slug);
   const { state = {} } = useLocation() as any;
 
   const handleExpandPanel = useCallback((element) => {
