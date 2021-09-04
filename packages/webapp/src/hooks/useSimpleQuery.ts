@@ -3,7 +3,7 @@ import { useErrorHandler } from "./useErrorHandler";
 
 export function useSimpleQuery<T>(
   queryKey: QueryKey,
-  queryFn: (queryKey?: readonly any[]) => Promise<T>,
+  queryFn: (queryKey: QueryKey) => Promise<T>,
   options?: UseQueryOptions<T>,
 ) {
   const errorHandler = useErrorHandler();

@@ -5,7 +5,7 @@ import { fetchStoriesByIds } from "../../stories/storiesAPI";
 export function useFollowingStories() {
   const { data } = useReadingHistory();
   return useSimpleQuery(
-    ["following-stories"],
+    "following-stories",
     () =>
       fetchStoriesByIds(
         (data || [])

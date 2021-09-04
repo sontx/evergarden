@@ -1,36 +1,34 @@
-import { EnhancedMutationOptions } from "../../../hooks/useEnhancedMutation";
-import { updateStoryHistory } from "../../histories/historiesAPI";
-import { useListMutation } from "../../../hooks/useListMutation";
 import { useQueryClient } from "react-query";
+import { useUpdateHistory } from "../../histories/hooks/useUpdateHistory";
 
-export function useUnfollowStory(options?: EnhancedMutationOptions) {
+export function useUnfollowStory() {
   const queryClient = useQueryClient();
-  const readingHistoryKey = "reading-history";
-  return useListMutation(
-    "unfollow-story",
-    (data) => updateStoryHistory({ storyId: data.id, isFollowing: false }),
-    {
-      relativeQueryKey: "following-stories",
-      updateQueryFrom: "request",
-      removingData: true,
-      onMutate: async ({ id }) => {
-        await queryClient.cancelQueries(readingHistoryKey);
-        const previousData = queryClient.getQueryData(
-          readingHistoryKey,
-        ) as any[];
+  const followingStoriesKey = "following-stories";
+  const { mutate, ...rest } = useUpdateHistory({
+    onMutate: async ({ storyId }) => {
+      await queryClient.cancelQueries(followingStoriesKey);
+      const previousData = queryClient.getQueryData(followingStoriesKey);
+      if (Array.isArray(previousData)) {
         queryClient.setQueryData(
-          readingHistoryKey,
-          (previousData || []).map((item) =>
-            item.storyId !== id ? item : { ...item, isFollowing: false },
-          ),
+          followingStoriesKey,
+          previousData.filter((item) => item.id !== storyId),
         );
-        return { previousData };
-      },
-      onError: (error, variables, context: any) => {
-        if (context?.previousData) {
-          queryClient.setQueryData(readingHistoryKey, context.previousData);
-        }
-      },
+      }
+      return { previousData };
     },
-  );
+    onError: (error, variables, context: any) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(followingStoriesKey, context.previousData);
+      }
+    },
+  });
+  return {
+    rest,
+    mutate: (id: number) =>
+      mutate({
+        storyId: id,
+        isFollowing: false,
+        date: new Date().toISOString(),
+      }),
+  };
 }

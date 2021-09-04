@@ -17,7 +17,6 @@ import { StoryEditorPage } from "./pages/StoryEditor";
 import { UserStoriesPage } from "./pages/UserStories";
 import { UserChaptersPage } from "./pages/UserChapters";
 import { ChapterEditorPage } from "./pages/ChapterEditor";
-import { HistoriesSync } from "./features/histories/HistoriesSync";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { queryClient } from "./app/store";
@@ -35,69 +34,67 @@ export default function App() {
         <RSIntlProvider locale={enGB}>
           <ThemeProvider>
             <AuthSync>
-              <HistoriesSync>
-                <Router>
-                  <ErrorHandler>
-                    <Switch>
-                      <Route exact path="/login">
-                        <Login />
-                      </Route>
-                      <Route path="/" exact>
-                        <Home />
-                      </Route>
-                      <Route exact path="/story/:url">
-                        <Story />
-                      </Route>
-                      <Route exact path="/reading/:url/:chapterNo">
-                        <Reading />
-                      </Route>
-                      <Route exact path="/following">
-                        <AuthRequired>
-                          <Following />
-                        </AuthRequired>
-                      </Route>
-                      <Route exact path="/history">
-                        <AuthRequired>
-                          <History />
-                        </AuthRequired>
-                      </Route>
-                      <Route exact path="/user/story">
-                        <AuthRequired>
-                          <UserStoriesPage />
-                        </AuthRequired>
-                      </Route>
-                      <Route exact path="/user/story/new">
-                        <AuthRequired>
-                          <StoryEditorPage />
-                        </AuthRequired>
-                      </Route>
-                      <Route exact path="/user/story/:url">
-                        <AuthRequired>
-                          <StoryEditorPage />
-                        </AuthRequired>
-                      </Route>
-                      <Route exact path="/user/story/:url/chapter">
-                        <AuthRequired>
-                          <UserChaptersPage />
-                        </AuthRequired>
-                      </Route>
-                      <Route exact path="/user/story/:url/chapter/new">
-                        <AuthRequired>
-                          <ChapterEditorPage />
-                        </AuthRequired>
-                      </Route>
-                      <Route exact path="/user/story/:url/chapter/:chapterNo">
-                        <AuthRequired>
-                          <ChapterEditorPage />
-                        </AuthRequired>
-                      </Route>
-                      <Route>
-                        <ErrorPage code={404} />
-                      </Route>
-                    </Switch>
-                  </ErrorHandler>
-                </Router>
-              </HistoriesSync>
+              <Router>
+                <ErrorHandler>
+                  <Switch>
+                    <Route exact path="/login">
+                      <Login />
+                    </Route>
+                    <Route path="/" exact>
+                      <Home />
+                    </Route>
+                    <Route exact path="/story/:url">
+                      <Story />
+                    </Route>
+                    <Route exact path="/reading/:url/:chapterNo">
+                      <Reading />
+                    </Route>
+                    <Route exact path="/following">
+                      <AuthRequired>
+                        <Following />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/history">
+                      <AuthRequired>
+                        <History />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story">
+                      <AuthRequired>
+                        <UserStoriesPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/new">
+                      <AuthRequired>
+                        <StoryEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/:url">
+                      <AuthRequired>
+                        <StoryEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/:url/chapter">
+                      <AuthRequired>
+                        <UserChaptersPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/:url/chapter/new">
+                      <AuthRequired>
+                        <ChapterEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/:url/chapter/:chapterNo">
+                      <AuthRequired>
+                        <ChapterEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route>
+                      <ErrorPage code={404} />
+                    </Route>
+                  </Switch>
+                </ErrorHandler>
+              </Router>
             </AuthSync>
           </ThemeProvider>
         </RSIntlProvider>

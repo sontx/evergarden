@@ -1,41 +1,37 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import { useAutoFlushDebounce } from "../../hooks/useAutoFlushDebounce";
-import { updateStoryHistoryAsync } from "../histories/historiesSlice";
+import { useUnfollowStory } from "../following/hooks/useUnfollowStory";
+import { useFollowStory } from "../following/hooks/useFollowStory";
+import { debouncedClick } from "../../utils/debouncedClick";
 
 export function withFollowSync(Component: React.ElementType) {
   return function (props: any) {
     const story = props.story;
-    const dispatch = useAppDispatch();
-
+    const { mutate: followStory } = useUnfollowStory();
+    const { mutate: unfollowStory } = useFollowStory();
     const [isFollowing, setFollowing] = useState<boolean>();
 
     useEffect(() => {
       setFollowing(!!(story && story.history?.isFollowing));
     }, [story]);
 
-    const updateFollowDebounce = useAutoFlushDebounce(
-      (isFollowing, story, dispatch) => {
-        dispatch(
-          updateStoryHistoryAsync({
-            storyId: story.id,
-            isFollowing: !!isFollowing,
-          }),
-        );
-      },
-      500,
-    );
-
     const handleFollow = useCallback(() => {
       setFollowing((prevState) => {
         const follow = !prevState;
-        updateFollowDebounce(follow, story, dispatch);
+        if (follow) {
+          followStory(story.id);
+        } else {
+          unfollowStory(story.id);
+        }
         return follow;
       });
-    }, [dispatch, story, updateFollowDebounce]);
+    }, [followStory, story.id, unfollowStory]);
 
     return (
-      <Component {...props} onClick={handleFollow} isFollowing={isFollowing} />
+      <Component
+        {...props}
+        onClick={debouncedClick(handleFollow)}
+        isFollowing={isFollowing}
+      />
     );
   };
 }

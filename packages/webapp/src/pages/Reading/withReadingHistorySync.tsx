@@ -1,9 +1,9 @@
 import React, { ElementType, useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectChapter } from "../../features/chapter/chapterSlice";
-import { updateStoryHistoryAsync } from "../../features/histories/historiesSlice";
 import { EndOfSessionWatcher } from "../../utils/end-of-session-watcher";
 import { useAutoFlushDebounce } from "../../hooks/useAutoFlushDebounce";
+import { useUpdateHistory } from "../../features/histories/hooks/useUpdateHistory";
 
 export function withReadingHistorySync(Component: ElementType) {
   return ({ story, ...rest }: any) => {
@@ -11,6 +11,7 @@ export function withReadingHistorySync(Component: ElementType) {
     const chapter = useAppSelector(selectChapter);
     const storyId = useMemo(() => story?.id, [story]);
     const chapterNo = useMemo(() => chapter?.chapterNo, [chapter]);
+    const { mutate: updateHistory } = useUpdateHistory();
 
     const onScroll = useAutoFlushDebounce(
       (
@@ -19,14 +20,12 @@ export function withReadingHistorySync(Component: ElementType) {
         readingPosition: number,
         date: string,
       ) => {
-        dispatch(
-          updateStoryHistoryAsync({
-            storyId,
-            currentChapterNo: chapterNo,
-            currentReadingPosition: readingPosition,
-            date,
-          }),
-        );
+        updateHistory({
+          storyId,
+          currentChapterNo: chapterNo,
+          currentReadingPosition: readingPosition,
+          date,
+        });
       },
       5000,
       { trailing: true },
@@ -54,30 +53,26 @@ export function withReadingHistorySync(Component: ElementType) {
         window.addEventListener("scroll", handleScrollEvent);
 
         // sync history in case changing chapter
-        dispatch(
-          updateStoryHistoryAsync({
-            ...payload,
-            date: new Date().toISOString(),
-          }),
-        );
+        updateHistory({
+          ...payload,
+          date: new Date().toISOString(),
+        });
 
         // sync history in case the page is closed
-        const updateHistory = () => {
-          dispatch(
-            updateStoryHistoryAsync({
-              ...payload,
-              currentReadingPosition: computeReadingPosition(),
-              date: new Date().toISOString(),
-            }),
-          );
+        const forceUpdateHistory = () => {
+          updateHistory({
+            ...payload,
+            currentReadingPosition: computeReadingPosition(),
+            date: new Date().toISOString(),
+          });
         };
-        EndOfSessionWatcher.instance.register(updateHistory);
+        EndOfSessionWatcher.instance.register(forceUpdateHistory);
         return () => {
-          EndOfSessionWatcher.instance.unregister(updateHistory);
+          EndOfSessionWatcher.instance.unregister(forceUpdateHistory);
           window.removeEventListener("scroll", handleScrollEvent);
         };
       }
-    }, [chapterNo, dispatch, onScroll, storyId]);
+    }, [chapterNo, dispatch, onScroll, storyId, updateHistory]);
 
     // scroll to previous scroll position
     useEffect(() => {

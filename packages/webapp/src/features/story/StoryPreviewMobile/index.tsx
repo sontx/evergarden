@@ -7,7 +7,7 @@ import { useCallback } from "react";
 import { Comment } from "../../../components/Comment/Comment";
 import { CommentCount } from "../../../components/Comment/CommentCount";
 import { useHistory, useLocation } from "react-router-dom";
-import { Reaction } from "../../../components/Reaction";
+import { Reaction } from "../Reaction";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { openReading } from "../storySlice";
 import { withFollowSync } from "../withFollowSync";

@@ -57,7 +57,7 @@ export function FollowingStories(props: StandardProps) {
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
-                mutate(story);
+                mutate(story.id);
                 Alert.success(
                   <div>
                     {intl.formatMessage({ id: "unfollowSuccess" })}{" "}

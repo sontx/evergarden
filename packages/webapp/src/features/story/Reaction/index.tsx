@@ -3,12 +3,12 @@ import { StandardProps } from "rsuite/es/@types/common";
 import { Icon, IconButton } from "rsuite";
 
 import classNames from "classnames";
-import { abbreviateNumber } from "../../utils/types";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { abbreviateNumber } from "../../../utils/types";
+import { useAppSelector } from "../../../app/hooks";
 import { ReactElement, useState } from "react";
-import { useAutoFlushDebounce } from "../../hooks/useAutoFlushDebounce";
-import { updateStoryHistoryAsync } from "../../features/histories/historiesSlice";
-import { selectUser } from "../../features/user/userSlice";
+import { useAutoFlushDebounce } from "../../../hooks/useAutoFlushDebounce";
+import { selectUser } from "../../user/userSlice";
+import { useVote } from "../hooks/useVote";
 
 function VoteButton({
   icon,
@@ -33,13 +33,13 @@ function VoteButton({
 }
 
 export function Reaction({ story }: { story: GetStoryDto }) {
-  const dispatch = useAppDispatch();
   const isLogged = !!useAppSelector(selectUser);
   const [vote, setVote] = useState(story?.history?.vote);
+  const { mutate } = useVote();
 
   const changeVoteDebounce = useAutoFlushDebounce(
-    (story: GetStoryDto, vote?: VoteType) => {
-      dispatch(updateStoryHistoryAsync({ storyId: story.id, vote }));
+    (story: GetStoryDto, vote: VoteType, voteAction) => {
+      voteAction(story.id, vote);
     },
     1000,
   );
@@ -48,7 +48,7 @@ export function Reaction({ story }: { story: GetStoryDto }) {
     if (story) {
       const oldVote = vote || "none";
       const newVote = oldVote === targetVote ? "none" : targetVote;
-      changeVoteDebounce(story, newVote);
+      changeVoteDebounce(story, newVote, mutate);
       setVote(newVote);
     }
   };

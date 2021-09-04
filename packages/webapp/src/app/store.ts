@@ -30,7 +30,6 @@ import chapterEditorReducer from "../features/chapter-editor/chapterEditorSlice"
 import authorsReducer from "../features/authors/authorsSlice";
 import genresReducer from "../features/genres/genresSlice";
 import userStoriesReducer from "../features/user-stories/userStoriesSlice";
-import historiesReducer from "../features/histories/historiesSlice";
 import userReducer from "../features/user/userSlice";
 import lastUpdatedReducer from "../features/last-updated/lastUpdatedSlice";
 import hotStoriesReducer from "../features/hot-stories/hotStoriesSlice";
@@ -49,7 +48,6 @@ const reducers = combineReducers({
   chapter: chapterReducer,
   login: authReducer,
   global: globalReducer,
-  histories: historiesReducer,
   search: searchReducer,
   storyEditor: storyEditorReducer,
   chapterEditor: chapterEditorReducer,
