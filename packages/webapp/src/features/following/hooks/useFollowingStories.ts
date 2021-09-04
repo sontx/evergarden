@@ -1,16 +1,6 @@
-import api from "../../../utils/api";
-import { GetStoryDto } from "@evergarden/shared";
 import { useReadingHistory } from "../../histories/hooks/useReadingHistory";
 import { useSimpleQuery } from "../../../hooks/useSimpleQuery";
-
-async function fetchStoriesByIds(ids: number[]): Promise<GetStoryDto[]> {
-  const response = await api.get("/api/stories", {
-    params: {
-      ids,
-    },
-  });
-  return response.data;
-}
+import { fetchStoriesByIds } from "../../stories/storiesAPI";
 
 export function useFollowingStories() {
   const { data } = useReadingHistory();
