@@ -5,10 +5,10 @@ import { Icon, IconButton } from "rsuite";
 import classNames from "classnames";
 import { abbreviateNumber } from "../../../utils/types";
 import { useAppSelector } from "../../../app/hooks";
-import { ReactElement, useState } from "react";
-import { useAutoFlushDebounce } from "../../../hooks/useAutoFlushDebounce";
+import { ReactElement } from "react";
 import { selectUser } from "../../user/userSlice";
 import { useVote } from "../hooks/useVote";
+import { withDebouncedClick } from "../../../HOCs/withDebouncedClick";
 
 function VoteButton({
   icon,
@@ -32,24 +32,18 @@ function VoteButton({
   );
 }
 
+const DebouncedVoteButton = withDebouncedClick(VoteButton);
+
 export function Reaction({ story }: { story: GetStoryDto }) {
   const isLogged = !!useAppSelector(selectUser);
-  const [vote, setVote] = useState(story?.history?.vote);
   const { mutate } = useVote();
-
-  const changeVoteDebounce = useAutoFlushDebounce(
-    (story: GetStoryDto, vote: VoteType, voteAction) => {
-      voteAction(story.id, vote);
-    },
-    1000,
-  );
+  const currentVote = story.history?.vote;
 
   const changeVote = (targetVote: VoteType) => {
     if (story) {
-      const oldVote = vote || "none";
+      const oldVote = currentVote || "none";
       const newVote = oldVote === targetVote ? "none" : targetVote;
-      changeVoteDebounce(story, newVote, mutate);
-      setVote(newVote);
+      mutate(story.id, newVote);
     }
   };
 
@@ -57,22 +51,22 @@ export function Reaction({ story }: { story: GetStoryDto }) {
     <>
       {story && (
         <div className="reaction-container">
-          <VoteButton
+          <DebouncedVoteButton
             disabled={!isLogged}
             onClick={() => changeVote("upvote")}
-            selected={vote === "upvote"}
+            selected={currentVote === "upvote"}
             icon={<Icon icon="thumbs-up" />}
             count={abbreviateNumber(
-              (story.upvote || 0) + (vote === "upvote" ? 1 : 0),
+              (story.upvote || 0) + (currentVote === "upvote" ? 1 : 0),
             )}
           />
-          <VoteButton
+          <DebouncedVoteButton
             disabled={!isLogged}
             onClick={() => changeVote("downvote")}
-            selected={vote === "downvote"}
+            selected={currentVote === "downvote"}
             icon={<Icon icon="thumbs-down" />}
             count={abbreviateNumber(
-              (story.downvote || 0) + (vote === "downvote" ? 1 : 0),
+              (story.downvote || 0) + (currentVote === "downvote" ? 1 : 0),
             )}
           />
         </div>

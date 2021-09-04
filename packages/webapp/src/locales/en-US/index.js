@@ -74,4 +74,5 @@ export default {
   continueReadingText: "Continue {chapter}",
   unfollowSuccess: "Unfollowed",
   requiredFieldMessage: "This field is required",
+  chaptersPanelTitle: "Chapters",
 };

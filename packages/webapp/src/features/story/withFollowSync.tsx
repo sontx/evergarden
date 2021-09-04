@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useUnfollowStory } from "../following/hooks/useUnfollowStory";
 import { useFollowStory } from "../following/hooks/useFollowStory";
-import { debouncedClick } from "../../utils/debouncedClick";
+import { withDebouncedClick } from "../../HOCs/withDebouncedClick";
 
 export function withFollowSync(Component: React.ElementType) {
+  const DebouncedComponent = withDebouncedClick(Component);
+
   return function (props: any) {
     const story = props.story;
     const { mutate: followStory } = useUnfollowStory();
@@ -27,9 +29,9 @@ export function withFollowSync(Component: React.ElementType) {
     }, [followStory, story.id, unfollowStory]);
 
     return (
-      <Component
+      <DebouncedComponent
         {...props}
-        onClick={debouncedClick(handleFollow)}
+        onClick={handleFollow}
         isFollowing={isFollowing}
       />
     );

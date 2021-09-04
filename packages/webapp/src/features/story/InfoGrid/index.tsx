@@ -6,14 +6,6 @@ import { useCallback } from "react";
 import { useAppDispatch } from "../../../app/hooks";
 import { openReading } from "../storySlice";
 
-function Ongoing() {
-  return <span className="story-preview-detail-status--ongoing">Ongoing</span>;
-}
-
-function Full() {
-  return <span className="story-preview-detail-status--full">Full</span>;
-}
-
 function CreatedBy({ user }: { user: number | GetUserDto }) {
   const showUser =
     typeof user === "object"
@@ -30,7 +22,7 @@ function CreatedBy({ user }: { user: number | GetUserDto }) {
   );
 }
 
-export function StoryDetail(props: { story: GetStoryDto }) {
+export function InfoGrid(props: { story: GetStoryDto }) {
   const { story } = props;
 
   const dispatch = useAppDispatch();
@@ -42,7 +34,7 @@ export function StoryDetail(props: { story: GetStoryDto }) {
   }, [dispatch, history, story]);
 
   return (
-    <div className="story-preview-detail">
+    <div className="info-grid">
       {story.authors && (
         <>
           <label>Author(s)</label>
@@ -84,7 +76,11 @@ export function StoryDetail(props: { story: GetStoryDto }) {
       {story.status && (
         <>
           <label>Status</label>
-          {story.status === "full" ? <Full /> : <Ongoing />}
+          {story.status === "full" ? (
+            <span className="status--full">Full</span>
+          ) : (
+            <span className="status--ongoing">Ongoing</span>
+          )}
         </>
       )}
 
