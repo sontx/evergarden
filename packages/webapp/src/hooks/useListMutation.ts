@@ -4,10 +4,10 @@ import {
 } from "./useEnhancedMutation";
 import { updateListObjects } from "../utils/list-utils";
 
-export function useListMutation<TRequest = any, TResponse = any>(
+export function useListMutation<TRequest = any, TResponse = any, TTransform = any>(
   mutationKey: string,
-  mutationFn: (data?: TRequest) => Promise<TResponse>,
-  options: EnhancedMutationOptions<TRequest, TResponse> & {
+  mutationFn: (data: TRequest) => Promise<TResponse>,
+  options: EnhancedMutationOptions<TRequest, TResponse, TTransform> & {
     removingData?: boolean;
   },
 ) {

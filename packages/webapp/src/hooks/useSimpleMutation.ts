@@ -3,7 +3,7 @@ import { useErrorHandler } from "./useErrorHandler";
 
 export function useSimpleMutation<TRequest = any, TResponse = any>(
   mutationKey: string,
-  mutationFn: (data?: TRequest) => Promise<TResponse>,
+  mutationFn: (data: TRequest) => Promise<TResponse>,
   options?: MutationOptions<TResponse, unknown, TRequest>,
 ) {
   const errorHandler = useErrorHandler();

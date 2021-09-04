@@ -21,7 +21,7 @@ export async function updateStory(
 export async function updateStoryCover(
   storyId: number,
   file: File,
-): Promise<{ thumbnail: string; cover: string }> {
+): Promise<GetStoryDto> {
   const formData = new FormData();
   formData.append("file", file);
   const response = await api.put(`/api/stories/${storyId}/cover`, formData, {

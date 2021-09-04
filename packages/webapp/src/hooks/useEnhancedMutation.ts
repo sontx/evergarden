@@ -3,18 +3,19 @@ import { useSimpleMutation } from "./useSimpleMutation";
 
 export type EnhancedMutationOptions<
   TRequest = any,
-  TResponse = any
+  TResponse = any,
+  TTransform = any
 > = MutationOptions<TResponse, unknown, TRequest> & {
   updateQueryFrom?: "request" | "response";
   relativeQueryKey?: QueryKey;
-  updateQueryDataFn?: (prev: any, next: any) => any;
-  transformUpdateData?: (next: any) => any;
+  updateQueryDataFn?: (prev: any, next: TTransform) => any;
+  transformUpdateData?: (next: TRequest | TResponse) => TTransform;
   alwaysRefetch?: boolean;
 };
 
 export function useEnhancedMutation<TRequest = any, TResponse = any>(
   mutationKey: string,
-  mutationFn: (data?: TRequest) => Promise<TResponse>,
+  mutationFn: (data: TRequest) => Promise<TResponse>,
   options: EnhancedMutationOptions<TRequest, TResponse>,
 ) {
   const {
@@ -26,7 +27,7 @@ export function useEnhancedMutation<TRequest = any, TResponse = any>(
     relativeQueryKey,
     updateQueryDataFn,
     alwaysRefetch,
-    transformUpdateData,
+    transformUpdateData = (next: TRequest | TResponse) => next,
     ...rest
   } = options || {};
 
@@ -54,12 +55,12 @@ export function useEnhancedMutation<TRequest = any, TResponse = any>(
         const previousData = queryClient.getQueryData(relativeQueryKey);
         queryClient.setQueryData(
           relativeQueryKey,
-          updateQueryDataFn(
-            previousData,
-            transformUpdateData ? transformUpdateData(request) : request,
-          ),
+          updateQueryDataFn(previousData, transformUpdateData(request)),
         );
-        return { previousData };
+        return {
+          previousData,
+          ...(typeof customResult === "object" ? customResult : {}),
+        };
       }
     },
     onSuccess: async (data, variables, context) => {
@@ -67,12 +68,10 @@ export function useEnhancedMutation<TRequest = any, TResponse = any>(
         if (!updateQueryFrom) {
           await queryClient.invalidateQueries(relativeQueryKey);
         } else if (updateQueryFrom === "response" && updateQueryDataFn) {
+          const previousData = queryClient.getQueryData(relativeQueryKey);
           queryClient.setQueryData(
             relativeQueryKey,
-            updateQueryDataFn(
-              variables,
-              transformUpdateData ? transformUpdateData(data) : data,
-            ),
+            updateQueryDataFn(previousData, transformUpdateData(data)),
           );
         }
       }

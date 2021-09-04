@@ -1,68 +1,53 @@
-import React, { useCallback } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectStory } from "../../features/story-editor/storyEditorSlice";
+import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Icon, IconButton } from "rsuite";
-import { openStory } from "../../features/story/storySlice";
-import { withUpdateStory } from "./withUpdateStory";
 import { UserPage } from "../../components/UserPage";
-import { StoryEditor } from "../../features/story-editor/StoryEditor";
-
-const Wrapper = withUpdateStory(UserPage);
+import { useIntl } from "react-intl";
+import { UpdateStoryEditor } from "../../features/story-editor/UpdateStoryEditor";
+import { CreateStoryEditor } from "../../features/story-editor/CreateStoryEditor";
+import { useAppDispatch } from "../../app/hooks";
+import { openStoryByUrl } from "../../features/story/storySlice";
 
 export function StoryEditorPage() {
-  const story = useAppSelector(selectStory);
+  const intl = useIntl();
+  const { url } = useParams<{ url: string }>();
   const history = useHistory();
   const dispatch = useAppDispatch();
-  const { url } = useParams<{ url: string }>();
-
-  const handleBack = useCallback(() => {
-    history.push("/user/story");
-  }, [history]);
-
-  const handleView = useCallback(() => {
-    if (story) {
-      dispatch(openStory(history, story));
-    }
-  }, [dispatch, history, story]);
-
-  const handleChapters = useCallback(() => {
-    history.push(`/user/story/${url}/chapter`);
-  }, [history, url]);
-
-  const mode = !!url ? "update" : "create";
+  const isUpdate = !!url;
 
   return (
-    <Wrapper
-      title={mode === "update" ? "Update story" : "New story"}
+    <UserPage
+      title={intl.formatMessage({
+        id: isUpdate ? "pageTitleUpdateStory" : "pageTitleCreateStory",
+      })}
       action={
         <>
-          {mode === "update" && (
+          {isUpdate && (
             <>
               <IconButton
+                onClick={() => history.push(`/user/story/${url}/chapter`)}
                 icon={<Icon icon="list" />}
-                onClick={handleChapters}
                 appearance="link"
                 size="sm"
               />
               <IconButton
+                onClick={() => dispatch(openStoryByUrl(history, url))}
                 icon={<Icon icon="eye" />}
-                onClick={handleView}
                 appearance="link"
                 size="sm"
               />
             </>
           )}
           <IconButton
+            onClick={() => history.push("/user/story")}
             icon={<Icon icon="close" />}
-            onClick={handleBack}
             appearance="link"
             size="sm"
           />
         </>
       }
     >
-      <StoryEditor mode={mode} />
-    </Wrapper>
+      {isUpdate ? <UpdateStoryEditor /> : <CreateStoryEditor />}
+    </UserPage>
   );
 }

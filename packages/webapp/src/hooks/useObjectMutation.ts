@@ -5,7 +5,7 @@ import {
 
 export function useObjectMutation<TRequest = any, TResponse = any>(
   mutationKey: string,
-  mutationFn: (data?: TRequest) => Promise<TResponse>,
+  mutationFn: (data: TRequest) => Promise<TResponse>,
   options: EnhancedMutationOptions<TRequest, TResponse> & {
     removingData?: boolean;
   },

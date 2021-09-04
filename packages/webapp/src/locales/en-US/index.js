@@ -15,6 +15,8 @@ export default {
   pageTitleLogin: "Login",
   pageTitleStory: "Story",
   pageTitleReading: "Reading",
+  pageTitleCreateStory: "New story",
+  pageTitleUpdateStory: "Update story",
   loginWelcome: "Evergarden",
   loginSlogan: "Let's explore mysterious worlds",
   loginWithFacebook: "Login with Facebook",
@@ -71,4 +73,5 @@ export default {
   homeTopViewsStoriesToday: "Today",
   continueReadingText: "Continue {chapter}",
   unfollowSuccess: "Unfollowed",
+  requiredFieldMessage: "This field is required",
 };
