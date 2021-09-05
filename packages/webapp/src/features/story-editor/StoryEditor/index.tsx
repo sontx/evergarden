@@ -7,8 +7,8 @@ import {
   RadioGroup,
   Schema,
 } from "rsuite";
-import { AuthorsPicker } from "../../features/authors/AuthorsPicker";
-import { GenresPicker } from "../../features/genres/GenresPicker";
+import { AuthorsPicker } from "../../authors/AuthorsPicker";
+import { GenresPicker } from "../../genres/GenresPicker";
 
 import {
   CreateStoryDto,
@@ -17,12 +17,12 @@ import {
   StoryStatus,
   UpdateStoryDto,
 } from "@evergarden/shared";
-import { ThumbnailUploader } from "../ThumbnailUploader";
-import { EditorForm, validateModel } from "../EditorForm";
+import { ThumbnailUploader } from "../../../components/ThumbnailUploader";
+import { EditorForm, validateModel } from "../../../components/EditorForm";
 import { FormattedMessage, useIntl } from "react-intl";
-import { SingleCheckboxFormAccepter } from "../EnhancedCheckbox/SingleCheckboxFormAccepter";
-import { SingleCheckboxForm } from "../EnhancedCheckbox/SingleCheckboxForm";
-import { EnhancedRadio } from "../EnhancedRadio";
+import { SingleCheckboxFormAccepter } from "../../../components/EnhancedCheckbox/SingleCheckboxFormAccepter";
+import { SingleCheckboxForm } from "../../../components/EnhancedCheckbox/SingleCheckboxForm";
+import { EnhancedRadio } from "../../../components/EnhancedRadio";
 
 const { StringType, ArrayType, BooleanType } = Schema.Types;
 

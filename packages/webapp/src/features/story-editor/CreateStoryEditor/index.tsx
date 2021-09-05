@@ -1,5 +1,5 @@
 import { useCreateStory } from "../hooks/useCreateStory";
-import { StoryEditor } from "../../../components/StoryEditor";
+import { StoryEditor } from "../StoryEditor";
 import { useEffect } from "react";
 import { useGoEditStory } from "../../../hooks/navigation/useGoEditStory";
 

@@ -20,7 +20,6 @@ import {
 import { createFilter } from "redux-persist-transform-filter";
 import globalReducer from "../features/global/globalSlice";
 import storyReducer from "../features/story/storySlice";
-import storiesReducer from "../features/stories/storiesSlice";
 import chaptersReducer from "../features/chapters/chaptersSlice";
 import chapterReducer from "../features/chapter/chapterSlice";
 import followingReducer from "../features/following/followingSlice";
@@ -43,7 +42,6 @@ const reducers = combineReducers({
   user: userReducer,
   followingStories: followingReducer,
   story: storyReducer,
-  stories: storiesReducer,
   chapters: chaptersReducer,
   chapter: chapterReducer,
   login: authReducer,

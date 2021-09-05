@@ -1,4 +1,4 @@
-import { StoryEditor } from "../../../components/StoryEditor";
+import { StoryEditor } from "../StoryEditor";
 import { useParams } from "react-router-dom";
 import { useUpdateStory } from "../hooks/useUpdateStory";
 import { useStory } from "../../story/hooks/useStory";
@@ -19,3 +19,4 @@ export function UpdateStoryEditor() {
     />
   );
 }
+

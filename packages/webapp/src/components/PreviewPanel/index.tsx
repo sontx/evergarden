@@ -1,10 +1,11 @@
-import { NavigateAction, StoryListHeader } from "../StoryListHeader";
+import { StoryListHeader } from "../FullPanel/StoryListHeader";
 import { StoryList } from "../StoryList";
 
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { ReactNode } from "react";
 import { GetStoryDtoEx } from "../StoryItem/index.api";
+import { NavigateAction } from "../FullPanel/NavigateAction";
 
 export function PreviewPanel({
   stories,

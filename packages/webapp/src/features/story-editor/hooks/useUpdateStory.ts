@@ -1,7 +1,7 @@
 import api from "../../../utils/api";
 import { GetStoryDto, UpdateStoryDto } from "@evergarden/shared";
 import { useListObjectMutation } from "../../../hooks/api-query/useListObjectMutation";
-import { UpdateStoryData } from "../../../components/StoryEditor";
+import { UpdateStoryData } from "../StoryEditor";
 import { deleteStoryCover, updateStoryCover } from "../storyEditorAPI";
 
 async function updateStory(
