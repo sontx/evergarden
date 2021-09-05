@@ -1,12 +1,14 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import { useCallback, useState } from "react";
-import { IntlShape, useIntl } from "react-intl";
+import { useCallback } from "react";
 import { Button, ButtonGroup, ButtonToolbar, Icon } from "rsuite";
 import classNames from "classnames";
-import { useAppSelector } from "../../app/hooks";
-import { withFollowSync } from "../story/withFollowSync";
-import { selectIsLoggedIn } from "../user/userSlice";
-import { useGoStory } from "../../hooks/navigation/useGoStory";
+import { useAppSelector } from "../../../app/hooks";
+import { withFollowSync } from "../../story/withFollowSync";
+import { selectIsLoggedIn } from "../../user/userSlice";
+import { useGoStory } from "../../../hooks/navigation/useGoStory";
+import { ChapterTitle } from "../../../components/ChapterTitle";
+import { useToggle } from "../../../hooks/useToggle";
+import { useOverlay } from "../../../hooks/useOverlay";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -18,55 +20,32 @@ function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
 
 const FollowButtonWrapper = withFollowSync(FollowButton);
 
-export function getChapterDisplayName(
-  chapter: GetChapterDto | undefined,
-  intl: IntlShape,
-): string {
-  if (!chapter) {
-    return "";
-  }
-  return chapter.title
-    ? `${intl.formatMessage(
-        { id: "chapterTitle" },
-        { chapterNo: chapter.chapterNo },
-      )}: ${chapter.title}`
-    : intl.formatMessage(
-        { id: "chapterTitle" },
-        { chapterNo: chapter.chapterNo },
-      );
-}
-
-export function ReadingNavigationTop(props: {
-  story: GetStoryDto | undefined;
-  chapter: GetChapterDto | undefined;
+export function TopNavigation({
+  story,
+  chapter,
+}: {
+  story: GetStoryDto;
+  chapter: GetChapterDto;
 }) {
-  const { story, chapter } = props;
-  const [showMore, setShowMore] = useState(false);
+  const [showMore, toggleShowMore] = useToggle();
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
-  const intl = useIntl();
   const gotoStory = useGoStory();
 
+  useOverlay();
+
   const handleClickBack = useCallback(() => {
-    if (story) {
-      gotoStory(story);
-    }
+    gotoStory(story);
   }, [gotoStory, story]);
 
-  const handleClickMore = useCallback(() => {
-    setShowMore((prevState) => !prevState);
-  }, []);
-
   const handleClickComment = useCallback(() => {
-    if (story) {
-      gotoStory(story, { focusTo: "comment" });
-    }
+    gotoStory(story, { focusTo: "comment" });
   }, [gotoStory, story]);
 
   return (
-    <div className="reading-nav reading-nav--top">
+    <div className="top-navigation">
       <div className="header">
         <span className="action" onClick={handleClickBack}>
-          <Icon size="lg" icon="chevron-left" />
+          <Icon size="lg" icon="left" />
         </span>
         <div className="title">
           <div
@@ -74,15 +53,15 @@ export function ReadingNavigationTop(props: {
               "title--more": showMore,
             })}
           >
-            {story?.title}
+            {story.title}
           </div>
           {showMore && (
             <div className="title--sub">
-              {getChapterDisplayName(chapter, intl)}
+              <ChapterTitle chapter={chapter} />
             </div>
           )}
         </div>
-        <span className="action" onClick={handleClickMore}>
+        <span className="action" onClick={toggleShowMore}>
           <Icon size="lg" icon="more" />
         </span>
       </div>

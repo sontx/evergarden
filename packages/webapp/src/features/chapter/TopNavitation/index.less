@@ -1,0 +1,35 @@
+@import (reference) "../common";
+
+.top-navigation {
+  .reading-navigation();
+
+  top: 0;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .title {
+    text-align: center;
+    padding: 10px 5px;
+  }
+
+  .title--more {
+    font-size: @font-size-base - 1;
+  }
+
+  .title--sub {
+    font-size: @font-size-base - 5;
+    margin-top: 2px;
+  }
+
+  button {
+    border-radius: 0;
+  }
+
+  .action {
+    padding: 10px;
+  }
+}

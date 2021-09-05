@@ -14,12 +14,12 @@ export function useInfinitePageQuery<T>(
     limit: number,
     queryKey?: readonly any[],
   ) => Promise<T[]>,
-  options?: UseInfiniteQueryOptions<T[]>,
+  options?: UseInfiniteQueryOptions<T[]> & { silent?: boolean },
   itemPerPage?: number,
 ) {
   const max = itemPerPage === undefined ? MAX_STORIES_PER_PAGE : itemPerPage;
   const errorHandler = useErrorHandler();
-  const { onError, ...rest } = options || {};
+  const { onError, silent, ...rest } = options || {};
   return useInfiniteQuery<T[]>(
     queryKey,
     ({ pageParam = 0, queryKey }) => queryFn(pageParam * max, max, queryKey),
@@ -32,7 +32,9 @@ export function useInfinitePageQuery<T>(
           ? allPages.length
           : false,
       onError: (err) => {
-        errorHandler(err);
+        if (!silent) {
+          errorHandler(err);
+        }
         if (onError) {
           onError(err);
         }

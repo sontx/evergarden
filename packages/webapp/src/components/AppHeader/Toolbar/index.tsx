@@ -11,9 +11,8 @@ import { useGoLogin } from "../../../hooks/navigation/useGoLogin";
 export function Toolbar() {
   const user = useAppSelector(selectUser);
   const [showSearchBox, setShowSearchBox] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
   const goLogin = useGoLogin();
-  const toggleMenu = useToggle(setShowMenu);
+  const [showMenu, toggleShowMenu] = useToggle();
 
   return (
     <>
@@ -29,7 +28,7 @@ export function Toolbar() {
           <Nav.Item
             className="user-avatar"
             disabled={showSearchBox}
-            onSelect={toggleMenu}
+            onSelect={toggleShowMenu}
           >
             <Avatar src={user.photoUrl} circle />
           </Nav.Item>
@@ -45,14 +44,14 @@ export function Toolbar() {
             <Nav.Item
               disabled={showSearchBox}
               className="nav-icon"
-              onSelect={toggleMenu}
+              onSelect={toggleShowMenu}
             >
               <Icon icon="bars" />
             </Nav.Item>
           </>
         )}
       </Nav>
-      {showMenu && <UserMenu onClose={toggleMenu} />}
+      {showMenu && <UserMenu onClose={toggleShowMenu} />}
       {showSearchBox && <SearchBox onClose={() => setShowSearchBox(false)} />}
     </>
   );

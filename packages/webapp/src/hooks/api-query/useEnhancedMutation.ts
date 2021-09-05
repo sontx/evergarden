@@ -1,11 +1,11 @@
-import { MutationOptions, QueryKey, useQueryClient } from "react-query";
-import { useSimpleMutation } from "./useSimpleMutation";
+import { QueryKey, useQueryClient } from "react-query";
+import { SimpleMutationOptions, useSimpleMutation } from "./useSimpleMutation";
 
 export type EnhancedMutationOptions<
   TRequest = any,
   TResponse = any,
   TTransform = any
-> = MutationOptions<TResponse, unknown, TRequest> & {
+> = SimpleMutationOptions<TRequest, TResponse> & {
   updateQueryFrom?: "request" | "response";
   relativeQueryKey?: QueryKey;
   updateQueryDataFn?: (prev: any, next: TTransform) => any;

@@ -1,6 +1,7 @@
 import { Fab } from "react-tiny-fab";
 import { Icon } from "rsuite";
 import React, { useCallback, useEffect, useState } from "react";
+import { subscribeVerticalScrollDirection } from "../../utils/subscribe-vertical-scroll-direction";
 
 export function BackTop({
   containerElement,
@@ -19,18 +20,9 @@ export function BackTop({
   }, [container]);
 
   useEffect(() => {
-    let lastScrollTop = container.scrollTop;
-    const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const isScrollDown = scrollTop > lastScrollTop;
-      setShow(isScrollDown);
-      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-    };
-
-    const scrollElement =
-      container === document.documentElement ? document : container;
-    scrollElement.addEventListener("scroll", handleScroll);
-    return () => scrollElement.removeEventListener("scroll", handleScroll);
+    return subscribeVerticalScrollDirection(({ isDown }) => {
+      setShow(isDown);
+    });
   }, [container]);
 
   return (
