@@ -19,6 +19,7 @@ import { useHistory } from "react-router-dom";
 import { useIntl } from "react-intl";
 import { SingleCheckboxFormAccepter } from "../../components/EnhancedCheckbox/SingleCheckboxFormAccepter";
 import { SingleCheckboxForm } from "../../components/EnhancedCheckbox/SingleCheckboxForm";
+import { useGoEditChapter } from "../../hooks/navigation/useGoEditChapter";
 
 const { StringType, BooleanType } = Schema.Types;
 
@@ -48,6 +49,7 @@ export function ChapterEditor({
   const dispatch = useAppDispatch();
   const history = useHistory();
   const intl = useIntl();
+  const gotoEditChapter = useGoEditChapter();
 
   useEffect(() => {
     if (chapter && mode === "update") {
@@ -58,10 +60,10 @@ export function ChapterEditor({
   useEffect(() => {
     if (savingStatus === "success") {
       if (story && chapter) {
-        history.push(`/user/story/${story.url}/chapter/${chapter.chapterNo}`);
+        gotoEditChapter(story, chapter);
       }
     }
-  }, [chapter, history, mode, savingStatus, story]);
+  }, [chapter, gotoEditChapter, history, mode, savingStatus, story]);
 
   const handleSave = useCallback(() => {
     if (!story) {

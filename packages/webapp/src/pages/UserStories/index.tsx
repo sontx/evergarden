@@ -1,19 +1,11 @@
 import { UserListStoriesPage } from "../../components/UserListStoriesPage";
-import React, { useCallback } from "react";
+import React from "react";
 import { UserStories } from "../../features/user-stories/UserStories";
 import { Icon, IconButton } from "rsuite";
-import { useHistory } from "react-router-dom";
-import { useAppDispatch } from "../../app/hooks";
-import { setStory } from "../../features/story-editor/storyEditorSlice";
+import { useGoCreateStory } from "../../hooks/navigation/useGoCreateStory";
 
 export function UserStoriesPage() {
-  const history = useHistory();
-  const dispatch = useAppDispatch();
-
-  const handleCreateNew = useCallback(() => {
-    dispatch(setStory(undefined));
-    history.push("/user/story/new");
-  }, [dispatch, history]);
+  const gotoCreateStory = useGoCreateStory();
 
   return (
     <UserListStoriesPage
@@ -21,7 +13,7 @@ export function UserStoriesPage() {
       action={
         <IconButton
           icon={<Icon icon="plus" />}
-          onClick={handleCreateNew}
+          onClick={gotoCreateStory}
           size="sm"
           appearance="link"
         />

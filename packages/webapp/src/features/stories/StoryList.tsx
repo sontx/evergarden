@@ -1,5 +1,3 @@
-import { useAppDispatch } from "../../app/hooks";
-import { useHistory } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { GetStoryDto, StoryCategory } from "@evergarden/shared";
 import { Animation, List } from "rsuite";
@@ -7,13 +5,13 @@ import InfiniteLoader from "react-window-infinite-loader";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { fetchStories } from "./storiesAPI";
-import { openStory } from "../story/storySlice";
 
 import "./storyList.less";
 import { abbreviateNumber } from "../../utils/types";
 import { StoryItemLoading } from "../../components/StoryItemLoading";
 import { withAnimation } from "../../components/StoryItem/withAnimation";
 import { CompactStoryItem } from "../../components/StoryItem";
+import { useGoStory } from "../../hooks/navigation/useGoStory";
 
 const StoryItemWrapper = withAnimation(CompactStoryItem);
 
@@ -27,10 +25,9 @@ let SHOW_STORIES: (GetStoryDto | false | undefined)[] = [];
 const isItemLoaded = (index: number) => SHOW_STORIES[index] !== undefined;
 
 export function StoryList({ category }: { category: StoryCategory }) {
-  const dispatch = useAppDispatch();
-  const history = useHistory();
   const infiniteLoaderRef = useRef<InfiniteLoader | null>(null);
   const [totalItems, setTotalItems] = useState(100);
+  const gotoStory = useGoStory();
 
   const fetchMore = async (
     startIndex: number,
@@ -66,10 +63,10 @@ export function StoryList({ category }: { category: StoryCategory }) {
   const handleClick = useCallback(
     (story: GetStoryDto) => {
       if (story) {
-        dispatch(openStory(history, story));
+        gotoStory(story);
       }
     },
-    [dispatch, history],
+    [gotoStory],
   );
 
   return (

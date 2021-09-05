@@ -1,11 +1,10 @@
 import { GetStoryDto } from "@evergarden/shared";
 import { ButtonGroup, Icon, IconButton } from "rsuite";
 import { withFollowSync } from "../withFollowSync";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppSelector } from "../../../app/hooks";
 import { selectIsLoggedIn } from "../../user/userSlice";
 import { useCallback } from "react";
-import { openReading } from "../storySlice";
-import { useHistory } from "react-router-dom";
+import { useGoReading } from "../../../hooks/navigation/useGoReading";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -31,20 +30,19 @@ const FollowButtonWrapper = withFollowSync(FollowButton);
 
 export function StoryAction({ story }: { story: GetStoryDto }) {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
-  const history = useHistory();
-  const dispatch = useAppDispatch();
+  const gotoReading = useGoReading();
 
   const handleRead = useCallback(() => {
     if (story) {
-      dispatch(openReading(history, story, 1));
+      gotoReading(story, 1);
     }
-  }, [dispatch, history, story]);
+  }, [gotoReading, story]);
 
   const handleContinue = useCallback(() => {
     if (story && story.history) {
-      dispatch(openReading(history, story, story.history.currentChapterNo));
+      gotoReading(story, story.history.currentChapterNo);
     }
-  }, [dispatch, history, story]);
+  }, [gotoReading, story]);
 
   return (
     <ButtonGroup className="story-action" justified>

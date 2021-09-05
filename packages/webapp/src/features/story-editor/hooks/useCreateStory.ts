@@ -3,7 +3,7 @@ import { CreateStoryDto, GetStoryDto } from "@evergarden/shared";
 import { useListMutation } from "../../../hooks/useListMutation";
 import { CreateStoryData } from "../../../components/StoryEditor";
 import { updateStoryCover } from "../storyEditorAPI";
-import { useQueryClient } from "react-query";
+import { useCacheStory } from "../../story/hooks/useCacheStory";
 
 async function createStory(story: CreateStoryDto): Promise<GetStoryDto> {
   const response = await api.post("/api/stories", story);
@@ -11,7 +11,7 @@ async function createStory(story: CreateStoryDto): Promise<GetStoryDto> {
 }
 
 export function useCreateStory() {
-  const queryClient = useQueryClient();
+  const cacheStory = useCacheStory();
   return useListMutation<CreateStoryData, GetStoryDto>(
     "create-story",
     async (data) => {
@@ -26,7 +26,7 @@ export function useCreateStory() {
       relativeQueryKey: "user-stories",
       updateQueryFrom: "response",
       onSuccess: (data) => {
-        queryClient.setQueryData(["story", data.url], data);
+        cacheStory(data);
       },
     },
   );

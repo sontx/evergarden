@@ -1,7 +1,4 @@
-import { useHistory } from "react-router-dom";
-import { useAppDispatch } from "../../../app/hooks";
 import classNames from "classnames";
-import { openStory } from "../../../features/story/storySlice";
 import { LazyImageEx } from "../../LazyImageEx";
 import defaultThumbnail from "../../../images/logo.png";
 import TextTruncate from "react-text-truncate";
@@ -12,17 +9,22 @@ import { StoryItemBaseProps } from "../index.api";
 import { StoryItemMark } from "../StoryItemMark";
 
 export const VerticalStoryItem = forwardRef(
-  ({ story: passStory, className, ...rest }: StoryItemBaseProps, ref) => {
+  (
+    { story: passStory, className, onClick, ...rest }: StoryItemBaseProps,
+    ref,
+  ) => {
     const story = useStoryHistory(passStory);
-    const history = useHistory();
-    const dispatch = useAppDispatch();
 
     return (
       <figure
         ref={ref as any}
         className={classNames("story-item story-item--vertical", className)}
         {...rest}
-        onClick={() => dispatch(openStory(history, story))}
+        onClick={() => {
+          if (onClick) {
+            onClick(story);
+          }
+        }}
       >
         <LazyImageEx
           alt={story.title}

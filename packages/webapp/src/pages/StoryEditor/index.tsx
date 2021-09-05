@@ -1,19 +1,25 @@
-import React from "react";
-import { useHistory, useParams } from "react-router-dom";
+import React, { useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { Icon, IconButton } from "rsuite";
 import { UserPage } from "../../components/UserPage";
 import { useIntl } from "react-intl";
 import { UpdateStoryEditor } from "../../features/story-editor/UpdateStoryEditor";
 import { CreateStoryEditor } from "../../features/story-editor/CreateStoryEditor";
-import { useAppDispatch } from "../../app/hooks";
-import { openStoryByUrl } from "../../features/story/storySlice";
+import { useGoStory } from "../../hooks/navigation/useGoStory";
+import { useGoUserChapterList } from "../../hooks/navigation/useGoUserChapterList";
+import { useGoUserStoryList } from "../../hooks/navigation/useGoUserStoryList";
 
 export function StoryEditorPage() {
   const intl = useIntl();
-  const { url } = useParams<{ url: string }>();
-  const history = useHistory();
-  const dispatch = useAppDispatch();
-  const isUpdate = !!url;
+  const { url: slug } = useParams<{ url: string }>();
+  const isUpdate = !!slug;
+  const gotoStory = useGoStory();
+  const gotoUserChapterList = useGoUserChapterList();
+  const gotoUserStoryList = useGoUserStoryList();
+
+  const handleGoUserChapterList = useCallback(() => {
+    gotoUserChapterList(slug);
+  }, [gotoUserChapterList, slug]);
 
   return (
     <UserPage
@@ -25,13 +31,13 @@ export function StoryEditorPage() {
           {isUpdate && (
             <>
               <IconButton
-                onClick={() => history.push(`/user/story/${url}/chapter`)}
+                onClick={handleGoUserChapterList}
                 icon={<Icon icon="list" />}
                 appearance="link"
                 size="sm"
               />
               <IconButton
-                onClick={() => dispatch(openStoryByUrl(history, url))}
+                onClick={() => gotoStory(slug)}
                 icon={<Icon icon="eye" />}
                 appearance="link"
                 size="sm"
@@ -39,7 +45,7 @@ export function StoryEditorPage() {
             </>
           )}
           <IconButton
-            onClick={() => history.push("/user/story")}
+            onClick={gotoUserStoryList}
             icon={<Icon icon="close" />}
             appearance="link"
             size="sm"

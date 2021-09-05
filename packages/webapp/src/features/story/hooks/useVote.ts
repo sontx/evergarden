@@ -1,10 +1,12 @@
 import { useUpdateHistory } from "../../histories/hooks/useUpdateHistory";
 import { calculateVoteCount, GetStoryDto, VoteType } from "@evergarden/shared";
 import { useQueryClient } from "react-query";
+import { useCacheStory } from "./useCacheStory";
 
 export function useVote(slug?: string) {
   const queryClient = useQueryClient();
   const storyKey = ["story", slug];
+  const cacheStory = useCacheStory();
   const { mutate, ...rest } = useUpdateHistory({
     onMutate: async (variables) => {
       if (slug) {
@@ -16,16 +18,15 @@ export function useVote(slug?: string) {
             variables.vote || "none",
           );
           if (result) {
-            queryClient.setQueryData(storyKey, {
+            cacheStory({
               ...previousData,
               history: {
                 ...(previousData.history || {}),
                 ...variables,
-              },
+              } as any,
               upvote: previousData.upvote + result.upvote,
               downvote: previousData.downvote + result.downvote,
             });
-
             return { previousStory: previousData };
           }
         }

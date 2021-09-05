@@ -1,12 +1,12 @@
 import { Icon, Modal } from "rsuite";
 import { useCallback, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { openReading, selectStory } from "../../story/storySlice";
+import { useAppSelector } from "../../../app/hooks";
+import { selectStory } from "../../story/storySlice";
 import { selectChapter } from "../../chapter/chapterSlice";
-import { useHistory } from "react-router-dom";
 import { ChaptersPanel } from "../../../components/ChaptersPanel";
 import { ChaptersToolBar } from "../../../components/ChaptersToolBar";
 import { GetChapterDto } from "@evergarden/shared";
+import { useGoReading } from "../../../hooks/navigation/useGoReading";
 
 export function ChapterListModal(props: {
   show?: boolean;
@@ -15,9 +15,8 @@ export function ChapterListModal(props: {
   const { show, onClose } = props;
   const story = useAppSelector(selectStory);
   const chapter = useAppSelector(selectChapter);
-  const dispatch = useAppDispatch();
-  const history = useHistory();
   const [isDesc, setDesc] = useState(true);
+  const gotoReading = useGoReading();
 
   const handleChapterClick = useCallback(
     (clickedChapter: GetChapterDto | number) => {
@@ -34,10 +33,10 @@ export function ChapterListModal(props: {
           onClose();
         }
       } else if (story) {
-        dispatch(openReading(history, story, chapterNo));
+        gotoReading(story, chapterNo);
       }
     },
-    [chapter, dispatch, history, onClose, story],
+    [chapter, gotoReading, onClose, story],
   );
 
   return (

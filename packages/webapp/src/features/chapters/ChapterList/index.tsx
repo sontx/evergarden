@@ -12,9 +12,8 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useIntl } from "react-intl";
 import { isEmpty } from "../../../utils/types";
-import { openReading } from "../../story/storySlice";
-import { useHistory } from "react-router-dom";
 import { GetStoryDto } from "@evergarden/shared";
+import { useGoReading } from "../../../hooks/navigation/useGoReading";
 
 export function ChapterList(props: { story: GetStoryDto }) {
   const { story } = props;
@@ -25,7 +24,7 @@ export function ChapterList(props: { story: GetStoryDto }) {
   const dispatch = useAppDispatch();
   const [page, setPage] = useState(0);
   const intl = useIntl();
-  const history = useHistory();
+  const gotoReading = useGoReading();
 
   useEffect(() => {
     dispatch(resetChapters());
@@ -47,9 +46,9 @@ export function ChapterList(props: { story: GetStoryDto }) {
 
   const handleChapterClick = useCallback(
     (chapter) => {
-      dispatch(openReading(history, story, chapter.chapterNo));
+      gotoReading(story, chapter.chapterNo);
     },
-    [dispatch, history, story],
+    [gotoReading, story],
   );
 
   return (

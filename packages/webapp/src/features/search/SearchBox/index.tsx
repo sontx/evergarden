@@ -18,12 +18,11 @@ import classNames from "classnames";
 import { EnhancedImage } from "../../../components/EnhancedImage";
 import { useIntl } from "react-intl";
 import TextTruncate from "react-text-truncate";
-import { openStoryByUrl } from "../../story/storySlice";
-import { useHistory } from "react-router-dom";
 import { Backdrop } from "../../../components/Backdrop";
 import { useOverlay } from "../../../hooks/useOverlay";
 import { useNoBodyScrolling } from "../../../hooks/useNoBodyScrolling";
 import { selectIsFloatingHeader } from "../../global/globalSlice";
+import { useGoStory } from "../../../hooks/navigation/useGoStory";
 
 export function SearchBox({ onClose }: { onClose: () => void }) {
   const dispatch = useAppDispatch();
@@ -32,7 +31,7 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
   const [searchText, setSearchText] = useState("");
   const isFloatingHeader = useAppSelector(selectIsFloatingHeader);
   const intl = useIntl();
-  const history = useHistory();
+  const gotoStory = useGoStory();
 
   useNoBodyScrolling();
   useOverlay();
@@ -61,9 +60,9 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
   const handleSelect = useCallback(
     (item) => {
       onClose();
-      dispatch(openStoryByUrl(history, item.origin.url));
+      gotoStory(item.origin.url);
     },
-    [dispatch, history, onClose],
+    [gotoStory, onClose],
   );
 
   const handleClearSearchText = useCallback(() => {

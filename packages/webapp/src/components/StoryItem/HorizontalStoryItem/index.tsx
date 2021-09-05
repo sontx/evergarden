@@ -2,16 +2,15 @@ import defaultThumbnail from "../../../images/logo.png";
 import { LazyImageEx } from "../../LazyImageEx";
 import TextTruncate from "react-text-truncate";
 import { Icon, Tag, TagGroup } from "rsuite";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { abbreviateNumber } from "../../../utils/types";
-import { openReading, openStory } from "../../../features/story/storySlice";
-import { useAppDispatch } from "../../../app/hooks";
 import { forwardRef, useCallback } from "react";
 import { useStoryHistory } from "../../../features/histories/hooks/useStoryHistory";
 import { hasUnreadChapter, StoryItemBaseProps } from "../index.api";
 import { AuthorLink } from "../../AuthorLink";
 import { StoryItemMark } from "../StoryItemMark";
+import { useGoReading } from "../../../hooks/navigation/useGoReading";
 
 export const HorizontalStoryItem = forwardRef(
   (
@@ -19,17 +18,18 @@ export const HorizontalStoryItem = forwardRef(
     ref,
   ) => {
     const story = useStoryHistory(passStory);
-    const history = useHistory();
-    const dispatch = useAppDispatch();
     const unreadChapter = hasUnreadChapter(story);
+    const gotoReading = useGoReading();
 
     const handleClick = useCallback(() => {
       if (onClick) {
         onClick(story);
-      } else {
-        dispatch(openStory(history, story));
       }
-    }, [dispatch, history, onClick, story]);
+    }, [onClick, story]);
+
+    const handleLastChapterClick = useCallback(() => {
+      gotoReading(story, story.lastChapter);
+    }, [gotoReading, story]);
 
     return (
       <div
@@ -74,11 +74,7 @@ export const HorizontalStoryItem = forwardRef(
                 {story.lastChapter !== undefined && story.lastChapter > 0 && (
                   <Tag
                     className={classNames({ "unread-chapter": unreadChapter })}
-                    onClick={() =>
-                      dispatch(
-                        openReading(history, story, story.lastChapter || 1),
-                      )
-                    }
+                    onClick={handleLastChapterClick}
                   >
                     <Icon icon="list-ol" /> {story.lastChapter}
                   </Tag>

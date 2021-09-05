@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectStory } from "../../features/story-editor/storyEditorSlice";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { withUpdateStory } from "../StoryEditor/withUpdateStory";
 import { UserPage } from "../../components/UserPage";
 import React, { useCallback, useEffect } from "react";
@@ -10,17 +10,19 @@ import {
   setChapter,
 } from "../../features/chapter-editor/chapterEditorSlice";
 import { Icon, IconButton } from "rsuite";
-import { openReading } from "../../features/story/storySlice";
 import { ChapterEditor } from "../../features/chapter-editor/ChapterEditor";
+import { useGoReading } from "../../hooks/navigation/useGoReading";
+import { useGoUserChapterList } from "../../hooks/navigation/useGoUserChapterList";
 
 const Wrapper = withUpdateStory(UserPage);
 
 export function ChapterEditorPage() {
   const story = useAppSelector(selectStory);
   const chapter = useAppSelector(selectChapter);
-  const history = useHistory();
   const dispatch = useAppDispatch();
   const { url, chapterNo } = useParams<{ url: string; chapterNo: string }>();
+  const gotoReading = useGoReading();
+  const gotoUserChapterList = useGoUserChapterList();
 
   useEffect(() => {
     dispatch(setChapter(undefined));
@@ -45,14 +47,14 @@ export function ChapterEditorPage() {
   }, [chapter, chapterNo, dispatch, story, url]);
 
   const handleBack = useCallback(() => {
-    history.push(`/user/story/${url}/chapter`);
-  }, [history, url]);
+    gotoUserChapterList(story || url);
+  }, [gotoUserChapterList, story, url]);
 
   const handleView = useCallback(() => {
     if (story) {
-      dispatch(openReading(history, story, parseInt(chapterNo)));
+      gotoReading(story, parseInt(chapterNo));
     }
-  }, [chapterNo, dispatch, history, story]);
+  }, [chapterNo, gotoReading, story]);
 
   const mode = isFinite(parseInt(chapterNo)) ? "update" : "create";
   const showChapterNo =

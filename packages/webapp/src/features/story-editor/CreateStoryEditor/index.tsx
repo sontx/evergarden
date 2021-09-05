@@ -1,17 +1,17 @@
 import { useCreateStory } from "../hooks/useCreateStory";
 import { StoryEditor } from "../../../components/StoryEditor";
 import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useGoEditStory } from "../../../hooks/navigation/useGoEditStory";
 
 export function CreateStoryEditor() {
   const { isLoading: isSaving, mutate, data, isSuccess } = useCreateStory();
-  const history = useHistory();
+  const gotoEditStory = useGoEditStory();
 
   useEffect(() => {
     if (isSuccess && data) {
-      history.push(`/user/story/${data.url}`);
+      gotoEditStory(data);
     }
-  }, [isSuccess, data, history]);
+  }, [isSuccess, data, gotoEditStory]);
 
   return (
     <StoryEditor

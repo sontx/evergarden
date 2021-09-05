@@ -3,10 +3,10 @@ import { useCallback, useState } from "react";
 import { IntlShape, useIntl } from "react-intl";
 import { Button, ButtonGroup, ButtonToolbar, Icon } from "rsuite";
 import classNames from "classnames";
-import { useAppDispatch } from "../../app/hooks";
-import { openStory } from "../story/storySlice";
-import { useHistory } from "react-router-dom";
+import { useAppSelector } from "../../app/hooks";
 import { withFollowSync } from "../story/withFollowSync";
+import { selectIsLoggedIn } from "../user/userSlice";
+import { useGoStory } from "../../hooks/navigation/useGoStory";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -42,15 +42,15 @@ export function ReadingNavigationTop(props: {
 }) {
   const { story, chapter } = props;
   const [showMore, setShowMore] = useState(false);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const intl = useIntl();
-  const dispatch = useAppDispatch();
-  const history = useHistory();
+  const gotoStory = useGoStory();
 
   const handleClickBack = useCallback(() => {
     if (story) {
-      dispatch(openStory(history, story));
+      gotoStory(story);
     }
-  }, [dispatch, history, story]);
+  }, [gotoStory, story]);
 
   const handleClickMore = useCallback(() => {
     setShowMore((prevState) => !prevState);
@@ -58,9 +58,9 @@ export function ReadingNavigationTop(props: {
 
   const handleClickComment = useCallback(() => {
     if (story) {
-      dispatch(openStory(history, story, { focusTo: "comment" }));
+      gotoStory(story, { focusTo: "comment" });
     }
-  }, [dispatch, history, story]);
+  }, [gotoStory, story]);
 
   return (
     <div className="reading-nav reading-nav--top">
@@ -95,7 +95,7 @@ export function ReadingNavigationTop(props: {
             <Button onClick={handleClickComment}>
               <Icon icon="commenting" />
             </Button>
-            {story && story.history && <FollowButtonWrapper story={story} />}
+            {story && isLoggedIn && <FollowButtonWrapper story={story} />}
             <Button>
               <Icon icon="bug" />
             </Button>

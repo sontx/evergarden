@@ -1,10 +1,9 @@
 import { GetStoryDto, GetUserDto } from "@evergarden/shared";
 import { Tag } from "rsuite";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import moment from "moment";
 import { useCallback } from "react";
-import { useAppDispatch } from "../../../app/hooks";
-import { openReading } from "../storySlice";
+import { useGoReading } from "../../../hooks/navigation/useGoReading";
 
 function CreatedBy({ user }: { user: number | GetUserDto }) {
   const showUser =
@@ -24,14 +23,13 @@ function CreatedBy({ user }: { user: number | GetUserDto }) {
 
 export function InfoGrid(props: { story: GetStoryDto }) {
   const { story } = props;
+  const gotoReading = useGoReading();
 
-  const dispatch = useAppDispatch();
-  const history = useHistory();
   const handleLastChapterClick = useCallback(() => {
     if (story.lastChapter !== undefined && story.lastChapter > 0) {
-      dispatch(openReading(history, story, story.lastChapter));
+      gotoReading(story, story.lastChapter);
     }
-  }, [dispatch, history, story]);
+  }, [gotoReading, story]);
 
   return (
     <div className="info-grid">

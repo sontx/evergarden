@@ -1,6 +1,4 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import { useHistory } from "react-router-dom";
-import { useAppDispatch } from "../../app/hooks";
 import { useCallback, useState } from "react";
 import {
   Animation,
@@ -11,29 +9,30 @@ import {
   Icon,
 } from "rsuite";
 import { SettingPanel } from "../settings/SettingPanel";
-import { openReading } from "../story/storySlice";
 import { ChapterListModal } from "../chapters/ChapterListModal";
+import { useGoNextChapter } from "./hooks/useGoNextChapter";
+import { useGoBackChapter } from "./hooks/useGoBackChapter";
 
 export function ReadingNavigationBottom(props: {
   story: GetStoryDto | undefined;
   chapter: GetChapterDto | undefined;
 }) {
   const { story, chapter } = props;
-  const history = useHistory();
   const [showChapterList, setShowChapterList] = useState(false);
-  const dispatch = useAppDispatch();
+  const gotoNextChapter = useGoNextChapter();
+  const gotoBackChapter = useGoBackChapter();
 
   const handleNext = useCallback(() => {
     if (story && chapter) {
-      dispatch(openReading(history, story, chapter.chapterNo + 1));
+      gotoNextChapter(story, chapter);
     }
-  }, [chapter, dispatch, history, story]);
+  }, [chapter, gotoNextChapter, story]);
 
   const handleBack = useCallback(() => {
     if (story && chapter) {
-      dispatch(openReading(history, story, chapter.chapterNo - 1));
+      gotoBackChapter(story, chapter);
     }
-  }, [chapter, dispatch, history, story]);
+  }, [chapter, gotoBackChapter, story]);
 
   const handleShowChapters = useCallback(() => {
     setShowChapterList(true);

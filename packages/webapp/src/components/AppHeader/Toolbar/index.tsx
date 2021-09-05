@@ -4,15 +4,15 @@ import { useState } from "react";
 import { selectUser } from "../../../features/user/userSlice";
 
 import { SearchBox } from "../../../features/search/SearchBox";
-import { useLogin } from "../hooks/useLogin";
 import { UserMenu } from "../UserMenu";
 import { useToggle } from "../../../hooks/useToggle";
+import { useGoLogin } from "../../../hooks/navigation/useGoLogin";
 
 export function Toolbar() {
   const user = useAppSelector(selectUser);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const handleLogin = useLogin();
+  const goLogin = useGoLogin();
   const toggleMenu = useToggle(setShowMenu);
 
   return (
@@ -38,7 +38,7 @@ export function Toolbar() {
             <Nav.Item
               disabled={showSearchBox}
               className="nav-icon"
-              onSelect={handleLogin}
+              onSelect={goLogin}
             >
               <Icon icon="sign-in" />
             </Nav.Item>

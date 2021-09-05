@@ -1,48 +1,45 @@
 import React, { useCallback, useState } from "react";
 import { Icon, IconButton } from "rsuite";
-import { useHistory } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  selectStory,
-  setStory,
-} from "../../features/story-editor/storyEditorSlice";
+import { useAppSelector } from "../../app/hooks";
+import { selectStory } from "../../features/story-editor/storyEditorSlice";
 import { withUpdateStory } from "../StoryEditor/withUpdateStory";
 import { UserPage } from "../../components/UserPage";
 import { ChaptersPanel } from "../../components/ChaptersPanel";
 import { GetChapterDto } from "@evergarden/shared";
 
 import { ChaptersToolBar } from "../../components/ChaptersToolBar";
+import { useGoEditStory } from "../../hooks/navigation/useGoEditStory";
+import { useGoCreateChapter } from "../../hooks/navigation/useGoCreateChapter";
+import { useGoEditChapter } from "../../hooks/navigation/useGoEditChapter";
 
 const Wrapper = withUpdateStory(UserPage);
 
 export function UserChaptersPage() {
-  const history = useHistory();
-  const dispatch = useAppDispatch();
   const story = useAppSelector(selectStory);
   const [isDesc, setDesc] = useState(true);
+  const gotoUserStory = useGoEditStory();
+  const gotoCreateChapter = useGoCreateChapter();
+  const gotoEditChapter = useGoEditChapter();
 
   const handleBack = useCallback(() => {
     if (story) {
-      history.push(`/user/story/${story.url}`);
+      gotoUserStory(story);
     }
-  }, [history, story]);
+  }, [gotoUserStory, story]);
 
   const handleCreateNew = useCallback(() => {
     if (story) {
-      dispatch(setStory(undefined));
-      history.push(`/user/story/${story.url}/chapter/new`);
+      gotoCreateChapter(story);
     }
-  }, [dispatch, history, story]);
+  }, [gotoCreateChapter, story]);
 
   const handleSelectChapter = useCallback(
     (chapter: GetChapterDto | number) => {
       if (story) {
-        const chapterNo =
-          typeof chapter === "object" ? chapter.chapterNo : chapter;
-        history.push(`/user/story/${story.url}/chapter/${chapterNo}`);
+        gotoEditChapter(story, chapter);
       }
     },
-    [history, story],
+    [gotoEditChapter, story],
   );
 
   return (
