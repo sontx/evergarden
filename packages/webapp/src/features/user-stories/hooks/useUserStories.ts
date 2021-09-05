@@ -1,7 +1,7 @@
 import api from "../../../utils/api";
 import { GetStoryDto } from "@evergarden/shared";
 import { UseQueryOptions } from "react-query";
-import { useSimpleQuery } from "../../../hooks/useSimpleQuery";
+import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 
 async function fetchUserStories(): Promise<GetStoryDto[]> {
   const response = await api.get("/api/stories", {

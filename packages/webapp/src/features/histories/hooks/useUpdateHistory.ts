@@ -1,5 +1,5 @@
-import { EnhancedMutationOptions } from "../../../hooks/useEnhancedMutation";
-import { useListMutation } from "../../../hooks/useListMutation";
+import { EnhancedMutationOptions } from "../../../hooks/api-query/useEnhancedMutation";
+import { useListMutation } from "../../../hooks/api-query/useListMutation";
 import { UpdateReadingHistoryDto } from "@evergarden/shared";
 import { updateListObjects } from "../../../utils/list-utils";
 

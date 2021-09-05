@@ -1,7 +1,7 @@
 import api from "../../../utils/api";
 import { GetStoryDto, PaginationResult } from "@evergarden/shared";
 import { UseInfiniteQueryOptions } from "react-query";
-import { useInfinitePageQuery } from "../../../hooks/useInfinitePageQuery";
+import { useInfinitePageQuery } from "../../../hooks/api-query/useInfinitePageQuery";
 
 async function fetchLastUpdatedStories(
   skip: number,

@@ -1,6 +1,6 @@
 import { useHistory } from "react-router-dom";
 import { useCallback } from "react";
-import { handleRequestError } from "../utils/api";
+import { handleRequestError } from "../../utils/api";
 
 export function useErrorHandler() {
   const history = useHistory();

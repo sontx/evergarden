@@ -1,6 +1,6 @@
 import api from "../../../utils/api";
 import { CreateStoryDto, GetStoryDto } from "@evergarden/shared";
-import { useListMutation } from "../../../hooks/useListMutation";
+import { useListMutation } from "../../../hooks/api-query/useListMutation";
 import { CreateStoryData } from "../../../components/StoryEditor";
 import { updateStoryCover } from "../storyEditorAPI";
 import { useCacheStory } from "../../story/hooks/useCacheStory";

@@ -1,4 +1,4 @@
-import { useSimpleQuery } from "../../../hooks/useSimpleQuery";
+import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 import { fetchStoriesByIds } from "../../stories/storiesAPI";
 import { useReadingHistory } from "./useReadingHistory";
 

@@ -1,6 +1,6 @@
 import { UseQueryOptions } from "react-query";
 import { GetStoryDto } from "@evergarden/shared";
-import { useSimpleQuery } from "../../../hooks/useSimpleQuery";
+import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 import { fetchStory } from "../storyAPI";
 import { useStoryHistory } from "../../histories/hooks/useStoryHistory";
 

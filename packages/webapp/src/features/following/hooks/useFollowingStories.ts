@@ -1,5 +1,5 @@
 import { useReadingHistory } from "../../histories/hooks/useReadingHistory";
-import { useSimpleQuery } from "../../../hooks/useSimpleQuery";
+import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 import { fetchStoriesByIds } from "../../stories/storiesAPI";
 
 export function useFollowingStories() {

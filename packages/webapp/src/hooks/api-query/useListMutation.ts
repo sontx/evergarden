@@ -2,7 +2,7 @@ import {
   EnhancedMutationOptions,
   useEnhancedMutation,
 } from "./useEnhancedMutation";
-import { updateListObjects } from "../utils/list-utils";
+import { updateListObjects } from "../../utils/list-utils";
 
 export function useListMutation<TRequest = any, TResponse = any, TTransform = any>(
   mutationKey: string,
