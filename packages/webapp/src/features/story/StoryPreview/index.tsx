@@ -5,7 +5,6 @@ import { CommentCount } from "../../../components/Comment/CommentCount";
 import { useLocation } from "react-router-dom";
 
 import defaultThumbnail from "../../../images/default-cover.png";
-import { ReadingLoader } from "../../../components/ReadingLoader";
 import { LazyImageEx } from "../../../components/LazyImageEx";
 import { InfoGrid } from "../InfoGrid";
 import { ChapterList } from "../../chapters/ChapterList";
@@ -14,10 +13,14 @@ import { StorySubtitle } from "../StorySubtitle";
 import { StoryDescription } from "../StoryDescription";
 import { StoryAction } from "../StoryAction";
 import { FormattedMessage } from "react-intl";
+import { CuteLoader } from "../../../components/CuteLoader";
+import { useAppSelector } from "../../../app/hooks";
+import { selectIsDarkMode } from "../../global/globalSlice";
 
 export function StoryPreview({ slug }: { slug: string }) {
   const { data: story } = useStory(slug);
   const { state = {} } = useLocation() as any;
+  const darkMode = useAppSelector(selectIsDarkMode);
 
   const handleExpandPanel = useCallback((element) => {
     if (element) {
@@ -75,6 +78,6 @@ export function StoryPreview({ slug }: { slug: string }) {
       </Panel>
     </div>
   ) : (
-    <ReadingLoader />
+    <CuteLoader center dark={darkMode} />
   );
 }
