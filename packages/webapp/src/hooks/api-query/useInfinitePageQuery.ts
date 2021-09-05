@@ -3,25 +3,24 @@ import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
 } from "react-query";
-import { GetStoryDto } from "@evergarden/shared";
 import { useErrorHandler } from "./useErrorHandler";
 
 const MAX_STORIES_PER_PAGE = 20;
 
-export function useInfinitePageQuery(
+export function useInfinitePageQuery<T>(
   queryKey: QueryKey,
   queryFn: (
     skip: number,
     limit: number,
     queryKey?: readonly any[],
-  ) => Promise<GetStoryDto[]>,
-  options?: UseInfiniteQueryOptions<GetStoryDto[]>,
+  ) => Promise<T[]>,
+  options?: UseInfiniteQueryOptions<T[]>,
   itemPerPage?: number,
 ) {
   const max = itemPerPage === undefined ? MAX_STORIES_PER_PAGE : itemPerPage;
   const errorHandler = useErrorHandler();
   const { onError, ...rest } = options || {};
-  return useInfiniteQuery<GetStoryDto[]>(
+  return useInfiniteQuery<T[]>(
     queryKey,
     ({ pageParam = 0, queryKey }) => queryFn(pageParam * max, max, queryKey),
     {
