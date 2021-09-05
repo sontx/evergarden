@@ -8,7 +8,7 @@ import {
   VerticalStoryItem,
   VerticalStoryItemSkeleton,
 } from "../StoryItem";
-import { withHistory } from "../StoryItem/withHistory";
+import { withAction } from "../StoryItem/withAction";
 import { InfiniteStoryList } from "./InfiniteStoryList";
 import { VerticalStoryList } from "./VerticalStoryList";
 import { ElementType, forwardRef, ReactNode } from "react";
@@ -17,9 +17,9 @@ import classNames from "classnames";
 
 import { HorizontalStoryList } from "./HorizontalStoryList";
 
-const CompactItem = withHistory(withAnimation(CompactStoryItem));
-const HorizontalItem = withHistory(withAnimation(HorizontalStoryItem));
-const VerticalItem = withHistory(VerticalStoryItem);
+const CompactItem = withAction(withAnimation(CompactStoryItem));
+const HorizontalItem = withAction(withAnimation(HorizontalStoryItem));
+const VerticalItem = withAction(VerticalStoryItem);
 
 export interface StoryListProps
   extends Omit<StoryListBaseProps, "renderSkeleton" | "renderItem"> {

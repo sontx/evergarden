@@ -4,7 +4,7 @@ import {
   CompactStoryItemSkeleton,
 } from "../../../components/StoryItem";
 import { withAnimation } from "../../../components/StoryItem/withAnimation";
-import { withHistory } from "../../../components/StoryItem/withHistory";
+import { withAction } from "../../../components/StoryItem/withAction";
 import { useFollowingStories } from "../hooks/useFollowingStories";
 import { Alert, Divider, Icon, IconButton } from "rsuite";
 import { useUnfollowStory } from "../hooks/useUnfollowStory";
@@ -15,7 +15,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { ChapterNumber } from "../../../components/StoryItem/CompactStoryItem/ChapterNumber";
 import { useStoriesHistory } from "../../histories/hooks/useStoriesHistory";
 
-const StoryItem = withHistory(withAnimation(CompactStoryItem));
+const StoryItem = withAction(withAnimation(CompactStoryItem), "continueReading");
 const FilterStories = withStoriesFilter(StoryList);
 
 export function FollowingStories(props: StandardProps) {
