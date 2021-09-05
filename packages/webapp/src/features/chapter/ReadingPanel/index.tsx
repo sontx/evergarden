@@ -1,4 +1,4 @@
-import { Animation, Loader, Panel } from "rsuite";
+import { Animation, Panel } from "rsuite";
 import { useAppSelector } from "../../../app/hooks";
 import { selectIsLoggedIn, selectUserSettings } from "../../user/userSlice";
 import {
@@ -18,6 +18,8 @@ import { withUserSettings } from "../../../components/ReadingRenderer/withUserSe
 import { useTracker } from "../hooks/useTracker";
 import { useSyncHistory } from "../hooks/useSyncHistory";
 import { usePrefetchNextChapter } from "../hooks/usePrefetchNextChapter";
+import { CuteLoader } from "../../../components/CuteLoader";
+import { selectIsDarkMode } from "../../global/globalSlice";
 
 const Renderer = withUserSettings(ReadingRenderer);
 
@@ -36,6 +38,7 @@ export function ReadingPanel({
   const track = useTracker();
   const syncHistory = useSyncHistory();
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const darkMode = useAppSelector(selectIsDarkMode);
 
   usePrefetchNextChapter(story, chapter);
 
@@ -89,9 +92,7 @@ export function ReadingPanel({
           </Animation.Fade>
         </>
       ) : (
-        <div>
-          <Loader />
-        </div>
+        <CuteLoader center dark={darkMode} />
       )}
     </div>
   );
