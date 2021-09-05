@@ -11,6 +11,7 @@ import { GetStoryDto } from "@evergarden/shared";
 import { StoryItemMark } from "../StoryItemMark";
 import { ChapterNumber } from "./ChapterNumber";
 import { UpdatedTime } from "./UpdatedTime";
+import { canContinueReading } from "../../../utils/story-utils";
 
 export interface CompactStoryItemProps extends StoryItemBaseProps {
   title?: (story: GetStoryDto) => ReactNode;
@@ -73,13 +74,12 @@ export const CompactStoryItem = memo(function ({
       {rightSlot ? (
         <div className="slot--right">{rightSlot(story)}</div>
       ) : (
-        story.history &&
-        story.history.currentChapterNo > 0 && (
+        canContinueReading(story) && (
           <div className="slot--right">
             <span className="continue-reading">
               <FormattedMessage
                 id="continueReadingText"
-                values={{ chapter: story.history.currentChapterNo }}
+                values={{ chapter: story.history?.currentChapterNo }}
               />
             </span>
           </div>

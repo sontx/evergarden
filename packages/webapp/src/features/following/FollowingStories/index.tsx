@@ -14,8 +14,12 @@ import { StoryList } from "../../../components/StoryList";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ChapterNumber } from "../../../components/StoryItem/CompactStoryItem/ChapterNumber";
 import { useStoriesHistory } from "../../histories/hooks/useStoriesHistory";
+import { canContinueReading } from "../../../utils/story-utils";
 
-const StoryItem = withAction(withAnimation(CompactStoryItem), "continueReading");
+const StoryItem = withAction(
+  withAnimation(CompactStoryItem),
+  "continueReading",
+);
 const FilterStories = withStoriesFilter(StoryList);
 
 export function FollowingStories(props: StandardProps) {
@@ -38,12 +42,12 @@ export function FollowingStories(props: StandardProps) {
           subtitle={() => (
             <>
               <ChapterNumber story={story} />
-              {story.history && (
+              {canContinueReading(story) && (
                 <>
                   <Divider vertical />
                   <FormattedMessage
                     id="continueReadingText"
-                    values={{ chapter: story.history.currentChapterNo }}
+                    values={{ chapter: story.history?.currentChapterNo }}
                   />
                 </>
               )}
