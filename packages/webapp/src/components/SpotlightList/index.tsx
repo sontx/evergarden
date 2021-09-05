@@ -15,8 +15,12 @@ SwiperCore.use([Navigation, Pagination, Parallax]);
 export function SpotlightList({
   stories,
   className,
+  onClick,
   ...rest
-}: StandardProps & { stories?: GetStoryDto[] }) {
+}: StandardProps & {
+  stories?: GetStoryDto[];
+  onClick?(story: GetStoryDto): void;
+}) {
   useEffect(() => {
     document.querySelectorAll(".spotlight-list .title").forEach((title) => {
       title.setAttribute("data-swiper-parallax", "-300");
@@ -43,7 +47,14 @@ export function SpotlightList({
         data-swiper-parallax="-23%"
       />
       {(stories || []).map((story) => (
-        <SwiperSlide key={story.id}>
+        <SwiperSlide
+          key={story.id}
+          onClick={() => {
+            if (onClick) {
+              onClick(story);
+            }
+          }}
+        >
           <div className="spotlight-content">
             <h5 className="title">{story.title}</h5>
             <div className="subtitle" data-swiper-parallax="-200">
