@@ -14,8 +14,16 @@ import {
 import { useGoFollowing } from "../../../hooks/navigation/useGoFollowing";
 import { useGoHistory } from "../../../hooks/navigation/useGoHistory";
 import { useGoUserStoryList } from "../../../hooks/navigation/useGoUserStoryList";
+import { StandardProps } from "rsuite/es/@types/common";
+import classNames from "classnames";
 
-export function UserMenu({ onClose }: { onClose: () => void }) {
+export function UserMenu({
+  onClose,
+  className,
+  ...rest
+}: {
+  onClose: () => void;
+} & StandardProps) {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const isDarkMode = useAppSelector(selectIsDarkMode);
@@ -28,7 +36,12 @@ export function UserMenu({ onClose }: { onClose: () => void }) {
   }, [dispatch]);
 
   return (
-    <GridMenu cols={3} className="user-menu" onClose={onClose}>
+    <GridMenu
+      cols={3}
+      className={classNames("user-menu", className)}
+      onClose={onClose}
+      {...rest}
+    >
       {user && (
         <>
           <GridMenuItem icon={<Icon icon="user" />}>

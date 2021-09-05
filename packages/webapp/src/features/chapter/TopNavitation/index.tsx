@@ -1,5 +1,5 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import { useCallback } from "react";
+import { CSSProperties, useCallback, useRef } from "react";
 import { Button, ButtonGroup, ButtonToolbar, Icon } from "rsuite";
 import classNames from "classnames";
 import { useAppSelector } from "../../../app/hooks";
@@ -9,6 +9,7 @@ import { useGoStory } from "../../../hooks/navigation/useGoStory";
 import { ChapterTitle } from "../../../components/ChapterTitle";
 import { useToggle } from "../../../hooks/useToggle";
 import { useOverlay } from "../../../hooks/useOverlay";
+import { UserMenu } from "../../../components/AppHeader/UserMenu";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -28,6 +29,8 @@ export function TopNavigation({
   chapter: GetChapterDto;
 }) {
   const [showMore, toggleShowMore] = useToggle();
+  const [showMenu, toggleShowMenu] = useToggle();
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const gotoStory = useGoStory();
 
@@ -41,8 +44,13 @@ export function TopNavigation({
     gotoStory(story, { focusTo: "comment" });
   }, [gotoStory, story]);
 
+  const menuTop = containerRef.current?.clientHeight;
+  const menuStyle = menuTop
+    ? ({ "--grid-menu-top": `${menuTop}px` } as CSSProperties)
+    : {};
+
   return (
-    <div className="top-navigation">
+    <div className="top-navigation" ref={containerRef}>
       <div className="header">
         <span className="action" onClick={handleClickBack}>
           <Icon size="lg" icon="left" />
@@ -78,8 +86,20 @@ export function TopNavigation({
             <Button>
               <Icon icon="bug" />
             </Button>
+            <Button onClick={toggleShowMenu}>
+              <Icon icon="bars" />
+            </Button>
           </ButtonGroup>
         </ButtonToolbar>
+      )}
+      {showMenu && (
+        <UserMenu
+          onClose={toggleShowMenu}
+          style={{
+            ...menuStyle,
+            paddingTop: "1px",
+          }}
+        />
       )}
     </div>
   );

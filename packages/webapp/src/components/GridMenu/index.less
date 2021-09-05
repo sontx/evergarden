@@ -1,13 +1,13 @@
 .grid-menu {
-  top: @nav-bar-height;
   left: 0;
   right: 0;
   position: absolute;
   color: @btn-default-color;
   z-index: 10;
+  top: var(--grid-menu-top);
 
   .backdrop-container {
-    top: @nav-bar-height;
+    top: var(--grid-menu-top);
   }
 
   .grid-menu-items {
