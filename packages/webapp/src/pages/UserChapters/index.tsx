@@ -45,12 +45,14 @@ export function UserChaptersPage() {
       }
       action={
         <>
-          <IconButton
-            icon={<Icon icon="plus" />}
-            onClick={handleCreateNew}
-            size="sm"
-            appearance="link"
-          />
+          {story?.status !== "full" && (
+            <IconButton
+              icon={<Icon icon="plus" />}
+              onClick={handleCreateNew}
+              size="sm"
+              appearance="link"
+            />
+          )}
           <IconButton
             icon={<Icon icon="close" />}
             onClick={handleBack}
