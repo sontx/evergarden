@@ -4,7 +4,7 @@ import {
   HorizontalStoryItemSkeleton,
 } from "../../../components/StoryItem";
 import { withAnimation } from "../../../components/StoryItem/withAnimation";
-import { withStoriesFilter } from "../../../HOCs/withStoriesFilter";
+import { withStoriesFilter } from "../../../components/UserStoryListPage/withStoriesFilter";
 import { StoryList } from "../../../components/StoryList";
 import { useUserStories } from "../hooks/useUserStories";
 import { useGoEditStory } from "../../../hooks/navigation/useGoEditStory";

@@ -1,8 +1,7 @@
 import { ElementType, useEffect, useState } from "react";
 import { GetStoryDto } from "@evergarden/shared";
-import { StoryListProps } from "../components/StoryList";
-
-export type SortType = "none" | "new" | "recent" | "a-z" | "z-a";
+import { StoryListProps } from "../StoryList";
+import { SortType } from "./index";
 
 function sortNew(item1: GetStoryDto, item2: GetStoryDto) {
   // @ts-ignore
@@ -14,14 +13,6 @@ function sortRecent(item1: GetStoryDto, item2: GetStoryDto) {
     ? (new Date(item2.history.lastVisit) as any) -
         (new Date(item1.history.lastVisit) as any)
     : 0;
-}
-
-function sortAZ(item1: GetStoryDto, item2: GetStoryDto) {
-  return item1.title.toLowerCase().localeCompare(item2.title.toLowerCase());
-}
-
-function sortZA(item1: GetStoryDto, item2: GetStoryDto) {
-  return item2.title.toLowerCase().localeCompare(item1.title.toLowerCase());
 }
 
 export function withStoriesFilter(Component: ElementType<StoryListProps>) {
@@ -58,12 +49,6 @@ export function withStoriesFilter(Component: ElementType<StoryListProps>) {
             break;
           case "recent":
             temp.sort(sortRecent);
-            break;
-          case "a-z":
-            temp.sort(sortAZ);
-            break;
-          case "z-a":
-            temp.sort(sortZA);
             break;
         }
       }

@@ -1,4 +1,4 @@
-import { UserListStoriesPage } from "../../components/UserListStoriesPage";
+import { UserStoryListPage } from "../../components/UserStoryListPage";
 import React from "react";
 import { UserStories } from "../../features/user-stories/UserStories";
 import { Icon, IconButton } from "rsuite";
@@ -8,7 +8,7 @@ export function UserStoriesPage() {
   const gotoCreateStory = useGoCreateStory();
 
   return (
-    <UserListStoriesPage
+    <UserStoryListPage
       title="Your stories"
       action={
         <IconButton
@@ -20,6 +20,6 @@ export function UserStoriesPage() {
       }
     >
       {(props) => <UserStories {...props} />}
-    </UserListStoriesPage>
+    </UserStoryListPage>
   );
 }

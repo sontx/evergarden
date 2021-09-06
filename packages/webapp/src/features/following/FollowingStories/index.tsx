@@ -9,7 +9,7 @@ import { useFollowingStories } from "../hooks/useFollowingStories";
 import { Alert, Divider, Icon, IconButton } from "rsuite";
 import { useUnfollowStory } from "../hooks/useUnfollowStory";
 import { useFollowingStoryCount } from "../hooks/useFollowingStoryCount";
-import { withStoriesFilter } from "../../../HOCs/withStoriesFilter";
+import { withStoriesFilter } from "../../../components/UserStoryListPage/withStoriesFilter";
 import { StoryList } from "../../../components/StoryList";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ChapterNumber } from "../../../components/StoryItem/CompactStoryItem/ChapterNumber";
