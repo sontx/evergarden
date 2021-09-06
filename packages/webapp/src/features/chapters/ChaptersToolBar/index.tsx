@@ -4,6 +4,7 @@ import { GetStoryDto } from "@evergarden/shared";
 import { useIntl } from "react-intl";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
+import { useDebouncedCallback } from "use-debounce";
 
 export function ChaptersToolBar({
   story,
@@ -32,14 +33,18 @@ export function ChaptersToolBar({
     });
   }, [onSortChange]);
 
+  const filterFn = useDebouncedCallback((value) => {
+    if (onFilterChange) {
+      onFilterChange(parseInt(`${value}`));
+    }
+  }, 500);
+
   const handleChapterNoChange = useCallback(
     (newValue) => {
       setChapterNo(newValue);
-      if (onFilterChange) {
-        onFilterChange(parseInt(`${newValue}`));
-      }
+      filterFn(newValue);
     },
-    [onFilterChange],
+    [filterFn],
   );
 
   const maxChapterNo = story?.lastChapter || 0;
