@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 import defaultThumbnail from "../../../images/default-cover.png";
 import { LazyImageEx } from "../../../components/LazyImageEx";
 import { InfoGrid } from "../InfoGrid";
-import { ChapterList } from "../../chapters/ChapterList";
+import { ChapterList } from "../../chapters/ChapterList1";
 import { useStory } from "../hooks/useStory";
 import { StorySubtitle } from "../StorySubtitle";
 import { StoryDescription } from "../StoryDescription";

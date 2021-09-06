@@ -1,4 +1,4 @@
-import { ChapterTitle } from "../../../components/ChapterTitle";
+import { ChapterHeader } from "../../../components/ChapterHeader";
 import { GetChapterDto } from "@evergarden/shared";
 import { useEffect, useRef } from "react";
 import { subscribeVerticalScrollDirection } from "../../../utils/subscribe-vertical-scroll-direction";
@@ -21,7 +21,7 @@ export function ReadingFooter({ chapter }: { chapter: GetChapterDto }) {
 
   return (
     <div className="reading-footer" ref={footerRef}>
-      <ChapterTitle chapter={chapter} />
+      <ChapterHeader chapter={chapter} />
     </div>
   );
 }

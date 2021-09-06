@@ -3,28 +3,33 @@ import { StandardProps } from "rsuite/es/@types/common";
 import { FormattedMessage } from "react-intl";
 import classNames from "classnames";
 
-export function ChapterTitle({
+export function ChapterHeader({
   chapter,
   className,
   ...rest
-}: { chapter: GetChapterDto } & StandardProps) {
+}: { chapter: Partial<GetChapterDto> } & StandardProps) {
+  const { chapterNo, title } =
+    typeof chapter === "object"
+      ? chapter
+      : { chapterNo: chapter, title: undefined };
+
   return (
-    <span {...rest} className={classNames(className, "chapter-title")}>
-      {chapter.title ? (
+    <span {...rest} className={classNames(className, "chapter-header")}>
+      {title ? (
         <>
           <span className="chapter-no chapter-no--suffix">
             <FormattedMessage
               id="chapterTitle"
-              values={{ chapterNo: chapter.chapterNo }}
+              values={{ chapterNo: chapterNo }}
             />
           </span>
-          {chapter.title}
+          <span className="chapter-title">{title}</span>
         </>
       ) : (
         <span className="chapter-no">
           <FormattedMessage
             id="chapterTitle"
-            values={{ chapterNo: chapter.chapterNo }}
+            values={{ chapterNo: chapterNo }}
           />
         </span>
       )}

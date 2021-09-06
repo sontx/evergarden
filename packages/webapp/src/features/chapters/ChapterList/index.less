@@ -1,14 +1,31 @@
-@import (reference) "src/styles/variables";
+.chapter-list {
+  .rs-list-item-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: @font-size-base - 1;
+  }
 
-.chapter-list-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  column-gap: 10px;
-  row-gap: 12px;
-  font-size: @font-size-base - 1;
+  .meta {
+    display: flex;
+  }
 
-  .chapter-no {
-    text-transform: uppercase;
-    font-weight: 500;
+  .chapter-created {
+    color: @secondary-text-color;
+    font-style: italic;
+    margin-left: 5px;
+    font-size: @font-size-base - 2;
+  }
+
+  .chapter--highlighted {
+    .chapter-header {
+      color: darkorange !important;
+    }
+  }
+
+  .chapter--unread {
+    .chapter-title {
+      color: unset;
+    }
   }
 }

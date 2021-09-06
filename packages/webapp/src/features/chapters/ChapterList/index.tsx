@@ -1,104 +1,72 @@
-import { Loader, Message, Pagination, Placeholder } from "rsuite";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import {
-  fetchChaptersAsync,
-  resetChapters,
-  selectChapters,
-  selectErrorMessage,
-  selectStatus,
-  selectTotalPage,
-} from "../chaptersSlice";
-import { useCallback, useEffect, useState } from "react";
+import { GetPreviewChapter } from "@evergarden/shared";
+import { List } from "rsuite";
+import { ChapterHeader } from "../../../components/ChapterHeader";
+import { isDesktop, isMobileOnly } from "react-device-detect";
+import classNames from "classnames";
+import { ReactNode } from "react";
+import moment from "moment";
 
-import { useIntl } from "react-intl";
-import { isEmpty } from "../../../utils/types";
-import { GetStoryDto } from "@evergarden/shared";
-import { useGoReading } from "../../../hooks/navigation/useGoReading";
+export interface ChapterListBaseProps {
+  sort: "asc" | "desc";
+  renderMeta?: (chapter: Partial<GetPreviewChapter>) => ReactNode;
+  onClick?: (chapterNo: number) => void;
+  highlighted?: number[];
+  unreadFrom?: number;
+}
 
-export function ChapterList(props: { story: GetStoryDto }) {
-  const { story } = props;
-  const status = useAppSelector(selectStatus);
-  const errorMessage = useAppSelector(selectErrorMessage);
-  const chapters = useAppSelector(selectChapters);
-  const totalPages = useAppSelector(selectTotalPage);
-  const dispatch = useAppDispatch();
-  const [page, setPage] = useState(0);
-  const intl = useIntl();
-  const gotoReading = useGoReading();
+export interface ChapterListProps extends ChapterListBaseProps {
+  chapters?: GetPreviewChapter[];
+  skeletonFrom: number;
+  skeletonTo: number;
+}
 
-  useEffect(() => {
-    dispatch(resetChapters());
-  }, [dispatch, story.id]);
+export function ChapterList({
+  chapters,
+  skeletonFrom,
+  skeletonTo,
+  sort,
+  renderMeta,
+  onClick,
+  highlighted,
+  unreadFrom = 0,
+}: ChapterListProps) {
+  const sign = sort === "asc" ? 1 : -1;
 
-  useEffect(() => {
-    dispatch(
-      fetchChaptersAsync({
-        storyId: story.id,
-        page: page,
-        limit: 50,
-      }),
-    );
-  }, [page, dispatch, story.id]);
-
-  const handleChangePage = useCallback((gotoPage) => {
-    setPage(gotoPage - 1);
-  }, []);
-
-  const handleChapterClick = useCallback(
-    (chapter) => {
-      gotoReading(story, chapter.chapterNo);
-    },
-    [gotoReading, story],
-  );
+  const renderItems = (chapters
+    ? chapters
+    : Array.from(Array(skeletonTo - skeletonFrom + 1).keys()).map((item) => ({
+        chapterNo: skeletonFrom + item,
+        published: true,
+        created: undefined,
+      }))
+  ).sort((a, b) => (a.chapterNo - b.chapterNo) * sign);
 
   return (
-    <div style={{ marginTop: "10px" }}>
-      {(status === "success" || !isEmpty(chapters)) && (
-        <div style={{ position: "relative" }}>
-          <div className="chapter-list-container">
-            {(chapters || []).map((chapter) => (
-              // eslint-disable-next-line jsx-a11y/anchor-is-valid
-              <a key={chapter.id} onClick={() => handleChapterClick(chapter)}>
-                <span className="chapter-no">
-                  {intl.formatMessage(
-                    { id: "chapterTitle" },
-                    { chapterNo: chapter.chapterNo },
-                  )}
-                </span>
-                {chapter.title && `: ${chapter.title}`}
-              </a>
-            ))}
-          </div>
-          <div style={{ marginTop: "14px", textAlign: "center" }}>
-            <Pagination
-              activePage={page + 1}
-              onSelect={handleChangePage}
-              prev
-              last
-              next
-              first
-              size="sm"
-              ellipsis={true}
-              boundaryLinks={true}
-              maxButtons={4}
-              pages={totalPages}
-            />
-          </div>
-          {status === "processing" && (
-            <Loader
-              backdrop
-              content={intl.formatMessage({ id: "loadingText" })}
-              vertical
-            />
-          )}
-        </div>
-      )}
-      {status === "processing" && isEmpty(chapters) && (
-        <Placeholder.Paragraph rows={10} active />
-      )}
-      {status === "error" && (
-        <Message closable type="error" description={errorMessage} full />
-      )}
-    </div>
+    <List className="chapter-list" size="sm" hover={isDesktop}>
+      {renderItems.map((item) => (
+        <List.Item
+          key={item.chapterNo}
+          onClick={() => {
+            if (onClick) {
+              onClick(item.chapterNo);
+            }
+          }}
+          className={classNames({
+            "chapter--highlighted": !!highlighted?.includes(item.chapterNo),
+            "chapter--unread": item.chapterNo >= unreadFrom,
+          })}
+        >
+          <span>
+            <ChapterHeader chapter={item} />
+            {!isMobileOnly && item.created && (
+              <span className="chapter-created">
+                ({moment(item.created).fromNow()})
+              </span>
+            )}
+          </span>
+          {renderMeta && <div className="meta">{renderMeta(item)}</div>}
+        </List.Item>
+      ))}
+    </List>
   );
 }

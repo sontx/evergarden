@@ -16,12 +16,14 @@ export function UserPage({
   className,
   style,
   fullContent = true,
+  showBackTop,
 }: {
   children: ReactNode;
   title: string;
   header?: ReactNode;
   action?: ReactNode;
   fullContent?: boolean;
+  showBackTop?: boolean;
 } & StandardProps) {
   return (
     <AppContainer
@@ -30,6 +32,7 @@ export function UserPage({
         ...(fullContent ? { minHeight: "100vh" } : {}),
         ...(style || {}),
       }}
+      showBackTop={showBackTop}
     >
       <SEO title={title} />
       <AppHeader />

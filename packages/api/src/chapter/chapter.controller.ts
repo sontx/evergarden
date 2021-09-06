@@ -15,7 +15,14 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ChapterService } from "./chapter.service";
-import { CreateChapterDto, GetChapterDto, PaginationResult, toInt, UpdateChapterDto } from "@evergarden/shared";
+import {
+  CreateChapterDto,
+  GetChapterDto,
+  PaginationResult,
+  toInt,
+  UpdateChapterDto,
+  GetPreviewChapter,
+} from "@evergarden/shared";
 import { Role } from "../auth/role/roles.decorator";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
@@ -83,7 +90,7 @@ export class ChapterController {
     @Query("limit") limit,
     @Query("sort") sort: "asc" | "desc",
     @Req() req,
-  ): Promise<PaginationResult<GetChapterDto>> {
+  ): Promise<PaginationResult<GetPreviewChapter>> {
     page = toInt(page);
     limit = toInt(limit);
     skip = toInt(skip);
@@ -171,7 +178,7 @@ export class ChapterController {
       throw new NotFoundException();
     }
 
-    const {id} = req.user || {};
+    const { id } = req.user || {};
     await this.chapterService.report(chapter, report, id);
   }
 }

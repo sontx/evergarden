@@ -17,6 +17,7 @@ export default {
   pageTitleReading: "Reading",
   pageTitleCreateStory: "New story",
   pageTitleUpdateStory: "Update story",
+  pageTitleChapters: "Chapters",
   loginWelcome: "Evergarden",
   loginSlogan: "Let's explore mysterious worlds",
   loginWithFacebook: "Login with Facebook",
@@ -75,4 +76,6 @@ export default {
   unfollowSuccess: "Unfollowed",
   requiredFieldMessage: "This field is required",
   chaptersPanelTitle: "Chapters",
+  chaptersRangeTitle: "Chapter {from} - {to}",
+  filterChapterHint: "Filter chapter...",
 };

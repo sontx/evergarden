@@ -1,18 +1,26 @@
 import { Icon, IconButton, InputGroup, InputNumber } from "rsuite";
 import { useCallback, useState } from "react";
 import { GetStoryDto } from "@evergarden/shared";
+import { useIntl } from "react-intl";
+import { StandardProps } from "rsuite/es/@types/common";
+import classNames from "classnames";
 
 export function ChaptersToolBar({
   story,
   onJumpTo,
   onSortChange,
+  onFilterChange,
+  className,
+  ...rest
 }: {
   story?: GetStoryDto;
   onJumpTo?: (chapterNo: number) => void;
   onSortChange?: (isDesc: boolean) => void;
-}) {
+  onFilterChange?: (chapterNo: number) => void;
+} & StandardProps) {
   const [isDesc, setDesc] = useState(true);
   const [chapterNo, setChapterNo] = useState();
+  const intl = useIntl();
 
   const handleSortClick = useCallback(() => {
     setDesc((prev) => {
@@ -24,14 +32,20 @@ export function ChaptersToolBar({
     });
   }, [onSortChange]);
 
-  const handleChapterNoChange = useCallback((newValue) => {
-    setChapterNo(newValue);
-  }, []);
+  const handleChapterNoChange = useCallback(
+    (newValue) => {
+      setChapterNo(newValue);
+      if (onFilterChange) {
+        onFilterChange(parseInt(`${newValue}`));
+      }
+    },
+    [onFilterChange],
+  );
 
   const maxChapterNo = story?.lastChapter || 0;
 
   return (
-    <div className="chapter-toolbar-container">
+    <div className={classNames("chapters-toolbar", className)} {...rest}>
       <IconButton
         className="sort-button"
         icon={<Icon icon={isDesc ? "sort-numeric-desc" : "sort-numeric-asc"} />}
@@ -43,7 +57,7 @@ export function ChaptersToolBar({
           onChange={handleChapterNoChange}
           max={maxChapterNo}
           min={1}
-          placeholder="Jump to chapter"
+          placeholder={intl.formatMessage({ id: "filterChapterHint" })}
         />
         <InputGroup.Button
           onClick={() => {
@@ -58,7 +72,7 @@ export function ChaptersToolBar({
             }
           }}
         >
-          <Icon icon="angle-double-right" />
+          <Icon icon="right" />
         </InputGroup.Button>
       </InputGroup>
     </div>

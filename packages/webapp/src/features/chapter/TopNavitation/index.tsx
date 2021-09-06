@@ -6,7 +6,7 @@ import { useAppSelector } from "../../../app/hooks";
 import { withFollowSync } from "../../story/withFollowSync";
 import { selectIsLoggedIn } from "../../user/userSlice";
 import { useGoStory } from "../../../hooks/navigation/useGoStory";
-import { ChapterTitle } from "../../../components/ChapterTitle";
+import { ChapterHeader } from "../../../components/ChapterHeader";
 import { useToggle } from "../../../hooks/useToggle";
 import { useOverlay } from "../../../hooks/useOverlay";
 import { UserMenu } from "../../../components/AppHeader/UserMenu";
@@ -65,7 +65,7 @@ export function TopNavigation({
           </div>
           {showMore && (
             <div className="title--sub">
-              <ChapterTitle chapter={chapter} />
+              <ChapterHeader chapter={chapter} />
             </div>
           )}
         </div>

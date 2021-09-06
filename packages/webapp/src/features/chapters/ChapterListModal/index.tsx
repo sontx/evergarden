@@ -4,7 +4,7 @@ import { useAppSelector } from "../../../app/hooks";
 import { selectStory } from "../../story/storySlice";
 import { selectChapter } from "../../chapter/chapterSlice";
 import { ChaptersPanel } from "../../../components/ChaptersPanel";
-import { ChaptersToolBar } from "../../../components/ChaptersToolBar";
+import { ChaptersToolBar } from "../ChaptersToolBar";
 import { GetChapterDto } from "@evergarden/shared";
 import { useGoReading } from "../../../hooks/navigation/useGoReading";
 
