@@ -1,9 +1,10 @@
 import { useStory } from "../../story/hooks/useStory";
-import { Icon, Loader, PanelGroup } from "rsuite";
+import { Icon, PanelGroup } from "rsuite";
 import { ChapterRange } from "../ChapterRange";
 import { Fragment, useState } from "react";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
+import { ChaptersPanelLoader } from "../ChaptersPanelLoader";
 
 const MAX_CHAPTERS_PER_GROUP =
   process.env.NODE_ENV === "development" ? 10 : 100;
@@ -91,9 +92,7 @@ export function ChaptersPanel({
             })}
         </PanelGroup>
       ) : (
-        <div>
-          <Loader />
-        </div>
+        <ChaptersPanelLoader />
       )}
     </div>
   );
