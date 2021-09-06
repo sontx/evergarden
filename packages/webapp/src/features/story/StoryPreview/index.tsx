@@ -7,7 +7,6 @@ import { useLocation } from "react-router-dom";
 import defaultThumbnail from "../../../images/default-cover.png";
 import { LazyImageEx } from "../../../components/LazyImageEx";
 import { InfoGrid } from "../InfoGrid";
-import { ChapterList } from "../../chapters/ChapterList1";
 import { useStory } from "../hooks/useStory";
 import { StorySubtitle } from "../StorySubtitle";
 import { StoryDescription } from "../StoryDescription";
@@ -16,11 +15,21 @@ import { FormattedMessage } from "react-intl";
 import { CuteLoader } from "../../../components/CuteLoader";
 import { useAppSelector } from "../../../app/hooks";
 import { selectIsDarkMode } from "../../global/globalSlice";
+import { ChaptersPanel } from "../../chapters/ChaptersPanel";
+import { useGoReading } from "../../../hooks/navigation/useGoReading";
 
 export function StoryPreview({ slug }: { slug: string }) {
   const { data: story } = useStory(slug);
   const { state = {} } = useLocation() as any;
   const darkMode = useAppSelector(selectIsDarkMode);
+  const gotoReading = useGoReading();
+
+  const handleGoReading = useCallback(
+    (chapterNo: number) => {
+      gotoReading(slug, chapterNo);
+    },
+    [gotoReading, slug],
+  );
 
   const handleExpandPanel = useCallback((element) => {
     if (element) {
@@ -43,7 +52,7 @@ export function StoryPreview({ slug }: { slug: string }) {
 
   return story ? (
     <div className="story-preview">
-      <Panel bodyFill>
+      <Panel bodyFill className="story-header">
         <LazyImageEx
           src={story.cover}
           defaultSrc={defaultThumbnail}
@@ -63,7 +72,7 @@ export function StoryPreview({ slug }: { slug: string }) {
         header={<FormattedMessage id="chaptersPanelTitle" />}
         collapsible
       >
-        <ChapterList story={story} />
+        <ChaptersPanel slug={slug} sort="desc" onClick={handleGoReading} />
       </Panel>
       <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
       <Panel

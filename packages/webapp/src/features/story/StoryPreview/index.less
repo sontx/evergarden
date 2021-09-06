@@ -1,15 +1,18 @@
 .story-preview {
-  .rs-panel {
-    border-radius: 0 !important;
+  .story-header {
+    .rs-panel {
+      border-radius: 0 !important;
+    }
+
+    .rs-panel-heading {
+      padding: 15px 10px 2px;
+    }
+
+    .rs-panel-body:not(.rs-panel-body-fill) {
+      padding: 0 10px 10px !important;
+    }
   }
 
-  .rs-panel-heading {
-    padding: 15px 10px 2px;
-  }
-
-  .rs-panel-body:not(.rs-panel-body-fill) {
-    padding: 0 10px 10px !important;
-  }
 
   img {
     width: 100%;
@@ -18,35 +21,25 @@
     height: 30vh;
   }
 
-  .rs-list-item {
-    box-shadow: unset !important;
-  }
-
-  .rs-list {
-    margin-bottom: 12px;
-    box-shadow: unset !important;
-  }
-
   .rs-divider {
     margin-left: 10px;
     margin-right: 10px;
   }
 
+  .comment-panel,
   .chapter-panel {
-    .rs-panel-heading {
-      padding-top: 8px;
+    > .rs-panel-heading {
+      padding: 8px 10px 0;
     }
 
-    .rs-panel-heading::before {
+    > .rs-panel-heading::before {
       top: 8px !important;
       right: 10px !important;
     }
-  }
 
-  .comment-panel {
-    .rs-panel-heading::before {
-      top: 16px !important;
-      right: 10px !important;
+    > .rs-panel-body {
+      padding: 10px;
+      margin-top: 10px;
     }
   }
 }
