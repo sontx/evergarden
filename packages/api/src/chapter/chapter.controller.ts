@@ -138,12 +138,13 @@ export class ChapterController {
     @Body() chapter: UpdateChapterDto,
     @Req() req,
   ): Promise<GetChapterDto> {
+    const story = await this.storyService.getStory(storyId);
+    if (!isOwnerOrGod(req, story)) {
+      throw new ForbiddenException();
+    }
     const currentChapter = await this.chapterService.getChapterByNo(storyId, chapterNo);
     if (!currentChapter) {
       throw new NotFoundException();
-    }
-    if (!isOwnerOrGod(req, currentChapter)) {
-      throw new ForbiddenException();
     }
     return this.chapterService.updateChapter(currentChapter, chapter, req.user);
   }

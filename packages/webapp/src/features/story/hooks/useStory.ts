@@ -4,11 +4,17 @@ import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 import { fetchStory } from "../storyAPI";
 import { useStoryHistory } from "../../histories/hooks/useStoryHistory";
 
-export function useStory(slug: string, options?: UseQueryOptions<GetStoryDto>) {
+export function useStory(
+  slug: string | undefined,
+  options?: UseQueryOptions<GetStoryDto>,
+) {
   const { data, ...rest } = useSimpleQuery(
     ["story", slug],
-    () => fetchStory(slug),
-    options,
+    () => fetchStory(slug || ""),
+    {
+      enabled: !!slug,
+      ...(options || {}),
+    },
   );
   const story = useStoryHistory(data);
   return { ...rest, data: story };

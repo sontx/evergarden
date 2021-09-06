@@ -1,71 +1,37 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectStory } from "../../features/story-editor/storyEditorSlice";
 import { useParams } from "react-router-dom";
-import { withUpdateStory } from "../StoryEditor/withUpdateStory";
 import { UserPage } from "../../components/UserPage";
-import React, { useCallback, useEffect } from "react";
-import {
-  fetchChapterAsync,
-  selectChapter,
-  setChapter,
-} from "../../features/chapter-editor/chapterEditorSlice";
+import React, { useCallback } from "react";
 import { Icon, IconButton } from "rsuite";
-import { ChapterEditor } from "../../features/chapter-editor/ChapterEditor";
 import { useGoReading } from "../../hooks/navigation/useGoReading";
 import { useGoUserChapterList } from "../../hooks/navigation/useGoUserChapterList";
-
-const Wrapper = withUpdateStory(UserPage);
+import { useIntl } from "react-intl";
+import { UpdateChapterEditor } from "../../features/chapter-editor/UpdateChapterEditor";
+import { CreateChapterEditor } from "../../features/chapter-editor/CreateChapterEditor";
 
 export function ChapterEditorPage() {
-  const story = useAppSelector(selectStory);
-  const chapter = useAppSelector(selectChapter);
-  const dispatch = useAppDispatch();
   const { url, chapterNo } = useParams<{ url: string; chapterNo: string }>();
+  const intl = useIntl();
   const gotoReading = useGoReading();
   const gotoUserChapterList = useGoUserChapterList();
 
-  useEffect(() => {
-    dispatch(setChapter(undefined));
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (story && isFinite(parseInt(chapterNo))) {
-      if (
-        chapter &&
-        chapter.storyId === story.id &&
-        chapter.chapterNo === parseInt(chapterNo)
-      ) {
-        return;
-      }
-      dispatch(
-        fetchChapterAsync({
-          storyId: story.id,
-          chapterNo: parseInt(chapterNo),
-        }),
-      );
-    }
-  }, [chapter, chapterNo, dispatch, story, url]);
-
   const handleBack = useCallback(() => {
-    gotoUserChapterList(story || url);
-  }, [gotoUserChapterList, story, url]);
+    gotoUserChapterList(url);
+  }, [gotoUserChapterList, url]);
 
   const handleView = useCallback(() => {
-    if (story) {
-      gotoReading(story, parseInt(chapterNo));
-    }
-  }, [chapterNo, gotoReading, story]);
+    gotoReading(url, parseInt(chapterNo));
+  }, [chapterNo, gotoReading, url]);
 
-  const mode = isFinite(parseInt(chapterNo)) ? "update" : "create";
-  const showChapterNo =
-    mode === "update" ? chapterNo : story ? (story.lastChapter || 0) + 1 : 0;
+  const isUpdate = !!chapterNo;
 
   return (
-    <Wrapper
-      title={mode === "update" ? `Update chapter ${chapterNo}` : "New chapter"}
+    <UserPage
+      title={intl.formatMessage({
+        id: isUpdate ? "pageTitleUpdateChapter" : "pageTitleCreateChapter",
+      })}
       action={
         <>
-          {mode === "update" && (
+          {isUpdate && (
             <IconButton
               onClick={handleView}
               appearance="link"
@@ -82,7 +48,11 @@ export function ChapterEditorPage() {
         </>
       }
     >
-      <ChapterEditor mode={mode} chapterNo={showChapterNo} />
-    </Wrapper>
+      {isUpdate ? (
+        <UpdateChapterEditor slug={url} chapterNo={parseInt(chapterNo)} />
+      ) : (
+        <CreateChapterEditor slug={url} />
+      )}
+    </UserPage>
   );
 }

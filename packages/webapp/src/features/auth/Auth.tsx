@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { loginOAuth2Async, selectStatus } from "./authSlice";
 import { useCallback, useEffect, useMemo } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import { isMobile } from "react-device-detect";
+import { isMobileOnly } from "react-device-detect";
 import GoogleLogin, {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
@@ -94,7 +94,7 @@ export function Auth() {
     <div className="login-container">
       <Panel
         className="panel"
-        style={isMobile ? { border: "unset" } : {}}
+        style={isMobileOnly ? { border: "unset" } : {}}
         bordered
         header={
           <div className="title">

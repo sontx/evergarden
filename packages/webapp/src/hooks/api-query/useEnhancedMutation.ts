@@ -16,7 +16,7 @@ export type EnhancedMutationOptions<
 export function useEnhancedMutation<TRequest = any, TResponse = any>(
   mutationKey: string,
   mutationFn: (data: TRequest) => Promise<TResponse>,
-  options: EnhancedMutationOptions<TRequest, TResponse>,
+  options?: EnhancedMutationOptions<TRequest, TResponse>,
 ) {
   const {
     onMutate,

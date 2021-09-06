@@ -5,7 +5,7 @@ import { EnhancedModal } from "../EnhancedModal";
 import { Button, ButtonGroup, Icon } from "rsuite";
 import { FormattedMessage } from "react-intl";
 import { ErrorPanel } from "../ErrorPanel";
-import { isMobile } from "react-device-detect";
+import { isMobileOnly } from "react-device-detect";
 
 export function ErrorHandler({ children }: { children: ReactNode }) {
   const location = useLocation<{
@@ -74,12 +74,12 @@ export function ErrorHandler({ children }: { children: ReactNode }) {
           className="error-handler"
           backdrop
           center
-          mobile={isMobile}
+          mobile={isMobileOnly}
           show
           title={<></>}
           onHide={closeErrorPanel}
           actions={
-            <ButtonGroup block justified={isMobile}>
+            <ButtonGroup block justified={isMobileOnly}>
               <Button size="sm" onClick={handleGoBack} appearance="primary">
                 <Icon icon="back-arrow" />
                 <FormattedMessage id="goBackButton" />

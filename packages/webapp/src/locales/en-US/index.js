@@ -17,6 +17,8 @@ export default {
   pageTitleReading: "Reading",
   pageTitleCreateStory: "New story",
   pageTitleUpdateStory: "Update story",
+  pageTitleCreateChapter: "New chapter",
+  pageTitleUpdateChapter: "Update chapter",
   pageTitleChapters: "Chapters",
   loginWelcome: "Evergarden",
   loginSlogan: "Let's explore mysterious worlds",
@@ -78,4 +80,5 @@ export default {
   chaptersPanelTitle: "Chapters",
   chaptersRangeTitle: "Chapter {from} - {to}",
   filterChapterHint: "Filter chapter...",
+  editChapterContentHint: "Chapter content",
 };
