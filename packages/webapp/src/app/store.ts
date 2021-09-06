@@ -24,8 +24,6 @@ import chaptersReducer from "../features/chapters/chaptersSlice";
 import chapterReducer from "../features/chapter/chapterSlice";
 import followingReducer from "../features/following/followingSlice";
 import searchReducer from "../features/search/searchSlice";
-import storyEditorReducer from "../features/story-editor/storyEditorSlice";
-import chapterEditorReducer from "../features/chapter-editor/chapterEditorSlice";
 import authorsReducer from "../features/authors/authorsSlice";
 import genresReducer from "../features/genres/genresSlice";
 import userStoriesReducer from "../features/user-stories/userStoriesSlice";
@@ -47,8 +45,6 @@ const reducers = combineReducers({
   login: authReducer,
   global: globalReducer,
   search: searchReducer,
-  storyEditor: storyEditorReducer,
-  chapterEditor: chapterEditorReducer,
   authors: authorsReducer,
   genres: genresReducer,
   userStories: userStoriesReducer,

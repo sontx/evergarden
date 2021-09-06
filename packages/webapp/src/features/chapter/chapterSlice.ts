@@ -17,61 +17,14 @@ const initialState: ChapterState = {
   status: "none",
 };
 
-export const fetchChapterAsync = createAsyncThunk(
-  "chapter/fetch",
-  async (
-    { storyId, chapterNo }: { storyId: number; chapterNo: number },
-    { rejectWithValue },
-  ) => {
-    return catchRequestError(async () => {
-      if (cachedNextChapter) {
-        if (
-          cachedNextChapter.storyId === storyId &&
-          cachedNextChapter.chapterNo === chapterNo
-        ) {
-          return cachedNextChapter;
-        }
-      }
-      return await fetchChapter(storyId, chapterNo);
-    }, rejectWithValue);
-  },
-);
-
-export const fetchNextChapterAsync = createAsyncThunk(
-  "chapter/fetchNext",
-  async (option: { storyId: number; chapterNo: number }) => {
-    cachedNextChapter = await fetchChapter(option.storyId, option.chapterNo);
-  },
-);
-
 export const chapterSlice = createSlice({
   name: "chapter",
   initialState,
   reducers: {
-    setChapter: (state, { payload }) => {
-      state.chapter = payload;
-      if (!payload) {
-        state.status = "none";
-      }
-    },
-  },
-  extraReducers: {
-    [`${fetchChapterAsync.pending}`]: (state) => {
-      state.errorMessage = undefined;
-      state.status = "processing";
-    },
-    [`${fetchChapterAsync.fulfilled}`]: (state, { payload }) => {
-      state.chapter = payload;
-      state.status = "success";
-    },
-    [`${fetchChapterAsync.rejected}`]: (state, { payload }) => {
-      state.errorMessage = payload;
-      state.status = "error";
-    },
+
   },
 });
 
-export const { setChapter } = chapterSlice.actions;
 
 export const selectChapter = (state: RootState) => state.chapter.chapter;
 export const selectStatus = (state: RootState) => state.chapter.status;
