@@ -72,7 +72,7 @@ export function StoryPreview({ slug }: { slug: string }) {
         header={<FormattedMessage id="chaptersPanelTitle" />}
         collapsible
       >
-        <ChaptersPanel slug={slug} sort="desc" onClick={handleGoReading} />
+        <ChaptersPanel slug={slug} hasFilterBar onClick={handleGoReading} />
       </Panel>
       <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
       <Panel
