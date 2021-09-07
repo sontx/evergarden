@@ -20,6 +20,7 @@ import { useSyncHistory } from "../hooks/useSyncHistory";
 import { usePrefetchNextChapter } from "../hooks/usePrefetchNextChapter";
 import { CuteLoader } from "../../../components/CuteLoader";
 import { selectIsDarkMode } from "../../global/globalSlice";
+import classNames from "classnames";
 
 const Renderer = withUserSettings(ReadingRenderer);
 
@@ -66,8 +67,8 @@ export function ReadingPanel({
       {story && chapter ? (
         <>
           <Animation.Bounce in>
-            {(animationProps, ref) => (
-              <div ref={ref} {...animationProps}>
+            {({className, ...rest}, ref) => (
+              <div ref={ref} {...rest} className={classNames(className, "reading-panel-animation")}>
                 <Panel
                   className="reading-panel-header"
                   style={{ fontFamily: getFont(settings.readingFont).family }}

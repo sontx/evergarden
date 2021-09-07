@@ -17,7 +17,7 @@ export function Reading() {
   const settings = useAppSelector(selectUserSettings) || defaultUserSettings;
 
   return (
-    <AppContainer showBackTop>
+    <AppContainer showBackTop className="reading-page">
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppContent noPadding>
         <ReadingPanel slug={url} chapterNo={parseInt(`${chapterNo}`)} />
