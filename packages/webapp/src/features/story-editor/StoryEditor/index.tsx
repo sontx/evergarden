@@ -7,7 +7,7 @@ import {
   RadioGroup,
   Schema,
 } from "rsuite";
-import { AuthorsPicker } from "../../authors/AuthorsPicker";
+import { AuthorsPicker } from "../../authors/AuthorPicker";
 import { GenresPicker } from "../../genres/GenresPicker";
 
 import {

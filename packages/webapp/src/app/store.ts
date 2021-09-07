@@ -21,7 +21,6 @@ import globalReducer from "../features/global/globalSlice";
 import storyReducer from "../features/story/storySlice";
 import followingReducer from "../features/following/followingSlice";
 import searchReducer from "../features/search/searchSlice";
-import authorsReducer from "../features/authors/authorsSlice";
 import userReducer from "../features/user/userSlice";
 import lastUpdatedReducer from "../features/last-updated/lastUpdatedSlice";
 import hotStoriesReducer from "../features/hot-stories/hotStoriesSlice";
@@ -37,7 +36,6 @@ const reducers = combineReducers({
   login: authReducer,
   global: globalReducer,
   search: searchReducer,
-  authors: authorsReducer,
   topViews: topViewsReducer,
   lastUpdated: lastUpdatedReducer,
   hotStories: hotStoriesReducer,

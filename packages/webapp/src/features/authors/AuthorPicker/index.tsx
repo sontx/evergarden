@@ -1,35 +1,16 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { searchAuthorAsync, selectAuthors, selectStatus } from "./authorsSlice";
 import { TagPicker } from "rsuite";
 // @ts-ignore
 import BarLoader from "react-bar-loader";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
-import "./authorsPicker.less";
 import { GetAuthorDto } from "@evergarden/shared";
-import { useDebouncedCallback } from "use-debounce";
+import { useDebounce } from "use-debounce";
+import { useSearchAuthors } from "../hooks/useSearchAuthors";
 
 export function AuthorsPicker({ onChange, value, ...rest }: any) {
-  const status = useAppSelector(selectStatus);
-  const authors = useAppSelector(selectAuthors);
-  const dispatch = useAppDispatch();
-
-  const searchDebounce = useDebouncedCallback(
-    (word: string) => {
-      dispatch(searchAuthorAsync(word));
-    },
-    300,
-    { trailing: true },
-  );
-
-  const handleSearch = useCallback(
-    (word) => {
-      if (word) {
-        searchDebounce(word);
-      }
-    },
-    [searchDebounce],
-  );
+  const [query, setQuery] = useState("");
+  const [debouncedQuery] = useDebounce((query || "").trim(), 300);
+  const { data: authors, isLoading } = useSearchAuthors(debouncedQuery);
 
   const handleChange = useCallback(
     (newValue) => {
@@ -50,7 +31,7 @@ export function AuthorsPicker({ onChange, value, ...rest }: any) {
         : item,
   );
 
-  for (const author of authors) {
+  for (const author of authors || []) {
     const found = mergedAuthors.find((item) => item.name === author.name);
     if (!found) {
       mergedAuthors.push(author);
@@ -73,9 +54,9 @@ export function AuthorsPicker({ onChange, value, ...rest }: any) {
         data={mergedAuthors}
         labelKey="name"
         valueKey="name"
-        onSearch={handleSearch}
+        onSearch={setQuery}
       />
-      {status === "processing" && <BarLoader className="bar-loader" height="1" />}
+      {isLoading && <BarLoader className="bar-loader" height="1" />}
     </div>
   );
 }
