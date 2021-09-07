@@ -36,7 +36,7 @@ export function InfoGrid(props: { story: GetStoryDto }) {
       {story.authors && (
         <>
           <label>Author(s)</label>
-          <span>
+          <span className="tags-group">
             {(story.authors || []).map((author) => (
               <Tag key={author.id}>
                 <Link
@@ -55,7 +55,7 @@ export function InfoGrid(props: { story: GetStoryDto }) {
       {story.genres && (
         <>
           <label>Genre(s)</label>
-          <span>
+          <span className="tags-group">
             {(story.genres || []).map((genre) => (
               <Tag key={genre.id}>
                 <Link

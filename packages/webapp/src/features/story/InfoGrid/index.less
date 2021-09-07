@@ -1,6 +1,6 @@
 .info-grid {
   display: grid;
-  grid-template-columns: max-content max-content;
+  grid-template-columns: max-content 1fr;
   grid-gap: 10px;
   font-size: @font-size-base - 1;
   margin-left: 10px;
@@ -24,5 +24,16 @@
 
   .status--ongoing {
     color: orange;
+  }
+
+  .tags-group {
+    margin-top: 5px;
+    .rs-tag {
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    .rs-tag + .rs-tag {
+      margin-left: 0;
+    }
   }
 }
