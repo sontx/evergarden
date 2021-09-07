@@ -1,6 +1,7 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
 import { useQueryClient } from "react-query";
 import { fetchChapter } from "../chapterAPI";
+import ms from "ms";
 
 export function usePrefetchNextChapter(
   story: GetStoryDto | undefined,
@@ -22,8 +23,8 @@ export function usePrefetchNextChapter(
           ],
           () => fetchChapter(story.id, nextChapterNo),
           {
-            staleTime: 1000 * 60 * 20,// 30m,
-            cacheTime: 1000 * 60 * 20,// 30m,
+            staleTime: ms("30m"),
+            cacheTime: ms("30m"),
           },
         )
         .then();

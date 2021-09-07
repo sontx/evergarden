@@ -2,6 +2,7 @@ import { GetChapterDto } from "@evergarden/shared";
 import { UseQueryOptions } from "react-query";
 import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 import { fetchChapter } from "../chapterAPI";
+import ms from "ms";
 
 export function useChapter(
   storyId: number | undefined,
@@ -14,7 +15,7 @@ export function useChapter(
     {
       ...(options || {}),
       enabled: typeof storyId === "number",
-      staleTime: 1000 * 60 * 20// 20m
+      staleTime: ms("20m")
     },
   );
 }

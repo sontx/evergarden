@@ -56,10 +56,11 @@ export function ChaptersPanel({
   const [filter, setFilter] = useState<number | undefined>();
   const [sort, setSort] = useState<SortType>(defaultSort || "desc");
   const lastChapter = useMemo(() => story?.lastChapter, [story?.lastChapter]);
-  const currentChapterNo = useMemo(() => story?.history?.currentChapterNo, [
-    story?.history?.currentChapterNo,
-  ]);
   const needShowCurrentChapter = useRef(currentChapterIntoView);
+  const currentChapterNo = useMemo(() => {
+    needShowCurrentChapter.current = true;
+    return story?.history?.currentChapterNo;
+  }, [story?.history?.currentChapterNo]);
 
   const unreadFrom =
     typeof currentChapterNo === "number" && currentChapterNo > 0
