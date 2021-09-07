@@ -1,7 +1,7 @@
 import { Icon, IconButton, InputGroup, InputNumber } from "rsuite";
 import { useCallback, useState } from "react";
 import { GetStoryDto } from "@evergarden/shared";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { useDebouncedCallback } from "use-debounce";
@@ -77,7 +77,7 @@ export function ChaptersToolBar({
             }
           }}
         >
-          <Icon icon="right" />
+          <FormattedMessage id="filterChapterConfirm"/>
         </InputGroup.Button>
       </InputGroup>
     </div>

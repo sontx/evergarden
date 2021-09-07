@@ -81,4 +81,5 @@ export default {
   chaptersRangeTitle: "Chapter {from} - {to}",
   filterChapterHint: "Filter chapter...",
   editChapterContentHint: "Chapter content",
+  filterChapterConfirm: "Go",
 };
