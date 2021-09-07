@@ -129,7 +129,7 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
               </InputGroup.Addon>
             )}
           </InputGroup>
-          {status === "processing" && <BarLoader color="#169de0" height="1" />}
+          {status === "processing" && <BarLoader className="bar-loader" height="1" />}
           <Backdrop onClick={onClose} className="searchbox-backdrop" />
         </div>
       )}

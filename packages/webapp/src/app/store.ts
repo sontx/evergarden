@@ -22,7 +22,6 @@ import storyReducer from "../features/story/storySlice";
 import followingReducer from "../features/following/followingSlice";
 import searchReducer from "../features/search/searchSlice";
 import authorsReducer from "../features/authors/authorsSlice";
-import genresReducer from "../features/genres/genresSlice";
 import userReducer from "../features/user/userSlice";
 import lastUpdatedReducer from "../features/last-updated/lastUpdatedSlice";
 import hotStoriesReducer from "../features/hot-stories/hotStoriesSlice";
@@ -39,7 +38,6 @@ const reducers = combineReducers({
   global: globalReducer,
   search: searchReducer,
   authors: authorsReducer,
-  genres: genresReducer,
   topViews: topViewsReducer,
   lastUpdated: lastUpdatedReducer,
   hotStories: hotStoriesReducer,

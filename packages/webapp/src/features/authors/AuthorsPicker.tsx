@@ -75,7 +75,7 @@ export function AuthorsPicker({ onChange, value, ...rest }: any) {
         valueKey="name"
         onSearch={handleSearch}
       />
-      {status === "processing" && <BarLoader color="#169de0" height="1" />}
+      {status === "processing" && <BarLoader className="bar-loader" height="1" />}
     </div>
   );
 }
