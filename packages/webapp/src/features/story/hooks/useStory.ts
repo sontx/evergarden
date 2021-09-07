@@ -1,8 +1,15 @@
 import { UseQueryOptions } from "react-query";
 import { GetStoryDto } from "@evergarden/shared";
 import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
-import { fetchStory } from "../storyAPI";
 import { useStoryHistory } from "../../histories/hooks/useStoryHistory";
+import api from "../../../utils/api";
+
+async function fetchStory(
+  idOrSlug: string | number,
+): Promise<GetStoryDto> {
+  const response = await api.get(`/api/stories/${idOrSlug}`);
+  return response.data;
+}
 
 export function useStory(
   slug: string | undefined,

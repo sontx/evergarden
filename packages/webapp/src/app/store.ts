@@ -18,7 +18,6 @@ import {
 } from "redux-persist/es/constants";
 import { createFilter } from "redux-persist-transform-filter";
 import globalReducer from "../features/global/globalSlice";
-import storyReducer from "../features/story/storySlice";
 import followingReducer from "../features/following/followingSlice";
 import searchReducer from "../features/search/searchSlice";
 import userReducer from "../features/user/userSlice";
@@ -32,7 +31,6 @@ import { QueryClient } from "react-query";
 const reducers = combineReducers({
   user: userReducer,
   followingStories: followingReducer,
-  story: storyReducer,
   login: authReducer,
   global: globalReducer,
   search: searchReducer,
