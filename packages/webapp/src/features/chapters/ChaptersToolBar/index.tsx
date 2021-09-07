@@ -6,8 +6,11 @@ import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { useDebouncedCallback } from "use-debounce";
 
+type SortType = "desc" | "asc";
+
 export function ChaptersToolBar({
   story,
+  sort,
   onJumpTo,
   onSortChange,
   onFilterChange,
@@ -15,23 +18,13 @@ export function ChaptersToolBar({
   ...rest
 }: {
   story?: GetStoryDto;
+  sort: SortType;
   onJumpTo?: (chapterNo: number) => void;
-  onSortChange?: (isDesc: boolean) => void;
+  onSortChange?: (sort: SortType) => void;
   onFilterChange?: (chapterNo: number) => void;
 } & StandardProps) {
-  const [isDesc, setDesc] = useState(true);
   const [chapterNo, setChapterNo] = useState();
   const intl = useIntl();
-
-  const handleSortClick = useCallback(() => {
-    setDesc((prev) => {
-      const newValue = !prev;
-      if (onSortChange) {
-        onSortChange(newValue);
-      }
-      return newValue;
-    });
-  }, [onSortChange]);
 
   const filterFn = useDebouncedCallback((value) => {
     if (onFilterChange) {
@@ -53,8 +46,16 @@ export function ChaptersToolBar({
     <div className={classNames("chapters-toolbar", className)} {...rest}>
       <IconButton
         className="sort-button"
-        icon={<Icon icon={isDesc ? "sort-numeric-desc" : "sort-numeric-asc"} />}
-        onClick={handleSortClick}
+        icon={
+          <Icon
+            icon={sort === "desc" ? "sort-numeric-desc" : "sort-numeric-asc"}
+          />
+        }
+        onClick={() => {
+          if (onSortChange) {
+            onSortChange(sort === "asc" ? "desc" : "asc");
+          }
+        }}
       />
       <InputGroup>
         <InputNumber
@@ -77,7 +78,7 @@ export function ChaptersToolBar({
             }
           }}
         >
-          <FormattedMessage id="filterChapterConfirm"/>
+          <FormattedMessage id="filterChapterConfirm" />
         </InputGroup.Button>
       </InputGroup>
     </div>

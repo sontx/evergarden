@@ -1,10 +1,11 @@
 import { useStory } from "../../story/hooks/useStory";
 import { Icon, PanelGroup } from "rsuite";
 import { ChapterRange } from "../ChapterRange";
-import { Fragment, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { ChaptersPanelLoader } from "../ChaptersPanelLoader";
+import { ChaptersToolBar } from "../ChaptersToolBar";
 
 const MAX_CHAPTERS_PER_GROUP =
   process.env.NODE_ENV === "development" ? 10 : 100;
@@ -12,18 +13,20 @@ const MAX_CHAPTERS_PER_GROUP =
 export function ChaptersPanel({
   slug,
   className,
-  sort,
-  filter,
   onClick,
+  defaultSort,
+  hasFilterBar,
   ...rest
 }: {
   slug: string;
-  sort: "asc" | "desc";
-  filter?: number;
   onClick?: (chapterNo: number) => void;
+  defaultSort?: "desc" | "asc";
+  hasFilterBar?: boolean;
 } & StandardProps) {
   const { data: story } = useStory(slug);
   const [active, setActive] = useState(0);
+  const [filter, setFilter] = useState<number | undefined>();
+  const [sort, setSort] = useState<"desc" | "asc">(defaultSort || "desc");
 
   let ranges =
     typeof story?.lastChapter === "number" &&
@@ -43,6 +46,16 @@ export function ChaptersPanel({
 
   return (
     <div className={classNames(className, "chapters-panel")} {...rest}>
+      {hasFilterBar && (
+        <ChaptersToolBar
+          onFilterChange={setFilter}
+          story={story}
+          sort={sort}
+          onSortChange={setSort}
+          onJumpTo={onClick}
+          style={{ marginBottom: "20px" }}
+        />
+      )}
       {story ? (
         <PanelGroup accordion activeKey={active} onSelect={setActive}>
           {ranges &&

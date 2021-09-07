@@ -50,11 +50,6 @@ export function ChapterListModal(props: {
         closeButton={false}
         style={{ paddingRight: 0, display: "flex" }}
       >
-        <ChaptersToolBar
-          story={story}
-          onJumpTo={handleChapterClick}
-          onSortChange={setDesc}
-        />
         <div style={{ padding: "8px 0 8px 15px" }} onClick={onClose}>
           <Icon icon="close" />
         </div>

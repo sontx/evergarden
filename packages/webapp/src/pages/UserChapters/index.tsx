@@ -1,8 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { Icon, IconButton } from "rsuite";
 import { UserPage } from "../../components/UserPage";
-
-import { ChaptersToolBar } from "../../features/chapters/ChaptersToolBar";
 import { useGoEditStory } from "../../hooks/navigation/useGoEditStory";
 import { useGoCreateChapter } from "../../hooks/navigation/useGoCreateChapter";
 import { useGoEditChapter } from "../../hooks/navigation/useGoEditChapter";
@@ -14,8 +12,6 @@ import { useIntl } from "react-intl";
 export function UserChaptersPage() {
   const { url } = useParams<{ url: string }>();
   const { data: story } = useStory(url);
-  const [isDesc, setDesc] = useState(true);
-  const [filter, setFilter] = useState<number | undefined>(undefined);
   const gotoUserStory = useGoEditStory();
   const gotoCreateChapter = useGoCreateChapter();
   const gotoEditChapter = useGoEditChapter();
@@ -62,19 +58,7 @@ export function UserChaptersPage() {
         </>
       }
     >
-      <ChaptersToolBar
-        onFilterChange={setFilter}
-        story={story}
-        onSortChange={setDesc}
-        onJumpTo={handleEditChapter}
-        style={{ marginBottom: "20px" }}
-      />
-      <ChaptersPanel
-        slug={url}
-        sort={isDesc ? "desc" : "asc"}
-        filter={filter}
-        onClick={handleEditChapter}
-      />
+      <ChaptersPanel slug={url} onClick={handleEditChapter} hasFilterBar />
     </UserPage>
   );
 }
