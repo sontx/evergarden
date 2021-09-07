@@ -5,7 +5,7 @@ import React from "react";
 
 export function AppLogo() {
   return (
-    <Link to={{ pathname: "/" }} className="app-logo no-link">
+    <Link to={{ pathname: "/" }} className="app-logo">
       <Avatar src={logo} />
       <h4>Evergarden</h4>
     </Link>
