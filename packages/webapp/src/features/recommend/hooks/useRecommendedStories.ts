@@ -1,6 +1,7 @@
 import api from "../../../utils/api";
 import { GetStoryDto, PaginationResult } from "@evergarden/shared";
-import { useQuery, UseQueryOptions } from "react-query";
+import { UseQueryOptions } from "react-query";
+import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 
 async function fetchRecommendedStories(): Promise<GetStoryDto[]> {
   const response = await api.get<PaginationResult<GetStoryDto>>(
@@ -15,7 +16,7 @@ async function fetchRecommendedStories(): Promise<GetStoryDto[]> {
 export default function useRecommendedStories(
   options?: UseQueryOptions<GetStoryDto[]>,
 ) {
-  return useQuery<GetStoryDto[]>(
+  return useSimpleQuery<GetStoryDto[]>(
     ["recommended-stories"],
     () => fetchRecommendedStories(),
     options,
