@@ -7,7 +7,6 @@ import {
 import { PersistConfig, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
-import counterReducer from "../features/counter/counterSlice";
 import authReducer from "../features/auth/authSlice";
 import {
   FLUSH,
@@ -20,13 +19,10 @@ import {
 import { createFilter } from "redux-persist-transform-filter";
 import globalReducer from "../features/global/globalSlice";
 import storyReducer from "../features/story/storySlice";
-import chaptersReducer from "../features/chapters/chaptersSlice";
-import chapterReducer from "../features/chapter/chapterSlice";
 import followingReducer from "../features/following/followingSlice";
 import searchReducer from "../features/search/searchSlice";
 import authorsReducer from "../features/authors/authorsSlice";
 import genresReducer from "../features/genres/genresSlice";
-import userStoriesReducer from "../features/user-stories/userStoriesSlice";
 import userReducer from "../features/user/userSlice";
 import lastUpdatedReducer from "../features/last-updated/lastUpdatedSlice";
 import hotStoriesReducer from "../features/hot-stories/hotStoriesSlice";
@@ -36,18 +32,14 @@ import newStoriesReducer from "../features/new-stories/newStoriesSlice";
 import { QueryClient } from "react-query";
 
 const reducers = combineReducers({
-  counter: counterReducer,
   user: userReducer,
   followingStories: followingReducer,
   story: storyReducer,
-  chapters: chaptersReducer,
-  chapter: chapterReducer,
   login: authReducer,
   global: globalReducer,
   search: searchReducer,
   authors: authorsReducer,
   genres: genresReducer,
-  userStories: userStoriesReducer,
   topViews: topViewsReducer,
   lastUpdated: lastUpdatedReducer,
   hotStories: hotStoriesReducer,

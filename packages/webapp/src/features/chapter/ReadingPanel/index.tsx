@@ -69,6 +69,7 @@ export function ReadingPanel({
             {(animationProps, ref) => (
               <div ref={ref} {...animationProps}>
                 <Panel
+                  className="reading-panel-header"
                   style={{ fontFamily: getFont(settings.readingFont).family }}
                   header={chapter && <ReadingHeader chapter={chapter} />}
                 >

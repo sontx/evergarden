@@ -1,7 +1,24 @@
-import { fetchRangeChapters } from "../chaptersAPI";
 import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 import { UseQueryOptions } from "react-query";
-import { GetPreviewChapter } from "@evergarden/shared";
+import { GetChapterDto, GetPreviewChapter } from "@evergarden/shared";
+import api from "../../../utils/api";
+
+async function fetchRangeChapters(
+  storyId: number,
+  skip: number,
+  limit: number,
+  sort: string,
+): Promise<GetChapterDto[]> {
+  const response = await api.get(`/api/stories/${storyId}/chapters`, {
+    params: {
+      skip,
+      limit,
+      includesContent: false,
+      sort,
+    },
+  });
+  return response.data.items;
+}
 
 export function useChapters(
   storyId: number | undefined,
@@ -11,15 +28,7 @@ export function useChapters(
 ) {
   return useSimpleQuery(
     ["chapters", storyId, { from, to }],
-    async () => {
-      const data = await fetchRangeChapters(
-        storyId as number,
-        from - 1,
-        to - from + 1,
-        "asc",
-      );
-      return data.items;
-    },
+    () => fetchRangeChapters(storyId as number, from - 1, to - from + 1, "asc"),
     {
       enabled: typeof storyId === "number",
       ...(options || {}),

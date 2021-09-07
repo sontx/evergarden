@@ -9,9 +9,12 @@ import {
   Icon,
 } from "rsuite";
 import { SettingPanel } from "../../settings/SettingPanel";
-import { ChapterListModal } from "../../chapters/ChapterListModal";
 import { useGoNextChapter } from "../hooks/useGoNextChapter";
 import { useGoBackChapter } from "../hooks/useGoBackChapter";
+import { useToggle } from "../../../hooks/useToggle";
+import { FullPanel } from "../../../components/FullPanel";
+import { ChaptersPanel } from "../../chapters/ChaptersPanel";
+import { useGoReading } from "../../../hooks/navigation/useGoReading";
 
 export function BottomNavigation({
   story,
@@ -20,9 +23,10 @@ export function BottomNavigation({
   story: GetStoryDto;
   chapter: GetChapterDto;
 }) {
-  const [showChapterList, setShowChapterList] = useState(false);
+  const [showChapters, toggleShowChapters] = useToggle();
   const gotoNextChapter = useGoNextChapter();
   const gotoBackChapter = useGoBackChapter();
+  const gotoReading = useGoReading();
 
   const handleNext = useCallback(() => {
     gotoNextChapter(story, chapter);
@@ -31,13 +35,6 @@ export function BottomNavigation({
   const handleBack = useCallback(() => {
     gotoBackChapter(story, chapter);
   }, [chapter, gotoBackChapter, story]);
-
-  const handleShowChapters = useCallback(() => {
-    setShowChapterList(true);
-  }, []);
-  const handleHideChapters = useCallback(() => {
-    setShowChapterList(false);
-  }, []);
 
   const [showSettingsPopup, setShowSettingsPopup] = useState(false);
   const handleShowSettings = useCallback(() => {
@@ -58,10 +55,7 @@ export function BottomNavigation({
       </Animation.Collapse>
       <ButtonToolbar>
         <ButtonGroup justified>
-          <Button
-            onClick={handleBack}
-            disabled={chapter.chapterNo <= 1}
-          >
+          <Button onClick={handleBack} disabled={chapter.chapterNo <= 1}>
             <Icon size="lg" icon="arrow-circle-o-left" />
           </Button>
           <Button
@@ -70,7 +64,7 @@ export function BottomNavigation({
           >
             <Icon size="lg" icon="arrow-circle-right" />
           </Button>
-          <Button onClick={handleShowChapters}>
+          <Button onClick={toggleShowChapters}>
             <Icon size="lg" icon="list-ol" />
           </Button>
           <Button onClick={handleShowSettings}>
@@ -78,7 +72,16 @@ export function BottomNavigation({
           </Button>
         </ButtonGroup>
       </ButtonToolbar>
-      <ChapterListModal show={showChapterList} onClose={handleHideChapters} />
+      {showChapters && (
+        <FullPanel title={story.title} onClose={toggleShowChapters}>
+          <ChaptersPanel
+            slug={story.url}
+            hasFilterBar
+            currentChapterIntoView
+            onClick={(chapterNo) => gotoReading(story, chapterNo)}
+          />
+        </FullPanel>
+      )}
     </div>
   );
 }
