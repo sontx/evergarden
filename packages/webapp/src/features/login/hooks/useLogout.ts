@@ -11,9 +11,9 @@ async function logout() {
   }
 }
 
-export function useLogout() {
+export function useLogout(showLoading = true) {
   const queryClient = useQueryClient();
-  return useEnhancedMutation("logout", logout, {
+  return useEnhancedMutation<void>("logout", logout, {
     onSettled: async () => {
       localStorage.removeItem("isLoggedIn");
       await queryClient.resetQueries("user");

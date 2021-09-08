@@ -6,6 +6,9 @@ import { UserMenu } from "../UserMenu";
 import { useToggle } from "../../../hooks/useToggle";
 import { useGoLogin } from "../../../hooks/navigation/useGoLogin";
 import { useUser } from "../../../features/user/hooks/useUser";
+import { withActionHandler } from "../UserMenu/withActionHandler";
+
+const UserMenuWrapper = withActionHandler(UserMenu);
 
 export function Toolbar() {
   const { data: user } = useUser();
@@ -50,7 +53,7 @@ export function Toolbar() {
           </>
         )}
       </Nav>
-      {showMenu && <UserMenu onClose={toggleShowMenu} />}
+      <UserMenuWrapper onClose={toggleShowMenu} show={showMenu} />
       {showSearchBox && <SearchBox onClose={() => setShowSearchBox(false)} />}
     </>
   );

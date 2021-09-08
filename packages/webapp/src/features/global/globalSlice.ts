@@ -5,6 +5,7 @@ export interface GlobalSliceState {
   isFloatingHeader: boolean;
   isShowingOverlay?: boolean;
   isDarkMode: boolean;
+  isShowingFullScreenLoader?: boolean;
 }
 
 const initialState: GlobalSliceState = {
@@ -25,6 +26,9 @@ export const globalSlice = createSlice({
     setDarkMode: (state, { payload }) => {
       state.isDarkMode = !!payload;
     },
+    setShowingFullScreenLoader: (state, { payload }) => {
+      state.isShowingFullScreenLoader = !!payload;
+    },
   },
 });
 
@@ -33,11 +37,14 @@ export const selectIsFloatingHeader = (state: RootState) =>
 export const selectIsShowingOverlay = (state: RootState) =>
   state.global.isShowingOverlay;
 export const selectIsDarkMode = (state: RootState) => state.global.isDarkMode;
+export const selectIsShowingFullScreenLoader = (state: RootState) =>
+  state.global.isShowingFullScreenLoader;
 
 export const {
   setFloatingHeader,
   setIsShowingOverlay,
   setDarkMode,
+  setShowingFullScreenLoader,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

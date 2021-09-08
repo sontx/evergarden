@@ -21,10 +21,14 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { queryClient } from "./app/store";
 import { ErrorHandler } from "./components/ErrorHandler";
 import { ThemeProvider } from "./ThemeProvider";
+import { FullScreenLoader } from "./components/FullScreenLoader";
+import { withGlobalFullScreenLoader } from "./components/FullScreenLoader/withGlobalFullScreenLoader";
 
 import "./index.less";
 import "./styles/dark/index.less";
 import "./styles/light/index.less";
+
+const GlobalLoader = withGlobalFullScreenLoader(FullScreenLoader);
 
 export default function App() {
   return (
@@ -91,6 +95,7 @@ export default function App() {
                     <ErrorPage code={404} />
                   </Route>
                 </Switch>
+                <GlobalLoader />
               </ErrorHandler>
             </Router>
           </ThemeProvider>

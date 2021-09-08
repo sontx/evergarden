@@ -8,28 +8,28 @@ import {
   selectIsDarkMode,
   setDarkMode,
 } from "../../../features/global/globalSlice";
-import { useGoFollowing } from "../../../hooks/navigation/useGoFollowing";
-import { useGoHistory } from "../../../hooks/navigation/useGoHistory";
-import { useGoUserStoryList } from "../../../hooks/navigation/useGoUserStoryList";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
-import { useLogout } from "../../../features/login/hooks/useLogout";
 import { useUser } from "../../../features/user/hooks/useUser";
 
 export function UserMenu({
   onClose,
+  onFollowClick,
+  onHistoryClick,
+  onUserStoriesClick,
+  onLogoutClick,
   className,
   ...rest
 }: {
   onClose: () => void;
+  onFollowClick: () => void;
+  onHistoryClick: () => void;
+  onUserStoriesClick: () => void;
+  onLogoutClick: () => void;
 } & StandardProps) {
   const { data: user } = useUser();
   const dispatch = useAppDispatch();
   const isDarkMode = useAppSelector(selectIsDarkMode);
-  const gotoFollowing = useGoFollowing();
-  const gotoHistory = useGoHistory();
-  const gotoUserStoryList = useGoUserStoryList();
-  const { mutate: logout } = useLogout();
 
   return (
     <GridMenu
@@ -43,18 +43,18 @@ export function UserMenu({
           <GridMenuItem icon={<Icon icon="user" />}>
             {user.fullName}
           </GridMenuItem>
-          <GridMenuItem icon={<Icon icon="star" />} onClick={gotoFollowing}>
+          <GridMenuItem icon={<Icon icon="star" />} onClick={onFollowClick}>
             <FormattedMessage id="userMenuFollowing" />
           </GridMenuItem>
           <GridMenuItem
             icon={<Icon icon="address-book" />}
-            onClick={gotoUserStoryList}
+            onClick={onUserStoriesClick}
           >
             <FormattedMessage id="userMenuMyStories" />
           </GridMenuItem>
         </>
       )}
-      <GridMenuItem icon={<Icon icon="history" />} onClick={gotoHistory}>
+      <GridMenuItem icon={<Icon icon="history" />} onClick={onHistoryClick}>
         <FormattedMessage id="userMenuHistory" />
       </GridMenuItem>
       <GridMenuItem icon={<Icon icon="info" />} className="contact">
@@ -72,7 +72,7 @@ export function UserMenu({
         <GridMenuItem
           icon={<Icon icon="sign-out" />}
           className="logout"
-          onClick={logout}
+          onClick={onLogoutClick}
         >
           <FormattedMessage id="userMenuLogout" />
         </GridMenuItem>

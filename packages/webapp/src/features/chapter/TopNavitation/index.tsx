@@ -9,6 +9,7 @@ import { useToggle } from "../../../hooks/useToggle";
 import { useOverlay } from "../../../hooks/useOverlay";
 import { UserMenu } from "../../../components/AppHeader/UserMenu";
 import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
+import { withActionHandler } from "../../../components/AppHeader/UserMenu/withActionHandler";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -19,6 +20,7 @@ function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
 }
 
 const FollowButtonWrapper = withFollowSync(FollowButton);
+const UserMenuWrapper = withActionHandler(UserMenu);
 
 export function TopNavigation({
   story,
@@ -91,15 +93,14 @@ export function TopNavigation({
           </ButtonGroup>
         </ButtonToolbar>
       )}
-      {showMenu && (
-        <UserMenu
-          onClose={toggleShowMenu}
-          style={{
-            ...menuStyle,
-            paddingTop: "1px",
-          }}
-        />
-      )}
+      <UserMenuWrapper
+        onClose={toggleShowMenu}
+        show={showMenu}
+        style={{
+          ...menuStyle,
+          paddingTop: "1px",
+        }}
+      />
     </div>
   );
 }
