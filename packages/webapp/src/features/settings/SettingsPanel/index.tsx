@@ -1,36 +1,31 @@
-import { CustomSlider } from "../../components/CustomSlider";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { CustomSlider } from "../../../components/CustomSlider";
 import { SelectPicker } from "rsuite";
 import { useCallback } from "react";
-import { selectUserSettings, setUserSettings } from "../user/userSlice";
-import {
-  defaultUserSettings,
-  FONTS,
-  getFont,
-  SIZES,
-} from "../../utils/user-settings-config";
+import { FONTS, getFont, SIZES } from "../../../utils/user-settings-config";
+import { useUserSettings } from "../hooks/useUserSettings";
+import { useUpdateUserSettings } from "../hooks/useUpdateUserSettings";
 
-export function SettingPanel() {
-  const dispatch = useAppDispatch();
-  const settings = useAppSelector(selectUserSettings) || defaultUserSettings;
+export function SettingsPanel() {
+  const { data: settings } = useUserSettings();
+  const { mutate: updateSettings } = useUpdateUserSettings();
 
   const handleFontChange = useCallback(
     (value) => {
-      dispatch(setUserSettings({ readingFont: value.name }));
+      updateSettings({ readingFont: value.name });
     },
-    [dispatch],
+    [updateSettings],
   );
   const handleSizeChange = useCallback(
     (value: any) => {
-      dispatch(setUserSettings({ readingFontSize: value }));
+      updateSettings({ readingFontSize: value });
     },
-    [dispatch],
+    [updateSettings],
   );
   const handleLineSpacingChange = useCallback(
     (value: any) => {
-      dispatch(setUserSettings({ readingLineSpacing: value }));
+      updateSettings({ readingLineSpacing: value });
     },
-    [dispatch],
+    [updateSettings],
   );
 
   return (

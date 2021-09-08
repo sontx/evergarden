@@ -11,6 +11,6 @@ async function fetchAllGenres(): Promise<GetGenreDto[]> {
 export function useGenres() {
   return useSimpleQuery("genres", fetchAllGenres, {
     staleTime: ms("4h"),
-    cacheTime: ms("4h"),
+    cacheTime: ms("5h"),
   });
 }

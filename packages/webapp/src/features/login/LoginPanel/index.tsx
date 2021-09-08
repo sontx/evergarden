@@ -1,10 +1,7 @@
 import { Alert, Button, Icon, Panel } from "rsuite";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 // @ts-ignore
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-import "./auth.less";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { loginOAuth2Async, selectStatus } from "./authSlice";
 import { useCallback, useEffect, useMemo } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { isMobileOnly } from "react-device-detect";
@@ -12,6 +9,8 @@ import GoogleLogin, {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
+import { useOAuthFacebook } from "../hooks/useOAuthFacebook";
+import { useOAuthGoogle } from "../hooks/useOAuthGoogle";
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
 const FACEBOOK_CLIENT_ID = process.env.REACT_APP_FACEBOOK_CLIENT_ID || "";
@@ -29,21 +28,28 @@ function isGoogleLoginResponse(
   return !!(response as any).accessToken;
 }
 
-export function Auth() {
-  const intl = useIntl();
-
-  const status = useAppSelector(selectStatus);
+export function LoginPanel() {
   const location = useLocation();
   const history = useHistory();
-  const dispatch = useAppDispatch();
+
+  const {
+    mutate: loginGg,
+    isSuccess: isLoginGgSuccess,
+    isLoading: isLoginingGg,
+  } = useOAuthGoogle();
+  const {
+    mutate: loginFb,
+    isSuccess: isLoginFbSuccess,
+    isLoading: isLoginingFb,
+  } = useOAuthFacebook();
 
   const handleLoginGoogleSuccess = useCallback(
     (data: GoogleLoginResponse | GoogleLoginResponseOffline) => {
       if (isGoogleLoginResponse(data)) {
-        dispatch(loginOAuth2Async({ token: data.tokenId, provider: "google" }));
+        loginGg(data.tokenId);
       }
     },
-    [dispatch],
+    [loginGg],
   );
 
   const handleLoginGoogleFailure = useCallback((error) => {
@@ -59,16 +65,14 @@ export function Auth() {
   const handleLoginFacebook = useCallback(
     (data) => {
       if (data.accessToken) {
-        dispatch(
-          loginOAuth2Async({ token: data.accessToken, provider: "facebook" }),
-        );
+        loginFb(data.accessToken);
       }
     },
-    [dispatch],
+    [loginFb],
   );
 
   useEffect(() => {
-    if (status === "success") {
+    if (isLoginGgSuccess || isLoginFbSuccess) {
       const prevPath: string =
         (location.state && (location.state as any).prevPathName) || "/";
       const redirectPath =
@@ -79,7 +83,7 @@ export function Auth() {
           : prevPath;
       history.push(redirectPath);
     }
-  }, [dispatch, history, intl, status, location]);
+  }, [history, isLoginFbSuccess, isLoginGgSuccess, location]);
 
   const isFacebookApp = useMemo(() => {
     const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
@@ -91,7 +95,7 @@ export function Auth() {
   }, []);
 
   return (
-    <div className="login-container">
+    <div className="login-panel">
       <Panel
         className="panel"
         style={isMobileOnly ? { border: "unset" } : {}}
@@ -120,7 +124,7 @@ export function Auth() {
               <Button
                 onClick={renderProps.onClick}
                 disabled={renderProps.isDisabled}
-                loading={renderProps.isProcessing}
+                loading={renderProps.isProcessing || isLoginingFb}
                 color="blue"
                 size="sm"
                 block
@@ -135,6 +139,7 @@ export function Auth() {
             render={(renderProps) => (
               <Button
                 disabled={renderProps.disabled}
+                loading={isLoginingGg}
                 color="red"
                 size="sm"
                 block

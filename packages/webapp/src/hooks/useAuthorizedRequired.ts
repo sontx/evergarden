@@ -1,10 +1,9 @@
-import { useAppSelector } from "../app/hooks";
-import { selectIsLoggedIn } from "../features/user/userSlice";
 import { useCallback } from "react";
 import { useGoLogin } from "./navigation/useGoLogin";
+import { useIsLoggedIn } from "../features/user/hooks/useIsLoggedIn";
 
 export function useAuthorizedRequired() {
-  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const isLoggedIn = useIsLoggedIn();
   const gotoLogin = useGoLogin();
   return useCallback(
     (fn: () => void) => {

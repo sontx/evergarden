@@ -4,11 +4,10 @@ import { Icon, IconButton } from "rsuite";
 
 import classNames from "classnames";
 import { abbreviateNumber } from "../../../utils/types";
-import { useAppSelector } from "../../../app/hooks";
 import { ReactElement } from "react";
-import { selectUser } from "../../user/userSlice";
 import { useVote } from "../hooks/useVote";
 import { withDebouncedClick } from "../../../HOCs/withDebouncedClick";
+import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
 
 function VoteButton({
   icon,
@@ -35,7 +34,7 @@ function VoteButton({
 const DebouncedVoteButton = withDebouncedClick(VoteButton);
 
 export function Reaction({ story }: { story: GetStoryDto }) {
-  const isLogged = !!useAppSelector(selectUser);
+  const isLogged = useIsLoggedIn();
   const { mutate } = useVote(story.url);
   const currentVote = story.history?.vote;
 

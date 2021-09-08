@@ -24,7 +24,7 @@ export function usePrefetchNextChapter(
           () => fetchChapter(story.id, nextChapterNo),
           {
             staleTime: ms("30m"),
-            cacheTime: ms("30m"),
+            cacheTime: ms("35m"),
           },
         )
         .then();

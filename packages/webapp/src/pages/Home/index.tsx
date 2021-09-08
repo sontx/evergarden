@@ -11,13 +11,12 @@ import { AppFooter } from "../../components/AppFooter";
 import { HotStoriesPreview } from "../../features/hot-stories/HotStoriesPreview";
 import { StopViewsPreview } from "../../features/top-views/TopViewPreview";
 import { AppContent } from "../../components/AppContent";
-import { useAppSelector } from "../../app/hooks";
-import { selectIsLoggedIn } from "../../features/user/userSlice";
 import { RecommendStories } from "../../features/recommend/RecommendStories";
+import { useIsLoggedIn } from "../../features/user/hooks/useIsLoggedIn";
 
 export function Home() {
   const intl = useIntl();
-  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const isLoggedIn = useIsLoggedIn();
 
   return (
     <AppContainer showBackTop>

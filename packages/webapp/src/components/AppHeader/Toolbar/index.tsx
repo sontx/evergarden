@@ -1,15 +1,14 @@
-import { useAppSelector } from "../../../app/hooks";
 import { Avatar, Icon, Nav } from "rsuite";
 import { useState } from "react";
-import { selectUser } from "../../../features/user/userSlice";
 
 import { SearchBox } from "../../../features/search/SearchBox";
 import { UserMenu } from "../UserMenu";
 import { useToggle } from "../../../hooks/useToggle";
 import { useGoLogin } from "../../../hooks/navigation/useGoLogin";
+import { useUser } from "../../../features/user/hooks/useUser";
 
 export function Toolbar() {
-  const user = useAppSelector(selectUser);
+  const { data: user } = useUser();
   const [showSearchBox, setShowSearchBox] = useState(false);
   const goLogin = useGoLogin();
   const [showMenu, toggleShowMenu] = useToggle();

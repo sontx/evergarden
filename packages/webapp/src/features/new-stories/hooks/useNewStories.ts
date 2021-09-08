@@ -22,7 +22,7 @@ export default function useNewStories(
 ) {
   const [page, max] = queryKey;
   return useInfinitePageQuery(
-    [page],
+    ["new-stories", page],
     (skip, limit) =>
       fetchNewStories(skip, max === undefined ? limit : (max as number)),
     options,

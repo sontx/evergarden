@@ -1,12 +1,11 @@
 import { GetStoryDto } from "@evergarden/shared";
 import { ButtonGroup, Icon, IconButton } from "rsuite";
 import { withFollowSync } from "../withFollowSync";
-import { useAppSelector } from "../../../app/hooks";
-import { selectIsLoggedIn } from "../../user/userSlice";
 import { useCallback } from "react";
 import { useGoReading } from "../../../hooks/navigation/useGoReading";
 import { FormattedMessage } from "react-intl";
 import { canContinueReading } from "../../../utils/story-utils";
+import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -31,7 +30,7 @@ function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
 const FollowButtonWrapper = withFollowSync(FollowButton);
 
 export function StoryAction({ story }: { story: GetStoryDto }) {
-  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const isLoggedIn = useIsLoggedIn();
   const gotoReading = useGoReading();
 
   const handleRead = useCallback(() => {

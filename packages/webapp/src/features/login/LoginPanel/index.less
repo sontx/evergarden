@@ -1,4 +1,4 @@
-.login-container {
+.login-panel {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -41,21 +41,21 @@
       }
     }
   }
-}
 
-.login-container::before {
-  content: "";
-  position: fixed;
-  left: 0;
-  right: 0;
-  z-index: -1;
+  &::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: -1;
 
-  display: block;
-  width: 100%;
-  height: 100%;
+    display: block;
+    width: 100%;
+    height: 100%;
 
-  filter: blur(1.5px);
-  background-size: cover;
-  background-position: center;
-  background-image: ~"url('../../images/login-bg.jpg')";
+    filter: blur(1.5px);
+    background-size: cover;
+    background-position: center;
+    background-image: ~"url('../../../images/login-bg.jpg')";
+  }
 }

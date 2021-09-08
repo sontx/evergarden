@@ -8,13 +8,13 @@ import {
   Divider,
   Icon,
 } from "rsuite";
-import { SettingPanel } from "../../settings/SettingPanel";
 import { useGoNextChapter } from "../hooks/useGoNextChapter";
 import { useGoBackChapter } from "../hooks/useGoBackChapter";
 import { useToggle } from "../../../hooks/useToggle";
 import { FullPanel } from "../../../components/FullPanel";
 import { ChaptersPanel } from "../../chapters/ChaptersPanel";
 import { useGoReading } from "../../../hooks/navigation/useGoReading";
+import { SettingsPanel } from "../../settings/SettingsPanel";
 
 export function BottomNavigation({
   story,
@@ -47,7 +47,7 @@ export function BottomNavigation({
         {(props, ref) => (
           <div {...props} ref={ref}>
             <div style={{ padding: "20px" }}>
-              <SettingPanel />
+              <SettingsPanel />
             </div>
             <Divider style={{ margin: 0 }} />
           </div>

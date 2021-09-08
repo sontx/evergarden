@@ -7,7 +7,6 @@ import {
 import { PersistConfig, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
-import authReducer from "../features/auth/authSlice";
 import {
   FLUSH,
   PAUSE,
@@ -20,7 +19,6 @@ import { createFilter } from "redux-persist-transform-filter";
 import globalReducer from "../features/global/globalSlice";
 import followingReducer from "../features/following/followingSlice";
 import searchReducer from "../features/search/searchSlice";
-import userReducer from "../features/user/userSlice";
 import lastUpdatedReducer from "../features/last-updated/lastUpdatedSlice";
 import hotStoriesReducer from "../features/hot-stories/hotStoriesSlice";
 import topViewsReducer from "../features/top-views/topViewsSlice";
@@ -29,9 +27,7 @@ import newStoriesReducer from "../features/new-stories/newStoriesSlice";
 import { QueryClient } from "react-query";
 
 const reducers = combineReducers({
-  user: userReducer,
   followingStories: followingReducer,
-  login: authReducer,
   global: globalReducer,
   search: searchReducer,
   topViews: topViewsReducer,

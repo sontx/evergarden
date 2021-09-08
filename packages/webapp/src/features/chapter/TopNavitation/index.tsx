@@ -2,14 +2,13 @@ import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
 import { CSSProperties, useCallback, useRef } from "react";
 import { Button, ButtonGroup, ButtonToolbar, Icon } from "rsuite";
 import classNames from "classnames";
-import { useAppSelector } from "../../../app/hooks";
 import { withFollowSync } from "../../story/withFollowSync";
-import { selectIsLoggedIn } from "../../user/userSlice";
 import { useGoStory } from "../../../hooks/navigation/useGoStory";
 import { ChapterHeader } from "../../../components/ChapterHeader";
 import { useToggle } from "../../../hooks/useToggle";
 import { useOverlay } from "../../../hooks/useOverlay";
 import { UserMenu } from "../../../components/AppHeader/UserMenu";
+import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -31,7 +30,7 @@ export function TopNavigation({
   const [showMore, toggleShowMore] = useToggle();
   const [showMenu, toggleShowMenu] = useToggle();
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const isLoggedIn = useIsLoggedIn();
   const gotoStory = useGoStory();
 
   useOverlay();

@@ -4,9 +4,6 @@ import { FormattedMessage } from "react-intl";
 import { GridMenu } from "../../GridMenu";
 import DarkModeToggle from "react-dark-mode-toggle";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectUser } from "../../../features/user/userSlice";
-import { useCallback } from "react";
-import { logoutAsync } from "../../../features/auth/authSlice";
 import {
   selectIsDarkMode,
   setDarkMode,
@@ -16,6 +13,8 @@ import { useGoHistory } from "../../../hooks/navigation/useGoHistory";
 import { useGoUserStoryList } from "../../../hooks/navigation/useGoUserStoryList";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
+import { useLogout } from "../../../features/login/hooks/useLogout";
+import { useUser } from "../../../features/user/hooks/useUser";
 
 export function UserMenu({
   onClose,
@@ -24,16 +23,13 @@ export function UserMenu({
 }: {
   onClose: () => void;
 } & StandardProps) {
-  const user = useAppSelector(selectUser);
+  const { data: user } = useUser();
   const dispatch = useAppDispatch();
   const isDarkMode = useAppSelector(selectIsDarkMode);
   const gotoFollowing = useGoFollowing();
   const gotoHistory = useGoHistory();
   const gotoUserStoryList = useGoUserStoryList();
-
-  const handleLogout = useCallback(() => {
-    dispatch(logoutAsync());
-  }, [dispatch]);
+  const { mutate: logout } = useLogout();
 
   return (
     <GridMenu
@@ -76,7 +72,7 @@ export function UserMenu({
         <GridMenuItem
           icon={<Icon icon="sign-out" />}
           className="logout"
-          onClick={handleLogout}
+          onClick={logout}
         >
           <FormattedMessage id="userMenuLogout" />
         </GridMenuItem>

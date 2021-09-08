@@ -1,10 +1,9 @@
 import { ReactElement } from "react";
-import { useAppSelector } from "../../app/hooks";
 import { Redirect, useLocation } from "react-router-dom";
-import { selectIsLoggedIn } from "../../features/user/userSlice";
+import { useIsLoggedIn } from "../../features/user/hooks/useIsLoggedIn";
 
 export function AuthRequired({ children }: { children: ReactElement }) {
-  const isLogged = useAppSelector(selectIsLoggedIn);
+  const isLogged = useIsLoggedIn();
   const location = useLocation();
   return isLogged ? (
     children

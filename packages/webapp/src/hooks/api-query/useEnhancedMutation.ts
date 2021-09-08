@@ -1,5 +1,6 @@
 import { QueryKey, useQueryClient } from "react-query";
 import { SimpleMutationOptions, useSimpleMutation } from "./useSimpleMutation";
+import { useReactQueryPersist } from "../useReactQueryPersist";
 
 export type EnhancedMutationOptions<
   TRequest = any,
@@ -11,6 +12,8 @@ export type EnhancedMutationOptions<
   updateQueryDataFn?: (prev: any, next: TTransform) => any;
   transformUpdateData?: (next: TRequest | TResponse) => TTransform;
   alwaysRefetch?: boolean;
+  persistKey?: string;
+  persistCacheTime?: number | string | false;
 };
 
 export function useEnhancedMutation<TRequest = any, TResponse = any>(
@@ -27,11 +30,14 @@ export function useEnhancedMutation<TRequest = any, TResponse = any>(
     relativeQueryKey,
     updateQueryDataFn,
     alwaysRefetch,
+    persistKey,
+    persistCacheTime,
     transformUpdateData = (next: TRequest | TResponse) => next,
     ...rest
   } = options || {};
 
   const queryClient = useQueryClient();
+  const persist = useReactQueryPersist();
   return useSimpleMutation(mutationKey, mutationFn, {
     onMutate: async (request) => {
       let customResult;
@@ -74,6 +80,10 @@ export function useEnhancedMutation<TRequest = any, TResponse = any>(
             updateQueryDataFn(previousData, transformUpdateData(data)),
           );
         }
+      }
+
+      if (persistKey) {
+        persist(persistKey, data, persistCacheTime);
       }
 
       if (onSuccess) {

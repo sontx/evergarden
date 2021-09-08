@@ -1,10 +1,6 @@
 import { Animation, Panel } from "rsuite";
 import { useAppSelector } from "../../../app/hooks";
-import { selectIsLoggedIn, selectUserSettings } from "../../user/userSlice";
-import {
-  defaultUserSettings,
-  getFont,
-} from "../../../utils/user-settings-config";
+import { getFont } from "../../../utils/user-settings-config";
 import { ReadingHeader } from "../ReadingHeader";
 import { ReadingRenderer } from "../../../components/ReadingRenderer";
 import { useToggle } from "../../../hooks/useToggle";
@@ -21,6 +17,8 @@ import { usePrefetchNextChapter } from "../hooks/usePrefetchNextChapter";
 import { CuteLoader } from "../../../components/CuteLoader";
 import { selectIsDarkMode } from "../../global/globalSlice";
 import classNames from "classnames";
+import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
+import { useUserSettings } from "../../settings/hooks/useUserSettings";
 
 const Renderer = withUserSettings(ReadingRenderer);
 
@@ -31,14 +29,14 @@ export function ReadingPanel({
   slug: string;
   chapterNo: number;
 }) {
-  const settings = useAppSelector(selectUserSettings) || defaultUserSettings;
   const [showNav, toggleNav, setShowNav] = useToggle();
   const { data: story } = useStory(slug);
   const { data: chapter } = useChapter(story?.id, chapterNo);
   const workingEnvRef = useRef<{ storyId?: number; chapterNo?: number }>({});
   const track = useTracker();
   const syncHistory = useSyncHistory();
-  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const isLoggedIn = useIsLoggedIn();
+  const { data: settings } = useUserSettings();
   const darkMode = useAppSelector(selectIsDarkMode);
 
   usePrefetchNextChapter(story, chapter);
@@ -67,8 +65,12 @@ export function ReadingPanel({
       {story && chapter ? (
         <>
           <Animation.Bounce in>
-            {({className, ...rest}, ref) => (
-              <div ref={ref} {...rest} className={classNames(className, "reading-panel-animation")}>
+            {({ className, ...rest }, ref) => (
+              <div
+                ref={ref}
+                {...rest}
+                className={classNames(className, "reading-panel-animation")}
+              >
                 <Panel
                   className="reading-panel-header"
                   style={{ fontFamily: getFont(settings.readingFont).family }}

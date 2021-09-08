@@ -1,20 +1,18 @@
 import { useParams } from "react-router-dom";
 import React from "react";
-import { useAppSelector } from "../../app/hooks";
 import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppContainer } from "../../components/AppContainer";
 import { Helmet } from "react-helmet";
-import { selectUserSettings } from "../../features/user/userSlice";
-import { defaultUserSettings } from "../../utils/user-settings-config";
 import { AppContent } from "../../components/AppContent";
 import { ReadingPanel } from "../../features/chapter/ReadingPanel";
+import { useUserSettings } from "../../features/settings/hooks/useUserSettings";
 
 export function Reading() {
   const { url, chapterNo } = useParams() as any;
   const intl = useIntl();
-  const settings = useAppSelector(selectUserSettings) || defaultUserSettings;
+  const { data: settings } = useUserSettings();
 
   return (
     <AppContainer showBackTop className="reading-page">
