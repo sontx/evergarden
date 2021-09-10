@@ -7,6 +7,7 @@ import { forwardRef } from "react";
 import { useStoryHistory } from "../../../features/histories/hooks/useStoryHistory";
 import { StoryItemBaseProps } from "../index.api";
 import { StoryItemMark } from "../StoryItemMark";
+import { LastChapter } from "../LastChapter";
 
 export const VerticalStoryItem = forwardRef(
   (
@@ -26,11 +27,17 @@ export const VerticalStoryItem = forwardRef(
           }
         }}
       >
-        <LazyImageEx
-          alt={story.title}
-          defaultSrc={defaultThumbnail}
-          src={story.thumbnail}
-        />
+        <div className="thumbnail-container">
+          <LazyImageEx
+            alt={story.title}
+            defaultSrc={defaultThumbnail}
+            src={story.thumbnail}
+          />
+          {story.mark && <StoryItemMark mark={story.mark} />}
+          {story.lastChapter !== undefined && (
+            <LastChapter story={story} />
+          )}
+        </div>
         <div className="info">
           <figcaption className="title">
             <TextTruncate line={2} text={story.title} />
@@ -43,7 +50,6 @@ export const VerticalStoryItem = forwardRef(
             />
           )}
         </div>
-        {story.mark && <StoryItemMark mark={story.mark} />}
       </figure>
     );
   },
