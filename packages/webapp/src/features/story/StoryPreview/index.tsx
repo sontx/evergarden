@@ -13,15 +13,14 @@ import { StoryDescription } from "../StoryDescription";
 import { StoryAction } from "../StoryAction";
 import { FormattedMessage } from "react-intl";
 import { CuteLoader } from "../../../components/CuteLoader";
-import { useAppSelector } from "../../../app/hooks";
-import { selectIsDarkMode } from "../../global/globalSlice";
 import { ChaptersPanel } from "../../chapters/ChaptersPanel";
 import { useGoReading } from "../../../hooks/navigation/useGoReading";
+import { useIsDarkMode } from "../../global/hooks/useIsDarkMode";
 
 export function StoryPreview({ slug }: { slug: string }) {
   const { data: story } = useStory(slug);
   const { state = {} } = useLocation() as any;
-  const darkMode = useAppSelector(selectIsDarkMode);
+  const { isDarkMode } = useIsDarkMode();
   const gotoReading = useGoReading();
 
   const handleGoReading = useCallback(
@@ -87,6 +86,6 @@ export function StoryPreview({ slug }: { slug: string }) {
       </Panel>
     </div>
   ) : (
-    <CuteLoader center dark={darkMode} />
+    <CuteLoader center dark={isDarkMode} />
   );
 }

@@ -4,11 +4,9 @@ import { StandardProps } from "rsuite/es/@types/common";
 
 import "./firefly.less";
 import { useAppSelector } from "../../app/hooks";
-import {
-  selectIsDarkMode,
-  selectIsShowingOverlay,
-} from "../../features/global/globalSlice";
+import { selectIsShowingOverlay } from "../../features/global/globalSlice";
 import { BackTop } from "../BackTop";
+import { useIsDarkMode } from "../../features/global/hooks/useIsDarkMode";
 
 export function AppContainer({
   children,
@@ -21,7 +19,7 @@ export function AppContainer({
   showBackTop?: boolean;
 } & StandardProps) {
   const isShowingOverlay = useAppSelector(selectIsShowingOverlay);
-  const isDarkMode = useAppSelector(selectIsDarkMode);
+  const { isDarkMode } = useIsDarkMode();
 
   return (
     <Container style={{ minHeight: "100vh" }} {...rest}>

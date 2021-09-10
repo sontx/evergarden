@@ -3,14 +3,10 @@ import { Icon } from "rsuite";
 import { FormattedMessage } from "react-intl";
 import { GridMenu } from "../../GridMenu";
 import DarkModeToggle from "react-dark-mode-toggle";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import {
-  selectIsDarkMode,
-  setDarkMode,
-} from "../../../features/global/globalSlice";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { useUser } from "../../../features/user/hooks/useUser";
+import { useIsDarkMode } from "../../../features/global/hooks/useIsDarkMode";
 
 export function UserMenu({
   onClose,
@@ -28,8 +24,7 @@ export function UserMenu({
   onLogoutClick: () => void;
 } & StandardProps) {
   const { data: user } = useUser();
-  const dispatch = useAppDispatch();
-  const isDarkMode = useAppSelector(selectIsDarkMode);
+  const { isDarkMode, setDarkMode } = useIsDarkMode();
 
   return (
     <GridMenu
@@ -62,7 +57,7 @@ export function UserMenu({
       </GridMenuItem>
       <GridMenuItem preventClick className="dark-theme-toggle">
         <DarkModeToggle
-          onChange={(darkMode) => dispatch(setDarkMode(darkMode))}
+          onChange={setDarkMode}
           checked={isDarkMode}
           size={70}
           speed={2}

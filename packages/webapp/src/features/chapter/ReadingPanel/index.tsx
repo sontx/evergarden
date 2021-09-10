@@ -1,5 +1,4 @@
 import { Animation, Panel } from "rsuite";
-import { useAppSelector } from "../../../app/hooks";
 import { getFont } from "../../../utils/user-settings-config";
 import { ReadingHeader } from "../ReadingHeader";
 import { ReadingRenderer } from "../../../components/ReadingRenderer";
@@ -15,10 +14,10 @@ import { useTracker } from "../hooks/useTracker";
 import { useSyncHistory } from "../hooks/useSyncHistory";
 import { usePrefetchNextChapter } from "../hooks/usePrefetchNextChapter";
 import { CuteLoader } from "../../../components/CuteLoader";
-import { selectIsDarkMode } from "../../global/globalSlice";
 import classNames from "classnames";
 import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
 import { useUserSettings } from "../../settings/hooks/useUserSettings";
+import { useIsDarkMode } from "../../global/hooks/useIsDarkMode";
 
 const Renderer = withUserSettings(ReadingRenderer);
 
@@ -37,7 +36,7 @@ export function ReadingPanel({
   const syncHistory = useSyncHistory();
   const isLoggedIn = useIsLoggedIn();
   const { data: settings } = useUserSettings();
-  const darkMode = useAppSelector(selectIsDarkMode);
+  const { isDarkMode } = useIsDarkMode();
 
   usePrefetchNextChapter(story, chapter);
 
@@ -96,7 +95,7 @@ export function ReadingPanel({
           </Animation.Fade>
         </>
       ) : (
-        <CuteLoader center dark={darkMode} />
+        <CuteLoader center dark={isDarkMode} />
       )}
     </div>
   );
