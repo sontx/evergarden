@@ -21,7 +21,7 @@ export function abbreviateNumber(value: number): string {
     let shortValue: any = "";
     for (let precision = 2; precision >= 1; precision--) {
       shortValue = parseFloat(
-        (suffixNum != 0
+        (suffixNum !== 0
           ? value / Math.pow(1000, suffixNum)
           : value
         ).toPrecision(precision),
@@ -31,7 +31,7 @@ export function abbreviateNumber(value: number): string {
         break;
       }
     }
-    if (shortValue % 1 != 0) shortValue = shortValue.toFixed(1);
+    if (shortValue % 1 !== 0) shortValue = shortValue.toFixed(1);
     newValue = shortValue + suffixes[suffixNum];
   }
   return newValue;
@@ -45,7 +45,7 @@ export function trimText(text: string): string {
 }
 
 export function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1) + min)
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export function isValidSlug(st: string): boolean {

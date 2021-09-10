@@ -1,18 +1,17 @@
-import { Auth } from "../../features/auth/Auth";
+import { LoginPanel } from "../../features/login/LoginPanel";
 import { SEO } from "../../components/SEO";
 import { useIntl } from "react-intl";
 import { AppFooter } from "../../components/AppFooter";
-import { useAppSelector } from "../../app/hooks";
-import { selectIsLoggedIn } from "../../features/user/userSlice";
 import { Redirect } from "react-router-dom";
+import { useIsLoggedIn } from "../../features/user/hooks/useIsLoggedIn";
 
 export function Login() {
   const intl = useIntl();
-  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const isLoggedIn = useIsLoggedIn();
   return !isLoggedIn ? (
     <>
       <SEO title={intl.formatMessage({ id: "pageTitleLogin" })} />
-      <Auth />
+      <LoginPanel />
       <AppFooter float />
     </>
   ) : (

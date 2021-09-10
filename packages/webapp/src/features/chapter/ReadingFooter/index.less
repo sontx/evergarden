@@ -1,0 +1,21 @@
+@import (reference) "../../../styles/common";
+
+.reading-footer {
+  font-size: @font-size-base - 1;
+  padding: 5px 10px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  color: #a4a9b3;
+  background: @body-bg;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.1s ease-out, opacity 0.1s ease-out;
+
+  .text-truncated();
+
+  &--show {
+    opacity: 1;
+    visibility: visible;
+  }
+}

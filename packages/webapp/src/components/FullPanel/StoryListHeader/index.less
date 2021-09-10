@@ -1,0 +1,36 @@
+.story-list-header {
+  padding: 15px 0;
+  display: flex;
+  justify-content: space-between;
+  text-transform: uppercase;
+
+  .title {
+    font-size: 100%;
+
+    &::before {
+      display: inline-block;
+      box-sizing: border-box;
+      width: 0.625rem;
+      height: 1em;
+      content: "";
+      vertical-align: -0.22ex;
+      color: transparent;
+      border-left: 2px solid @primary-color;
+    }
+  }
+
+  .subtitle {
+    color: @secondary-text-color;
+    margin-left: 0.625rem;
+    font-size: 80%;
+  }
+
+  .action {
+    color: @secondary-text-color;
+    font-size: 80%;
+
+    a {
+      color: inherit;
+    }
+  }
+}

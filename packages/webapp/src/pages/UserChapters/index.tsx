@@ -1,92 +1,64 @@
-import React, { useCallback, useState } from "react";
-import {Button, Icon, IconButton} from "rsuite";
-import { useHistory } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  selectStory,
-  setStory,
-} from "../../features/story-editor/storyEditorSlice";
-import { withUpdateStory } from "../StoryEditor/withUpdateStory";
+import React, { useCallback } from "react";
+import { Icon, IconButton } from "rsuite";
 import { UserPage } from "../../components/UserPage";
-import { ChaptersPanel } from "../../components/ChaptersPanel";
-import { GetChapterDto } from "@evergarden/shared";
-
-import "./index.less";
-import { ChaptersToolBar } from "../../components/ChaptersToolBar";
-import { PublishSub } from "../../components/PublishSub";
-
-const Wrapper = withUpdateStory(UserPage);
+import { useGoEditStory } from "../../hooks/navigation/useGoEditStory";
+import { useGoCreateChapter } from "../../hooks/navigation/useGoCreateChapter";
+import { useGoEditChapter } from "../../hooks/navigation/useGoEditChapter";
+import { ChaptersPanel } from "../../features/chapters/ChaptersPanel";
+import { useParams } from "react-router-dom";
+import { useStory } from "../../features/story/hooks/useStory";
+import { useIntl } from "react-intl";
 
 export function UserChaptersPage() {
-  const history = useHistory();
-  const dispatch = useAppDispatch();
-  const story = useAppSelector(selectStory);
-  const [isDesc, setDesc] = useState(true);
+  const { url } = useParams<{ url: string }>();
+  const { data: story } = useStory(url);
+  const gotoUserStory = useGoEditStory();
+  const gotoCreateChapter = useGoCreateChapter();
+  const gotoEditChapter = useGoEditChapter();
+  const intl = useIntl();
 
   const handleBack = useCallback(() => {
-    if (story) {
-      history.push(`/user/story/${story.url}`);
-    }
-  }, [history, story]);
+    gotoUserStory(url);
+  }, [gotoUserStory, url]);
 
   const handleCreateNew = useCallback(() => {
-    if (story) {
-      dispatch(setStory(undefined));
-      history.push(`/user/story/${story.url}/chapter/new`);
-    }
-  }, [dispatch, history, story]);
+    gotoCreateChapter(url);
+  }, [gotoCreateChapter, url]);
 
-  const handleSelectChapter = useCallback(
-    (chapter: GetChapterDto | number) => {
-      if (story) {
-        const chapterNo =
-          typeof chapter === "object" ? chapter.chapterNo : chapter;
-        history.push(`/user/story/${story.url}/chapter/${chapterNo}`);
-      }
+  const handleEditChapter = useCallback(
+    (chapterNo: number) => {
+      gotoEditChapter(url, chapterNo);
     },
-    [history, story],
+    [gotoEditChapter, url],
   );
 
   return (
-    <Wrapper
+    <UserPage
+      showBackTop
       fullContent
-      title={story ? `${story.title} - chapters` : "Chapters"}
-      header={
-        <div className="page-title">
-          <h5 style={{ display: "block" }}>Story chapters</h5>
-          {story && (
-            <small className="user-chapters-story-title">{story.title}</small>
-          )}
-        </div>
+      title={
+        story ? story.title : intl.formatMessage({ id: "pageTitleChapters" })
       }
       action={
         <>
-          <IconButton icon={<Icon icon="plus"/>} onClick={handleCreateNew} size="sm" appearance="link"/>
-          <IconButton icon={<Icon icon="close"/>} onClick={handleBack} appearance="link" size="sm"/>
+          {story?.status !== "full" && (
+            <IconButton
+              icon={<Icon icon="plus" />}
+              onClick={handleCreateNew}
+              size="sm"
+              appearance="link"
+            />
+          )}
+          <IconButton
+            icon={<Icon icon="close" />}
+            onClick={handleBack}
+            appearance="link"
+            size="sm"
+          />
         </>
       }
     >
-      <div style={{ marginBottom: "20px" }}>
-        <ChaptersToolBar
-          story={story}
-          onJumpTo={handleSelectChapter}
-          onSortChange={setDesc}
-        />
-      </div>
-      <div className="user-chapters-container">
-        <ChaptersPanel
-          renderAction={(chapter) =>
-            typeof chapter === "object" && !chapter.published ? (
-              <span className="chapter-action">Unpublished</span>
-            ) : (
-              <></>
-            )
-          }
-          sort={isDesc ? "9-0" : "0-9"}
-          story={story}
-          onSelect={handleSelectChapter}
-        />
-      </div>
-    </Wrapper>
+      <ChaptersPanel slug={url} onClick={handleEditChapter} hasFilterBar />
+    </UserPage>
   );
 }

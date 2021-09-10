@@ -8,6 +8,7 @@ import {
   PaginationOptions,
   PaginationResult,
   UpdateChapterDto,
+  GetPreviewChapter,
 } from "@evergarden/shared";
 import { Story } from "../story/story.entity";
 import { StoryService } from "../story/story.service";
@@ -46,17 +47,24 @@ export class ChapterService {
     pagination: PaginationOptions,
     includesUnpublished?: boolean,
     sort?: "asc" | "desc",
-  ): Promise<PaginationResult<GetChapterDto>> {
+  ): Promise<PaginationResult<GetPreviewChapter>> {
     const result = await this.chapterRepository.findAndCount({
       where: { storyId: storyId, ...(!includesUnpublished ? { published: true } : {}) },
       order: { chapterNo: sort === "asc" ? "ASC" : "DESC" },
       take: pagination.limit,
       skip: isFinite(pagination.skip) ? pagination.skip : pagination.page * pagination.limit,
-      select: ["id", "chapterNo", "title"],
+      select: ["id", "chapterNo", "title", "published", "created"],
     });
 
+    console.log(result);
     return {
-      items: result[0].map(this.toDto),
+      items: result[0].map((item) => ({
+        id: item.id,
+        chapterNo: item.chapterNo,
+        title: item.title,
+        published: item.published,
+        created: item.created,
+      })),
       meta: {
         currentPage: pagination.page,
         itemsPerPage: pagination.limit,

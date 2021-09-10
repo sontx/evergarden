@@ -1,0 +1,28 @@
+.chapter-range {
+  //.rs-panel-body {
+  //  padding: 0;
+  //}
+
+  .rs-panel-heading, .rs-panel-body {
+    padding: 5px;
+  }
+
+  .rs-panel-heading {
+    color: @secondary-text-color;
+    text-transform: uppercase;
+    font-size: @font-size-base;
+    border-radius: @border-radius-base;
+    background: @panel-bg-color;
+
+    &::before {
+      top: 5px;
+      right: 5px;
+    }
+  }
+
+  &.rs-panel-in {
+    .rs-panel-heading {
+      color: @primary-color;
+    }
+  }
+}

@@ -190,16 +190,19 @@ export class UpdateStoryDto {
   published?: boolean;
 }
 
-export class GetChapterDto {
+export class GetPreviewChapter {
   id: number;
-  storyId: number;
   chapterNo: number;
+  published?: boolean;
   title?: string;
   created: Date;
+}
+
+export class GetChapterDto extends GetPreviewChapter {
+  storyId: number;
   updated: Date;
   createdBy: GetUserDto;
   updatedBy: GetUserDto;
-  published?: boolean;
   content: string;
 }
 
@@ -236,7 +239,7 @@ export interface PaginationResult<T> {
   };
 }
 
-export type StoryCategory = 'updated' | 'hot' | 'user';
+export type StoryCategory = 'updated' | 'hot' | 'user' | 'spotlight' | 'suggestions' | 'recommend' | 'new';
 export type VoteType = 'upvote' | 'downvote' | 'none';
 
 export interface GetReadingHistoryDto {

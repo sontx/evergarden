@@ -8,7 +8,6 @@ import {
   TypeAttributes,
 } from "rsuite/lib/@types/common";
 
-import "./index.less";
 import classNames from "classnames";
 import ReactDOM from "react-dom";
 
@@ -20,6 +19,8 @@ interface EnhancedModalProps extends StandardProps, AnimationEventProps {
   children: ReactNode;
   title?: ReactNode;
   actions?: ReactNode;
+  mobile?: boolean;
+  center?: boolean;
 }
 
 export function EnhancedModal({
@@ -28,15 +29,24 @@ export function EnhancedModal({
   children,
   title,
   actions,
+  mobile,
+  center,
   ...rest
 }: EnhancedModalProps) {
   return (
     <Modal
       backdrop="static"
       {...rest}
-      className={classNames(className, "enhanced-modal")}
+      className={classNames(className, "enhanced-modal", {
+        "enhanced-modal--mobile": mobile,
+        "enhanced-modal--center": center,
+      })}
     >
-      {title && <Modal.Title>{title}</Modal.Title>}
+      {title && (
+        <Modal.Header>
+          <Modal.Title>{title}</Modal.Title>
+        </Modal.Header>
+      )}
       <Modal.Body>
         {icon && <span className="modal-icon">{icon}</span>}
         {children}

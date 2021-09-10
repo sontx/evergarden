@@ -1,0 +1,17 @@
+.reading-navigation-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reading-navigation {
+  position: fixed;
+  width: 100%;
+  background: @btn-default-bg;
+  touch-action: none;
+
+  button {
+    border-radius: 0 !important;
+    .reading-navigation-action();
+  }
+}
