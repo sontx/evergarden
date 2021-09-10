@@ -10,6 +10,7 @@ import { useOverlay } from "../../../hooks/useOverlay";
 import { UserMenu } from "../../../components/AppHeader/UserMenu";
 import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
 import { withActionHandler } from "../../../components/AppHeader/UserMenu/withActionHandler";
+import { FormReportBug } from "../FormReportBug";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -31,6 +32,7 @@ export function TopNavigation({
 }) {
   const [showMore, toggleShowMore] = useToggle();
   const [showMenu, toggleShowMenu] = useToggle();
+  const [showReport, toggleReport] = useToggle();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isLoggedIn = useIsLoggedIn();
   const gotoStory = useGoStory();
@@ -81,7 +83,7 @@ export function TopNavigation({
               <Icon icon="commenting" />
             </Button>
             {story && isLoggedIn && <FollowButtonWrapper story={story} />}
-            <Button>
+            <Button onClick={toggleReport}>
               <Icon icon="bug" />
             </Button>
             <Button onClick={toggleShowMenu}>
@@ -90,6 +92,7 @@ export function TopNavigation({
           </ButtonGroup>
         </ButtonToolbar>
       )}
+      {showReport && <FormReportBug chapter={chapter} onClose={toggleReport}/>}
       <UserMenuWrapper
         onClose={toggleShowMenu}
         show={showMenu}

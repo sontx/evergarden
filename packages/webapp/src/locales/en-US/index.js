@@ -82,4 +82,15 @@ export default {
   filterChapterHint: "Filter chapter...",
   editChapterContentHint: "Chapter content",
   filterChapterConfirm: "Go",
+  titleFormReportBug: "Report chapter",
+  details: "Details",
+  wrongContent: "Wrong content",
+  spellingMistake: "Spelling mistake",
+  wrongChapter: "Wrong chapter",
+  wrongTranslation: "Wrong translation",
+  chaptersAreNotDisplayed: "Chapters are not displayed",
+  containsSensitiveVulgarLanguage: "Contains sensitive, vulgar language",
+  chooseType: "Choose type",
+  sendReportButton: "Send report",
+  reportSuccessMessage: "Thanks for the report!"
 };
