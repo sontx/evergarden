@@ -1,16 +1,9 @@
 import { Animation, AutoComplete, Icon, InputGroup } from "rsuite";
-import { useDebouncedCallback } from "use-debounce";
+import { useDebounce } from "use-debounce";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import {
-  clear,
-  searchStoriesAsync,
-  selectStatus,
-  selectStories,
-} from "../searchSlice";
 import React, { useCallback, useEffect, useState } from "react";
 // @ts-ignore
 import BarLoader from "react-bar-loader";
-import { trimText } from "../../../utils/types";
 
 import defaultThumbnail from "../../../images/logo.png";
 
@@ -23,12 +16,13 @@ import { useOverlay } from "../../../hooks/useOverlay";
 import { useNoBodyScrolling } from "../../../hooks/useNoBodyScrolling";
 import { selectIsFloatingHeader } from "../../global/globalSlice";
 import { useGoStory } from "../../../hooks/navigation/useGoStory";
+import { useSearchStory } from "../hooks/useSearchStory";
 
 export function SearchBox({ onClose }: { onClose: () => void }) {
+  const [query, setQuery] = useState("");
   const dispatch = useAppDispatch();
-  const stories = useAppSelector(selectStories);
-  const status = useAppSelector(selectStatus);
-  const [searchText, setSearchText] = useState("");
+  const [debouncedQuery] = useDebounce((query || "").trim(), 300);
+  const { data: stories, isLoading } = useSearchStory(debouncedQuery);
   const isFloatingHeader = useAppSelector(selectIsFloatingHeader);
   const intl = useIntl();
   const gotoStory = useGoStory();
@@ -37,25 +31,12 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
   useOverlay();
 
   useEffect(() => {
-    dispatch(clear());
+    setQuery("");
   }, [dispatch]);
 
-  const callSearchDebounce = useDebouncedCallback((text) => {
-    dispatch(searchStoriesAsync(text));
-  }, 300);
-
-  const handleChange = useCallback(
-    (text) => {
-      setSearchText(text);
-      const searchText = trimText(text);
-      if (searchText) {
-        callSearchDebounce(searchText);
-      } else {
-        dispatch(clear());
-      }
-    },
-    [callSearchDebounce, dispatch],
-  );
+  const handleChange = useCallback((value: string) => {
+    setQuery(value);
+  }, []);
 
   const handleSelect = useCallback(
     (item) => {
@@ -66,9 +47,8 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
   );
 
   const handleClearSearchText = useCallback(() => {
-    setSearchText("");
-    dispatch(clear());
-  }, [dispatch]);
+    setQuery("");
+  }, []);
 
   return (
     <Animation.Bounce in={true}>
@@ -83,13 +63,13 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
           <InputGroup inside>
             <AutoComplete
               autoFocus
-              value={searchText}
+              value={query}
               placeholder={intl.formatMessage({ id: "globalSearchHint" })}
               menuClassName="searchbox-menu"
               onChange={handleChange}
               onSelect={handleSelect}
               filterBy={() => true}
-              data={stories.map((story) => ({
+              data={(!!query ? stories || [] : []).map((story) => ({
                 label: story.title,
                 value: story.title,
                 origin: story,
@@ -119,7 +99,7 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
                 );
               }}
             />
-            {searchText ? (
+            {query ? (
               <InputGroup.Button onClick={handleClearSearchText}>
                 <Icon icon="close" style={{ color: "red" }} />
               </InputGroup.Button>
@@ -129,7 +109,7 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
               </InputGroup.Addon>
             )}
           </InputGroup>
-          {status === "processing" && <BarLoader className="bar-loader" height="1" />}
+          {isLoading && <BarLoader className="bar-loader" height="1" />}
           <Backdrop onClick={onClose} className="searchbox-backdrop" />
         </div>
       )}

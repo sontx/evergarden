@@ -18,7 +18,6 @@ import {
 import { createFilter } from "redux-persist-transform-filter";
 import globalReducer from "../features/global/globalSlice";
 import followingReducer from "../features/following/followingSlice";
-import searchReducer from "../features/search/searchSlice";
 import lastUpdatedReducer from "../features/last-updated/lastUpdatedSlice";
 import hotStoriesReducer from "../features/hot-stories/hotStoriesSlice";
 import topViewsReducer from "../features/top-views/topViewsSlice";
@@ -29,7 +28,6 @@ import { QueryClient } from "react-query";
 const reducers = combineReducers({
   followingStories: followingReducer,
   global: globalReducer,
-  search: searchReducer,
   topViews: topViewsReducer,
   lastUpdated: lastUpdatedReducer,
   hotStories: hotStoriesReducer,
