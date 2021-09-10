@@ -82,6 +82,14 @@ export class StoryController {
     const isDefinedArray = (arr: number[]) => !!arr && arr.length > 0;
 
     switch (category) {
+      case "spotlight":
+        // TODO: implement spotlight
+      case "suggestions":
+      // TODO: implement spotlight
+      case "new":
+      // TODO: implement spotlight
+      case "recommend":
+      // TODO: implement spotlight
       case "updated":
         return await this.storyService.getLastUpdatedStories(pagination, imGod);
       case "hot":

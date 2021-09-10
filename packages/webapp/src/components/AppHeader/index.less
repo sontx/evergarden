@@ -1,16 +1,30 @@
-@import '~rsuite/lib/styles/themes/dark/index.less';
+.app-header {
+  background-color: @body-bg;
 
-.fixed-header {
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .rs-nav-item-content:focus {
+    background-color: fade(@nav-bar-default-bg, 85%) !important;
+  }
+}
+
+.app-header--fixed {
   position: fixed;
   width: 100%;
   z-index: 999;
-  background: @nav-bar-default-bg;
-  animation-name: changing-fixed-mode;
-  animation-duration: 300ms;
-  animation-timing-function: ease;
 }
 
-@keyframes changing-fixed-mode {
-  from {background: @body-bg;}
-  to {background: @nav-bar-default-bg;}
+.app-header--float {
+  background-color: fade(@nav-bar-default-bg, 80%);
+
+  .rs-navbar.rs-navbar-subtle {
+    background-color: unset;
+  }
+}
+
+.app-header--dummy {
+  height: @nav-bar-height;
 }

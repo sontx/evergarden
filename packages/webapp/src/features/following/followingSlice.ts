@@ -42,7 +42,7 @@ export const followingSlice = createSlice({
     },
     setFollowingStories: (state, action) => {
       state.stories = action.payload;
-    }
+    },
   },
   extraReducers: {
     [`${fetchFollowingStoriesAsync.pending}`]: (state, action) => {
@@ -60,7 +60,11 @@ export const followingSlice = createSlice({
   },
 });
 
-export const { setShowingAction, removeStory, setFollowingStories } = followingSlice.actions;
+export const {
+  setShowingAction,
+  removeStory,
+  setFollowingStories,
+} = followingSlice.actions;
 
 export const selectStatus = (state: RootState) => state.followingStories.status;
 export const selectStories = (state: RootState) =>

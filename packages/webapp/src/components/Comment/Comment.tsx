@@ -1,7 +1,7 @@
 import Disqus from "disqus-react";
-import {GetStoryDto} from "@evergarden/shared";
+import { GetStoryDto } from "@evergarden/shared";
 
-export function Comment(props: { story: GetStoryDto, onReady?: () => void }) {
+export function Comment(props: { story: GetStoryDto; onReady?: () => void }) {
   const { story, onReady } = props;
   return (
     <Disqus.DiscussionEmbed
@@ -9,7 +9,7 @@ export function Comment(props: { story: GetStoryDto, onReady?: () => void }) {
       config={{
         identifier: story.url,
         title: story.title,
-        onReady
+        onReady,
       }}
     />
   );

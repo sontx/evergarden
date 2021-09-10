@@ -1,41 +1,31 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import { useAutoFlushDebounce } from "../../hooks/useAutoFlushDebounce";
-import { updateStoryHistoryAsync } from "../histories/historiesSlice";
+import React, { useCallback } from "react";
+import { useUnfollowStory } from "../following/hooks/useUnfollowStory";
+import { useFollowStory } from "../following/hooks/useFollowStory";
+import { withDebouncedClick } from "../../HOCs/withDebouncedClick";
+import { GetStoryDto } from "@evergarden/shared";
 
 export function withFollowSync(Component: React.ElementType) {
+  const DebouncedComponent = withDebouncedClick(Component);
+
   return function (props: any) {
-    const story = props.story;
-    const dispatch = useAppDispatch();
-
-    const [isFollowing, setFollowing] = useState<boolean>();
-
-    useEffect(() => {
-      setFollowing(!!(story && story.history?.isFollowing));
-    }, [story]);
-
-    const updateFollowDebounce = useAutoFlushDebounce(
-      (isFollowing, story, dispatch) => {
-        dispatch(
-          updateStoryHistoryAsync({
-            storyId: story.id,
-            isFollowing: !!isFollowing,
-          }),
-        );
-      },
-      500,
-    );
+    const story = props.story as GetStoryDto;
+    const { mutate: unfollowStory } = useUnfollowStory();
+    const { mutate: followStory } = useFollowStory();
 
     const handleFollow = useCallback(() => {
-      setFollowing((prevState) => {
-        const follow = !prevState;
-        updateFollowDebounce(follow, story, dispatch);
-        return follow;
-      });
-    }, [dispatch, story, updateFollowDebounce]);
+      if (story.history?.isFollowing) {
+        unfollowStory(story.id);
+      } else {
+        followStory(story.id);
+      }
+    }, [followStory, story.history?.isFollowing, story.id, unfollowStory]);
 
     return (
-      <Component {...props} onClick={handleFollow} isFollowing={isFollowing} />
+      <DebouncedComponent
+        {...props}
+        onClick={handleFollow}
+        isFollowing={!!story.history?.isFollowing}
+      />
     );
   };
 }

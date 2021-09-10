@@ -60,8 +60,8 @@ export default () => ({
   settings: {
     sizing: {
       thumbnail: {
-        width: 40,
-        height: 50,
+        width: 66,
+        height: 88,
       },
       cover: {
         maxWidth: 768,

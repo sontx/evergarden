@@ -1,0 +1,31 @@
+.user-menu {
+  --grid-menu-top: @nav-bar-height;
+
+  .logout {
+    color: @error-color;
+  }
+
+  .contact {
+    color: @info-color;
+  }
+
+  .dark-theme-toggle {
+    text-align: -webkit-center;
+    text-align: -moz-center;
+    display: flex;
+
+    .menu-item-text {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button {
+      outline: none;
+      display: block;
+      padding-top: 1px !important;
+      overflow: visible !important;
+    }
+  }
+}

@@ -1,0 +1,56 @@
+@import (reference) "../../../styles/variables";
+@import (reference) "../../../styles/common";
+
+.story-item--compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+
+  .slot--left {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+
+    .lazy-image-placeholder {
+      width: @thumbnail-width--compact;
+      height: @thumbnail-height--compact;
+      margin-right: 8px;
+    }
+
+    img {
+      .lazy-image-placeholder();
+      min-width: @thumbnail-width--compact;
+      max-width: @thumbnail-width--compact;
+      min-height: @thumbnail-height--compact;
+      max-height: @thumbnail-height--compact;
+      object-fit: cover;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+
+      .title {
+        line-height: 100%;
+        .text-truncated();
+      }
+
+      .subtitle {
+        .text-subtitle();
+        .rs-divider-vertical {
+          margin: 0 6px;
+        }
+      }
+    }
+  }
+
+  .slot--right {
+    margin-left: 10px;
+    .continue-reading {
+      .text-subtitle();
+    }
+  }
+}

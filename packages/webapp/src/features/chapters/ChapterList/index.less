@@ -1,0 +1,34 @@
+.chapter-list {
+  .rs-list-item {
+    background-color: unset;
+    .rs-list-item-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: @font-size-base - 1;
+    }
+  }
+
+  .meta {
+    display: flex;
+  }
+
+  .chapter-created {
+    color: @secondary-text-color;
+    font-style: italic;
+    margin-left: 5px;
+    font-size: @font-size-base - 2;
+  }
+
+  .chapter--highlighted {
+    .chapter-header {
+      color: darkorange !important;
+    }
+  }
+
+  .chapter--unread {
+    .chapter-title {
+      color: unset;
+    }
+  }
+}

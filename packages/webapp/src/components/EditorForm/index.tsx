@@ -2,6 +2,8 @@ import { Button, Loader } from "rsuite";
 import React, { ReactNode } from "react";
 import { ProcessingStatus } from "../../utils/types";
 import { useIntl } from "react-intl";
+import { StandardProps } from "rsuite/es/@types/common";
+import classNames from "classnames";
 
 export function validateModel(model: any, value: any) {
   const result = model.check(value);
@@ -23,23 +25,27 @@ function LoadingPanel({ title }: { title: string }) {
 }
 
 export function EditorForm({
-  savingStatus,
-  fetchingStatus,
+  isSaving,
+  isFetching,
   handleSave,
   actionLabel,
   children,
   disabled,
+  className,
+  ...rest
 }: {
-  savingStatus: ProcessingStatus;
+  savingStatus?: ProcessingStatus;
   fetchingStatus?: ProcessingStatus;
+  isSaving?: boolean;
+  isFetching?: boolean;
   handleSave?: () => void;
-  actionLabel: string;
+  actionLabel: ReactNode;
   children: ReactNode;
   disabled?: boolean;
-}) {
+} & StandardProps) {
   const intl = useIntl();
   return (
-    <>
+    <div className={classNames(className, "editor-form")} {...rest}>
       {children}
       <Button
         disabled={disabled}
@@ -48,15 +54,15 @@ export function EditorForm({
         onClick={handleSave}
         block
         appearance="primary"
-        loading={savingStatus === "processing"}
+        loading={isSaving}
       >
         {actionLabel}
       </Button>
-      {fetchingStatus === "processing" && (
+      {isFetching && (
         <LoadingPanel
           title={intl.formatMessage({ id: "processFetchingLabel" })}
         />
       )}
-    </>
+    </div>
   );
 }

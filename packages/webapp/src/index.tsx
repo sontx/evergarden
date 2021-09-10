@@ -4,7 +4,6 @@ import App from "./App";
 import { store } from "./app/store";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
-import "./index.less";
 import "react-tiny-fab/dist/styles.css";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
