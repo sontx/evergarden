@@ -46,9 +46,6 @@ export function TopNavigation({
   }, [gotoStory, story]);
 
   const menuTop = containerRef.current?.clientHeight;
-  const menuStyle = menuTop
-    ? ({ "--grid-menu-top": `${menuTop}px` } as CSSProperties)
-    : {};
 
   return (
     <div className="top-navigation" ref={containerRef}>
@@ -96,10 +93,11 @@ export function TopNavigation({
       <UserMenuWrapper
         onClose={toggleShowMenu}
         show={showMenu}
-        style={{
-          ...menuStyle,
-          paddingTop: "1px",
-        }}
+        style={
+          menuTop
+            ? ({ "--grid-menu-top": `${menuTop}px` } as CSSProperties)
+            : {}
+        }
       />
     </div>
   );
