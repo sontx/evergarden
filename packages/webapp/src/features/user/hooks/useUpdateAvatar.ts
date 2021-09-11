@@ -2,7 +2,7 @@ import api from "../../../utils/api";
 import { GetUserDto } from "@evergarden/shared";
 import { useObjectMutation } from "../../../hooks/api-query/useObjectMutation";
 
-async function updateAvatar(file: File): Promise<GetUserDto> {
+async function updateAvatar(file: File | Blob): Promise<GetUserDto> {
   const formData = new FormData();
   formData.append("file", file);
   const response = await api.put("/api/users/avatar", formData, {
@@ -14,7 +14,7 @@ async function updateAvatar(file: File): Promise<GetUserDto> {
 }
 
 export function useUpdateAvatar() {
-  return useObjectMutation<File>("update-avatar", updateAvatar, {
+  return useObjectMutation<File | Blob>("update-avatar", updateAvatar, {
     relativeQueryKey: "user",
     updateQueryFrom: "request",
   });
