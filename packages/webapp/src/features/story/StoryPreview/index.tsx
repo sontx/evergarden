@@ -1,7 +1,6 @@
 import { Divider, Panel } from "rsuite";
 import { useCallback } from "react";
-import { Comment } from "../../../components/Comment/Comment";
-import { CommentCount } from "../../../components/Comment/CommentCount";
+import { Comment } from "../../../components/Comment";
 import { useLocation } from "react-router-dom";
 
 import defaultThumbnail from "../../../images/default-cover.png";
@@ -80,7 +79,7 @@ export function StoryPreview({ slug }: { slug: string }) {
         onEntered={handleExpandPanel}
         collapsible
         defaultExpanded={state.focusTo === "comment"}
-        header={<CommentCount story={story} />}
+        header="Comments"
       >
         <Comment onReady={handleCommentReady} story={story} />
       </Panel>

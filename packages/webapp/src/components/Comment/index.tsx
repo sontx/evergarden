@@ -1,0 +1,24 @@
+import { GetStoryDto } from "@evergarden/shared";
+// @ts-ignore
+import { Comments } from "react-facebook";
+import { useIsDarkMode } from "../../features/global/hooks/useIsDarkMode";
+import { isMobileOnly } from "react-device-detect";
+
+export function Comment({
+  story,
+  onReady,
+}: {
+  story: GetStoryDto;
+  onReady?: () => void;
+}) {
+  const { isDarkMode } = useIsDarkMode();
+  return (
+    <Comments
+      href={`${window.location.origin}/${story.url}`}
+      mobile={isMobileOnly}
+      numPosts={10}
+      width="100%"
+      colorScheme={isDarkMode ? "dark" : "light"}
+    />
+  );
+}

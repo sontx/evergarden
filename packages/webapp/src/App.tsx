@@ -5,6 +5,8 @@ import enGB from "rsuite/lib/IntlProvider/locales/en_GB";
 import { IntlProvider } from "react-intl";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Home } from "./pages/Home";
+// @ts-ignore
+import { FacebookProvider } from "react-facebook";
 import { Story } from "./pages/Story";
 import { Reading } from "./pages/Reading";
 import { Login } from "./pages/Login";
@@ -36,68 +38,70 @@ export default function App() {
       <IntlProvider locale="en" messages={locales.en}>
         <RSIntlProvider locale={enGB}>
           <ThemeProvider>
-            <Router>
-              <ErrorHandler>
-                <Switch>
-                  <Route exact path="/login">
-                    <Login />
-                  </Route>
-                  <Route path="/" exact>
-                    <Home />
-                  </Route>
-                  <Route exact path="/story/:url">
-                    <Story />
-                  </Route>
-                  <Route exact path="/reading/:url/:chapterNo">
-                    <Reading />
-                  </Route>
-                  <Route exact path="/following">
-                    <AuthRequired>
-                      <Following />
-                    </AuthRequired>
-                  </Route>
-                  <Route exact path="/history">
-                    <AuthRequired>
-                      <History />
-                    </AuthRequired>
-                  </Route>
-                  <Route exact path="/user/story">
-                    <AuthRequired>
-                      <UserStoriesPage />
-                    </AuthRequired>
-                  </Route>
-                  <Route exact path="/user/story/new">
-                    <AuthRequired>
-                      <StoryEditorPage />
-                    </AuthRequired>
-                  </Route>
-                  <Route exact path="/user/story/:url">
-                    <AuthRequired>
-                      <StoryEditorPage />
-                    </AuthRequired>
-                  </Route>
-                  <Route exact path="/user/story/:url/chapter">
-                    <AuthRequired>
-                      <UserChaptersPage />
-                    </AuthRequired>
-                  </Route>
-                  <Route exact path="/user/story/:url/chapter/new">
-                    <AuthRequired>
-                      <ChapterEditorPage />
-                    </AuthRequired>
-                  </Route>
-                  <Route exact path="/user/story/:url/chapter/:chapterNo">
-                    <AuthRequired>
-                      <ChapterEditorPage />
-                    </AuthRequired>
-                  </Route>
-                  <Route>
-                    <ErrorPage code={404} />
-                  </Route>
-                </Switch>
-                <GlobalLoader />
-              </ErrorHandler>
-            </Router>
+            <FacebookProvider appId={process.env.REACT_APP_FACEBOOK_CLIENT_ID}>
+              <Router>
+                <ErrorHandler>
+                  <Switch>
+                    <Route exact path="/login">
+                      <Login />
+                    </Route>
+                    <Route path="/" exact>
+                      <Home />
+                    </Route>
+                    <Route exact path="/story/:url">
+                      <Story />
+                    </Route>
+                    <Route exact path="/reading/:url/:chapterNo">
+                      <Reading />
+                    </Route>
+                    <Route exact path="/following">
+                      <AuthRequired>
+                        <Following />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/history">
+                      <AuthRequired>
+                        <History />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story">
+                      <AuthRequired>
+                        <UserStoriesPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/new">
+                      <AuthRequired>
+                        <StoryEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/:url">
+                      <AuthRequired>
+                        <StoryEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/:url/chapter">
+                      <AuthRequired>
+                        <UserChaptersPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/:url/chapter/new">
+                      <AuthRequired>
+                        <ChapterEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/story/:url/chapter/:chapterNo">
+                      <AuthRequired>
+                        <ChapterEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route>
+                      <ErrorPage code={404} />
+                    </Route>
+                  </Switch>
+                  <GlobalLoader />
+                </ErrorHandler>
+              </Router>
+            </FacebookProvider>
           </ThemeProvider>
         </RSIntlProvider>
       </IntlProvider>
