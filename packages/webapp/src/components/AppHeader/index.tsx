@@ -14,6 +14,13 @@ import {
 export function AppHeader({ fixedHeader }: { fixedHeader?: boolean }) {
   const dispatch = useAppDispatch();
   const isFloatingHeader = useAppSelector(selectIsFloatingHeader);
+
+  useEffect(() => {
+    return () => {
+      dispatch(setFloatingHeader(false));
+    };
+  }, [dispatch]);
+
   useEffect(() => {
     if (fixedHeader) {
       const scrollTop = () =>
