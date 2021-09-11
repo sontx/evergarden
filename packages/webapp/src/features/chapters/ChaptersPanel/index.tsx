@@ -43,6 +43,7 @@ export function ChaptersPanel({
   defaultSort,
   hasFilterBar,
   currentChapterIntoView,
+  transparentToolbar,
   ...rest
 }: {
   slug: string;
@@ -50,6 +51,7 @@ export function ChaptersPanel({
   defaultSort?: SortType;
   hasFilterBar?: boolean;
   currentChapterIntoView?: boolean;
+  transparentToolbar?: boolean;
 } & StandardProps) {
   const { data: story } = useStory(slug);
   const [active, setActive] = useState(currentChapterIntoView ? -1 : 0);
@@ -88,12 +90,12 @@ export function ChaptersPanel({
     <div className={classNames(className, "chapters-panel")} {...rest}>
       {hasFilterBar && (
         <ChaptersToolBar
+          transparent={transparentToolbar}
           onFilterChange={setFilter}
           story={story}
           sort={sort}
           onSortChange={setSort}
           onJumpTo={onClick}
-          style={{ marginBottom: "20px" }}
         />
       )}
       {story ? (

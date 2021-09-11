@@ -15,6 +15,7 @@ export function ChaptersToolBar({
   onSortChange,
   onFilterChange,
   className,
+  transparent,
   ...rest
 }: {
   story?: GetStoryDto;
@@ -22,6 +23,7 @@ export function ChaptersToolBar({
   onJumpTo?: (chapterNo: number) => void;
   onSortChange?: (sort: SortType) => void;
   onFilterChange?: (chapterNo: number) => void;
+  transparent?: boolean;
 } & StandardProps) {
   const [chapterNo, setChapterNo] = useState();
   const intl = useIntl();
@@ -45,7 +47,7 @@ export function ChaptersToolBar({
   return (
     <div className={classNames("chapters-toolbar", className)} {...rest}>
       <IconButton
-        appearance="ghost"
+        appearance={transparent ? "ghost" : "default"}
         className="sort-button"
         icon={
           <Icon
@@ -58,7 +60,7 @@ export function ChaptersToolBar({
           }
         }}
       />
-      <InputGroup className="transparent-input">
+      <InputGroup className={classNames({ "transparent-input": transparent })}>
         <InputNumber
           value={chapterNo}
           onChange={handleChapterNoChange}

@@ -65,7 +65,12 @@ export function StoryFooter({ story }: { story: GetStoryDto }) {
         expanded={activeTab === "chapters"}
         collapsible
       >
-        <ChaptersPanel slug={slug} hasFilterBar onClick={handleGoReading} />
+        <ChaptersPanel
+          transparentToolbar
+          slug={slug}
+          hasFilterBar
+          onClick={handleGoReading}
+        />
       </Panel>
       <Panel
         id="comment-panel"
