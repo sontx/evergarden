@@ -58,7 +58,7 @@ export function UserChaptersPage() {
         </>
       }
     >
-      <ChaptersPanel slug={url} onClick={handleEditChapter} hasFilterBar />
+      <ChaptersPanel story={story} onClick={handleEditChapter} hasFilterBar />
     </UserPage>
   );
 }

@@ -67,7 +67,7 @@ export function StoryFooter({ story }: { story: GetStoryDto }) {
       >
         <ChaptersPanel
           transparentToolbar
-          slug={slug}
+          story={story}
           hasFilterBar
           onClick={handleGoReading}
         />

@@ -75,7 +75,7 @@ export function BottomNavigation({
       {showChapters && (
         <FullPanel title={story.title} onClose={toggleShowChapters}>
           <ChaptersPanel
-            slug={story.url}
+            story={story}
             hasFilterBar
             currentChapterIntoView
             onClick={(chapterNo) => gotoReading(story, chapterNo)}

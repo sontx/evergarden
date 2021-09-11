@@ -1,4 +1,3 @@
-import { useStory } from "../../story/hooks/useStory";
 import { Icon, PanelGroup } from "rsuite";
 import { ChapterRange } from "../ChapterRange";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
@@ -6,6 +5,7 @@ import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { ChaptersPanelLoader } from "../ChaptersPanelLoader";
 import { ChaptersToolBar } from "../ChaptersToolBar";
+import { GetStoryDto } from "@evergarden/shared";
 
 const MAX_CHAPTERS_PER_GROUP =
   process.env.NODE_ENV === "development" ? 10 : 100;
@@ -37,7 +37,7 @@ function rangesMap(
 }
 
 export function ChaptersPanel({
-  slug,
+  story,
   className,
   onClick,
   defaultSort,
@@ -46,14 +46,13 @@ export function ChaptersPanel({
   transparentToolbar,
   ...rest
 }: {
-  slug: string;
+  story?: GetStoryDto;
   onClick?: (chapterNo: number) => void;
   defaultSort?: SortType;
   hasFilterBar?: boolean;
   currentChapterIntoView?: boolean;
   transparentToolbar?: boolean;
 } & StandardProps) {
-  const { data: story } = useStory(slug);
   const [active, setActive] = useState(currentChapterIntoView ? -1 : 0);
   const [filter, setFilter] = useState<number | undefined>();
   const [sort, setSort] = useState<SortType>(defaultSort || "desc");
@@ -99,7 +98,11 @@ export function ChaptersPanel({
         />
       )}
       {story ? (
-        <PanelGroup accordion activeKey={active} onSelect={setActive}>
+        <PanelGroup
+          accordion
+          activeKey={active >= 0 ? active : filter === undefined ? -1 : 0}
+          onSelect={setActive}
+        >
           {story.lastChapter !== undefined &&
             rangesMap(story.lastChapter, sort, (from, to, index, value) => {
               let eventKey = index;
