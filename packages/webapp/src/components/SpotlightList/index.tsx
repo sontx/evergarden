@@ -5,12 +5,12 @@ import classNames from "classnames";
 import { AuthorLink } from "../AuthorLink";
 import { Icon } from "rsuite";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Pagination, Parallax } from "swiper";
+import SwiperCore, { Autoplay, Navigation, Pagination, Parallax } from "swiper";
 import { abbreviateNumber } from "../../utils/types";
 import { useEffect } from "react";
 import { textTruncateAssistant } from "../../utils/text-truncate-assistant";
 
-SwiperCore.use([Navigation, Pagination, Parallax]);
+SwiperCore.use([Navigation, Pagination, Parallax, Autoplay]);
 
 export function SpotlightList({
   stories,
@@ -37,6 +37,10 @@ export function SpotlightList({
       className={classNames(className, "spotlight-list")}
       {...rest}
       speed={600}
+      autoplay={{
+        delay: 10000,
+        waitForTransition: true,
+      }}
       parallax
       pagination={{ clickable: true }}
       navigation
