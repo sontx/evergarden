@@ -10,7 +10,7 @@ export interface GlobalSliceState {
 
 const initialState: GlobalSliceState = {
   isFloatingHeader: false,
-  isDarkMode: true,
+  isDarkMode: false,
 };
 
 export const globalSlice = createSlice({
