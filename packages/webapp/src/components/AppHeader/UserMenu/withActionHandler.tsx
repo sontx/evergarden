@@ -6,6 +6,8 @@ import { useGoHistory } from "../../../hooks/navigation/useGoHistory";
 import { useGoUserStoryList } from "../../../hooks/navigation/useGoUserStoryList";
 import { useLogout } from "../../../features/login/hooks/useLogout";
 import { StandardProps } from "rsuite/es/@types/common";
+import { AboutPanel } from "../../AboutPanel";
+import { useToggle } from "../../../hooks/useToggle";
 
 export function withActionHandler(Component: ElementType) {
   return ({
@@ -16,6 +18,7 @@ export function withActionHandler(Component: ElementType) {
     const dispatch = useAppDispatch();
     const gotoFollowing = useGoFollowing();
     const gotoHistory = useGoHistory();
+    const [showAbout, toggleShowAbout] = useToggle();
     const gotoUserStoryList = useGoUserStoryList();
     const { mutate: logout, isLoading } = useLogout();
 
@@ -30,10 +33,11 @@ export function withActionHandler(Component: ElementType) {
         onHistoryClick={gotoHistory}
         onUserStoriesClick={gotoUserStoryList}
         onLogoutClick={logout}
+        onAboutClick={toggleShowAbout}
         {...rest}
       />
     ) : (
-      <></>
+      <>{showAbout && <AboutPanel onClose={toggleShowAbout} />}</>
     );
   };
 }

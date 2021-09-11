@@ -21,6 +21,7 @@ interface EnhancedModalProps extends StandardProps, AnimationEventProps {
   actions?: ReactNode;
   mobile?: boolean;
   center?: boolean;
+  backdropClose?: boolean;
 }
 
 export function EnhancedModal({
@@ -31,11 +32,12 @@ export function EnhancedModal({
   actions,
   mobile,
   center,
+  backdropClose,
   ...rest
 }: EnhancedModalProps) {
   return (
     <Modal
-      backdrop="static"
+      backdrop={backdropClose ? true : "static"}
       {...rest}
       className={classNames(className, "enhanced-modal", {
         "enhanced-modal--mobile": mobile,

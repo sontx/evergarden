@@ -14,6 +14,7 @@ export function UserMenu({
   onHistoryClick,
   onUserStoriesClick,
   onLogoutClick,
+  onAboutClick,
   className,
   ...rest
 }: {
@@ -22,6 +23,7 @@ export function UserMenu({
   onHistoryClick: () => void;
   onUserStoriesClick: () => void;
   onLogoutClick: () => void;
+  onAboutClick: () => void;
 } & StandardProps) {
   const { data: user } = useUser();
   const { isDarkMode, setDarkMode } = useIsDarkMode();
@@ -52,7 +54,11 @@ export function UserMenu({
       <GridMenuItem icon={<Icon icon="history" />} onClick={onHistoryClick}>
         <FormattedMessage id="userMenuHistory" />
       </GridMenuItem>
-      <GridMenuItem icon={<Icon icon="info" />} className="contact">
+      <GridMenuItem
+        icon={<Icon icon="info" />}
+        className="contact"
+        onClick={onAboutClick}
+      >
         <FormattedMessage id="userMenuAbout" />
       </GridMenuItem>
       <GridMenuItem preventClick className="dark-theme-toggle">
