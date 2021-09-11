@@ -3,6 +3,7 @@ import { Panel, PanelProps } from "rsuite";
 import { FormattedMessage } from "react-intl";
 import { useChapters } from "../hooks/useChapters";
 import { GetStoryDto } from "@evergarden/shared";
+import { useCallback } from "react";
 
 type ChapterRangeProps = ChapterListBaseProps &
   PanelProps & {
@@ -28,8 +29,13 @@ export function ChapterRange({
     enabled: enabled && !!story,
   });
 
+  const handleRef = useCallback((node) => {
+    (node as HTMLElement).scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   return (
     <Panel
+      onEntered={handleRef}
       className="chapter-range"
       header={
         <FormattedMessage
