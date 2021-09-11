@@ -4,13 +4,7 @@ import { Comments } from "react-facebook";
 import { useIsDarkMode } from "../../features/global/hooks/useIsDarkMode";
 import { isMobileOnly } from "react-device-detect";
 
-export function Comment({
-  story,
-  onReady,
-}: {
-  story: GetStoryDto;
-  onReady?: () => void;
-}) {
+export function Comment({ story }: { story: GetStoryDto }) {
   const { isDarkMode } = useIsDarkMode();
   return (
     <Comments

@@ -78,7 +78,7 @@ export function TopNavigation({
               <Icon icon="download" />
             </Button>
             <Button onClick={handleClickComment}>
-              <Icon icon="commenting" />
+              <Icon icon="comments" />
             </Button>
             {story && isLoggedIn && <FollowButtonWrapper story={story} />}
             <Button>
