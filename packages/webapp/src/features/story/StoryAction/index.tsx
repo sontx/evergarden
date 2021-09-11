@@ -54,6 +54,7 @@ export function StoryAction({ story }: { story: GetStoryDto }) {
           icon={<Icon icon="angle-right" />}
           style={{ fontSize: "small" }}
           size="sm"
+          appearance="primary"
           onClick={handleRead}
         >
           Read

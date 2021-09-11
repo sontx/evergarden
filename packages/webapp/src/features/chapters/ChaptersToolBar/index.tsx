@@ -45,6 +45,7 @@ export function ChaptersToolBar({
   return (
     <div className={classNames("chapters-toolbar", className)} {...rest}>
       <IconButton
+        appearance="ghost"
         className="sort-button"
         icon={
           <Icon
@@ -57,7 +58,7 @@ export function ChaptersToolBar({
           }
         }}
       />
-      <InputGroup>
+      <InputGroup className="transparent-input">
         <InputNumber
           value={chapterNo}
           onChange={handleChapterNoChange}
