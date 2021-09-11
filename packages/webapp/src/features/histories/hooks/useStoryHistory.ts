@@ -19,6 +19,8 @@ export function useStoryHistory<T extends GetStoryDto | undefined>(
       } else {
         setWithHistory(story);
       }
+    } else {
+      setWithHistory(story);
     }
   }, [histories, story]);
 

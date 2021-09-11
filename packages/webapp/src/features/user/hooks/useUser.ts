@@ -22,6 +22,7 @@ export function useUser() {
       if (errorDetails.code !== 401) {
         errorHandler(err);
       } else {
+        localStorage.removeItem("isLoggedIn");
         queryClient.setQueryData("user", null);
       }
     },
