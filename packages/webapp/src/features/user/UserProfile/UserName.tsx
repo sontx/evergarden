@@ -60,7 +60,7 @@ export const UserName = ({ user }: {user:AuthUser | undefined}) => {
       ) : (
           <>
             <span>{name}</span>
-            <Icon icon="pencil" size="lg" onClick={() => setIsEditing(true);}/>
+            <Icon icon="pencil" size="lg" onClick={() => setIsEditing(true)}/>
           </>
         )
       }
