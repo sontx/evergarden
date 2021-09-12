@@ -3,7 +3,7 @@ import { IntlProvider as RSIntlProvider } from "rsuite";
 import locales from "./locales";
 import enGB from "rsuite/lib/IntlProvider/locales/en_GB";
 import { IntlProvider } from "react-intl";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 // @ts-ignore
 import { FacebookProvider } from "react-facebook";
@@ -24,6 +24,7 @@ import { queryClient } from "./app/store";
 import { ErrorHandler } from "./components/ErrorHandler";
 import { ThemeProvider } from "./ThemeProvider";
 import { FullScreenLoader } from "./components/FullScreenLoader";
+import { AnimatedSwitch } from "./components/AnimatedSwitch";
 import { withGlobalFullScreenLoader } from "./components/FullScreenLoader/withGlobalFullScreenLoader";
 
 import "./index.less";
@@ -41,7 +42,7 @@ export default function App() {
             <FacebookProvider appId={process.env.REACT_APP_FACEBOOK_CLIENT_ID}>
               <Router>
                 <ErrorHandler>
-                  <Switch>
+                  <AnimatedSwitch>
                     <Route exact path="/login">
                       <Login />
                     </Route>
@@ -93,7 +94,7 @@ export default function App() {
                     <Route>
                       <ErrorPage code={404} />
                     </Route>
-                  </Switch>
+                  </AnimatedSwitch>
                   <GlobalLoader />
                 </ErrorHandler>
               </Router>
