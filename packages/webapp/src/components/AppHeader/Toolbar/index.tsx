@@ -7,11 +7,13 @@ import { useToggle } from "../../../hooks/useToggle";
 import { useGoLogin } from "../../../hooks/navigation/useGoLogin";
 import { useUser } from "../../../features/user/hooks/useUser";
 import { withActionHandler } from "../UserMenu/withActionHandler";
+import { useIsLoggedIn } from "../../../features/user/hooks/useIsLoggedIn";
 
 const UserMenuWrapper = withActionHandler(UserMenu);
 
 export function Toolbar() {
   const { data: user } = useUser();
+  const isLoggedIn = useIsLoggedIn();
   const [showSearchBox, setShowSearchBox] = useState(false);
   const goLogin = useGoLogin();
   const [showMenu, toggleShowMenu] = useToggle();
@@ -26,7 +28,7 @@ export function Toolbar() {
         >
           <Icon size="lg" icon={showSearchBox ? "compress" : "search"} />
         </Nav.Item>
-        {user ? (
+        {user && isLoggedIn ? (
           <Nav.Item
             className="user-avatar"
             disabled={showSearchBox}

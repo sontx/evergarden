@@ -7,6 +7,7 @@ import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { useUser } from "../../../features/user/hooks/useUser";
 import { useIsDarkMode } from "../../../features/global/hooks/useIsDarkMode";
+import { useIsLoggedIn } from "../../../features/user/hooks/useIsLoggedIn";
 
 export function UserMenu({
   onClose,
@@ -26,6 +27,7 @@ export function UserMenu({
   onAboutClick: () => void;
 } & StandardProps) {
   const { data: user } = useUser();
+  const isLoggedIn = useIsLoggedIn();
   const { isDarkMode, setDarkMode } = useIsDarkMode();
 
   return (
@@ -35,7 +37,7 @@ export function UserMenu({
       onClose={onClose}
       {...rest}
     >
-      {user && (
+      {user && isLoggedIn && (
         <>
           <GridMenuItem icon={<Icon icon="user" />}>
             {user.fullName}
@@ -69,7 +71,7 @@ export function UserMenu({
           speed={2}
         />
       </GridMenuItem>
-      {user && (
+      {user && isLoggedIn && (
         <GridMenuItem
           icon={<Icon icon="sign-out" />}
           className="logout"
