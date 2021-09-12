@@ -34,10 +34,9 @@ export function FullPanel({
           ref={ref1 as any}
         >
           <div className="panel-header">
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a onClick={onClose} className="header-btn-back">
+            <span onClick={onClose} className="header-btn-back">
               <Icon icon="left" />
-            </a>
+            </span>
             <span className="header-right">
               <span className="panel-title">{title}</span>
               {subtitle && <span className="panel-subtitle">{subtitle}</span>}
