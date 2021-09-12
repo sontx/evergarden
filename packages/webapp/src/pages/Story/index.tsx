@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 import { AppHeader } from "../../components/AppHeader";
 import { AppFooter } from "../../components/AppFooter";
 import { SEO } from "../../components/SEO";
@@ -11,6 +11,10 @@ import { StoryPreview } from "../../features/story/StoryPreview";
 export function Story() {
   const { url } = useParams() as any;
   const intl = useIntl();
+
+  useEffect(() => {
+    window.scroll({ top: 0 });
+  }, []);
 
   return (
     <AppContainer backgroundEffect showBackTop>
