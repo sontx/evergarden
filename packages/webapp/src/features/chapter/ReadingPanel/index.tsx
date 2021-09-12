@@ -15,7 +15,6 @@ import { useSyncHistory } from "../hooks/useSyncHistory";
 import { usePrefetchNextChapter } from "../hooks/usePrefetchNextChapter";
 import { CuteLoader } from "../../../components/CuteLoader";
 import classNames from "classnames";
-import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
 import { useUserSettings } from "../../settings/hooks/useUserSettings";
 import { useIsDarkMode } from "../../global/hooks/useIsDarkMode";
 
@@ -34,7 +33,6 @@ export function ReadingPanel({
   const workingEnvRef = useRef<{ storyId?: number; chapterNo?: number }>({});
   const track = useTracker();
   const syncHistory = useSyncHistory();
-  const isLoggedIn = useIsLoggedIn();
   const { data: settings } = useUserSettings();
   const { isDarkMode } = useIsDarkMode();
 
@@ -48,16 +46,14 @@ export function ReadingPanel({
       (env.storyId !== story.id || env.chapterNo !== chapter.chapterNo)
     ) {
       track(story.id);
-      if (isLoggedIn) {
-        syncHistory({ story, chapter });
-      }
+      syncHistory({ story, chapter });
       workingEnvRef.current = {
         storyId: story.id,
         chapterNo: chapter.chapterNo,
       };
       setShowNav(false);
     }
-  }, [story, chapter, setShowNav, track, syncHistory, isLoggedIn]);
+  }, [story, chapter, setShowNav, track, syncHistory]);
 
   return (
     <div className="reading-panel">

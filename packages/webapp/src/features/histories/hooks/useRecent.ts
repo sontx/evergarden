@@ -6,7 +6,12 @@ export function useRecent() {
   const { data } = useReadingHistory();
   return useSimpleQuery(
     ["recent"],
-    () => fetchStoriesByIds((data || []).map((item) => item.storyId)),
+    () => {
+      const history = data || [];
+      return history.length > 0
+        ? fetchStoriesByIds(history.map((item) => item.storyId))
+        : Promise.resolve([]);
+    },
     {
       enabled: !!data,
     },

@@ -40,9 +40,6 @@ export function UserMenu({
           <GridMenuItem icon={<Icon icon="user" />}>
             {user.fullName}
           </GridMenuItem>
-          <GridMenuItem icon={<Icon icon="star" />} onClick={onFollowClick}>
-            <FormattedMessage id="userMenuFollowing" />
-          </GridMenuItem>
           <GridMenuItem
             icon={<Icon icon="address-book" />}
             onClick={onUserStoriesClick}
@@ -51,6 +48,9 @@ export function UserMenu({
           </GridMenuItem>
         </>
       )}
+      <GridMenuItem icon={<Icon icon="star" />} onClick={onFollowClick}>
+        <FormattedMessage id="userMenuFollowing" />
+      </GridMenuItem>
       <GridMenuItem icon={<Icon icon="history" />} onClick={onHistoryClick}>
         <FormattedMessage id="userMenuHistory" />
       </GridMenuItem>

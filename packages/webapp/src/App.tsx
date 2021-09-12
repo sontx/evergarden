@@ -55,14 +55,10 @@ export default function App() {
                       <Reading />
                     </Route>
                     <Route exact path="/following">
-                      <AuthRequired>
-                        <Following />
-                      </AuthRequired>
+                      <Following />
                     </Route>
                     <Route exact path="/history">
-                      <AuthRequired>
-                        <History />
-                      </AuthRequired>
+                      <History />
                     </Route>
                     <Route exact path="/user/story">
                       <AuthRequired>

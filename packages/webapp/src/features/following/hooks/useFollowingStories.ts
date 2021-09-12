@@ -6,12 +6,12 @@ export function useFollowingStories() {
   const { data } = useReadingHistory();
   return useSimpleQuery(
     "following-stories",
-    () =>
-      fetchStoriesByIds(
-        (data || [])
-          .filter((item) => item.isFollowing)
-          .map((item) => item.storyId),
-      ),
+    () => {
+      const following = (data || []).filter((item) => item.isFollowing);
+      return following.length > 0
+        ? fetchStoriesByIds(following.map((item) => item.storyId))
+        : Promise.resolve([]);
+    },
     {
       enabled: !!data,
     },

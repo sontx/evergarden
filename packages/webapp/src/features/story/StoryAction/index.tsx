@@ -5,7 +5,6 @@ import { useCallback } from "react";
 import { useGoReading } from "../../../hooks/navigation/useGoReading";
 import { FormattedMessage } from "react-intl";
 import { canContinueReading } from "../../../utils/story-utils";
-import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -30,7 +29,6 @@ function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
 const FollowButtonWrapper = withFollowSync(FollowButton);
 
 export function StoryAction({ story }: { story: GetStoryDto }) {
-  const isLoggedIn = useIsLoggedIn();
   const gotoReading = useGoReading();
 
   const handleRead = useCallback(() => {
@@ -47,7 +45,7 @@ export function StoryAction({ story }: { story: GetStoryDto }) {
 
   return (
     <ButtonGroup className="story-action" justified>
-      {isLoggedIn && <FollowButtonWrapper story={story} />}
+      <FollowButtonWrapper story={story} />
       {!canContinueReading(story) && (
         <IconButton
           placement="right"

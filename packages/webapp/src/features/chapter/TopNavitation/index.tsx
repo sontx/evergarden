@@ -32,7 +32,6 @@ export function TopNavigation({
   const [showMore, toggleShowMore] = useToggle();
   const [showMenu, toggleShowMenu] = useToggle();
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const isLoggedIn = useIsLoggedIn();
   const gotoStory = useGoStory();
 
   useOverlay();
@@ -80,7 +79,7 @@ export function TopNavigation({
             <Button onClick={handleClickComment}>
               <Icon icon="comments" />
             </Button>
-            {story && isLoggedIn && <FollowButtonWrapper story={story} />}
+            {story && <FollowButtonWrapper story={story} />}
             <Button>
               <Icon icon="bug" />
             </Button>
