@@ -1,5 +1,5 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import { CSSProperties, useCallback, useRef } from "react";
+import { CSSProperties, useCallback, useEffect, useRef } from "react";
 import { Button, ButtonGroup, ButtonToolbar, Icon } from "rsuite";
 import classNames from "classnames";
 import { withFollowSync } from "../../story/withFollowSync";
@@ -29,11 +29,17 @@ export function TopNavigation({
   chapter: GetChapterDto;
 }) {
   const [showMore, toggleShowMore] = useToggle();
-  const [showMenu, toggleShowMenu] = useToggle();
+  const [showMenu, toggleShowMenu, setShowMenu] = useToggle();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const gotoStory = useGoStory();
 
   useOverlay();
+
+  useEffect(() => {
+    if (!showMore) {
+      setShowMenu(false);
+    }
+  }, [setShowMenu, showMore]);
 
   const handleClickBack = useCallback(() => {
     gotoStory(story);
