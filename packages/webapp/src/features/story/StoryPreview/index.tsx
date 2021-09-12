@@ -18,11 +18,13 @@ export function StoryPreview({ slug }: { slug: string }) {
   return story ? (
     <div className="story-preview">
       <Panel bodyFill className="story-header">
-        <LazyImageEx
-          src={story.cover}
-          defaultSrc={defaultThumbnail}
-          alt={story.title}
-        />
+       <div className="cover">
+         <LazyImageEx
+           src={story.cover}
+           defaultSrc={defaultThumbnail}
+           alt={story.title}
+         />
+       </div>
         <Panel header={story.title}>
           <StorySubtitle story={story} />
           <Divider style={{ margin: "10px 0 15px 0" }} />
