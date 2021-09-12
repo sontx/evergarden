@@ -6,6 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 import { PersistConfig, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import ms from "ms";
 import { combineReducers } from "redux";
 import {
   FLUSH,
@@ -68,6 +69,8 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
+      staleTime: ms("5m"),
+      cacheTime: ms("10m"),
     },
   },
 });
