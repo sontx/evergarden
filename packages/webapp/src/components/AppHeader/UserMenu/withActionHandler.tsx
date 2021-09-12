@@ -24,6 +24,9 @@ export function withActionHandler(Component: ElementType) {
 
     useEffect(() => {
       dispatch(setShowingFullScreenLoader(isLoading));
+      return () => {
+        dispatch(setShowingFullScreenLoader(false));
+      };
     }, [dispatch, isLoading]);
 
     return show ? (
