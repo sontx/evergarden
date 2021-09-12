@@ -1,6 +1,6 @@
 import { Icon, PanelGroup } from "rsuite";
 import { ChapterRange } from "../ChapterRange";
-import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import { StandardProps } from "rsuite/es/@types/common";
 import classNames from "classnames";
 import { ChaptersPanelLoader } from "../ChaptersPanelLoader";
@@ -54,42 +54,25 @@ export function ChaptersPanel({
   transparentToolbar?: boolean;
 } & StandardProps) {
   const [active, setActive] = useState(currentChapterIntoView ? -1 : 0);
-  const [filter, setFilter] = useState<number | undefined>();
   const [sort, setSort] = useState<SortType>(defaultSort || "desc");
-  const lastChapter = useMemo(() => story?.lastChapter, [story?.lastChapter]);
-  const needShowCurrentChapter = useRef(currentChapterIntoView);
   const currentChapterNo = useMemo(() => {
-    needShowCurrentChapter.current = true;
     return story?.history?.currentChapterNo;
   }, [story?.history?.currentChapterNo]);
+  const [filter, setFilter] = useState<number | undefined>(
+    currentChapterIntoView ? currentChapterNo : undefined,
+  );
 
   const unreadFrom =
     typeof currentChapterNo === "number" && currentChapterNo > 0
       ? currentChapterNo + 1
       : 0;
 
-  useEffect(() => {
-    if (
-      lastChapter !== undefined &&
-      currentChapterNo !== undefined &&
-      currentChapterIntoView &&
-      filter === undefined &&
-      needShowCurrentChapter.current
-    ) {
-      rangesMap(lastChapter, sort, (from, to, index) => {
-        if (currentChapterNo >= from && currentChapterNo <= to) {
-          needShowCurrentChapter.current = false;
-          setActive(index);
-        }
-      });
-    }
-  }, [lastChapter, currentChapterNo, currentChapterIntoView, filter, sort]);
-
   const activeKey = filter !== undefined ? 0 : active;
   return (
     <div className={classNames(className, "chapters-panel")} {...rest}>
       {hasFilterBar && (
         <ChaptersToolBar
+          defaultFilter={currentChapterIntoView ? currentChapterNo : undefined}
           transparent={transparentToolbar}
           onFilterChange={setFilter}
           story={story}
@@ -99,11 +82,7 @@ export function ChaptersPanel({
         />
       )}
       {story ? (
-        <PanelGroup
-          accordion
-          activeKey={activeKey}
-          onSelect={setActive}
-        >
+        <PanelGroup accordion activeKey={activeKey} onSelect={setActive}>
           {story.lastChapter !== undefined &&
             rangesMap(story.lastChapter, sort, (from, to, index, value) => {
               let eventKey = index;

@@ -16,6 +16,7 @@ export function ChaptersToolBar({
   onFilterChange,
   className,
   transparent,
+  defaultFilter,
   ...rest
 }: {
   story?: GetStoryDto;
@@ -24,8 +25,9 @@ export function ChaptersToolBar({
   onSortChange?: (sort: SortType) => void;
   onFilterChange?: (chapterNo: number) => void;
   transparent?: boolean;
+  defaultFilter?: number;
 } & StandardProps) {
-  const [chapterNo, setChapterNo] = useState();
+  const [chapterNo, setChapterNo] = useState(defaultFilter);
   const intl = useIntl();
 
   const filterFn = useDebouncedCallback((value) => {
