@@ -8,6 +8,7 @@
     box-shadow: none;
     padding-top: 6px;
     padding-bottom: 6px;
+    color: @secondary-text-color;
 
     .rs-list-item-content {
       display: flex;
@@ -29,12 +30,11 @@
   }
 
   .chapter--highlighted {
-    .chapter-header {
-      color: darkorange !important;
-    }
+    color: darkorange !important;
   }
 
   .chapter--unread {
+    color: unset;
     .chapter-title {
       color: unset;
     }

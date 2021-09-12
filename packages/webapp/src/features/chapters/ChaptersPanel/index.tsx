@@ -85,6 +85,7 @@ export function ChaptersPanel({
     }
   }, [lastChapter, currentChapterNo, currentChapterIntoView, filter, sort]);
 
+  const activeKey = filter !== undefined ? 0 : active;
   return (
     <div className={classNames(className, "chapters-panel")} {...rest}>
       {hasFilterBar && (
@@ -100,7 +101,7 @@ export function ChaptersPanel({
       {story ? (
         <PanelGroup
           accordion
-          activeKey={filter !== undefined ? 0 : active}
+          activeKey={activeKey}
           onSelect={setActive}
         >
           {story.lastChapter !== undefined &&
@@ -132,13 +133,13 @@ export function ChaptersPanel({
                   from={from}
                   story={story}
                   to={to}
-                  enabled={eventKey === active}
+                  enabled={eventKey === activeKey}
                   renderMeta={(chapter) =>
                     !chapter.published ? (
                       <Icon icon="user-secret" />
                     ) : (
                       story.history?.currentChapterNo === chapter.chapterNo && (
-                        <Icon icon="book2" />
+                        <Icon icon="eye" />
                       )
                     )
                   }

@@ -1,4 +1,4 @@
-import { Icon, IconButton, InputGroup, InputNumber } from "rsuite";
+import { Icon, InputGroup, InputNumber } from "rsuite";
 import { useCallback, useState } from "react";
 import { GetStoryDto } from "@evergarden/shared";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -46,21 +46,18 @@ export function ChaptersToolBar({
 
   return (
     <div className={classNames("chapters-toolbar", className)} {...rest}>
-      <IconButton
-        appearance={transparent ? "ghost" : "default"}
-        className="sort-button"
-        icon={
+      <InputGroup className={classNames({ "transparent-input": transparent })}>
+        <InputGroup.Button
+          onClick={() => {
+            if (onSortChange) {
+              onSortChange(sort === "asc" ? "desc" : "asc");
+            }
+          }}
+        >
           <Icon
             icon={sort === "desc" ? "sort-numeric-desc" : "sort-numeric-asc"}
           />
-        }
-        onClick={() => {
-          if (onSortChange) {
-            onSortChange(sort === "asc" ? "desc" : "asc");
-          }
-        }}
-      />
-      <InputGroup className={classNames({ "transparent-input": transparent })}>
+        </InputGroup.Button>
         <InputNumber
           value={chapterNo}
           onChange={handleChapterNoChange}
