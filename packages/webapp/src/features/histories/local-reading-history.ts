@@ -4,7 +4,7 @@ import {
 } from "@evergarden/shared";
 
 export class LocalReadingHistory {
-  private static readonly key = "readingHistory";
+  private static readonly key = "history";
   private static readonly max = 50;
 
   private static cachedData: GetReadingHistoryDto[] | undefined;
@@ -61,6 +61,8 @@ export class LocalReadingHistory {
         started: new Date(date),
       });
     }
+
+    this.cachedData = history;
 
     if (this.timeoutId !== undefined) {
       window.clearTimeout(this.timeoutId);

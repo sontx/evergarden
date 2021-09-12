@@ -56,7 +56,6 @@ export class ChapterService {
       select: ["id", "chapterNo", "title", "published", "created"],
     });
 
-    console.log(result);
     return {
       items: result[0].map((item) => ({
         id: item.id,
