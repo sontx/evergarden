@@ -7,7 +7,7 @@ import { useIsLoggedIn } from "../../features/user/hooks/useIsLoggedIn";
 
 export function Login() {
   const intl = useIntl();
-  const isLoggedIn = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
   return !isLoggedIn ? (
     <>
       <SEO title={intl.formatMessage({ id: "pageTitleLogin" })} />

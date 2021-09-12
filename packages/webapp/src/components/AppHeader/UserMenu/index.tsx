@@ -27,7 +27,7 @@ export function UserMenu({
   onAboutClick: () => void;
 } & StandardProps) {
   const { data: user } = useUser();
-  const isLoggedIn = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
   const { isDarkMode, setDarkMode } = useIsDarkMode();
 
   return (

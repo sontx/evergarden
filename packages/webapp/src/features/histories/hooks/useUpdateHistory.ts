@@ -15,7 +15,7 @@ async function updateStoryHistory(history: UpdateReadingHistoryDto) {
 export function useUpdateHistory(
   options?: EnhancedMutationOptions<UpdateReadingHistoryDto>,
 ) {
-  const isLoggedIn = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
   return useListMutation(
     "update-history",
     (data) =>

@@ -13,7 +13,7 @@ const UserMenuWrapper = withActionHandler(UserMenu);
 
 export function Toolbar() {
   const { data: user } = useUser();
-  const isLoggedIn = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
   const [showSearchBox, setShowSearchBox] = useState(false);
   const goLogin = useGoLogin();
   const [showMenu, toggleShowMenu] = useToggle();

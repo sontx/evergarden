@@ -11,7 +11,7 @@ async function fetchReadingHistories(): Promise<GetReadingHistoryDto[]> {
 }
 
 export function useReadingHistory() {
-  const isLoggedIn = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
   return useSimpleQuery(
     "reading-history",
     () =>

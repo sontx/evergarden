@@ -16,7 +16,6 @@ import { usePrefetchNextChapter } from "../hooks/usePrefetchNextChapter";
 import { CuteLoader } from "../../../components/CuteLoader";
 import classNames from "classnames";
 import { useUserSettings } from "../../settings/hooks/useUserSettings";
-import { useIsDarkMode } from "../../global/hooks/useIsDarkMode";
 
 const Renderer = withUserSettings(ReadingRenderer);
 
@@ -34,7 +33,6 @@ export function ReadingPanel({
   const track = useTracker();
   const syncHistory = useSyncHistory();
   const { data: settings } = useUserSettings();
-  const { isDarkMode } = useIsDarkMode();
 
   usePrefetchNextChapter(story, chapter);
 
@@ -91,7 +89,7 @@ export function ReadingPanel({
           </Animation.Fade>
         </>
       ) : (
-        <CuteLoader center dark={isDarkMode} />
+        <CuteLoader center />
       )}
     </div>
   );

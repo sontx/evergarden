@@ -8,23 +8,21 @@ import { StorySubtitle } from "../StorySubtitle";
 import { StoryDescription } from "../StoryDescription";
 import { StoryAction } from "../StoryAction";
 import { CuteLoader } from "../../../components/CuteLoader";
-import { useIsDarkMode } from "../../global/hooks/useIsDarkMode";
 import { StoryFooter } from "../StoryFooter";
 
 export function StoryPreview({ slug }: { slug: string }) {
   const { data: story } = useStory(slug);
-  const { isDarkMode } = useIsDarkMode();
 
   return story ? (
     <div className="story-preview">
       <Panel bodyFill className="story-header">
-       <div className="cover">
-         <LazyImageEx
-           src={story.cover}
-           defaultSrc={defaultThumbnail}
-           alt={story.title}
-         />
-       </div>
+        <div className="cover">
+          <LazyImageEx
+            src={story.cover}
+            defaultSrc={defaultThumbnail}
+            alt={story.title}
+          />
+        </div>
         <Panel header={story.title}>
           <StorySubtitle story={story} />
           <Divider style={{ margin: "10px 0 15px 0" }} />
@@ -36,6 +34,6 @@ export function StoryPreview({ slug }: { slug: string }) {
       <StoryFooter story={story} />
     </div>
   ) : (
-    <CuteLoader center dark={isDarkMode} />
+    <CuteLoader center />
   );
 }

@@ -1,18 +1,14 @@
 import classNames from "classnames";
+import { useIsDarkMode } from "../../features/global/hooks/useIsDarkMode";
 
-export function CuteLoader({
-  center,
-  dark,
-}: {
-  center?: boolean;
-  dark?: boolean;
-}) {
+export function CuteLoader({ center }: { center?: boolean }) {
+  const { isDarkMode } = useIsDarkMode();
   return (
     <div
       className={classNames(
         "dancing-lao",
         { "dancing-lao--center": center },
-        dark ? "dancing-lao--dark" : "dancing-lao--light",
+        isDarkMode ? "dancing-lao--dark" : "dancing-lao--light",
       )}
     >
       <div className="left-dots">

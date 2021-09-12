@@ -12,7 +12,7 @@ async function updateUserSettings(
 }
 
 export function useUpdateUserSettings() {
-  const isLoggedIn = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
   return useEnhancedMutation(
     "update-user-settings",
     (data) =>

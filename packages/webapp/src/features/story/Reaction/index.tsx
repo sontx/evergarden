@@ -34,7 +34,7 @@ function VoteButton({
 const DebouncedVoteButton = withDebouncedClick(VoteButton);
 
 export function Reaction({ story }: { story: GetStoryDto }) {
-  const isLogged = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
   const { mutate } = useVote(story.url);
   const currentVote = story.history?.vote;
 
@@ -51,14 +51,14 @@ export function Reaction({ story }: { story: GetStoryDto }) {
       {story && (
         <div className="reaction-container">
           <DebouncedVoteButton
-            disabled={!isLogged}
+            disabled={!isLoggedIn}
             onClick={() => changeVote("upvote")}
             selected={currentVote === "upvote"}
             icon={<Icon icon="thumbs-up" />}
             count={abbreviateNumber(story.upvote)}
           />
           <DebouncedVoteButton
-            disabled={!isLogged}
+            disabled={!isLoggedIn}
             onClick={() => changeVote("downvote")}
             selected={currentVote === "downvote"}
             icon={<Icon icon="thumbs-down" />}

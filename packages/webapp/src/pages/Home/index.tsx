@@ -16,7 +16,7 @@ import { useIsLoggedIn } from "../../features/user/hooks/useIsLoggedIn";
 
 export function Home() {
   const intl = useIntl();
-  const isLoggedIn = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
 
   return (
     <AppContainer showBackTop>
