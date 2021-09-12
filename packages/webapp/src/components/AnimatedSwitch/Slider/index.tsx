@@ -45,7 +45,7 @@ export class Slider extends React.Component<
     }
   }
 
-  componentWillReceiveProps(newProps: any) {
+  UNSAFE_componentWillReceiveProps(newProps: any) {
     if (newProps.position !== this.props.position) {
       this.startAnimation(newProps.position, newProps.animationCallback);
     }
