@@ -26,23 +26,31 @@ export function UserAvatar({ user }: {user:AuthUser | undefined}) {
 
   const onUpdateAvatar = async () => {
     const imageElement: any = imgRef?.current;
-    const cropper: any = imageElement?.cropper;
-    const newImage = dataURItoBlob(cropper.getCroppedCanvas().toDataURL());
 
-    try {
+    if(uploadFile !== user?.photoUrl && !uploadFile) {
       setProcessing(true);
-      if (newImage) {
-        await updateAvatar.mutate(newImage)
-      } else if (uploadFile !== user?.photoUrl && !uploadFile) {
-        await deleteAvatar.mutate("")
-      }
-
+      await deleteAvatar.mutate({photoUrl: ""})
       setProcessing(false);
       setShow(false);
+      return;
+    } else if (imageElement) {
+      const cropper: any = imageElement?.cropper;
+      const newImage = dataURItoBlob(cropper.getCroppedCanvas().toDataURL());
+      try {
+        setProcessing(true);
+        await updateAvatar.mutateAsync(newImage)
 
-    } catch (error) {
-      Logger.error(error);
+        setProcessing(false);
+        setShow(false);
+
+      } catch (error) {
+        Logger.error(error);
+      }
+
+      return;
     }
+
+    setShow(false);
   }
 
   const onChange = (e: any) => {
@@ -64,9 +72,7 @@ export function UserAvatar({ user }: {user:AuthUser | undefined}) {
       event.preventDefault()
       event.stopPropagation()
       setUploadFile("")
-      imgRef = {
-        current: null,
-      }
+      imgRef.current = null
     },
     [],
   );

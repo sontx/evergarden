@@ -16,6 +16,6 @@ async function updateAvatar(file: File | Blob): Promise<GetUserDto> {
 export function useUpdateAvatar() {
   return useObjectMutation<File | Blob>("update-avatar", updateAvatar, {
     relativeQueryKey: "user",
-    updateQueryFrom: "request",
+    updateQueryFrom: "response",
   });
 }
