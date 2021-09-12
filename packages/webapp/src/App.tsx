@@ -3,7 +3,7 @@ import { IntlProvider as RSIntlProvider } from "rsuite";
 import locales from "./locales";
 import enGB from "rsuite/lib/IntlProvider/locales/en_GB";
 import { IntlProvider } from "react-intl";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch as DesktopSwitch } from "react-router-dom";
 import { Home } from "./pages/Home";
 // @ts-ignore
 import { FacebookProvider } from "react-facebook";
@@ -30,8 +30,10 @@ import { withGlobalFullScreenLoader } from "./components/FullScreenLoader/withGl
 import "./index.less";
 import "./styles/dark/index.less";
 import "./styles/light/index.less";
+import { isMobileOnly } from "react-device-detect";
 
 const GlobalLoader = withGlobalFullScreenLoader(FullScreenLoader);
+const Switch = isMobileOnly ? AnimatedSwitch : DesktopSwitch;
 
 export default function App() {
   return (
@@ -42,7 +44,7 @@ export default function App() {
             <FacebookProvider appId={process.env.REACT_APP_FACEBOOK_CLIENT_ID}>
               <Router>
                 <ErrorHandler>
-                  <AnimatedSwitch>
+                  <Switch>
                     <Route exact path="/login">
                       <Login />
                     </Route>
@@ -94,7 +96,7 @@ export default function App() {
                     <Route>
                       <ErrorPage code={404} />
                     </Route>
-                  </AnimatedSwitch>
+                  </Switch>
                   <GlobalLoader />
                 </ErrorHandler>
               </Router>
