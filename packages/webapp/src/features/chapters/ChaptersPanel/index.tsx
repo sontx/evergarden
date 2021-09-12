@@ -100,7 +100,7 @@ export function ChaptersPanel({
       {story ? (
         <PanelGroup
           accordion
-          activeKey={active >= 0 ? active : filter === undefined ? -1 : 0}
+          activeKey={filter !== undefined ? 0 : active}
           onSelect={setActive}
         >
           {story.lastChapter !== undefined &&

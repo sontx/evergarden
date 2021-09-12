@@ -8,7 +8,6 @@ import { ChapterHeader } from "../../../components/ChapterHeader";
 import { useToggle } from "../../../hooks/useToggle";
 import { useOverlay } from "../../../hooks/useOverlay";
 import { UserMenu } from "../../../components/AppHeader/UserMenu";
-import { useIsLoggedIn } from "../../user/hooks/useIsLoggedIn";
 import { withActionHandler } from "../../../components/AppHeader/UserMenu/withActionHandler";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
