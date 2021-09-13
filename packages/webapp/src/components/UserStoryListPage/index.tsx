@@ -43,8 +43,8 @@ export function UserStoryListPage({
       {...rest}
     >
       <div className="toolbar">
-        <InputGroup className="filter-input" inside>
-          <InputGroup.Button className="sort-button" onClick={toggleSort}>
+        <InputGroup className="filter-input">
+          <InputGroup.Button onClick={toggleSort}>
             <Icon icon={sort === "new" ? "creative" : "clock-o"} />
           </InputGroup.Button>
           <Input
@@ -53,7 +53,10 @@ export function UserStoryListPage({
             placeholder="Filter story..."
           />
           {filter && (
-            <InputGroup.Button onClick={handleClearFilter}>
+            <InputGroup.Button
+              className="clear-button"
+              onClick={handleClearFilter}
+            >
               <Icon icon="close" style={{ color: "red" }} />
             </InputGroup.Button>
           )}
