@@ -11,7 +11,7 @@ async function fetchReadingHistories(): Promise<GetReadingHistoryDto[]> {
 }
 
 export function useReadingHistory() {
-  const { isLoggedIn } = useIsLoggedIn();
+  const { isLoggedIn, isLoading } = useIsLoggedIn();
   return useSimpleQuery(
     "reading-history",
     () =>
@@ -21,6 +21,7 @@ export function useReadingHistory() {
     {
       staleTime: ms("2h"),
       cacheTime: ms("12h"),
+      enabled: !isLoading,
     },
   );
 }

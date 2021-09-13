@@ -2,11 +2,7 @@ import { ElementType, useEffect, useState } from "react";
 import { GetStoryDto } from "@evergarden/shared";
 import { StoryListProps } from "../StoryList";
 import { SortType } from "./index";
-
-function sortNew(item1: GetStoryDto, item2: GetStoryDto) {
-  // @ts-ignore
-  return new Date(item2.updated) - new Date(item1.updated);
-}
+import { useStoriesHistory } from "../../features/histories/hooks/useStoriesHistory";
 
 function sortRecent(item1: GetStoryDto, item2: GetStoryDto) {
   return item2.history && item1.history
@@ -18,21 +14,24 @@ function sortRecent(item1: GetStoryDto, item2: GetStoryDto) {
 export function withStoriesFilter(Component: ElementType<StoryListProps>) {
   return ({
     sort,
+    sortFn = sortRecent,
     filter,
-    stories,
+    stories: passStories,
     ...rest
   }: {
     sort?: SortType;
     filter?: string;
+    sortFn?: (item1: GetStoryDto, item2: GetStoryDto) => number;
   } & StoryListProps) => {
     const [showStories, setShowStories] = useState<GetStoryDto[]>();
+    const stories = useStoriesHistory(passStories);
 
     useEffect(() => {
       if (!stories) {
         return;
       }
 
-      let temp;
+      let temp: GetStoryDto[];
       if (filter) {
         const filterValue = filter.toLowerCase();
         temp = stories.filter((item: GetStoryDto) =>
@@ -45,15 +44,15 @@ export function withStoriesFilter(Component: ElementType<StoryListProps>) {
       if (sort) {
         switch (sort) {
           case "new":
-            temp.sort(sortNew);
+            temp.sort(sortFn);
             break;
           case "recent":
-            temp.sort(sortRecent);
+            temp.sort((item1, item2) => -sortFn(item1, item2));
             break;
         }
       }
       setShowStories(temp);
-    }, [filter, sort, stories]);
+    }, [filter, sort, sortFn, stories]);
 
     return <Component stories={showStories} {...rest} />;
   };
