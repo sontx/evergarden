@@ -85,5 +85,9 @@ export default {
   filterChapterConfirm: "Go",
   missingFeatureMessage: "We're implementing this feature which will be available soon 😊",
   commentsPanelTitle: "Comments",
-  reviewsPanelTitle: "Reviews"
+  reviewsPanelTitle: "Reviews",
+  updateAvatar: "Update Avatar",
+  uploadPhoto: "Upload photo",
+  cancelBtn: "Cancel",
+  saveBtn: "Save"
 };

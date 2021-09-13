@@ -25,7 +25,8 @@
     "lerna": "^4.0.0"
   },
   "dependencies": {
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^9.0.1",
+    "react-cropper": "^2.1.8"
   },
   "husky": {
     "hooks": {

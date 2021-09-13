@@ -16,6 +16,7 @@ export function UserMenu({
   onUserStoriesClick,
   onLogoutClick,
   onAboutClick,
+  onFullNameClick,
   className,
   ...rest
 }: {
@@ -25,6 +26,7 @@ export function UserMenu({
   onUserStoriesClick: () => void;
   onLogoutClick: () => void;
   onAboutClick: () => void;
+  onFullNameClick: () => void;
 } & StandardProps) {
   const { data: user } = useUser();
   const { isLoggedIn } = useIsLoggedIn();
@@ -39,7 +41,10 @@ export function UserMenu({
     >
       {user && isLoggedIn && (
         <>
-          <GridMenuItem icon={<Icon icon="user" />}>
+          <GridMenuItem
+            icon={<Icon icon="user" />}
+            onClick={onFullNameClick}
+          >
             {user.fullName}
           </GridMenuItem>
           <GridMenuItem

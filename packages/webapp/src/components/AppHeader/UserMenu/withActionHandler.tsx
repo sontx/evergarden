@@ -4,6 +4,7 @@ import { setShowingFullScreenLoader } from "../../../features/global/globalSlice
 import { useGoFollowing } from "../../../hooks/navigation/useGoFollowing";
 import { useGoHistory } from "../../../hooks/navigation/useGoHistory";
 import { useGoUserStoryList } from "../../../hooks/navigation/useGoUserStoryList";
+import { useGoUserProfile } from "../../../hooks/navigation/useGoUserProfile";
 import { useLogout } from "../../../features/login/hooks/useLogout";
 import { StandardProps } from "rsuite/es/@types/common";
 import { AboutPanel } from "../../AboutPanel";
@@ -20,6 +21,7 @@ export function withActionHandler(Component: ElementType) {
     const gotoHistory = useGoHistory();
     const [showAbout, toggleShowAbout] = useToggle();
     const gotoUserStoryList = useGoUserStoryList();
+    const gotoUserProfile = useGoUserProfile();
     const { mutate: logout, isLoading } = useLogout();
 
     useEffect(() => {
@@ -37,6 +39,7 @@ export function withActionHandler(Component: ElementType) {
         onUserStoriesClick={gotoUserStoryList}
         onLogoutClick={logout}
         onAboutClick={toggleShowAbout}
+        onFullNameClick={gotoUserProfile}
         {...rest}
       />
     ) : (

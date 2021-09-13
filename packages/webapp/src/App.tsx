@@ -18,6 +18,7 @@ import { StoryEditorPage } from "./pages/StoryEditor";
 import { UserStoriesPage } from "./pages/UserStories";
 import { UserChaptersPage } from "./pages/UserChapters";
 import { ChapterEditorPage } from "./pages/ChapterEditor";
+import { UserProfilePage } from "./pages/UserProfile";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { queryClient } from "./app/store";
@@ -91,6 +92,11 @@ export default function App() {
                     <Route exact path="/user/story/:url/chapter/:chapterNo">
                       <AuthRequired>
                         <ChapterEditorPage />
+                      </AuthRequired>
+                    </Route>
+                    <Route exact path="/user/profile">
+                      <AuthRequired>
+                        <UserProfilePage />
                       </AuthRequired>
                     </Route>
                     <Route>
