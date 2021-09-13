@@ -1,8 +1,21 @@
 import React, { ElementType } from "react";
 import { Route, Switch } from "react-router-dom";
 import { Position, Slider } from "./Slider";
+import {
+  DEFAULT_DIRECTION,
+  Direction,
+  DirectionHandler,
+} from "./direction/direction-handler";
+import { ChapterToChapterHandler } from "./direction/chapter-to-chapter.handler";
+import { GeneralPagesHandler } from "./direction/general-pages.handler";
 
 class SlideOut extends React.Component<any, any> {
+  private static direction: Direction = DEFAULT_DIRECTION;
+  private static handlers: DirectionHandler[] = [
+    new ChapterToChapterHandler(),
+    new GeneralPagesHandler(),
+  ];
+
   constructor(props: any) {
     super(props);
 
@@ -19,10 +32,17 @@ class SlideOut extends React.Component<any, any> {
   componentDidUpdate(prevProps: any, prevState: any) {
     const prevUniqId = prevProps.uniqKey || prevProps.children.type;
     const uniqId = this.props.uniqKey || (this.props.children as any)?.type;
-
     if (prevUniqId !== uniqId) {
+      for (const handler of SlideOut.handlers) {
+        const direction = handler.handle(prevUniqId, uniqId);
+        if (direction) {
+          SlideOut.direction = direction;
+          break;
+        }
+      }
+
       this.setState({
-        childPosition: Position.TO_LEFT,
+        childPosition: SlideOut.direction.to,
         curChild: this.props.children,
         curUniqId: uniqId,
         prevChild: prevProps.children,
@@ -34,7 +54,7 @@ class SlideOut extends React.Component<any, any> {
 
   swapChildren = () => {
     this.setState({
-      childPosition: Position.FROM_RIGHT,
+      childPosition: SlideOut.direction.from,
       prevChild: null,
       prevUniqId: null,
       animationCallback: null,
