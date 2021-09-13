@@ -1,5 +1,5 @@
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import { CSSProperties, useCallback, useEffect, useRef } from "react";
+import { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 import { Button, ButtonGroup, ButtonToolbar, Icon } from "rsuite";
 import classNames from "classnames";
 import { withFollowSync } from "../../story/withFollowSync";
@@ -9,6 +9,7 @@ import { useToggle } from "../../../hooks/useToggle";
 import { useOverlay } from "../../../hooks/useOverlay";
 import { UserMenu } from "../../../components/AppHeader/UserMenu";
 import { withActionHandler } from "../../../components/AppHeader/UserMenu/withActionHandler";
+import { FormReportBug } from "../FormReportBug";
 
 function FollowButton({ isFollowing, ...rest }: { isFollowing?: boolean }) {
   return (
@@ -32,6 +33,7 @@ export function TopNavigation({
   const [showMenu, toggleShowMenu, setShowMenu] = useToggle();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const gotoStory = useGoStory();
+  const [showFormReport, setShowFormReport] = useState(false);
 
   useOverlay();
 
@@ -48,6 +50,10 @@ export function TopNavigation({
   const handleClickComment = useCallback(() => {
     gotoStory(story, { focusTo: "comment" });
   }, [gotoStory, story]);
+
+  const handleShowFormReportBug = useCallback(() => {
+    setShowFormReport((prevState) => !prevState);
+  }, []);
 
   const menuTop = containerRef.current?.clientHeight;
 
@@ -85,7 +91,7 @@ export function TopNavigation({
               <Icon icon="comments" />
             </Button>
             {story && <FollowButtonWrapper story={story} />}
-            <Button>
+            <Button onClick={handleShowFormReportBug}>
               <Icon icon="bug" />
             </Button>
             <Button onClick={toggleShowMenu}>
@@ -103,6 +109,13 @@ export function TopNavigation({
             : {}
         }
       />
+      {showFormReport && (
+        <FormReportBug
+          chapter={chapter}
+          show={showFormReport}
+          onClose={handleShowFormReportBug}
+        ></FormReportBug>
+      )}
     </div>
   );
 }
