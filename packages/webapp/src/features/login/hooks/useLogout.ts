@@ -1,7 +1,6 @@
 import api from "../../../utils/api";
 import Logger from "js-logger";
 import { useEnhancedMutation } from "../../../hooks/api-query/useEnhancedMutation";
-import { useQueryClient } from "react-query";
 
 async function logout() {
   try {
@@ -11,12 +10,11 @@ async function logout() {
   }
 }
 
-export function useLogout(showLoading = true) {
-  const queryClient = useQueryClient();
+export function useLogout() {
   return useEnhancedMutation<void>("logout", logout, {
     onSettled: async () => {
       localStorage.removeItem("isLoggedIn");
-      await queryClient.resetQueries("user");
+      window.location.reload();
     },
   });
 }

@@ -14,6 +14,7 @@ export function useRecent() {
     },
     {
       enabled: !!data,
+      staleTime: 0,
     },
   );
 }

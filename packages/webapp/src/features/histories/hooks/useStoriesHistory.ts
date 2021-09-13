@@ -24,6 +24,8 @@ export function useStoriesHistory(stories: GetStoryDto[] | undefined) {
       });
       if (changed) {
         setWithHistories(newStories);
+      } else {
+        setWithHistories(stories);
       }
     } else {
       setWithHistories(stories);

@@ -17,7 +17,8 @@ export function useOAuthLogin() {
     { provider: "facebook" | "google"; token: string },
     AuthUser
   >("login-with-facebook", (data) => oauthLogin(data.token, data.provider), {
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await queryClient.resetQueries({predicate: () => true});
       localStorage.setItem("isLoggedIn", "true");
       queryClient.setQueryData("user", data);
     },
