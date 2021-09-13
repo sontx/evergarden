@@ -1,5 +1,5 @@
 import React, { ElementType, ReactNode, useCallback, useState } from "react";
-import { Icon, IconButton, Input, InputGroup } from "rsuite";
+import { Icon, Input, InputGroup } from "rsuite";
 
 import { UserPage } from "../UserPage";
 import { StandardProps } from "rsuite/es/@types/common";
@@ -43,24 +43,19 @@ export function UserStoryListPage({
       {...rest}
     >
       <div className="toolbar">
-        <IconButton
-          onClick={toggleSort}
-          icon={<Icon icon={sort === "new" ? "creative" : "clock-o"} />}
-        />
         <InputGroup className="filter-input" inside>
+          <InputGroup.Button className="sort-button" onClick={toggleSort}>
+            <Icon icon={sort === "new" ? "creative" : "clock-o"} />
+          </InputGroup.Button>
           <Input
             value={filter}
             onChange={setFilter}
             placeholder="Filter story..."
           />
-          {filter ? (
+          {filter && (
             <InputGroup.Button onClick={handleClearFilter}>
               <Icon icon="close" style={{ color: "red" }} />
             </InputGroup.Button>
-          ) : (
-            <InputGroup.Addon>
-              <Icon icon="filter" />
-            </InputGroup.Addon>
           )}
         </InputGroup>
       </div>
