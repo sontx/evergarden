@@ -2,8 +2,8 @@ import { Alert, Button, Icon, Panel } from "rsuite";
 import { FormattedMessage } from "react-intl";
 // @ts-ignore
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-import { useCallback, useEffect, useMemo } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { useCallback, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { isMobileOnly } from "react-device-detect";
 import GoogleLogin, {
   GoogleLoginResponse,
@@ -15,13 +15,6 @@ import { useOAuthGoogle } from "../hooks/useOAuthGoogle";
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
 const FACEBOOK_CLIENT_ID = process.env.REACT_APP_FACEBOOK_CLIENT_ID || "";
 
-const NOT_SUPPORTED_REDIRECT_ROUTES = [
-  "/login",
-  "/following",
-  "/history",
-  "/user/story",
-];
-
 function isGoogleLoginResponse(
   response: GoogleLoginResponse | GoogleLoginResponseOffline,
 ): response is GoogleLoginResponse {
@@ -29,19 +22,8 @@ function isGoogleLoginResponse(
 }
 
 export function LoginPanel() {
-  const location = useLocation();
-  const history = useHistory();
-
-  const {
-    mutate: loginGg,
-    isSuccess: isLoginGgSuccess,
-    isLoading: isLoginingGg,
-  } = useOAuthGoogle();
-  const {
-    mutate: loginFb,
-    isSuccess: isLoginFbSuccess,
-    isLoading: isLoginingFb,
-  } = useOAuthFacebook();
+  const { mutate: loginGg, isLoading: isLoginingGg } = useOAuthGoogle();
+  const { mutate: loginFb, isLoading: isLoginingFb } = useOAuthFacebook();
 
   const handleLoginGoogleSuccess = useCallback(
     (data: GoogleLoginResponse | GoogleLoginResponseOffline) => {
@@ -55,7 +37,7 @@ export function LoginPanel() {
   const handleLoginGoogleFailure = useCallback((error) => {
     if (
       process.env.NODE_ENV === "development" &&
-      error !== "popup_closed_by_user"
+      error?.error !== "popup_closed_by_user"
     ) {
       console.log(error);
       Alert.error(error.details, 5000);
@@ -70,20 +52,6 @@ export function LoginPanel() {
     },
     [loginFb],
   );
-
-  useEffect(() => {
-    if (isLoginGgSuccess || isLoginFbSuccess) {
-      const prevPath: string =
-        (location.state && (location.state as any).prevPathName) || "/";
-      const redirectPath =
-        NOT_SUPPORTED_REDIRECT_ROUTES.findIndex((route) =>
-          prevPath.startsWith(route),
-        ) >= 0
-          ? "/"
-          : prevPath;
-      history.push(redirectPath);
-    }
-  }, [history, isLoginFbSuccess, isLoginGgSuccess, location]);
 
   const isFacebookApp = useMemo(() => {
     const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
