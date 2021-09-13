@@ -67,7 +67,8 @@ export function ChaptersPanel({
       ? currentChapterNo + 1
       : 0;
 
-  const activeKey = filter !== undefined ? 0 : active;
+  const activeKey = isFinite(filter as any) ? 0 : active;
+
   return (
     <div className={classNames(className, "chapters-panel")} {...rest}>
       {hasFilterBar && (
