@@ -39,7 +39,7 @@ export function withActionHandler(Component: ElementType) {
         onUserStoriesClick={gotoUserStoryList}
         onLogoutClick={logout}
         onAboutClick={toggleShowAbout}
-        onFullNameClick={gotoUserProfile}
+        onProfileClick={gotoUserProfile}
         {...rest}
       />
     ) : (

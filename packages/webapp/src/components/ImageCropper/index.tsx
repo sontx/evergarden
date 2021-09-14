@@ -1,21 +1,18 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 
 import Cropper from "react-cropper"
 import "cropperjs/dist/cropper.css";
 
-export function ImageCropper({ style, image, cropperRef } : {
+const ImageCropper = forwardRef<HTMLImageElement, {
   style?: object,
-  image: string,
-  cropperRef: {
-    current: HTMLImageElement | null
-  }
-}){
-  return (
+  image?: string,
+}>(
+  (props, ref) => (
     <Cropper
-      style={style}
+      style={props.style}
       zoomTo={0.5}
       initialAspectRatio={1}
-      src={image}
+      src={props.image}
       viewMode={1}
       minCropBoxHeight={10}
       minCropBoxWidth={10}
@@ -24,7 +21,10 @@ export function ImageCropper({ style, image, cropperRef } : {
       autoCropArea={1}
       checkOrientation={false}
       guides={true}
-      ref={cropperRef}
+      ref={ref}
     />
   )
-}
+);
+
+
+export default ImageCropper

@@ -1,9 +1,7 @@
 import React from 'react'
 
-import "./index.less"
-
-import { UserAvatar } from "./UserAvatar"
-import { UserName } from "./UserName"
+import { UserAvatar } from "../UserAvatar"
+import { UserName } from "../UserName"
 import {  SettingsPanel } from "../../settings/SettingsPanel"
 
 import { useUser } from '../hooks/useUser'

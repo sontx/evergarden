@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useRef } from "react"
 
 import { Input, Icon } from "rsuite";
 import { AuthUser } from "@evergarden/shared";
-import { useUpdateUser } from "../hooks/updateUser";
+import { useUpdateUser } from "../hooks/useUpdateUser";
 
 export const UserName = ({ user }: {user:AuthUser | undefined}) => {
   const [name, setName] = useState("");
@@ -15,7 +15,7 @@ export const UserName = ({ user }: {user:AuthUser | undefined}) => {
     if (user) {
       setName(user.fullName);
     }
-  }, [user])
+  }, [user, user?.fullName])
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
@@ -48,7 +48,7 @@ export const UserName = ({ user }: {user:AuthUser | undefined}) => {
 
   const handleOnChange = useCallback((e) => {
     setName(e);
-  }, [name])
+  }, [])
 
   return (
     <div className="profile_name" ref={wrapperRef}>
