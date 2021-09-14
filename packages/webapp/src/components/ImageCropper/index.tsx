@@ -3,7 +3,7 @@ import React, { forwardRef } from 'react'
 import Cropper from "react-cropper"
 import "cropperjs/dist/cropper.css";
 
-const ImageCropper = forwardRef<HTMLImageElement, {
+export const ImageCropper = forwardRef<HTMLImageElement, {
   style?: object,
   image?: string,
 }>(
@@ -25,6 +25,3 @@ const ImageCropper = forwardRef<HTMLImageElement, {
     />
   )
 );
-
-
-export default ImageCropper

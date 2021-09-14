@@ -4,7 +4,7 @@ import { Button, Icon, Loader, Avatar } from "rsuite"
 import { FormattedMessage } from "react-intl"
 import { dataURItoBlob } from 'src/utils/image-utils';
 import { isMobileOnly } from "react-device-detect";
-import ImageCropper from '../../../components/ImageCropper'
+import { ImageCropper } from '../../../components/ImageCropper'
 
 import { useUpdateAvatar } from '../hooks/useUpdateAvatar'
 import { useDeleteAvatar } from "../hooks/useDeleteAvatar"
@@ -112,4 +112,4 @@ export function UserAvatar({ user }: { user: AuthUser | undefined }) {
       </EnhancedModal>
     </>
   );
-} 
+}
