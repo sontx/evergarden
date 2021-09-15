@@ -4,6 +4,7 @@ import { FormattedMessage } from "react-intl";
 import { useChapters } from "../hooks/useChapters";
 import { GetStoryDto } from "@evergarden/shared";
 import { useCallback } from "react";
+import { scrollIntoHighlightedChapter } from "../ChapterList/utils";
 
 type ChapterRangeProps = ChapterListBaseProps &
   PanelProps & {
@@ -30,7 +31,9 @@ export function ChapterRange({
   });
 
   const handleRef = useCallback((node) => {
-    (node as HTMLElement).scrollIntoView({ behavior: "smooth" });
+    if (!scrollIntoHighlightedChapter(node as HTMLElement)) {
+      (node as HTMLElement).scrollIntoView({ behavior: "smooth" });
+    }
   }, []);
 
   return (

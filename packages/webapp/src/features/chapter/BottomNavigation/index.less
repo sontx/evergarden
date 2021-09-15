@@ -11,4 +11,20 @@
       background-color: lighten(@panel-bg-color, 5%);
     }
   }
+
+  .full-panel {
+    > .panel-body {
+      height: 1px;
+
+      .chapters-panel {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        > .rs-panel-group {
+          overflow-y: auto;
+        }
+      }
+    }
+  }
 }

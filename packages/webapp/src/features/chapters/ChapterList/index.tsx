@@ -3,8 +3,9 @@ import { List } from "rsuite";
 import { ChapterHeader } from "../../../components/ChapterHeader";
 import { isDesktop, isMobileOnly } from "react-device-detect";
 import classNames from "classnames";
-import { ReactNode } from "react";
+import { ReactNode, useLayoutEffect } from "react";
 import moment from "moment";
+import { scrollIntoHighlightedChapter } from "./utils";
 
 export interface ChapterListBaseProps {
   sort: "asc" | "desc";
@@ -40,6 +41,17 @@ export function ChapterList({
         created: undefined,
       }))
   ).sort((a, b) => (a.chapterNo - b.chapterNo) * sign);
+
+  useLayoutEffect(() => {
+    if (
+      chapters &&
+      chapters.length > 0 &&
+      highlighted &&
+      highlighted.length > 0
+    ) {
+      scrollIntoHighlightedChapter();
+    }
+  }, [chapters, highlighted]);
 
   return (
     <List className="chapter-list" size="sm" hover={isDesktop}>
