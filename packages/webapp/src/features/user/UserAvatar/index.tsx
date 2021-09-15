@@ -83,6 +83,10 @@ export function UserAvatar({ user }: { user: AuthUser | undefined }) {
         center
         onHide={() => setShow(false)}
         mobile={isMobileOnly}
+        actions={<>
+          <Button appearance="default" onClick={() => setShow(false)}><FormattedMessage id="cancelBtn" /></Button>
+          <Button appearance="primary" onClick={onUpdateAvatar} style={{ marginLeft: "20px", minWidth: "58px", maxHeight: "36px" }}>{(isDeleting || isUpdating) ? <Loader /> : <FormattedMessage id="saveBtn" />}</Button>
+        </>}
       >
         <div className="avatar_main">
           <div className="avatar_upload rs-btn-primary">
@@ -105,10 +109,6 @@ export function UserAvatar({ user }: { user: AuthUser | undefined }) {
             </div>
           ) : <div className="avatar_none" />
           }
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
-          <Button appearance="default" onClick={() => setShow(false)}><FormattedMessage id="cancelBtn" /></Button>
-          <Button appearance="primary" onClick={onUpdateAvatar} style={{ marginLeft: "20px", minWidth: "58px", maxHeight: "36px" }}>{(isDeleting || isUpdating) ? <Loader /> : <FormattedMessage id="saveBtn" />}</Button>
         </div>
       </EnhancedModal>
     </>
