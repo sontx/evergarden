@@ -659,7 +659,7 @@ module.exports = function(webpackEnv) {
                 minifyCSS: true,
                 minifyURLs: true,
               },
-              excludeAssets: [/(light)\.[a-z0-9].+\.css/],
+              excludeAssets: [/(dark)\.[a-z0-9].+\.css/],
             }
             : undefined,
         ),
