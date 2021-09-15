@@ -76,6 +76,7 @@ export function UserAvatar({ user }: { user: AuthUser | undefined }) {
     <>
       <Avatar className="profile_avatar" circle src={user?.photoUrl} onClick={() => setShow(true)} />
       <EnhancedModal
+        className="profile-modal"
         title="Update Avatar"
         backdropClose
         show={show}
