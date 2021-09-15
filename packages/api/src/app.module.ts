@@ -30,6 +30,8 @@ import { ViewcountModule } from "./viewcount/viewcount.module";
 import { TrackerModule } from "./tracker/tracker.module";
 import { SendMailModule } from "./send-mail/send-mail.module";
 import { BullModule } from "@nestjs/bull";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 import ms = require("ms");
 
 const RedisStore = ConnectRedis(session);
@@ -41,6 +43,9 @@ const RedisStore = ConnectRedis(session);
       envFilePath: [".env.development.local", ".env.development"],
       load: [configuration],
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "client"),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -109,8 +114,8 @@ const RedisStore = ConnectRedis(session);
           defaultJobOptions: {
             attempts: 3,
             removeOnComplete: true,
-            removeOnFail: true
-          }
+            removeOnFail: true,
+          },
         };
       },
     }),
