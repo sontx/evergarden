@@ -13,12 +13,12 @@ export function withUserSettings(Component: ElementType<ReadingRendererProps>) {
   }: ReadingRendererProps & { settings: GetUserSettingsDto }) => {
     const fontSize = useMemo(() => {
       const config: { [x in SizeType]: string } = {
-        S: "0.75em",
-        M: "1em",
-        L: "1.25em",
-        XL: "1.75em",
+        S: "1em",
+        M: "1.25em",
+        L: "1.75em",
+        XL: "2em",
       };
-      return config[settings.readingFontSize] || "1em";
+      return config[settings.readingFontSize] || "1.25em";
     }, [settings.readingFontSize]);
 
     const lineSpacingClass = useMemo(() => {
