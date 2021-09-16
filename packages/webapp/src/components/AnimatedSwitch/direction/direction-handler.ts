@@ -21,5 +21,5 @@ export const DEFAULT_DIRECTION: Direction = {
 };
 
 export interface DirectionHandler {
-  handle(prev: string, next: string): Direction | false;
+  handle(prev: string, next: string): Direction | false | "cancel";
 }

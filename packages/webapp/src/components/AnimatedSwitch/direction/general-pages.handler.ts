@@ -16,10 +16,14 @@ function isMatch(pathname: string, config: RouteConfig) {
 }
 
 export class GeneralPagesHandler implements DirectionHandler {
-  handle(prev: string, next: string): Direction | false {
+  handle(prev: string, next: string): Direction | false | "cancel" {
     const prevConfig = routes.find((route) => isMatch(prev, route));
     const nextConfig = routes.find((route) => isMatch(next, route));
+
     if (prevConfig && nextConfig) {
+      if (nextConfig.level < 0) {
+        return "cancel";
+      }
       return prevConfig.level > nextConfig.level
         ? BACK_DIRECTION
         : NEXT_DIRECTION;

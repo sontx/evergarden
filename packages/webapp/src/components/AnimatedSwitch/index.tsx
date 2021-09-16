@@ -36,6 +36,17 @@ class SlideOut extends React.Component<any, any> {
       for (const handler of SlideOut.handlers) {
         const direction = handler.handle(prevUniqId, uniqId);
         if (direction) {
+          if (direction === "cancel") {
+            this.setState({
+              childPosition: SlideOut.direction.from,
+              curChild: this.props.children,
+              curUniqId: uniqId,
+              prevChild: null,
+              prevUniqId: null,
+              animationCallback: null,
+            });
+            return;
+          }
           SlideOut.direction = direction;
           break;
         }

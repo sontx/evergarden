@@ -24,7 +24,7 @@ export const routes: RouteConfig[] = [
     path: "/",
     exact: true,
     Component: Home,
-    level: 0,
+    level: -1,
   },
   {
     path: "/login",
