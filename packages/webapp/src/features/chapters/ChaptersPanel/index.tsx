@@ -8,7 +8,7 @@ import { ChaptersToolBar } from "../ChaptersToolBar";
 import { GetStoryDto } from "@evergarden/shared";
 
 const MAX_CHAPTERS_PER_GROUP =
-  process.env.NODE_ENV === "development" ? 10 : 100;
+  process.env.NODE_ENV === "development" ? 100 : 100;
 type SortType = "asc" | "desc";
 
 function rangesMap(
@@ -44,6 +44,7 @@ export function ChaptersPanel({
   hasFilterBar,
   currentChapterIntoView,
   transparentToolbar,
+  fitHeight,
   ...rest
 }: {
   story?: GetStoryDto;
@@ -52,6 +53,7 @@ export function ChaptersPanel({
   hasFilterBar?: boolean;
   currentChapterIntoView?: boolean;
   transparentToolbar?: boolean;
+  fitHeight?: boolean;
 } & StandardProps) {
   const [active, setActive] = useState(currentChapterIntoView ? -1 : 0);
   const [sort, setSort] = useState<SortType>(defaultSort || "desc");
@@ -70,7 +72,12 @@ export function ChaptersPanel({
   const activeKey = isFinite(filter as any) ? 0 : active;
 
   return (
-    <div className={classNames(className, "chapters-panel")} {...rest}>
+    <div
+      className={classNames(className, "chapters-panel", {
+        "chapters-panel--fitHeight": fitHeight,
+      })}
+      {...rest}
+    >
       {hasFilterBar && (
         <ChaptersToolBar
           defaultFilter={currentChapterIntoView ? currentChapterNo : undefined}

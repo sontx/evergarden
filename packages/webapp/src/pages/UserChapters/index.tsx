@@ -58,7 +58,12 @@ export function UserChaptersPage() {
         </>
       }
     >
-      <ChaptersPanel story={story} onClick={handleEditChapter} hasFilterBar />
+      <ChaptersPanel
+        story={story}
+        onClick={handleEditChapter}
+        hasFilterBar
+        fitHeight
+      />
     </UserPage>
   );
 }

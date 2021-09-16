@@ -66,6 +66,7 @@ export function StoryFooter({ story }: { story: GetStoryDto }) {
         collapsible
       >
         <ChaptersPanel
+          fitHeight
           transparentToolbar
           story={story}
           hasFilterBar

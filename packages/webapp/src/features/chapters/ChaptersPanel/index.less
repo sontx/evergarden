@@ -13,4 +13,14 @@
   .meta {
     color: @text-color;
   }
+
+  &--fitHeight {
+    max-height: calc(100vh - 20px);
+    display: flex;
+    flex-direction: column;
+
+    > .rs-panel-group {
+      overflow-y: auto;
+    }
+  }
 }
