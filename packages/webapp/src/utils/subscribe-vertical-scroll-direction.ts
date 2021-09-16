@@ -7,17 +7,31 @@ export function subscribeVerticalScrollDirection(
   target: HTMLElement = document.documentElement,
 ): () => void {
   let lastScrollTop = target.scrollTop;
-  let isDown: boolean | undefined = undefined;
+  let isLastDown: boolean | undefined = undefined;
+  let isLastTouchedTop: boolean | undefined = undefined;
+  let isLastTouchedBottom: boolean | undefined = undefined;
+
   const handleScroll = () => {
     const scrollTop = target.scrollTop;
-    const isScrollDown = scrollTop > lastScrollTop;
-    if (isDown !== isScrollDown) {
+    const isDown = scrollTop > lastScrollTop;
+    const isTouchedTop = scrollTop === 0;
+    const isTouchedBottom =
+      scrollTop + target.clientHeight >= target.scrollHeight;
+
+    if (
+      isLastDown !== isDown ||
+      isLastTouchedTop !== isTouchedTop ||
+      isLastTouchedBottom !== isTouchedBottom
+    ) {
       onDirectionChange({
-        isDown: isScrollDown,
-        touchedTop: scrollTop === 0,
-        touchedBottom: scrollTop + target.clientHeight >= target.scrollHeight,
+        isDown,
+        touchedTop: isTouchedTop,
+        touchedBottom: isTouchedBottom,
       });
-      isDown = isScrollDown;
+
+      isLastDown = isDown;
+      isLastTouchedTop = isTouchedTop;
+      isLastTouchedBottom = isTouchedBottom;
     }
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   };
