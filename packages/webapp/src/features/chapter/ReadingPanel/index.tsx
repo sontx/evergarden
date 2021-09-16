@@ -56,41 +56,51 @@ export function ReadingPanel({
   return (
     <div className="reading-panel">
       {story && chapter ? (
-        <>
-          <Animation.Bounce in>
-            {({ className, ...rest }, ref) => (
-              <div
-                ref={ref}
-                {...rest}
-                className={classNames(className, "reading-panel-animation")}
+        <Animation.Bounce in>
+          {({ className, ...rest }, ref) => (
+            <div
+              ref={ref}
+              {...rest}
+              className={classNames(className, "reading-panel-animation")}
+            >
+              <Panel
+                className="reading-panel-header"
+                style={{ fontFamily: getFont(settings.readingFont).family }}
+                header={chapter && <ReadingHeader chapter={chapter} />}
               >
-                <Panel
-                  className="reading-panel-header"
-                  style={{ fontFamily: getFont(settings.readingFont).family }}
-                  header={chapter && <ReadingHeader chapter={chapter} />}
-                >
-                  <Renderer
-                    onClick={toggleNav}
-                    content={chapter.content}
-                    settings={settings}
-                  />
-                </Panel>
-              </div>
-            )}
-          </Animation.Bounce>
-          {!showNav && <ReadingFooter chapter={chapter} />}
-          <Animation.Fade in={showNav} unmountOnExit>
-            {(props1, ref1) => (
-              <div {...props1} ref={ref1}>
-                <TopNavigation chapter={chapter} story={story} />
-                <BottomNavigation chapter={chapter} story={story} />
-              </div>
-            )}
-          </Animation.Fade>
-        </>
+                <Renderer
+                  onClick={toggleNav}
+                  content={chapter.content}
+                  settings={settings}
+                />
+              </Panel>
+            </div>
+          )}
+        </Animation.Bounce>
       ) : (
-        <CuteLoader center />
+        <div onClick={toggleNav} style={{ width: "100%", height: "100%" }}>
+          <CuteLoader center />
+        </div>
       )}
+      {!showNav && chapter && <ReadingFooter chapter={chapter} />}
+      <Animation.Fade in={showNav} unmountOnExit>
+        {(props1, ref1) => (
+          <div {...props1} ref={ref1}>
+            <TopNavigation
+              slug={slug}
+              chapterNo={chapterNo}
+              chapter={chapter}
+              story={story}
+            />
+            <BottomNavigation
+              slug={slug}
+              chapterNo={chapterNo}
+              chapter={chapter}
+              story={story}
+            />
+          </div>
+        )}
+      </Animation.Fade>
     </div>
   );
 }

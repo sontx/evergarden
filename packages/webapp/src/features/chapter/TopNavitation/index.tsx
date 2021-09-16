@@ -24,9 +24,13 @@ const UserMenuWrapper = withActionHandler(UserMenu);
 export function TopNavigation({
   story,
   chapter,
+  slug,
+  chapterNo,
 }: {
-  story: GetStoryDto;
-  chapter: GetChapterDto;
+  story?: GetStoryDto;
+  chapter?: GetChapterDto;
+  slug: string;
+  chapterNo: number;
 }) {
   const [showMore, toggleShowMore] = useToggle();
   const [showMenu, toggleShowMenu, setShowMenu] = useToggle();
@@ -42,12 +46,16 @@ export function TopNavigation({
   }, [setShowMenu, showMore]);
 
   const handleClickBack = useCallback(() => {
-    gotoStory(story);
-  }, [gotoStory, story]);
+    if (slug) {
+      gotoStory(slug);
+    }
+  }, [gotoStory, slug]);
 
   const handleClickComment = useCallback(() => {
-    gotoStory(story, { focusTo: "comment" });
-  }, [gotoStory, story]);
+    if (slug) {
+      gotoStory(slug, { focusTo: "comment" });
+    }
+  }, [gotoStory, slug]);
 
   const menuTop = containerRef.current?.clientHeight;
 
@@ -60,14 +68,18 @@ export function TopNavigation({
         <div className="title">
           <div
             className={classNames({
-              "title--more": showMore,
+              "title-more": showMore,
             })}
           >
-            {story.title}
+            {story?.title || (
+              <span className="title--dump">
+                {slug.replace(/-/g, " ").trim()}
+              </span>
+            )}
           </div>
           {showMore && (
-            <div className="title--sub">
-              <ChapterHeader chapter={chapter} />
+            <div className="title-subtitle">
+              <ChapterHeader chapter={chapter || { chapterNo }} />
             </div>
           )}
         </div>
@@ -78,14 +90,14 @@ export function TopNavigation({
       {showMore && (
         <ButtonToolbar>
           <ButtonGroup justified>
-            <Button>
+            <Button disabled={!story}>
               <Icon icon="download" />
             </Button>
             <Button onClick={handleClickComment}>
               <Icon icon="comments" />
             </Button>
             {story && <FollowButtonWrapper story={story} />}
-            <Button>
+            <Button disabled={!chapter}>
               <Icon icon="bug" />
             </Button>
             <Button onClick={toggleShowMenu}>

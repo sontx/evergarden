@@ -19,9 +19,13 @@ import { SettingsPanel } from "../../settings/SettingsPanel";
 export function BottomNavigation({
   story,
   chapter,
+  chapterNo,
+  slug,
 }: {
-  story: GetStoryDto;
-  chapter: GetChapterDto;
+  story?: GetStoryDto;
+  chapter?: GetChapterDto;
+  chapterNo: number;
+  slug: string;
 }) {
   const [showChapters, toggleShowChapters] = useToggle();
   const gotoNextChapter = useGoNextChapter();
@@ -29,12 +33,14 @@ export function BottomNavigation({
   const gotoReading = useGoReading();
 
   const handleNext = useCallback(() => {
-    gotoNextChapter(story, chapter);
+    if (story && chapter) {
+      gotoNextChapter(story, chapter);
+    }
   }, [chapter, gotoNextChapter, story]);
 
   const handleBack = useCallback(() => {
-    gotoBackChapter(story, chapter);
-  }, [chapter, gotoBackChapter, story]);
+    gotoBackChapter(slug, chapterNo);
+  }, [chapterNo, gotoBackChapter, slug]);
 
   const [showSettingsPopup, setShowSettingsPopup] = useState(false);
   const handleShowSettings = useCallback(() => {
@@ -55,16 +61,23 @@ export function BottomNavigation({
       </Animation.Collapse>
       <ButtonToolbar>
         <ButtonGroup justified>
-          <Button onClick={handleBack} disabled={chapter.chapterNo <= 1}>
+          <Button
+            onClick={handleBack}
+            disabled={chapterNo <= 1}
+          >
             <Icon size="lg" icon="arrow-circle-o-left" />
           </Button>
           <Button
             onClick={handleNext}
-            disabled={chapter.chapterNo >= (story.lastChapter || 0)}
+            disabled={
+              !chapter ||
+              !story ||
+              chapter.chapterNo >= (story.lastChapter || 0)
+            }
           >
             <Icon size="lg" icon="arrow-circle-right" />
           </Button>
-          <Button onClick={toggleShowChapters}>
+          <Button onClick={toggleShowChapters} disabled={!story}>
             <Icon size="lg" icon="list-ol" />
           </Button>
           <Button onClick={handleShowSettings}>
@@ -72,7 +85,7 @@ export function BottomNavigation({
           </Button>
         </ButtonGroup>
       </ButtonToolbar>
-      {showChapters && (
+      {showChapters && story && (
         <FullPanel title={story.title} onClose={toggleShowChapters}>
           <ChaptersPanel
             story={story}

@@ -5,8 +5,10 @@ import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
 export function useGoNextChapter() {
   const gotoReading = useGoReading();
   return useCallback(
-    (story: GetStoryDto, chapter: GetChapterDto) => {
-      gotoReading(story, chapter.chapterNo + 1);
+    (story: string | GetStoryDto, chapter: GetChapterDto | number) => {
+      const chapterNo =
+        typeof chapter === "object" ? chapter.chapterNo : chapter;
+      gotoReading(story, chapterNo + 1);
     },
     [gotoReading],
   );
