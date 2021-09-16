@@ -33,7 +33,7 @@ export function BackTop({
       if (containerRef.current) {
         containerRef.current.style.display = isDown ? "unset" : "none";
       }
-    });
+    }, container);
   }, [container]);
 
   return (
