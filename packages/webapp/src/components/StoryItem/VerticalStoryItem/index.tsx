@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import { LazyImageEx } from "../../LazyImageEx";
 import defaultThumbnail from "../../../images/logo.png";
 import TextTruncate from "react-text-truncate";
 
@@ -28,15 +27,9 @@ export const VerticalStoryItem = forwardRef(
         }}
       >
         <div className="thumbnail-container">
-          <LazyImageEx
-            alt={story.title}
-            defaultSrc={defaultThumbnail}
-            src={story.thumbnail}
-          />
+          <img alt={story.title} src={story.thumbnail || defaultThumbnail} />
           {story.mark && <StoryItemMark mark={story.mark} />}
-          {story.lastChapter !== undefined && (
-            <LastChapter story={story} />
-          )}
+          {story.lastChapter !== undefined && <LastChapter story={story} />}
         </div>
         <div className="info">
           <figcaption className="title">

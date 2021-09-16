@@ -22,7 +22,7 @@ export const HorizontalStoryList = forwardRef(
         {...rest}
         slidesPerView="auto"
         spaceBetween={15}
-        freeMode
+        cssMode
       >
         {stories
           ? stories.map((story) => (

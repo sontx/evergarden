@@ -3,14 +3,13 @@ import {
   HorizontalStoryItem,
   HorizontalStoryItemSkeleton,
 } from "../../../components/StoryItem";
-import { withAnimation } from "../../../components/StoryItem/withAnimation";
 import { withStoriesFilter } from "../../../components/UserStoryListPage/withStoriesFilter";
 import { StoryList } from "../../../components/StoryList";
 import { useUserStories } from "../hooks/useUserStories";
 import { useGoEditStory } from "../../../hooks/navigation/useGoEditStory";
 import { GetStoryDto } from "@evergarden/shared";
 
-const StoryItem = withAnimation(HorizontalStoryItem);
+const StoryItem = HorizontalStoryItem;
 const FilterStories = withStoriesFilter(StoryList);
 
 function sort(item1: GetStoryDto, item2: GetStoryDto) {

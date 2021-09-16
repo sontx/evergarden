@@ -1,5 +1,4 @@
 import { StoryListBaseProps } from "./index.api";
-import { withAnimation } from "../StoryItem/withAnimation";
 import {
   CompactStoryItem,
   CompactStoryItemSkeleton,
@@ -17,8 +16,8 @@ import classNames from "classnames";
 
 import { HorizontalStoryList } from "./HorizontalStoryList";
 
-const CompactItem = withAction(withAnimation(CompactStoryItem));
-const HorizontalItem = withAction(withAnimation(HorizontalStoryItem));
+const CompactItem = withAction(CompactStoryItem);
+const HorizontalItem = withAction(HorizontalStoryItem);
 const VerticalItem = withAction(VerticalStoryItem);
 
 export interface StoryListProps

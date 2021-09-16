@@ -3,14 +3,13 @@ import {
   CompactStoryItem,
   CompactStoryItemSkeleton,
 } from "../../../components/StoryItem";
-import { withAnimation } from "../../../components/StoryItem/withAnimation";
 import { withAction } from "../../../components/StoryItem/withAction";
 import { withStoriesFilter } from "../../../components/UserStoryListPage/withStoriesFilter";
 import { StoryList } from "../../../components/StoryList";
 import { useReadingHistory } from "../hooks/useReadingHistory";
 import { useRecent } from "../hooks/useRecent";
 
-const StoryItem = withAction(withAnimation(CompactStoryItem), "continueReading");
+const StoryItem = withAction(CompactStoryItem, "continueReading");
 const FilterStories = withStoriesFilter(StoryList);
 
 export function RecentStories(props: StandardProps) {

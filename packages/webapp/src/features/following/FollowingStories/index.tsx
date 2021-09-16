@@ -3,7 +3,6 @@ import {
   CompactStoryItem,
   CompactStoryItemSkeleton,
 } from "../../../components/StoryItem";
-import { withAnimation } from "../../../components/StoryItem/withAnimation";
 import { withAction } from "../../../components/StoryItem/withAction";
 import { useFollowingStories } from "../hooks/useFollowingStories";
 import { Alert, Divider, Icon, IconButton } from "rsuite";
@@ -16,10 +15,7 @@ import { ChapterNumber } from "../../../components/StoryItem/CompactStoryItem/Ch
 import { useStoriesHistory } from "../../histories/hooks/useStoriesHistory";
 import { canContinueReading } from "../../../utils/story-utils";
 
-const StoryItem = withAction(
-  withAnimation(CompactStoryItem),
-  "continueReading",
-);
+const StoryItem = withAction(CompactStoryItem, "continueReading");
 const FilterStories = withStoriesFilter(StoryList);
 
 export function FollowingStories(props: StandardProps) {
