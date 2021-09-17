@@ -83,7 +83,19 @@ export default {
   filterChapterHint: "Filter chapter...",
   editChapterContentHint: "Chapter content",
   filterChapterConfirm: "Go",
-  missingFeatureMessage: "We're implementing this feature which will be available soon 😊",
+  missingFeatureMessage:
+    "We're implementing this feature which will be available soon 😊",
   commentsPanelTitle: "Comments",
-  reviewsPanelTitle: "Reviews"
+  reviewsPanelTitle: "Reviews",
+  titleFormReportBug: "Report chapter",
+  details: "Details",
+  wrongContent: "Wrong content",
+  spellingMistake: "Spelling mistake",
+  wrongChapter: "Wrong chapter",
+  wrongTranslation: "Wrong translation",
+  chaptersAreNotDisplayed: "Chapters are not displayed",
+  containsSensitiveVulgarLanguage: "Contains sensitive, vulgar language",
+  chooseType: "Choose type",
+  sendReportButton: "Send report",
+  reportSuccessMessage: "Thanks for the report!",
 };
