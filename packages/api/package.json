@@ -13,7 +13,7 @@
     "start": "cross-env NODE_ENV=development nest start",
     "start:dev": "cross-env NODE_ENV=development concurrently \"npm:start:watch\" \"npm:start:storage\"",
     "start:watch": "cross-env NODE_ENV=development nest start --watch",
-    "docker:dev": "npm run compile && cross-env NODE_ENV=development nest start --watch --tsc",
+    "docker:dev": "npm run compile && cross-env NODE_ENV=development USE_DOCKER=true nest start --watch --tsc",
     "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "start:prod": "node dist/main.js",
     "start:storage": "serve upload/storage -l 2000",

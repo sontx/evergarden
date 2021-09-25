@@ -36,11 +36,11 @@ import { RolesGuard } from "../auth/role/roles.guard";
 import { ReadingHistoryService } from "../reading-history/reading-history.service";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { UserService } from "../user/user.service";
-import { isGod, isNumber, isOwnerOrGod } from "../utils";
-import { StoryStorageService } from "../storage/story-storage.service";
+import { isGod, isNumber, isOwnerOrGod } from "../common/utils";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
 import { Story } from "./story.entity";
+import { IStoryStorageService, STORY_STORAGE_SERVICE_KEY } from "../storage/interfaces/story-storage.service";
 
 const SimpleParseArrayPipe = new ParseArrayPipe({
   separator: ",",
@@ -54,7 +54,8 @@ export class StoryController {
     private readonly storyService: StoryService,
     @Inject(forwardRef(() => ReadingHistoryService)) private readingHistoryService: ReadingHistoryService,
     @Inject(forwardRef(() => UserService)) private userService: UserService,
-    private storyStorageService: StoryStorageService,
+    @Inject(STORY_STORAGE_SERVICE_KEY)
+    private storyStorageService: IStoryStorageService,
   ) {}
 
   @Get()
@@ -83,7 +84,7 @@ export class StoryController {
 
     switch (category) {
       case "spotlight":
-        // TODO: implement spotlight
+      // TODO: implement spotlight
       case "suggestions":
       // TODO: implement spotlight
       case "new":

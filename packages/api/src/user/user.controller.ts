@@ -4,6 +4,7 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  Inject,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -14,20 +15,22 @@ import {
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import { GetUserDto, mergeObjects, UpdateUserDto, UpdateUserSettingsDto } from "@evergarden/shared";
+import { GetUserDto, GetUserSettingsDto, mergeObjects, UpdateUserDto, UpdateUserSettingsDto } from "@evergarden/shared";
 import { UserService } from "./user.service";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
 import { Role } from "../auth/role/roles.decorator";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
-import { UserStorageService } from "../storage/user-storage.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
-import { GetUserSettingsDto } from "@evergarden/shared";
+import { IUserStorageService, USER_STORAGE_SERVICE_KEY } from "src/storage/interfaces/user-storage.service";
 
 @Controller("users")
 export class UserController {
-  constructor(private userService: UserService, private userStorageService: UserStorageService) {}
+  constructor(
+    private userService: UserService,
+    @Inject(USER_STORAGE_SERVICE_KEY) private userStorageService: IUserStorageService,
+  ) {}
 
   @Get(":id")
   @UseGuards(JwtGuard)
