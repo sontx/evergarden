@@ -1,11 +1,16 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { ElasticsearchModule } from "@nestjs/elasticsearch";
-import { SearchController } from "./search.controller";
-import StorySearchService from "./story-search.service";
-import { StorageModule } from "../storage/storage.module";
-import AuthorSearchService from "./author-search.service";
+import ElasticStorySearchService from "./elastic/elastic-story-search.service";
+import ElasticAuthorSearchService from "./elastic/elastic-author-search.service";
+import { STORY_SEARCH_SERVICE_KEY } from "./interfaces/story-search.service";
+import { AUTHOR_SEARCH_SERVICE_KEY } from "./interfaces/author-search.service";
+import { StoryModule } from "../story/story.module";
+import { AuthorModule } from "../author/author.module";
+import { LocalStorySearchService } from "./local/local-story-search.service";
+import { LocalAuthorSearchService } from "./local/local-author-search.service";
+import { useMicroservices } from "../common/utils";
 
 @Module({
   imports: [
@@ -22,10 +27,19 @@ import AuthorSearchService from "./author-search.service";
       }),
       inject: [ConfigService],
     }),
-    StorageModule,
+    forwardRef(() => StoryModule),
+    forwardRef(() => AuthorModule),
   ],
-  providers: [StorySearchService, AuthorSearchService],
-  exports: [ElasticsearchModule, StorySearchService, AuthorSearchService],
-  controllers: [SearchController],
+  providers: [
+    {
+      provide: STORY_SEARCH_SERVICE_KEY,
+      useClass: useMicroservices() ? ElasticStorySearchService : LocalStorySearchService,
+    },
+    {
+      provide: AUTHOR_SEARCH_SERVICE_KEY,
+      useClass: useMicroservices() ? ElasticAuthorSearchService : LocalAuthorSearchService,
+    },
+  ],
+  exports: [ElasticsearchModule, STORY_SEARCH_SERVICE_KEY, AUTHOR_SEARCH_SERVICE_KEY],
 })
 export class SearchModule {}

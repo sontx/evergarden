@@ -41,6 +41,10 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
 import { Story } from "./story.entity";
 import { IStoryStorageService, STORY_STORAGE_SERVICE_KEY } from "../storage/interfaces/story-storage.service";
+import {
+  IStorySearchService,
+  STORY_SEARCH_SERVICE_KEY,
+} from "../search/interfaces/story-search.service";
 
 const SimpleParseArrayPipe = new ParseArrayPipe({
   separator: ",",
@@ -56,6 +60,8 @@ export class StoryController {
     @Inject(forwardRef(() => UserService)) private userService: UserService,
     @Inject(STORY_STORAGE_SERVICE_KEY)
     private storyStorageService: IStoryStorageService,
+    @Inject(STORY_SEARCH_SERVICE_KEY)
+    private storySearchService: IStorySearchService,
   ) {}
 
   @Get()
@@ -122,7 +128,7 @@ export class StoryController {
         }
 
         if (search) {
-          return await this.storyService.search(search.trim());
+          return await this.storySearchService.search(search.trim());
         }
         return [];
     }

@@ -8,11 +8,9 @@ import {
   PaginationOptions,
   PaginationResult,
   randomNumberString,
-  StorySearchBody,
   stringToSlug,
   UpdateStoryDto,
 } from "@evergarden/shared";
-import StorySearchService from "../search/story-search.service";
 import { AuthorService } from "../author/author.service";
 import { GenreService } from "../genre/genre.service";
 import { User } from "../user/user.entity";
@@ -29,7 +27,6 @@ export class StoryService {
   constructor(
     @InjectRepository(Story)
     private storyRepository: Repository<Story>,
-    private storySearchService: StorySearchService,
     private authorService: AuthorService,
     private genreService: GenreService,
     @Inject(forwardRef(() => UserService))
@@ -41,6 +38,14 @@ export class StoryService {
 
   async getAll() {
     return await this.storyRepository.find();
+  }
+
+  search(text: string, limit: number): Promise<Story[]> {
+    return this.storyRepository
+      .createQueryBuilder("story")
+      .where("LOWER(story.title) LIKE :title", { title: `%${text.trim().toLowerCase()}%` })
+      .limit(limit)
+      .getMany();
   }
 
   async getStoriesByIds(ids: number[]): Promise<GetStoryDto[]> {
@@ -142,13 +147,6 @@ export class StoryService {
       true,
     );
     return result.items;
-  }
-
-  async search(text: string): Promise<StorySearchBody[]> {
-    const result = await this.storySearchService.search(text);
-    return result.map((item) => ({
-      ...item,
-    }));
   }
 
   toDto(story: Story): GetStoryDto {

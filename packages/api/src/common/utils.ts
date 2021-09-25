@@ -13,8 +13,8 @@ export function isDevelopment() {
   return process.env.NODE_ENV === "development";
 }
 
-export function useDocker() {
-  return process.env.USE_DOCKER === "true";
+export function useMicroservices() {
+  return process.env.USE_MICROSERVIES === "true";
 }
 
 export function isOwnerOrGod(req, storyOrUploader: Story | GetStoryDto | GetChapterDto | Chapter | number): boolean {

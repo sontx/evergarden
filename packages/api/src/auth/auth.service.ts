@@ -3,7 +3,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
-import { User } from "src/user/user.entity";
+import { User } from "../user/user.entity";
 import { GoogleAuthService } from "./google-auth.service";
 import { FacebookAuthService } from "./facebook-auth.service";
 import ms = require("ms");

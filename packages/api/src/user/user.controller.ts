@@ -23,7 +23,7 @@ import { Role } from "../auth/role/roles.decorator";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
-import { IUserStorageService, USER_STORAGE_SERVICE_KEY } from "src/storage/interfaces/user-storage.service";
+import { IUserStorageService, USER_STORAGE_SERVICE_KEY } from "../storage/interfaces/user-storage.service";
 
 @Controller("users")
 export class UserController {

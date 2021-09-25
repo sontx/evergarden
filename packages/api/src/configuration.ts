@@ -1,4 +1,4 @@
-import { useDocker } from "./common/utils";
+import { useMicroservices } from "./common/utils";
 
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 3000,
@@ -22,7 +22,7 @@ export default () => ({
     },
   },
   storage: {
-    host: process.env.STORAGE_HOST || (useDocker() ? "http://localhost:9000" : "http://localhost:3000"),
+    host: process.env.STORAGE_HOST || (useMicroservices() ? "http://localhost:9000" : "http://localhost:3000"),
     minio: {
       host: process.env.MINIO_HOST || "minio",
       port: process.env.MINIO_PORT || 9000,
