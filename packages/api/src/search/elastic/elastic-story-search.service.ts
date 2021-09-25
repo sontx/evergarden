@@ -22,17 +22,17 @@ export default class ElasticStorySearchService implements IStorySearchService {
   ) {}
 
   @OnEvent(StoryCreatedEvent.name)
-  async handleStoryCreatedEvent(event: StoryCreatedEvent) {
+  private async handleStoryCreatedEvent(event: StoryCreatedEvent) {
     await this.add(event.createdStory);
   }
 
   @OnEvent(StoryUpdatedEvent.name)
-  async handleStoryUpdatedEvent(event: StoryUpdatedEvent) {
+  private async handleStoryUpdatedEvent(event: StoryUpdatedEvent) {
     await this.update(event.updatedStory);
   }
 
   @OnEvent(StoryDeletedEvent.name)
-  async handleStoryDeletedEvent(event: StoryDeletedEvent) {
+  private async handleStoryDeletedEvent(event: StoryDeletedEvent) {
     await this.remove(event.storyId);
   }
 

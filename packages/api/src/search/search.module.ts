@@ -14,22 +14,23 @@ import { useMicroservices } from "../common/utils";
 
 @Module({
   imports: [
-    ElasticsearchModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        node: configService.get("database.elastic.url"),
-        auth: {
-          username: configService.get("database.elastic.username"),
-          password: configService.get("database.elastic.password"),
-        },
-        maxRetries: 3,
-        sniffOnStart: true,
+    useMicroservices() &&
+      ElasticsearchModule.registerAsync({
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => ({
+          node: configService.get("database.elastic.url"),
+          auth: {
+            username: configService.get("database.elastic.username"),
+            password: configService.get("database.elastic.password"),
+          },
+          maxRetries: 3,
+          sniffOnStart: true,
+        }),
+        inject: [ConfigService],
       }),
-      inject: [ConfigService],
-    }),
     forwardRef(() => StoryModule),
     forwardRef(() => AuthorModule),
-  ],
+  ].filter(Boolean),
   providers: [
     {
       provide: STORY_SEARCH_SERVICE_KEY,
@@ -40,6 +41,6 @@ import { useMicroservices } from "../common/utils";
       useClass: useMicroservices() ? ElasticAuthorSearchService : LocalAuthorSearchService,
     },
   ],
-  exports: [ElasticsearchModule, STORY_SEARCH_SERVICE_KEY, AUTHOR_SEARCH_SERVICE_KEY],
+  exports: [STORY_SEARCH_SERVICE_KEY, AUTHOR_SEARCH_SERVICE_KEY],
 })
 export class SearchModule {}

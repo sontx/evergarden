@@ -20,7 +20,7 @@ export default class ElasticAuthorSearchService implements IAuthorSearchService 
   ) {}
 
   @OnEvent(AuthorCreatedEvent.name, { async: true })
-  async handleAuthorCreatedEvent(event: AuthorCreatedEvent) {
+  private async handleAuthorCreatedEvent(event: AuthorCreatedEvent) {
     await this.add(event.createdAuthor);
   }
 

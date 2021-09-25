@@ -1,8 +1,8 @@
-import { useMicroservices } from "./common/utils";
+import { isDevelopment, useMicroservices } from "./common/utils";
 
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 3000,
-  isDevelopment: process.env.NODE_ENV === "development",
+  isDevelopment: isDevelopment(),
   database: {
     mysql: {
       host: process.env.MYSQL_HOST || "mysql",
@@ -84,5 +84,8 @@ export default () => ({
     username: process.env.SENDMAIL_USERNAME,
     password: process.env.SENDMAIL_PASSWORD,
     defaultFrom: process.env.SENDMAIL_DEFAULTFROM,
+  },
+  policy: {
+    viewCountInterval: isDevelopment() ? "10m" : "12h",
   },
 });
