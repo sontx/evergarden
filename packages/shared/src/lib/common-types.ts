@@ -316,3 +316,7 @@ export class CreateReportChapterDto {
   @MaxLength(500)
   detail?: string;
 }
+
+export interface GetStoryTrendingDto extends GetStoryDto {
+  score: number;
+}

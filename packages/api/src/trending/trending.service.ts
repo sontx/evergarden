@@ -5,7 +5,7 @@ import { Trending } from "./trending.entity";
 import { ViewHitService } from "./view-hit.service";
 import { forEachChunk, isDevelopment } from "../common/utils";
 import { StoryService } from "../story/story.service";
-import { GetStoryDto } from "@evergarden/shared";
+import { GetStoryTrendingDto } from "@evergarden/shared";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
 const AUTO_UPDATE_TRENDING_CRON = isDevelopment() ? CronExpression.EVERY_MINUTE : CronExpression.EVERY_10_MINUTES;
@@ -42,18 +42,21 @@ export class TrendingService {
     }
   }
 
-  async getTrending(limit: number, skip: number): Promise<GetStoryDto[]> {
+  async getTrending(limit: number, skip: number): Promise<GetStoryTrendingDto[]> {
     const trending = await this.trendingRepository.find({
       order: { score: "DESC" },
       skip,
       take: limit,
     });
     const stories = await this.storyService.getStoriesByIds(trending.map((item) => item.storyId));
-    const result: GetStoryDto[] = [];
+    const result: GetStoryTrendingDto[] = [];
     for (const item of trending) {
       const found = stories.find((story) => story.id === item.storyId);
       if (found) {
-        result.push(found);
+        result.push({
+          ...found,
+          score: item.score,
+        });
       }
     }
     return result;
