@@ -10,6 +10,7 @@ import { AuthorModule } from "../author/author.module";
 import { GenreModule } from "../genre/genre.module";
 import { StorageModule } from "../storage/storage.module";
 import { VoteService } from "./vote.service";
+import { TrendingModule } from "../trending/trending.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { VoteService } from "./vote.service";
     forwardRef(() => SearchModule),
     forwardRef(() => ReadingHistoryModule),
     forwardRef(() => UserModule),
+    forwardRef(() => TrendingModule),
     AuthorModule,
     GenreModule,
     StorageModule,

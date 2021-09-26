@@ -34,6 +34,8 @@ import { BullModule } from "@nestjs/bull";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { useMicroservices } from "./common/utils";
+import { TrendingModule } from './trending/trending.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import ms = require("ms");
 
 const RedisStore = useMicroservices() && ConnectRedis(session);
@@ -52,6 +54,7 @@ function configSession(configService: ConfigService): expressSession.SessionOpti
 @Module({
   imports: [
     PassportModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: [".env.development.local", ".env.development"],
       load: [configuration],
@@ -152,6 +155,7 @@ function configSession(configService: ConfigService): expressSession.SessionOpti
     ViewcountModule,
     TrackerModule,
     SendMailModule,
+    TrendingModule,
   ].filter(Boolean),
   controllers: [AppController],
   providers: [AppService],

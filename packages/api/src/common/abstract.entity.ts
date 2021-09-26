@@ -17,4 +17,3 @@ export abstract class AbstractEntity {
   @Column({ type: "timestamp", nullable: false })
   updated: Date;
 }
-

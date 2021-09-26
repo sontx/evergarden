@@ -35,3 +35,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 /client
 .env.development.docker
+.env.development.nodocker

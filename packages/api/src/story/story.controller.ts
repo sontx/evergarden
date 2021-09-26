@@ -41,10 +41,8 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
 import { Story } from "./story.entity";
 import { IStoryStorageService, STORY_STORAGE_SERVICE_KEY } from "../storage/interfaces/story-storage.service";
-import {
-  IStorySearchService,
-  STORY_SEARCH_SERVICE_KEY,
-} from "../search/interfaces/story-search.service";
+import { IStorySearchService, STORY_SEARCH_SERVICE_KEY } from "../search/interfaces/story-search.service";
+import { TrendingService } from "../trending/trending.service";
 
 const SimpleParseArrayPipe = new ParseArrayPipe({
   separator: ",",
@@ -62,6 +60,7 @@ export class StoryController {
     private storyStorageService: IStoryStorageService,
     @Inject(STORY_SEARCH_SERVICE_KEY)
     private storySearchService: IStorySearchService,
+    private trendingService: TrendingService,
   ) {}
 
   @Get()
@@ -100,7 +99,7 @@ export class StoryController {
       case "updated":
         return await this.storyService.getLastUpdatedStories(pagination, imGod);
       case "hot":
-        return await this.storyService.getHotStories(pagination, imGod);
+        return await this.trendingService.getTrending(pagination.limit, pagination.skip);
       case "user":
         if (!req.user) {
           throw new UnauthorizedException();

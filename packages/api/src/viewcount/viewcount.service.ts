@@ -2,10 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { DelayedQueueService } from "../common/delayed-queue.service";
 import { Story } from "../story/story.entity";
 import { Connection } from "typeorm";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { ViewIncreasedEvent } from "../events/view-increased.event";
 
 @Injectable()
 export class ViewcountService extends DelayedQueueService<number> {
-  constructor(private connection: Connection) {
+  constructor(private connection: Connection, private eventEmitter: EventEmitter2) {
     super();
   }
 
@@ -18,6 +20,7 @@ export class ViewcountService extends DelayedQueueService<number> {
         .whereInIds(id)
         .set({ view: () => `view + ${value}` })
         .execute();
+      this.eventEmitter.emitAsync(ViewIncreasedEvent.name, new ViewIncreasedEvent(id, value, new Date())).then();
     }
   }
 

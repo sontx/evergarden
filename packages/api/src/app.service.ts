@@ -8,6 +8,7 @@ import { Role } from "@evergarden/shared";
 import { AuthorService } from "./author/author.service";
 import { AUTHOR_SEARCH_SERVICE_KEY, IAuthorSearchService } from "./search/interfaces/author-search.service";
 import { IStorySearchService, STORY_SEARCH_SERVICE_KEY } from "./search/interfaces/story-search.service";
+import { TrendingService } from "./trending/trending.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -23,6 +24,7 @@ export class AppService implements OnApplicationBootstrap {
     private authorService: AuthorService,
     private userService: UserService,
     private configService: ConfigService,
+    private trendingService: TrendingService,
   ) {}
 
   async onApplicationBootstrap() {
@@ -37,6 +39,14 @@ export class AppService implements OnApplicationBootstrap {
     this.logger.debug("Synchronizing initial users...");
     await this.initializeUsers();
     this.logger.debug("Synchronized initial users!");
+
+    this.logger.debug("Computing trending...");
+    await this.initializeTrending();
+    this.logger.debug("Computed trending!");
+  }
+
+  private async initializeTrending() {
+    await this.trendingService.updateTrending();
   }
 
   private async initializeSearchEngine() {

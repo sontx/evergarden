@@ -19,6 +19,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { StoryUpdatedEvent } from "../events/story-updated.event";
 import { StoryDeletedEvent } from "../events/story-deleted.event";
 import { StoryCreatedEvent } from "../events/story-created.event";
+import { getQuerySkip } from "../common/utils";
 
 @Injectable()
 export class StoryService {
@@ -63,14 +64,9 @@ export class StoryService {
       ...rest,
       where: includeUnpublished ? where : { published: true, ...where },
       take: options.limit,
-      skip: StoryService.getQuerySkip(options),
+      skip: getQuerySkip(options),
     });
     return this.toPaginationResult(options, result);
-  }
-
-  private static getQuerySkip(options: PaginationOptions): number {
-    const value = isFinite(options.skip) ? options.skip : options.page * options.limit;
-    return isFinite(value) ? value : 0;
   }
 
   private toPaginationResult(options: PaginationOptions, result: [Story[], number]): PaginationResult<GetStoryDto> {
@@ -104,7 +100,7 @@ export class StoryService {
       .createQueryBuilder("story")
       .innerJoin(`story.${joinTable}`, joinTable)
       .take(options.limit)
-      .skip(StoryService.getQuerySkip(options))
+      .skip(getQuerySkip(options))
       .orderBy("story.updated", "DESC");
     query = includeUnpublished
       ? query.where(`story.published = 1 and ${joinTable}.id in (:...joinIds)`, { joinIds })
@@ -127,14 +123,6 @@ export class StoryService {
       },
       includeUnpublished,
     );
-  }
-
-  async getHotStories(
-    options: PaginationOptions,
-    includeUnpublished?: boolean,
-  ): Promise<PaginationResult<GetStoryDto>> {
-    // TODO: implement later
-    return this.getLastUpdatedStories(options, includeUnpublished);
   }
 
   async getUserStories(userId: number): Promise<GetStoryDto[]> {
