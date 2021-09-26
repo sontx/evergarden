@@ -3,7 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import * as cookieParser from "cookie-parser";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
-import { isDevelopment } from "./utils";
+import { isDevelopment } from "./common/utils";
 import { DelayedRequestInterceptor } from "./common/delayed-request.interceptor";
 import { ValidationPipe } from "@nestjs/common";
 

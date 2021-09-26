@@ -27,7 +27,7 @@ import { Role } from "../auth/role/roles.decorator";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
 import { StoryService } from "../story/story.service";
-import { isOwnerOrGod } from "../utils";
+import { isOwnerOrGod } from "../common/utils";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { Chapter } from "./chapter.entity";
 import { CreateReportChapterDto } from "@evergarden/shared";

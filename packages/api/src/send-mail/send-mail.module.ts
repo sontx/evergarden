@@ -1,8 +1,11 @@
 import { Module } from "@nestjs/common";
-import { SendMailService } from "./send-mail.service";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { BullModule } from "@nestjs/bull";
+import { useMicroservices } from "../common/utils";
+import { SEND_MAIL_SERVICE_KEY } from "./interfaces/send-mail.service";
+import { LocalSendMailService } from "./local/local-send-mail.service";
+import { BullSendMailService } from "./bull/bull-send-mail.service";
 
 @Module({
   imports: [
@@ -26,11 +29,17 @@ import { BullModule } from "@nestjs/bull";
         };
       },
     }),
-    BullModule.registerQueue({
-      name: "email",
-    }),
+    useMicroservices() &&
+      BullModule.registerQueue({
+        name: "email",
+      }),
+  ].filter(Boolean),
+  providers: [
+    {
+      provide: SEND_MAIL_SERVICE_KEY,
+      useClass: useMicroservices() ? BullSendMailService : LocalSendMailService,
+    },
   ],
-  providers: [SendMailService],
-  exports: [SendMailService],
+  exports: [SEND_MAIL_SERVICE_KEY],
 })
 export class SendMailModule {}

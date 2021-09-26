@@ -1,7 +1,9 @@
-import { Story } from "./story/story.entity";
+import { Story } from "../story/story.entity";
 import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
-import { Chapter } from "./chapter/chapter.entity";
+import { Chapter } from "../chapter/chapter.entity";
 import { Readable } from "stream";
+import * as path from "path";
+import * as fs from "fs";
 
 export function delay(mills) {
   return new Promise((resolve) => setTimeout(() => resolve(null), mills));
@@ -9,6 +11,10 @@ export function delay(mills) {
 
 export function isDevelopment() {
   return process.env.NODE_ENV === "development";
+}
+
+export function useMicroservices() {
+  return process.env.USE_MICROSERVIES === "true";
 }
 
 export function isOwnerOrGod(req, storyOrUploader: Story | GetStoryDto | GetChapterDto | Chapter | number): boolean {
@@ -41,4 +47,16 @@ export function toBuffer(stream: Readable): Promise<Buffer> {
       reject(err);
     });
   });
+}
+
+export async function writeFileAsync(
+  filePath: string,
+  data: string | Uint8Array,
+  options?: (fs.BaseEncodingOptions & { mode?: fs.Mode; flag?: fs.OpenMode }) | BufferEncoding | null,
+): Promise<void> {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    await fs.promises.mkdir(dir, { recursive: true });
+  }
+  await fs.promises.writeFile(filePath, data, options);
 }

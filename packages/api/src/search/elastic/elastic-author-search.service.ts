@@ -1,32 +1,45 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { AuthorSearchBody, SearchResult } from "@evergarden/shared";
-import { Author } from "../author/author.entity";
+import { Author } from "../../author/author.entity";
 import { OnEvent } from "@nestjs/event-emitter";
-import { AuthorCreatedEvent } from "../events/author-created.event";
+import { AuthorCreatedEvent } from "../../events/author-created.event";
+import { IAuthorSearchService } from "../interfaces/author-search.service";
+import { AuthorService } from "../../author/author.service";
 
 @Injectable()
-export default class AuthorSearchService {
+export default class ElasticAuthorSearchService implements IAuthorSearchService {
   private static readonly index = "authors";
 
-  private readonly logger = new Logger(AuthorSearchService.name);
+  private readonly logger = new Logger(ElasticAuthorSearchService.name);
 
-  constructor(private readonly elasticsearchService: ElasticsearchService) {}
+  constructor(
+    private readonly elasticsearchService: ElasticsearchService,
+    @Inject(forwardRef(() => AuthorService))
+    private authorService: AuthorService,
+  ) {}
 
-  @OnEvent(AuthorCreatedEvent.name, {async: true})
-  async handleAuthorCreatedEvent(event: AuthorCreatedEvent) {
+  @OnEvent(AuthorCreatedEvent.name, { async: true })
+  private async handleAuthorCreatedEvent(event: AuthorCreatedEvent) {
     await this.add(event.createdAuthor);
   }
 
-  async indexExists(): Promise<boolean> {
-    const checkIndex = await this.elasticsearchService.indices.exists({ index: AuthorSearchService.index });
+  async initialize(): Promise<void> {
+    if (!(await this.indexExists())) {
+      const authors = await this.authorService.getAll();
+      await this.createIndex(authors);
+    }
+  }
+
+  private async indexExists(): Promise<boolean> {
+    const checkIndex = await this.elasticsearchService.indices.exists({ index: ElasticAuthorSearchService.index });
     return checkIndex.statusCode !== 404;
   }
 
-  async createIndex(authors: Author[]) {
+  private async createIndex(authors: Author[]) {
     this.elasticsearchService.indices.create(
       {
-        index: AuthorSearchService.index,
+        index: ElasticAuthorSearchService.index,
         body: {
           settings: {
             analysis: {
@@ -82,7 +95,7 @@ export default class AuthorSearchService {
       body.push(
         {
           index: {
-            _index: AuthorSearchService.index,
+            _index: ElasticAuthorSearchService.index,
             _id: author.id,
           },
         },
@@ -92,7 +105,7 @@ export default class AuthorSearchService {
 
     this.elasticsearchService.bulk(
       {
-        index: AuthorSearchService.index,
+        index: ElasticAuthorSearchService.index,
         body,
       },
       (err) => {
@@ -106,7 +119,7 @@ export default class AuthorSearchService {
 
   private async remove(authorId: number) {
     this.elasticsearchService.deleteByQuery({
-      index: AuthorSearchService.index,
+      index: ElasticAuthorSearchService.index,
       body: {
         query: {
           match: {
@@ -124,7 +137,7 @@ export default class AuthorSearchService {
     }, "");
 
     return this.elasticsearchService.updateByQuery({
-      index: AuthorSearchService.index,
+      index: ElasticAuthorSearchService.index,
       body: {
         query: {
           match: {
@@ -140,7 +153,7 @@ export default class AuthorSearchService {
 
   private async add(author: Author) {
     return this.elasticsearchService.index<SearchResult<AuthorSearchBody>, AuthorSearchBody>({
-      index: AuthorSearchService.index,
+      index: ElasticAuthorSearchService.index,
       body: this.toSearchBody(author),
     });
   }
@@ -154,7 +167,7 @@ export default class AuthorSearchService {
 
   async search(text: string): Promise<AuthorSearchBody[]> {
     const { body } = await this.elasticsearchService.search<SearchResult<AuthorSearchBody>>({
-      index: AuthorSearchService.index,
+      index: ElasticAuthorSearchService.index,
       body: {
         from: 0,
         size: 10,

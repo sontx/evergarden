@@ -8,4 +8,5 @@ SentenceAnalyzer
 SentencePicker
 dist
 data
+dump
 *.tgz

@@ -25,6 +25,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 import { NestSessionOptions, SessionModule } from "nestjs-session";
 import * as ConnectRedis from "connect-redis";
 import * as session from "express-session";
+import * as expressSession from "express-session";
 import { nanoid } from "nanoid";
 import { ViewcountModule } from "./viewcount/viewcount.module";
 import { TrackerModule } from "./tracker/tracker.module";
@@ -32,9 +33,21 @@ import { SendMailModule } from "./send-mail/send-mail.module";
 import { BullModule } from "@nestjs/bull";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { useMicroservices } from "./common/utils";
 import ms = require("ms");
 
-const RedisStore = ConnectRedis(session);
+const RedisStore = useMicroservices() && ConnectRedis(session);
+
+function configSession(configService: ConfigService): expressSession.SessionOptions {
+  return {
+    secret: configService.get("session.secret"),
+    saveUninitialized: false,
+    resave: false,
+    genid(): string {
+      return nanoid();
+    },
+  };
+}
 
 @Module({
   imports: [
@@ -69,56 +82,63 @@ const RedisStore = ConnectRedis(session);
         };
       },
     }),
-    RedisModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return {
-          host: configService.get("database.redis.host"),
-          port: configService.get("database.redis.port"),
-          name: "evergarden",
-        };
-      },
-    }),
-    SessionModule.forRootAsync({
-      imports: [ConfigModule, RedisModule],
-      inject: [ConfigService, RedisService],
-      useFactory: async (configService: ConfigService, redisService: RedisService): Promise<NestSessionOptions> => {
-        return {
-          session: {
-            secret: configService.get("session.secret"),
-            store: new RedisStore({
-              client: redisService.getClient("evergarden"),
-              disableTouch: true,
-              ttl: ms(configService.get<string>("session.ttl")) / 1000,
-            }),
-            saveUninitialized: false,
-            resave: false,
-            genid(): string {
-              return nanoid();
-            },
-          },
-        };
-      },
-    }),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          redis: {
+    useMicroservices() &&
+      RedisModule.forRootAsync({
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => {
+          return {
             host: configService.get("database.redis.host"),
             port: configService.get("database.redis.port"),
             name: "evergarden",
+          };
+        },
+      }),
+    useMicroservices()
+      ? SessionModule.forRootAsync({
+          imports: [ConfigModule, RedisModule],
+          inject: [ConfigService, RedisService],
+          useFactory: async (configService: ConfigService, redisService: RedisService): Promise<NestSessionOptions> => {
+            return {
+              session: {
+                store: new RedisStore({
+                  client: redisService.getClient("evergarden"),
+                  disableTouch: true,
+                  ttl: ms(configService.get<string>("session.ttl")) / 1000,
+                }),
+                ...configSession(configService),
+              },
+            };
           },
-          defaultJobOptions: {
-            attempts: 3,
-            removeOnComplete: true,
-            removeOnFail: true,
+        })
+      : SessionModule.forRootAsync({
+          imports: [ConfigModule],
+          inject: [ConfigService],
+          useFactory: async (configService: ConfigService): Promise<NestSessionOptions> => {
+            return {
+              session: configSession(configService),
+            };
           },
-        };
-      },
-    }),
+        }),
+    useMicroservices() &&
+      BullModule.forRootAsync({
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: async (configService: ConfigService) => {
+          return {
+            redis: {
+              host: configService.get("database.redis.host"),
+              port: configService.get("database.redis.port"),
+              name: "evergarden",
+            },
+            defaultJobOptions: {
+              attempts: 3,
+              removeOnComplete: true,
+              removeOnFail: true,
+            },
+          };
+        },
+      }),
     EventEmitterModule.forRoot({ global: true }),
     AuthModule,
     UserModule,
@@ -132,7 +152,7 @@ const RedisStore = ConnectRedis(session);
     ViewcountModule,
     TrackerModule,
     SendMailModule,
-  ],
+  ].filter(Boolean),
   controllers: [AppController],
   providers: [AppService],
 })

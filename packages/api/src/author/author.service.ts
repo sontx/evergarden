@@ -1,18 +1,19 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Author } from "./author.entity";
 import { GetAuthorDto } from "@evergarden/shared";
-import AuthorSearchService from "../search/author-search.service";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { AuthorCreatedEvent } from "../events/author-created.event";
+import { AUTHOR_SEARCH_SERVICE_KEY, IAuthorSearchService } from "../search/interfaces/author-search.service";
 
 @Injectable()
 export class AuthorService {
   constructor(
     @InjectRepository(Author) private authorRepository: Repository<Author>,
-    private authorSearchService: AuthorSearchService,
-    private eventEmitter: EventEmitter2
+    @Inject(AUTHOR_SEARCH_SERVICE_KEY)
+    private authorSearchService: IAuthorSearchService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async getAll(): Promise<Author[]> {
@@ -26,9 +27,12 @@ export class AuthorService {
     return this.toDto(found);
   }
 
-  async search(name: string): Promise<GetAuthorDto[]> {
-    const result = await this.authorSearchService.search(name);
-    return result.map((item) => ({ id: item.id, name: item.name }));
+  search(name: string, limit: number): Promise<Author[]> {
+    return this.authorRepository
+      .createQueryBuilder("author")
+      .where("LOWER(author.name) LIKE :name", { name: `%${name.trim().toLowerCase()}%` })
+      .limit(limit)
+      .getMany();
   }
 
   toDto(author: Author): GetAuthorDto {
@@ -42,7 +46,7 @@ export class AuthorService {
 
   private async add(name: string): Promise<GetAuthorDto> {
     const newAuthor = await this.authorRepository.create({ name });
-    const saved = await this.authorRepository.save(newAuthor)
+    const saved = await this.authorRepository.save(newAuthor);
     this.eventEmitter.emitAsync(AuthorCreatedEvent.name, new AuthorCreatedEvent(saved)).then();
     return this.toDto(await this.authorRepository.save(newAuthor));
   }

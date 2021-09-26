@@ -1,13 +1,13 @@
-import { Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common";
+import { Inject, Injectable, Logger, OnApplicationBootstrap } from "@nestjs/common";
 import { StoryService } from "./story/story.service";
-import StorySearchService from "./search/story-search.service";
 import genresDataset from "./genres.dataset";
 import { GenreService } from "./genre/genre.service";
 import { UserService } from "./user/user.service";
 import { ConfigService } from "@nestjs/config";
 import { Role } from "@evergarden/shared";
-import AuthorSearchService from "./search/author-search.service";
 import { AuthorService } from "./author/author.service";
+import { AUTHOR_SEARCH_SERVICE_KEY, IAuthorSearchService } from "./search/interfaces/author-search.service";
+import { IStorySearchService, STORY_SEARCH_SERVICE_KEY } from "./search/interfaces/story-search.service";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -15,8 +15,10 @@ export class AppService implements OnApplicationBootstrap {
 
   constructor(
     private storyService: StoryService,
-    private storySearchService: StorySearchService,
-    private authorSearchService: AuthorSearchService,
+    @Inject(STORY_SEARCH_SERVICE_KEY)
+    private storySearchService: IStorySearchService,
+    @Inject(AUTHOR_SEARCH_SERVICE_KEY)
+    private authorSearchService: IAuthorSearchService,
     private genreService: GenreService,
     private authorService: AuthorService,
     private userService: UserService,
@@ -38,15 +40,8 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   private async initializeSearchEngine() {
-    if (!(await this.storySearchService.indexExists())) {
-      const stories = await this.storyService.getAll();
-      await this.storySearchService.createIndex(stories);
-    }
-
-    if (!(await this.authorSearchService.indexExists())) {
-      const authors = await this.authorService.getAll();
-      await this.authorSearchService.createIndex(authors);
-    }
+    await this.storySearchService.initialize();
+    await this.authorSearchService.initialize();
   }
 
   private async initializeGenresDataset() {
