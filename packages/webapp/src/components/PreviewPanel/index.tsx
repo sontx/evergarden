@@ -6,6 +6,7 @@ import classNames from "classnames";
 import { ReactNode } from "react";
 import { GetStoryDtoEx } from "../StoryItem/index.api";
 import { NavigateAction } from "../FullPanel/NavigateAction";
+import { Empty } from "../Empty";
 
 export function PreviewPanel({
   stories,
@@ -36,6 +37,7 @@ export function PreviewPanel({
         skeletonCount={skeletonCount}
         stories={stories}
       />
+      {stories && stories.length === 0 && <Empty/>}
     </div>
   );
 }

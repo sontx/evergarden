@@ -83,7 +83,9 @@ export default {
   filterChapterHint: "Filter chapter...",
   editChapterContentHint: "Chapter content",
   filterChapterConfirm: "Go",
-  missingFeatureMessage: "We're implementing this feature which will be available soon 😊",
+  missingFeatureMessage:
+    "We're implementing this feature which will be available soon 😊",
   commentsPanelTitle: "Comments",
-  reviewsPanelTitle: "Reviews"
+  reviewsPanelTitle: "Reviews",
+  emptyLabel: "Empty list",
 };
