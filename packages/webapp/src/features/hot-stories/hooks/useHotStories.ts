@@ -1,7 +1,7 @@
 import api from "../../../utils/api";
 import { GetStoryDto } from "@evergarden/shared";
-import { UseInfiniteQueryOptions } from "react-query";
 import { useInfinitePageQuery } from "../../../hooks/api-query/useInfinitePageQuery";
+import ms from "ms";
 
 async function fetchHotStories(
   skip: number,
@@ -13,10 +13,9 @@ async function fetchHotStories(
   return response.data;
 }
 
-export default function useHotStories(
-  queryKey: unknown[],
-  options?: UseInfiniteQueryOptions<GetStoryDto[]>,
-) {
+export default function useHotStories(queryKey: unknown[]) {
   const [page] = queryKey;
-  return useInfinitePageQuery(["hot-stories", page], fetchHotStories, options);
+  return useInfinitePageQuery(["hot-stories", page], fetchHotStories, {
+    staleTime: ms("5m"),
+  });
 }

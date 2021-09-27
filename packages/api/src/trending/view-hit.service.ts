@@ -7,6 +7,7 @@ import { ViewIncreasedEvent } from "../events/view-increased.event";
 import { IViewHitsCacheService, VIEW_HITS_CACHE_SERVICE_KEY } from "./interfaces/view-hits-cache.service";
 import * as moment from "moment";
 import { forEachChunk } from "../common/utils";
+import { toInt } from "@evergarden/shared";
 
 export interface ViewHitScore {
   storyId: number;
@@ -24,7 +25,6 @@ export class ViewHitService {
 
   @OnEvent(ViewIncreasedEvent.name, { async: true })
   private async handleViewIncreasedEvent(event: ViewIncreasedEvent) {
-    console.log("handleViewIncreasedEvent", event);
     await this.viewHitsCacheService.add(event);
   }
 
@@ -59,5 +59,13 @@ export class ViewHitService {
       GROUP BY storyId
     `)) as ViewHitScore[];
     return result.filter((item) => item.score !== null);
+  }
+
+  async getTopViews(limit: number, skip: number): Promise<{ storyId: number; total: number }[]> {
+    const result = (await this.viewHitRepository.query(
+      "SELECT storyId, SUM(view) AS total FROM view_hits GROUP BY storyId ORDER BY total DESC LIMIT ? OFFSET ?",
+      [limit, skip],
+    )) as any[];
+    return result.map((item) => ({ storyId: toInt(item.storyId), total: toInt(item.total) }));
   }
 }

@@ -100,6 +100,16 @@ export class StoryService {
     return await query.getMany();
   }
 
+  async getTopViews(pageable: Pageable, includeUnpublished?: boolean) {
+    return this.getStories(
+      pageable,
+      {
+        order: { view: "DESC" },
+      },
+      includeUnpublished,
+    );
+  }
+
   async getNewStories(pageable: Pageable, includeUnpublished?: boolean) {
     return this.getStories(
       pageable,

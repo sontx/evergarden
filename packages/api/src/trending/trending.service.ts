@@ -5,10 +5,11 @@ import { Trending } from "./trending.entity";
 import { ViewHitService } from "./view-hit.service";
 import { forEachChunk, isDevelopment } from "../common/utils";
 import { StoryService } from "../story/story.service";
-import { GetStoryTrendingDto } from "@evergarden/shared";
+import { GetStoryDto, GetStoryTrendingDto } from "@evergarden/shared";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
 const AUTO_UPDATE_TRENDING_CRON = isDevelopment() ? CronExpression.EVERY_5_MINUTES : CronExpression.EVERY_10_MINUTES;
+type QueryId = { storyId: number; [x: string]: any };
 
 @Injectable()
 export class TrendingService {
@@ -48,15 +49,24 @@ export class TrendingService {
       skip,
       take: limit,
     });
-    const stories = await this.storyService.getStoriesByIds(trending.map((item) => item.storyId));
-    const result: GetStoryTrendingDto[] = [];
-    for (const item of trending) {
+    return this.mapToStories(trending, (story, queryId) => ({
+      ...story,
+      score: queryId.score,
+    }));
+  }
+
+  async getTopViews(limit: number, skip: number) {
+    const topViews = await this.viewHitService.getTopViews(limit, skip);
+    return this.mapToStories(topViews, (story) => story);
+  }
+
+  private async mapToStories<T>(queryIds: QueryId[], mapFn: (story: GetStoryDto, queryId: QueryId) => T): Promise<T[]> {
+    const stories = await this.storyService.getStoriesByIds(queryIds.map((item) => item.storyId));
+    const result: T[] = [];
+    for (const item of queryIds) {
       const found = stories.find((story) => story.id === item.storyId);
       if (found) {
-        result.push({
-          ...found,
-          score: item.score,
-        });
+        result.push(mapFn(found, item));
       }
     }
     return result;

@@ -21,13 +21,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { StoryService } from "./story.service";
-import {
-  CreateStoryDto,
-  GetStoryDto,
-  PaginationResult,
-  StorySearchBody,
-  UpdateStoryDto,
-} from "@evergarden/shared";
+import { CreateStoryDto, GetStoryDto, PaginationResult, StorySearchBody, UpdateStoryDto } from "@evergarden/shared";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { Role } from "../auth/role/roles.decorator";
 import { RolesGuard } from "../auth/role/roles.guard";
@@ -38,14 +32,8 @@ import { isGod, isNumber, isOwnerOrGod } from "../common/utils";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
 import { Story } from "./story.entity";
-import {
-  IStoryStorageService,
-  STORY_STORAGE_SERVICE_KEY,
-} from "../storage/interfaces/story-storage.service";
-import {
-  IStorySearchService,
-  STORY_SEARCH_SERVICE_KEY,
-} from "../search/interfaces/story-search.service";
+import { IStoryStorageService, STORY_STORAGE_SERVICE_KEY } from "../storage/interfaces/story-storage.service";
+import { IStorySearchService, STORY_SEARCH_SERVICE_KEY } from "../search/interfaces/story-search.service";
 import { TrendingService } from "../trending/trending.service";
 import { Pageable } from "../common/pageable";
 
@@ -59,7 +47,16 @@ function isSlug(idOrSlug: number | string): idOrSlug is string {
   return !isNumber(idOrSlug);
 }
 
-type QueryCategory = "updated" | "hot" | "user" | "spotlight" | "suggestions" | "recommend" | "new";
+type QueryCategory =
+  | "updated"
+  | "hot"
+  | "user"
+  | "spotlight"
+  | "suggestions"
+  | "recommend"
+  | "new"
+  | "top-views-all"
+  | "top-views-today";
 
 @Controller("stories")
 export class StoryController {
@@ -100,6 +97,10 @@ export class StoryController {
         return await this.storyService.getNewStories(pageable, imGod);
       case "recommend":
       // TODO: implement spotlight
+      case "top-views-today":
+        return await this.trendingService.getTopViews(pageable.limit, pageable.skip);
+      case "top-views-all":
+        return await this.storyService.getTopViews(pageable, imGod);
       case "updated":
         return await this.storyService.getLastUpdatedStories(pageable, imGod);
       case "hot":
