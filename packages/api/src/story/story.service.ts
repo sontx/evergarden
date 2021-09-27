@@ -144,58 +144,72 @@ export class StoryService {
   }
 
   async addStory(story: CreateStoryDto, userId: number): Promise<GetStoryDto> {
+    const url = await this.getUniqueStoryUrl(story);
+    const user = await this.userService.getById(userId);
+
+    return await this.storyRepository.manager.transaction(async (entityManager) => {
+      story.authors = await this.authorService.syncAuthors(story.authors || [], entityManager);
+      story.genres = await this.genreService.getValidGenres(story.genres || [], entityManager);
+
+      const now = new Date();
+      const savedStory = await entityManager.save(Story, {
+        ...story,
+        url,
+        created: now,
+        updated: now,
+        createdBy: user,
+        updatedBy: user,
+        view: 0,
+        lastChapter: 0,
+        upvote: 0,
+        downvote: 0,
+      });
+      this.eventEmitter.emitAsync(StoryCreatedEvent.name, new StoryCreatedEvent(savedStory)).then();
+      return StoryService.toDto(savedStory);
+    });
+  }
+
+  private async getUniqueStoryUrl(story: CreateStoryDto) {
     if (story.url) {
       const found = await this.getStoryByUrl(story.url);
       if (found) {
         throw new BadRequestException(`Duplicated story url: ${story.url}`);
       }
-    } else {
-      let newUrl = stringToSlug(story.title);
-      try {
-        const found = await this.getStoryByUrl(newUrl);
-        if (found) {
-          newUrl = `${newUrl}-${randomNumberString(4)}`;
-        }
-      } catch (e) {}
-      story.url = newUrl;
+      return story.url;
     }
 
-    story.authors = await this.authorService.syncAuthors(story.authors || []);
-    story.genres = await this.genreService.getValidGenres(story.genres || []);
-
-    const user = await this.userService.getById(userId);
-    const newStory = await this.storyRepository.create(story);
-    const now = new Date();
-    const savedStory = await this.storyRepository.save({
-      ...newStory,
-      created: now,
-      updated: now,
-      createdBy: user,
-      updatedBy: user,
-      view: 0,
-      lastChapter: 0,
-      upvote: 0,
-      downvote: 0,
-    });
-    this.eventEmitter.emitAsync(StoryCreatedEvent.name, new StoryCreatedEvent(savedStory)).then();
-    return StoryService.toDto(savedStory);
+    const generatedUrl = stringToSlug(story.title);
+    let checkUrl = generatedUrl;
+    while (true) {
+      const found = await this.storyRepository.findOne({ where: { url: checkUrl }, loadEagerRelations: false });
+      if (found) {
+        checkUrl = `${generatedUrl}-${randomNumberString(4)}`;
+      } else {
+        return checkUrl;
+      }
+    }
   }
 
   async updateStory(currentStory: Story, updateStory: UpdateStoryDto, userId: number): Promise<Story> {
     const user = await this.userService.getById(userId);
-    const authors = await this.authorService.syncAuthors(updateStory.authors || []);
-    const genres = await this.genreService.getValidGenres(updateStory.genres || []);
-    await this.storyRepository.save({
-      ...updateStory,
-      id: currentStory.id,
-      authors,
-      genres,
-      updated: new Date(),
-      updatedBy: user,
+
+    return await this.storyRepository.manager.transaction(async (entityManager) => {
+      const authors = await this.authorService.syncAuthors(updateStory.authors || [], entityManager);
+      const genres = await this.genreService.getValidGenres(updateStory.genres || [], entityManager);
+
+      const updatedStory = await entityManager.save(Story, {
+        ...updateStory,
+        id: currentStory.id,
+        authors,
+        genres,
+        updated: new Date(),
+        updatedBy: user,
+      });
+
+      this.eventEmitter.emitAsync(StoryUpdatedEvent.name, new StoryUpdatedEvent(updatedStory)).then();
+
+      return updatedStory;
     });
-    const saved = await this.getStory(currentStory.id);
-    this.eventEmitter.emitAsync(StoryUpdatedEvent.name, new StoryUpdatedEvent(saved)).then();
-    return saved;
   }
 
   async getStoryByUrl(url: string): Promise<Story | null> {

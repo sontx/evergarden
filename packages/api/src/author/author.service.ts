@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { EntityManager, FindOneOptions, Repository } from "typeorm";
 import { Author } from "./author.entity";
 import { GetAuthorDto } from "@evergarden/shared";
 import { EventEmitter2 } from "@nestjs/event-emitter";
@@ -20,10 +20,13 @@ export class AuthorService {
     return this.authorRepository.find();
   }
 
-  async getByName(name: string): Promise<GetAuthorDto> {
-    const found = await this.authorRepository.findOne({
+  async getByName(name: string, entityManger?: EntityManager): Promise<GetAuthorDto> {
+    const findOptions: FindOneOptions<Author> = {
       where: { name },
-    });
+    };
+    const found = entityManger
+      ? await entityManger.findOne(Author, findOptions)
+      : await this.authorRepository.findOne(findOptions);
     return this.toDto(found);
   }
 
@@ -44,21 +47,23 @@ export class AuthorService {
     );
   }
 
-  private async add(name: string): Promise<GetAuthorDto> {
-    const newAuthor = await this.authorRepository.create({ name });
-    const saved = await this.authorRepository.save(newAuthor);
-    this.eventEmitter.emitAsync(AuthorCreatedEvent.name, new AuthorCreatedEvent(saved)).then();
-    return this.toDto(await this.authorRepository.save(newAuthor));
+  private async add(name: string, entityManger?: EntityManager): Promise<GetAuthorDto> {
+    const newAuthor = { name };
+    const savedAuthor = entityManger
+      ? await entityManger.save(Author, newAuthor)
+      : await this.authorRepository.save(newAuthor);
+    this.eventEmitter.emitAsync(AuthorCreatedEvent.name, new AuthorCreatedEvent(savedAuthor)).then();
+    return this.toDto(savedAuthor);
   }
 
-  async syncAuthors(authors: GetAuthorDto[]): Promise<GetAuthorDto[]> {
+  async syncAuthors(authors: GetAuthorDto[], entityManger?: EntityManager): Promise<GetAuthorDto[]> {
     const syncList = [];
     for (const author of authors) {
       const name = author.name.trim();
       if (name) {
-        const existingAuthor = await this.getByName(name);
+        const existingAuthor = await this.getByName(name, entityManger);
         if (!existingAuthor) {
-          const newAuthor = await this.add(name);
+          const newAuthor = await this.add(name, entityManger);
           syncList.push(newAuthor);
         } else {
           syncList.push(existingAuthor);

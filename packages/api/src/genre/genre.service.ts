@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 import { GetGenreDto } from "@evergarden/shared";
 import { Genre } from "./genre.entity";
 
@@ -39,10 +39,12 @@ export class GenreService {
     }
   }
 
-  async getValidGenres(genres: GetGenreDto[]): Promise<Genre[]> {
+  async getValidGenres(genres: GetGenreDto[], entityManager?: EntityManager): Promise<Genre[]> {
     const temp = [];
     for (const genre of genres) {
-      const found = await this.genreRepository.findOne(genre.id);
+      const found = entityManager
+        ? await entityManager.findOne(Genre, genre.id)
+        : await this.genreRepository.findOne(genre.id);
       if (found) {
         temp.push(found);
       }
