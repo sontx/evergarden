@@ -12,7 +12,6 @@ import {
 } from "@evergarden/shared";
 import { AuthorService } from "../author/author.service";
 import { GenreService } from "../genre/genre.service";
-import { User } from "../user/user.entity";
 import { UserService } from "../user/user.service";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { StoryUpdatedEvent } from "../events/story-updated.event";
@@ -207,20 +206,6 @@ export class StoryService {
 
   async getStory(id: number): Promise<Story | null> {
     return await this.storyRepository.findOne(id);
-  }
-
-  async updateStoryInternal(story: Story, user: User): Promise<boolean> {
-    try {
-      await this.storyRepository.save({
-        ...story,
-        updated: new Date(),
-        updatedBy: user,
-      });
-      return true;
-    } catch (e) {
-      this.logger.warn(`Error while updating story: ${story.id}`, e);
-      return false;
-    }
   }
 
   async deleteStory(storyId: number): Promise<void> {

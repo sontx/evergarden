@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, Repository } from "typeorm";
 import { Chapter } from "./chapter.entity";
@@ -10,7 +10,6 @@ import {
   UpdateChapterDto,
 } from "@evergarden/shared";
 import { Story } from "../story/story.entity";
-import { StoryService } from "../story/story.service";
 import { UserService } from "../user/user.service";
 import { Pageable } from "../common/pageable";
 
@@ -27,8 +26,8 @@ function toPreviewDto(item: Chapter): GetPreviewChapter {
 @Injectable()
 export class ChapterService {
   constructor(
-    @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
-    private storyService: StoryService,
+    @InjectRepository(Chapter)
+    private chapterRepository: Repository<Chapter>,
     private userService: UserService,
   ) {}
 
@@ -73,26 +72,28 @@ export class ChapterService {
 
   async addChapter(story: Story, chapter: CreateChapterDto, userId: number): Promise<GetChapterDto> {
     const user = await this.userService.getById(userId);
-    let newChapter = await this.chapterRepository.create(chapter);
-    const now = new Date();
-    newChapter = await this.chapterRepository.save({
-      ...newChapter,
-      storyId: story.id,
-      created: now,
-      updated: now,
-      createdBy: user,
-      updatedBy: user,
-      chapterNo: (story.lastChapter || 0) + 1,
+    return await this.chapterRepository.manager.transaction(async (entityManager) => {
+      const now = new Date();
+      const nextChapterNo = (story.lastChapter || 0) + 1;
+
+      const savedChapter = await entityManager.save(Chapter, {
+        ...chapter,
+        storyId: story.id,
+        created: now,
+        updated: now,
+        createdBy: user,
+        updatedBy: user,
+        chapterNo: nextChapterNo,
+      });
+
+      await entityManager.update(Story, story.id, {
+        lastChapter: nextChapterNo,
+        updated: now,
+        updatedBy: user,
+      });
+
+      return ChapterService.toDto(savedChapter);
     });
-    const updatedStory = await this.storyService.updateStoryInternal(
-      { ...story, lastChapter: newChapter.chapterNo },
-      user,
-    );
-    if (!updatedStory) {
-      await this.chapterRepository.delete(newChapter.id as any);
-      throw new BadRequestException("Cannot update story");
-    }
-    return ChapterService.toDto(newChapter);
   }
 
   async updateChapter(currentChapter: Chapter, newChapter: UpdateChapterDto, userId: number): Promise<GetChapterDto> {
