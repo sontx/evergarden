@@ -1,13 +1,14 @@
 import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
 import { Story } from "../../story/story.entity";
-import { SearchResult, StorySearchBody } from "@evergarden/shared";
+import { StorySearchBody } from "@evergarden/shared";
 import { OnEvent } from "@nestjs/event-emitter";
 import { StoryCreatedEvent } from "../../events/story-created.event";
 import { StoryUpdatedEvent } from "../../events/story-updated.event";
 import { StoryDeletedEvent } from "../../events/story-deleted.event";
 import { IStorySearchService } from "../interfaces/story-search.service";
 import { StoryService } from "../../story/story.service";
+import { SearchResult } from "../search-result";
 
 @Injectable()
 export default class ElasticStorySearchService implements IStorySearchService {

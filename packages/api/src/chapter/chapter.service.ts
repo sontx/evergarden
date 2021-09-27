@@ -5,7 +5,7 @@ import { Chapter } from "./chapter.entity";
 import {
   CreateChapterDto,
   GetChapterDto,
-  GetPreviewChapter,
+  GetPreviewChapterDto,
   PaginationResult,
   UpdateChapterDto,
 } from "@evergarden/shared";
@@ -13,7 +13,7 @@ import { Story } from "../story/story.entity";
 import { UserService } from "../user/user.service";
 import { Pageable } from "../common/pageable";
 
-function toPreviewDto(item: Chapter): GetPreviewChapter {
+function toPreviewDto(item: Chapter): GetPreviewChapterDto {
   return {
     id: item.id,
     chapterNo: item.chapterNo,
@@ -51,7 +51,7 @@ export class ChapterService {
       includesUnpublished?: boolean;
       sort?: "asc" | "desc";
     },
-  ): Promise<PaginationResult<GetPreviewChapter> | GetPreviewChapter[]> {
+  ): Promise<PaginationResult<GetPreviewChapterDto> | GetPreviewChapterDto[]> {
     const findOptions: FindManyOptions<Chapter> = {
       where: { storyId: storyId, ...(!options.includesUnpublished ? { published: true } : {}) },
       order: { chapterNo: options.sort === "asc" ? "ASC" : "DESC" },

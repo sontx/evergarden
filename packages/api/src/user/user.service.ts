@@ -1,4 +1,4 @@
-import { GetUserDto, OAuth2Provider, Role } from "@evergarden/shared";
+import { GetUserDto, OAuth2Provider } from "@evergarden/shared";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
@@ -6,6 +6,7 @@ import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { ReadingHistoryService } from "../reading-history/reading-history.service";
 import { ConfigService } from "@nestjs/config";
+import { Role } from "../auth/role/roles";
 
 @Injectable()
 export class UserService {

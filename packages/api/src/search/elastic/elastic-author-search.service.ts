@@ -1,11 +1,12 @@
 import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { ElasticsearchService } from "@nestjs/elasticsearch";
-import { AuthorSearchBody, SearchResult } from "@evergarden/shared";
+import { AuthorSearchBody } from "@evergarden/shared";
 import { Author } from "../../author/author.entity";
 import { OnEvent } from "@nestjs/event-emitter";
 import { AuthorCreatedEvent } from "../../events/author-created.event";
 import { IAuthorSearchService } from "../interfaces/author-search.service";
 import { AuthorService } from "../../author/author.service";
+import { SearchResult } from "../search-result";
 
 @Injectable()
 export default class ElasticAuthorSearchService implements IAuthorSearchService {

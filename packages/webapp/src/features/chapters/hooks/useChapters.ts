@@ -1,6 +1,6 @@
 import { useSimpleQuery } from "../../../hooks/api-query/useSimpleQuery";
 import { UseQueryOptions } from "react-query";
-import { GetChapterDto, GetPreviewChapter } from "@evergarden/shared";
+import { GetChapterDto, GetPreviewChapterDto } from "@evergarden/shared";
 import api from "../../../utils/api";
 
 async function fetchRangeChapters(
@@ -24,7 +24,7 @@ export function useChapters(
   storyId: number | undefined,
   from: number,
   to: number,
-  options?: UseQueryOptions<GetPreviewChapter[]>,
+  options?: UseQueryOptions<GetPreviewChapterDto[]>,
 ) {
   return useSimpleQuery(
     ["chapters", storyId, { from, to }],

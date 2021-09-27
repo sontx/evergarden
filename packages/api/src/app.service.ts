@@ -4,11 +4,11 @@ import genresDataset from "./genres.dataset";
 import { GenreService } from "./genre/genre.service";
 import { UserService } from "./user/user.service";
 import { ConfigService } from "@nestjs/config";
-import { Role } from "@evergarden/shared";
 import { AuthorService } from "./author/author.service";
 import { AUTHOR_SEARCH_SERVICE_KEY, IAuthorSearchService } from "./search/interfaces/author-search.service";
 import { IStorySearchService, STORY_SEARCH_SERVICE_KEY } from "./search/interfaces/story-search.service";
 import { TrendingService } from "./trending/trending.service";
+import { Role } from "./auth/role/roles";
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {

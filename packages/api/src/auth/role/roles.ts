@@ -1,4 +1,4 @@
-import { Role } from "@evergarden/shared";
+export type Role = "guest" | "user" | "mod" | "admin";
 
 const roleWeight: { [K in Role]: number } = {
   guest: 0,

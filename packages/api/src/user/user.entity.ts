@@ -1,9 +1,10 @@
 import { Exclude } from "class-transformer";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { OAuth2Provider, Role } from "@evergarden/shared";
+import { OAuth2Provider } from "@evergarden/shared";
 import { UserSettings } from "./user-settings";
 import { Story } from "../story/story.entity";
 import { ReadingHistory } from "../reading-history/reading-history.entity";
+import { Role } from "../auth/role/roles";
 
 @Entity("users")
 export class User {

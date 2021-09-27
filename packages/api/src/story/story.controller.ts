@@ -25,7 +25,6 @@ import {
   CreateStoryDto,
   GetStoryDto,
   PaginationResult,
-  StoryCategory,
   StorySearchBody,
   UpdateStoryDto,
 } from "@evergarden/shared";
@@ -39,8 +38,14 @@ import { isGod, isNumber, isOwnerOrGod } from "../common/utils";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { BufferedFile } from "../storage/file.model";
 import { Story } from "./story.entity";
-import { IStoryStorageService, STORY_STORAGE_SERVICE_KEY } from "../storage/interfaces/story-storage.service";
-import { IStorySearchService, STORY_SEARCH_SERVICE_KEY } from "../search/interfaces/story-search.service";
+import {
+  IStoryStorageService,
+  STORY_STORAGE_SERVICE_KEY,
+} from "../storage/interfaces/story-storage.service";
+import {
+  IStorySearchService,
+  STORY_SEARCH_SERVICE_KEY,
+} from "../search/interfaces/story-search.service";
 import { TrendingService } from "../trending/trending.service";
 import { Pageable } from "../common/pageable";
 
@@ -53,6 +58,8 @@ const SimpleParseArrayPipe = new ParseArrayPipe({
 function isSlug(idOrSlug: number | string): idOrSlug is string {
   return !isNumber(idOrSlug);
 }
+
+type QueryCategory = "updated" | "hot" | "user" | "spotlight" | "suggestions" | "recommend" | "new";
 
 @Controller("stories")
 export class StoryController {
@@ -74,7 +81,7 @@ export class StoryController {
     @Query("page") page,
     @Query("skip") skip,
     @Query("limit") limit,
-    @Query("category") category: StoryCategory,
+    @Query("category") category: QueryCategory,
     @Query("ids", SimpleParseArrayPipe) ids: number[],
     @Query("search") search: string,
     @Query("genres", SimpleParseArrayPipe) genres: number[],

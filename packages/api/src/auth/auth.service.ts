@@ -1,4 +1,4 @@
-import { AuthUser, JwtPayload, OAuth2Provider, UserPass } from "@evergarden/shared";
+import { AuthUser, OAuth2Provider, UserPass } from "@evergarden/shared";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
@@ -7,6 +7,7 @@ import { User } from "../user/user.entity";
 import { GoogleAuthService } from "./google-auth.service";
 import { FacebookAuthService } from "./facebook-auth.service";
 import ms = require("ms");
+import { JwtPayload } from "./jwt-payload";
 
 @Injectable()
 export class AuthService {

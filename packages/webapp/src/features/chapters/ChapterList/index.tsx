@@ -1,4 +1,4 @@
-import { GetPreviewChapter } from "@evergarden/shared";
+import { GetPreviewChapterDto } from "@evergarden/shared";
 import { List } from "rsuite";
 import { ChapterHeader } from "../../../components/ChapterHeader";
 import { isDesktop, isMobileOnly } from "react-device-detect";
@@ -9,14 +9,14 @@ import { scrollIntoHighlightedChapter } from "./utils";
 
 export interface ChapterListBaseProps {
   sort: "asc" | "desc";
-  renderMeta?: (chapter: Partial<GetPreviewChapter>) => ReactNode;
+  renderMeta?: (chapter: Partial<GetPreviewChapterDto>) => ReactNode;
   onClick?: (chapterNo: number) => void;
   highlighted?: number[];
   unreadFrom?: number;
 }
 
 export interface ChapterListProps extends ChapterListBaseProps {
-  chapters?: GetPreviewChapter[];
+  chapters?: GetPreviewChapterDto[];
   skeletonFrom: number;
   skeletonTo: number;
 }
