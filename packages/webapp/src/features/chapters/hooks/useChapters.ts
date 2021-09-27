@@ -17,7 +17,7 @@ async function fetchRangeChapters(
       sort,
     },
   });
-  return response.data.items;
+  return response.data;
 }
 
 export function useChapters(
