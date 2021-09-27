@@ -11,7 +11,7 @@ import { useGoUserStoryList } from "../../hooks/navigation/useGoUserStoryList";
 
 export function StoryEditorPage() {
   const intl = useIntl();
-  const { url: slug } = useParams<{ url: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const isUpdate = !!slug;
   const gotoStory = useGoStory();
   const gotoUserChapterList = useGoUserChapterList();

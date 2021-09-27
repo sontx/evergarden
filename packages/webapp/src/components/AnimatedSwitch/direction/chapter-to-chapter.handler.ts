@@ -9,13 +9,13 @@ import { matchPath } from "react-router-dom";
 function extractParams(
   pathname: string,
 ): { slug: string; chapterNo: number } | null {
-  const match = matchPath<{ url: string; chapterNo: string }>(pathname, {
-    path: "/reading/:url/:chapterNo",
+  const match = matchPath<{ slug: string; chapterNo: string }>(pathname, {
+    path: "/reading/:slug/:chapterNo",
     exact: true,
   });
   return match
     ? {
-        slug: match.params?.url,
+        slug: match.params?.slug,
         chapterNo: parseInt(match.params?.chapterNo || ""),
       }
     : null;

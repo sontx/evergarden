@@ -9,7 +9,7 @@ import { AppContent } from "../../components/AppContent";
 import { StoryPreview } from "../../features/story/StoryPreview";
 
 export function Story() {
-  const { url } = useParams() as any;
+  const { slug } = useParams() as any;
   const intl = useIntl();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export function Story() {
       <SEO title={intl.formatMessage({ id: "pageTitleStory" })} />
       <AppHeader />
       <AppContent noPadding>
-        <StoryPreview slug={url} />
+        <StoryPreview slug={slug} />
       </AppContent>
       <AppFooter />
     </AppContainer>

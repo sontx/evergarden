@@ -41,7 +41,7 @@ export function SearchBox({ onClose }: { onClose: () => void }) {
   const handleSelect = useCallback(
     (item) => {
       onClose();
-      gotoStory(item.origin.url);
+      gotoStory(item.origin.slug);
     },
     [gotoStory, onClose],
   );

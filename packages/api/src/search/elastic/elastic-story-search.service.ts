@@ -98,7 +98,7 @@ export default class ElasticStorySearchService implements IStorySearchService {
                 type: "text",
                 index: false,
               },
-              url: {
+              slug: {
                 type: "text",
                 index: false,
               },
@@ -184,7 +184,7 @@ export default class ElasticStorySearchService implements IStorySearchService {
   private toSearchBody(story: Story) {
     return {
       id: story.id,
-      url: story.url,
+      slug: story.slug,
       title: story.title,
       description: story.description,
       thumbnail: story.thumbnail,

@@ -10,26 +10,26 @@ import { useStory } from "../../features/story/hooks/useStory";
 import { useIntl } from "react-intl";
 
 export function UserChaptersPage() {
-  const { url } = useParams<{ url: string }>();
-  const { data: story } = useStory(url);
+  const { slug } = useParams<{ slug: string }>();
+  const { data: story } = useStory(slug);
   const gotoUserStory = useGoEditStory();
   const gotoCreateChapter = useGoCreateChapter();
   const gotoEditChapter = useGoEditChapter();
   const intl = useIntl();
 
   const handleBack = useCallback(() => {
-    gotoUserStory(url);
-  }, [gotoUserStory, url]);
+    gotoUserStory(slug);
+  }, [gotoUserStory, slug]);
 
   const handleCreateNew = useCallback(() => {
-    gotoCreateChapter(url);
-  }, [gotoCreateChapter, url]);
+    gotoCreateChapter(slug);
+  }, [gotoCreateChapter, slug]);
 
   const handleEditChapter = useCallback(
     (chapterNo: number) => {
-      gotoEditChapter(url, chapterNo);
+      gotoEditChapter(slug, chapterNo);
     },
-    [gotoEditChapter, url],
+    [gotoEditChapter, slug],
   );
 
   return (

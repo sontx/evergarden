@@ -9,18 +9,18 @@ import { UpdateChapterEditor } from "../../features/chapter-editor/UpdateChapter
 import { CreateChapterEditor } from "../../features/chapter-editor/CreateChapterEditor";
 
 export function ChapterEditorPage() {
-  const { url, chapterNo } = useParams<{ url: string; chapterNo: string }>();
+  const { slug, chapterNo } = useParams<{ slug: string; chapterNo: string }>();
   const intl = useIntl();
   const gotoReading = useGoReading();
   const gotoUserChapterList = useGoUserChapterList();
 
   const handleBack = useCallback(() => {
-    gotoUserChapterList(url);
-  }, [gotoUserChapterList, url]);
+    gotoUserChapterList(slug);
+  }, [gotoUserChapterList, slug]);
 
   const handleView = useCallback(() => {
-    gotoReading(url, parseInt(chapterNo));
-  }, [chapterNo, gotoReading, url]);
+    gotoReading(slug, parseInt(chapterNo));
+  }, [chapterNo, gotoReading, slug]);
 
   const isUpdate = !!chapterNo;
 
@@ -49,9 +49,9 @@ export function ChapterEditorPage() {
       }
     >
       {isUpdate ? (
-        <UpdateChapterEditor slug={url} chapterNo={parseInt(chapterNo)} />
+        <UpdateChapterEditor slug={slug} chapterNo={parseInt(chapterNo)} />
       ) : (
-        <CreateChapterEditor slug={url} />
+        <CreateChapterEditor slug={slug} />
       )}
     </UserPage>
   );

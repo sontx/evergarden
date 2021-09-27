@@ -28,7 +28,7 @@ export function useCreateChapter(story: GetStoryDto | undefined) {
         );
         await queryClient.invalidateQueries(["chapters", data.storyId]);
 
-        const storyKey = ["story", story?.url];
+        const storyKey = ["story", story?.slug];
         await queryClient.cancelQueries(storyKey);
         const currentStory = queryClient.getQueryData(storyKey) as GetStoryDto;
         if (currentStory) {

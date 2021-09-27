@@ -10,7 +10,7 @@ import { ReadingPanel } from "../../features/chapter/ReadingPanel";
 import { useUserSettings } from "../../features/settings/hooks/useUserSettings";
 
 export function Reading() {
-  const { url, chapterNo } = useParams() as any;
+  const { slug, chapterNo } = useParams() as any;
   const intl = useIntl();
   const { data: settings } = useUserSettings();
 
@@ -18,7 +18,7 @@ export function Reading() {
     <AppContainer showBackTop className="reading-page">
       <SEO title={intl.formatMessage({ id: "pageTitleReading" })} />
       <AppContent noPadding>
-        <ReadingPanel slug={url} chapterNo={parseInt(`${chapterNo}`)} />
+        <ReadingPanel slug={slug} chapterNo={parseInt(`${chapterNo}`)} />
       </AppContent>
       <AppFooter />
       <Helmet>

@@ -103,7 +103,7 @@ export interface GetGenreDto {
 
 export interface GetStoryDto {
   id: number;
-  url: string;
+  slug: string;
   title: string;
   description?: string;
   thumbnail?: string;
@@ -129,7 +129,7 @@ export class CreateStoryDto {
   @MinLength(4)
   @IsString()
   @Matches(/[a-zA-Z]/s)
-  url?: string;
+  slug?: string;
 
   @MinLength(4)
   @IsString()
@@ -288,7 +288,7 @@ export class UpdateReadingHistoryDto {
 export interface StorySearchBody {
   id: number;
   title: string;
-  url: string;
+  slug: string;
   description?: string;
   thumbnail: string;
 }

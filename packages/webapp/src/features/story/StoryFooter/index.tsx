@@ -15,7 +15,7 @@ export function StoryFooter({ story }: { story: GetStoryDto }) {
   const [activeTab, setActiveTab] = useState<
     "" | "chapters" | "reviews" | "comments"
   >("");
-  const slug = useMemo(() => story?.url, [story?.url]);
+  const slug = useMemo(() => story?.slug, [story?.slug]);
 
   useEffect(() => {
     if (state.focusTo === "comment") {

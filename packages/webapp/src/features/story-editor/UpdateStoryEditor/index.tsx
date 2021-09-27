@@ -4,9 +4,9 @@ import { useUpdateStory } from "../hooks/useUpdateStory";
 import { useStory } from "../../story/hooks/useStory";
 
 export function UpdateStoryEditor() {
-  const { url } = useParams<{ url: string }>();
-  const { isLoading: isFetching, data } = useStory(url);
-  const { isLoading: isSaving, mutate } = useUpdateStory(url);
+  const { slug } = useParams<{ slug: string }>();
+  const { isLoading: isFetching, data } = useStory(slug);
+  const { isLoading: isSaving, mutate } = useUpdateStory(slug);
 
   return (
     <StoryEditor

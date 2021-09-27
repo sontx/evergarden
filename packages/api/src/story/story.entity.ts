@@ -13,7 +13,7 @@ import { ReadingHistory } from "../reading-history/reading-history.entity";
 @Check(`"lastChapter" is NULL OR lastChapter > 0`)
 export class Story extends AbstractEntity {
   @Column({ type: "nvarchar", length: 255, unique: true })
-  url: string;
+  slug: string;
 
   @Column({ type: "nvarchar", length: 255, unique: true })
   title: string;

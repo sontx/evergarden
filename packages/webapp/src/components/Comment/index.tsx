@@ -8,7 +8,7 @@ export function Comment({ story }: { story: GetStoryDto }) {
   const { isDarkMode } = useIsDarkMode();
   return (
     <Comments
-      href={`${window.location.origin}/${story.url}`}
+      href={`${window.location.origin}/${story.slug}`}
       mobile={isMobileOnly}
       numPosts={10}
       width="100%"

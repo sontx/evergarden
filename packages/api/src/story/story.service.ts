@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
+import { BadRequestException, forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, Repository } from "typeorm";
 import { Story } from "./story.entity";
@@ -21,8 +21,6 @@ import { Pageable } from "../common/pageable";
 
 @Injectable()
 export class StoryService {
-  private readonly logger = new Logger(StoryService.name);
-
   constructor(
     @InjectRepository(Story)
     private storyRepository: Repository<Story>,
@@ -144,7 +142,7 @@ export class StoryService {
   }
 
   async addStory(story: CreateStoryDto, userId: number): Promise<GetStoryDto> {
-    const url = await this.getUniqueStoryUrl(story);
+    const slug = await this.getUniqueStorySlug(story);
     const user = await this.userService.getById(userId);
 
     return await this.storyRepository.manager.transaction(async (entityManager) => {
@@ -154,7 +152,7 @@ export class StoryService {
       const now = new Date();
       const savedStory = await entityManager.save(Story, {
         ...story,
-        url,
+        slug,
         created: now,
         updated: now,
         createdBy: user,
@@ -169,23 +167,23 @@ export class StoryService {
     });
   }
 
-  private async getUniqueStoryUrl(story: CreateStoryDto) {
-    if (story.url) {
-      const found = await this.getStoryByUrl(story.url);
+  private async getUniqueStorySlug(story: CreateStoryDto) {
+    if (story.slug) {
+      const found = await this.getStoryByUrl(story.slug);
       if (found) {
-        throw new BadRequestException(`Duplicated story url: ${story.url}`);
+        throw new BadRequestException(`Duplicated story slug: ${story.slug}`);
       }
-      return story.url;
+      return story.slug;
     }
 
-    const generatedUrl = stringToSlug(story.title);
-    let checkUrl = generatedUrl;
+    const generatedSlug = stringToSlug(story.title);
+    let checkSlug = generatedSlug;
     while (true) {
-      const found = await this.storyRepository.findOne({ where: { url: checkUrl }, loadEagerRelations: false });
+      const found = await this.storyRepository.findOne({ where: { slug: checkSlug }, loadEagerRelations: false });
       if (found) {
-        checkUrl = `${generatedUrl}-${randomNumberString(4)}`;
+        checkSlug = `${generatedSlug}-${randomNumberString(4)}`;
       } else {
-        return checkUrl;
+        return checkSlug;
       }
     }
   }
@@ -212,9 +210,9 @@ export class StoryService {
     });
   }
 
-  async getStoryByUrl(url: string): Promise<Story | null> {
+  async getStoryByUrl(slug: string): Promise<Story | null> {
     return await this.storyRepository.findOne({
-      where: { url },
+      where: { slug },
     });
   }
 

@@ -21,7 +21,7 @@ export class LocalStorySearchService implements IStorySearchService {
     return found.map((story) => ({
       id: story.id,
       title: story.title,
-      url: story.url,
+      slug: story.slug,
       thumbnail: story.thumbnail,
       description: story.description,
     }));

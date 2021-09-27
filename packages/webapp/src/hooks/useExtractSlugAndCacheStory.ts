@@ -11,7 +11,7 @@ export function useExtractSlugAndCacheStory() {
         slug = slugOrStory;
       } else {
         cacheStory(slugOrStory);
-        slug = slugOrStory.url;
+        slug = slugOrStory.slug;
       }
       return slug;
     },

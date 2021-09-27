@@ -35,7 +35,7 @@ const DebouncedVoteButton = withDebouncedClick(VoteButton);
 
 export function Reaction({ story }: { story: GetStoryDto }) {
   const { isLoggedIn } = useIsLoggedIn();
-  const { mutate } = useVote(story.url);
+  const { mutate } = useVote(story.slug);
   const currentVote = story.history?.vote;
 
   const changeVote = (targetVote: VoteType) => {
