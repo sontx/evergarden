@@ -8,7 +8,7 @@ import { StoryService } from "../story/story.service";
 import { GetStoryTrendingDto } from "@evergarden/shared";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
-const AUTO_UPDATE_TRENDING_CRON = isDevelopment() ? CronExpression.EVERY_MINUTE : CronExpression.EVERY_10_MINUTES;
+const AUTO_UPDATE_TRENDING_CRON = isDevelopment() ? CronExpression.EVERY_5_MINUTES : CronExpression.EVERY_10_MINUTES;
 
 @Injectable()
 export class TrendingService {

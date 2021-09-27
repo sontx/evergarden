@@ -1,22 +1,28 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindManyOptions, Repository } from "typeorm";
 import { Chapter } from "./chapter.entity";
 import {
   CreateChapterDto,
-  CreateReportChapterDto,
   GetChapterDto,
   GetPreviewChapter,
-  PaginationOptions,
   PaginationResult,
   UpdateChapterDto,
 } from "@evergarden/shared";
 import { Story } from "../story/story.entity";
 import { StoryService } from "../story/story.service";
 import { UserService } from "../user/user.service";
-import { User } from "../user/user.entity";
-import * as moment from "moment";
-import { ISendMailService, SEND_MAIL_SERVICE_KEY } from "../send-mail/interfaces/send-mail.service";
+import { Pageable } from "../common/pageable";
+
+function toPreviewDto(item: Chapter): GetPreviewChapter {
+  return {
+    id: item.id,
+    chapterNo: item.chapterNo,
+    title: item.title,
+    published: item.published,
+    created: item.created,
+  };
+}
 
 @Injectable()
 export class ChapterService {
@@ -24,11 +30,7 @@ export class ChapterService {
     @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
     private storyService: StoryService,
     private userService: UserService,
-    @Inject(SEND_MAIL_SERVICE_KEY)
-    private sendMailService: ISendMailService,
-  ) {
-    this.toDto = this.toDto.bind(this);
-  }
+  ) {}
 
   async getChapterById(chapterId: number): Promise<Chapter> {
     return this.chapterRepository.findOne(chapterId);
@@ -45,34 +47,28 @@ export class ChapterService {
 
   async getChapters(
     storyId: number,
-    pagination: PaginationOptions,
-    includesUnpublished?: boolean,
-    sort?: "asc" | "desc",
-  ): Promise<PaginationResult<GetPreviewChapter>> {
-    const result = await this.chapterRepository.findAndCount({
-      where: { storyId: storyId, ...(!includesUnpublished ? { published: true } : {}) },
-      order: { chapterNo: sort === "asc" ? "ASC" : "DESC" },
-      take: pagination.limit,
-      skip: isFinite(pagination.skip) ? pagination.skip : pagination.page * pagination.limit,
+    pageable: Pageable,
+    options: {
+      includesUnpublished?: boolean;
+      sort?: "asc" | "desc";
+    },
+  ): Promise<PaginationResult<GetPreviewChapter> | GetPreviewChapter[]> {
+    const findOptions: FindManyOptions<Chapter> = {
+      where: { storyId: storyId, ...(!options.includesUnpublished ? { published: true } : {}) },
+      order: { chapterNo: options.sort === "asc" ? "ASC" : "DESC" },
+      take: pageable.limit,
+      skip: pageable.skip,
+      loadEagerRelations: false,
       select: ["id", "chapterNo", "title", "published", "created"],
-    });
-
-    return {
-      items: result[0].map((item) => ({
-        id: item.id,
-        chapterNo: item.chapterNo,
-        title: item.title,
-        published: item.published,
-        created: item.created,
-      })),
-      meta: {
-        currentPage: pagination.page,
-        itemsPerPage: pagination.limit,
-        totalItems: result[1],
-        itemCount: result[0].length,
-        totalPages: Math.ceil(result[1] / pagination.limit),
-      },
     };
+
+    if (pageable.needPaging) {
+      const result = await this.chapterRepository.findAndCount(findOptions);
+      return pageable.toPaginationResult(result, toPreviewDto);
+    }
+
+    const result = await this.chapterRepository.find(findOptions);
+    return result.map(toPreviewDto);
   }
 
   async addChapter(story: Story, chapter: CreateChapterDto, userId: number): Promise<GetChapterDto> {
@@ -96,7 +92,7 @@ export class ChapterService {
       await this.chapterRepository.delete(newChapter.id as any);
       throw new BadRequestException("Cannot update story");
     }
-    return this.toDto(newChapter);
+    return ChapterService.toDto(newChapter);
   }
 
   async updateChapter(currentChapter: Chapter, newChapter: UpdateChapterDto, userId: number): Promise<GetChapterDto> {
@@ -109,13 +105,13 @@ export class ChapterService {
       updated: new Date(),
     };
     await this.chapterRepository.update(currentChapter.id, updatedChapter);
-    return this.toDto({
+    return ChapterService.toDto({
       ...currentChapter,
       ...updatedChapter,
     });
   }
 
-  toDto(chapter: Chapter): GetChapterDto {
+  static toDto(chapter: Chapter): GetChapterDto {
     return (
       chapter && {
         storyId: chapter.storyId,
@@ -124,50 +120,11 @@ export class ChapterService {
         title: chapter.title,
         created: chapter.created,
         updated: chapter.updated,
-        updatedBy: this.userService.toDto(chapter.updatedBy),
-        createdBy: this.userService.toDto(chapter.createdBy),
+        updatedBy: UserService.toDto(chapter.updatedBy),
+        createdBy: UserService.toDto(chapter.createdBy),
         content: chapter.content,
         published: chapter.published,
       }
-    );
-  }
-
-  async report(chapter: Chapter, report: CreateReportChapterDto, userId?: number) {
-    const to = chapter.updatedBy.email?.toLowerCase();
-    if (!to) {
-      return;
-    }
-
-    let user: User;
-    if (userId) {
-      user = await this.userService.getById(userId);
-    }
-
-    const story = await this.storyService.getStory(chapter.storyId);
-
-    if (!story) {
-      throw new NotFoundException(`Story was not found`);
-    }
-
-    const cc = [chapter.createdBy.email, story.createdBy.email, story.updatedBy.email].filter(
-      (email) => !!email && email.toLowerCase() !== to,
-    );
-    const from = user ? `Report from <strong>${user.fullName}</strong>` : "Report from guest";
-    await this.sendMailService.sendMail(
-      {
-        to,
-        cc: cc.join(", "),
-        subject: `[${story.title}] report chapter ${chapter.chapterNo}` + (chapter.title ? ` - ${chapter.title}` : ""),
-        htmlBody: `
-${from}
-<ul>
-<li>Type: ${report.type}</li>
-<li>Detail: ${report.detail || "No Detail"}</li>
-<li>Report at: ${moment().add(7, "hours").format("HH:mm DD/MM/YYYY")}</li>
-</ul>
-</ul>`,
-      },
-      false,
     );
   }
 }

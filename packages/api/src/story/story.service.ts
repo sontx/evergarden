@@ -5,7 +5,6 @@ import { Story } from "./story.entity";
 import {
   CreateStoryDto,
   GetStoryDto,
-  PaginationOptions,
   PaginationResult,
   randomNumberString,
   stringToSlug,
@@ -19,7 +18,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { StoryUpdatedEvent } from "../events/story-updated.event";
 import { StoryDeletedEvent } from "../events/story-deleted.event";
 import { StoryCreatedEvent } from "../events/story-created.event";
-import { getQuerySkip } from "../common/utils";
+import { Pageable } from "../common/pageable";
 
 @Injectable()
 export class StoryService {
@@ -33,9 +32,7 @@ export class StoryService {
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private eventEmitter: EventEmitter2,
-  ) {
-    this.toDto = this.toDto.bind(this);
-  }
+  ) {}
 
   async getAll() {
     return await this.storyRepository.find();
@@ -51,73 +48,74 @@ export class StoryService {
 
   async getStoriesByIds(ids: number[]): Promise<GetStoryDto[]> {
     const stories = await this.storyRepository.findByIds(ids);
-    return stories.map(this.toDto);
+    return stories.map(StoryService.toDto);
   }
 
   async getStories(
-    options: PaginationOptions,
+    pageable: Pageable,
     findOption?: FindManyOptions<Story>,
     includeUnpublished?: boolean,
-  ): Promise<PaginationResult<GetStoryDto>> {
+  ): Promise<PaginationResult<GetStoryDto> | GetStoryDto[]> {
     const { where = {}, ...rest } = findOption || ({} as any);
-    const result = await this.storyRepository.findAndCount({
+    const findOptions: FindManyOptions<Story> = {
       ...rest,
       where: includeUnpublished ? where : { published: true, ...where },
-      take: options.limit,
-      skip: getQuerySkip(options),
-    });
-    return this.toPaginationResult(options, result);
-  }
-
-  private toPaginationResult(options: PaginationOptions, result: [Story[], number]): PaginationResult<GetStoryDto> {
-    return {
-      items: result[0].map(this.toDto),
-      meta: {
-        currentPage: options.page,
-        itemsPerPage: options.limit,
-        totalItems: result[1],
-        itemCount: result[0].length,
-        totalPages: Math.ceil(result[1] / options.limit),
-      },
+      take: pageable.limit,
+      skip: pageable.skip,
     };
+
+    if (pageable.needPaging) {
+      const result = await this.storyRepository.findAndCount(findOptions);
+      return pageable.toPaginationResult(result, StoryService.toDto);
+    }
+
+    const result = await this.storyRepository.find(findOptions);
+    return result.map(StoryService.toDto);
   }
 
-  async getStoriesByGenres(genres: number[], options: PaginationOptions, includeUnpublished?: boolean) {
+  async getStoriesByGenres(genres: number[], options: Pageable, includeUnpublished?: boolean) {
     return this.getStoriesByJoin(genres, "genres", options, includeUnpublished);
   }
 
-  async getStoriesByAuthors(authors: number[], options: PaginationOptions, includeUnpublished?: boolean) {
+  async getStoriesByAuthors(authors: number[], options: Pageable, includeUnpublished?: boolean) {
     return this.getStoriesByJoin(authors, "authors", options, includeUnpublished);
   }
 
   private async getStoriesByJoin(
     joinIds: number[],
     joinTable: "genres" | "authors",
-    options: PaginationOptions,
+    pageable: Pageable,
     includeUnpublished?: boolean,
   ) {
     let query = this.storyRepository
       .createQueryBuilder("story")
       .innerJoin(`story.${joinTable}`, joinTable)
-      .take(options.limit)
-      .skip(getQuerySkip(options))
+      .take(pageable.limit)
+      .skip(pageable.skip)
       .orderBy("story.updated", "DESC");
     query = includeUnpublished
       ? query.where(`story.published = 1 and ${joinTable}.id in (:...joinIds)`, { joinIds })
       : query.where(`${joinTable}.id in (:...joinIds)`, { joinIds });
-    if (options.page !== undefined) {
+    if (pageable.needPaging) {
       const result = await query.getManyAndCount();
-      return this.toPaginationResult(options, result);
+      return pageable.toPaginationResult(result, StoryService.toDto);
     }
     return await query.getMany();
   }
 
-  async getLastUpdatedStories(
-    options: PaginationOptions,
-    includeUnpublished?: boolean,
-  ): Promise<PaginationResult<GetStoryDto>> {
+  async getNewStories(pageable: Pageable, includeUnpublished?: boolean) {
     return this.getStories(
-      options,
+      pageable,
+      {
+        order: { created: "DESC" },
+      },
+      includeUnpublished,
+    );
+  }
+
+  async getLastUpdatedStories(pageable: Pageable, includeUnpublished?: boolean) {
+    return this.getStories(
+      pageable,
       {
         order: { updated: "DESC" },
       },
@@ -125,24 +123,23 @@ export class StoryService {
     );
   }
 
-  async getUserStories(userId: number): Promise<GetStoryDto[]> {
-    const result = await this.getStories(
-      { page: 0, skip: 0, limit: 99999990 },
+  async getUserStories(userId: number, pageable: Pageable) {
+    return await this.getStories(
+      pageable,
       {
         where: { createdBy: userId },
         order: { updated: "DESC" },
       },
       true,
     );
-    return result.items;
   }
 
-  toDto(story: Story): GetStoryDto {
+  static toDto(story: Story): GetStoryDto {
     return (
       story && {
         ...story,
-        createdBy: this.userService.toDto(story.createdBy),
-        updatedBy: this.userService.toDto(story.updatedBy),
+        createdBy: UserService.toDto(story.createdBy),
+        updatedBy: UserService.toDto(story.updatedBy),
       }
     );
   }
@@ -182,7 +179,7 @@ export class StoryService {
       downvote: 0,
     });
     this.eventEmitter.emitAsync(StoryCreatedEvent.name, new StoryCreatedEvent(savedStory)).then();
-    return this.toDto(savedStory);
+    return StoryService.toDto(savedStory);
   }
 
   async updateStory(currentStory: Story, updateStory: UpdateStoryDto, userId: number): Promise<Story> {

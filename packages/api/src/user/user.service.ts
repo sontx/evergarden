@@ -36,7 +36,7 @@ export class UserService {
     return await this.userRepository.findOne(id);
   }
 
-  toDto(user: User): GetUserDto {
+  static toDto(user: User): GetUserDto {
     return (
       user && {
         id: user.id,

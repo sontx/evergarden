@@ -11,7 +11,7 @@ import {
   MaxLength,
   Min,
   MinLength,
-} from "class-validator";
+} from 'class-validator';
 
 export type OAuth2Provider = 'google' | 'facebook';
 
@@ -89,7 +89,7 @@ export interface JwtPayload {
 export type Role = 'guest' | 'user' | 'mod' | 'admin';
 
 export type StoryStatus = 'ongoing' | 'full';
-export type StoryType = 'convert' | 'translate' | 'self-composed'
+export type StoryType = 'convert' | 'translate' | 'self-composed';
 
 export interface GetAuthorDto {
   id: number;
@@ -225,12 +225,6 @@ export class CreateChapterDto {
 
 export class UpdateChapterDto extends CreateChapterDto {}
 
-export interface PaginationOptions {
-  page: number;
-  skip?: number;
-  limit: number;
-}
-
 export interface PaginationResult<T> {
   items: T[];
   meta: {
@@ -242,7 +236,14 @@ export interface PaginationResult<T> {
   };
 }
 
-export type StoryCategory = 'updated' | 'hot' | 'user' | 'spotlight' | 'suggestions' | 'recommend' | 'new';
+export type StoryCategory =
+  | 'updated'
+  | 'hot'
+  | 'user'
+  | 'spotlight'
+  | 'suggestions'
+  | 'recommend'
+  | 'new';
 export type VoteType = 'upvote' | 'downvote' | 'none';
 
 export interface GetReadingHistoryDto {
@@ -308,7 +309,9 @@ export interface AuthorSearchBody {
 
 export class CreateReportChapterDto {
   @IsString()
-  @Matches(/wrongContent|spellingMistake|wrongChapter|wrongTranslation|chaptersAreNotDisplayed|containsSensitiveVulgarLanguage/s)
+  @Matches(
+    /wrongContent|spellingMistake|wrongChapter|wrongTranslation|chaptersAreNotDisplayed|containsSensitiveVulgarLanguage/s
+  )
   type: string;
 
   @IsOptional()

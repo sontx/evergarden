@@ -61,7 +61,7 @@ export class UserController {
     }
     user.fullName = updateUserData.fullName;
     await this.userService.updateUser(user);
-    return this.userService.toDto(user);
+    return UserService.toDto(user);
   }
 
   @Put("settings")
@@ -93,7 +93,7 @@ export class UserController {
 
     user.photoUrl = await this.userStorageService.upload(file, id);
     await this.userService.updateUser(user);
-    return this.userService.toDto(user);
+    return UserService.toDto(user);
   }
 
   @Delete("avatar")
@@ -109,6 +109,6 @@ export class UserController {
     await this.userStorageService.removeAvatar(id);
     user.photoUrl = "";
     await this.userService.updateUser(user);
-    return this.userService.toDto(user);
+    return UserService.toDto(user);
   }
 }

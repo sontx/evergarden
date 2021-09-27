@@ -27,7 +27,6 @@ import {
   PaginationResult,
   StoryCategory,
   StorySearchBody,
-  toInt,
   UpdateStoryDto,
 } from "@evergarden/shared";
 import JwtGuard from "../auth/jwt/jwt.guard";
@@ -43,12 +42,17 @@ import { Story } from "./story.entity";
 import { IStoryStorageService, STORY_STORAGE_SERVICE_KEY } from "../storage/interfaces/story-storage.service";
 import { IStorySearchService, STORY_SEARCH_SERVICE_KEY } from "../search/interfaces/story-search.service";
 import { TrendingService } from "../trending/trending.service";
+import { Pageable } from "../common/pageable";
 
 const SimpleParseArrayPipe = new ParseArrayPipe({
   separator: ",",
   items: Number,
   optional: true,
 });
+
+function isSlug(idOrSlug: number | string): idOrSlug is string {
+  return !isNumber(idOrSlug);
+}
 
 @Controller("stories")
 export class StoryController {
@@ -77,15 +81,8 @@ export class StoryController {
     @Query("authors", SimpleParseArrayPipe) authors: number[],
     @Req() req,
   ): Promise<PaginationResult<GetStoryDto> | GetStoryDto[] | StorySearchBody[]> {
-    limit = toInt(limit);
-    const pagination = {
-      page: toInt(page),
-      skip: toInt(skip),
-      limit: limit > 100 ? 100 : limit,
-    };
-
+    const pageable = Pageable.from(page, skip, limit);
     const imGod = isGod(req);
-    const isDefinedArray = (arr: number[]) => !!arr && arr.length > 0;
 
     switch (category) {
       case "spotlight":
@@ -93,20 +90,20 @@ export class StoryController {
       case "suggestions":
       // TODO: implement spotlight
       case "new":
-      // TODO: implement spotlight
+        return await this.storyService.getNewStories(pageable, imGod);
       case "recommend":
       // TODO: implement spotlight
       case "updated":
-        return await this.storyService.getLastUpdatedStories(pagination, imGod);
+        return await this.storyService.getLastUpdatedStories(pageable, imGod);
       case "hot":
-        return await this.trendingService.getTrending(pagination.limit, pagination.skip);
+        return await this.trendingService.getTrending(pageable.limit, pageable.skip);
       case "user":
         if (!req.user) {
           throw new UnauthorizedException();
         }
-        return await this.storyService.getUserStories(req.user.id);
+        return await this.storyService.getUserStories(req.user.id, pageable);
       default:
-        if (isDefinedArray(ids)) {
+        if (Array.isArray(ids)) {
           const result = await this.storyService.getStoriesByIds(ids);
           if (imGod) {
             return result;
@@ -118,12 +115,12 @@ export class StoryController {
           return result;
         }
 
-        if (isDefinedArray(genres)) {
-          return this.storyService.getStoriesByGenres(genres, pagination, imGod);
+        if (Array.isArray(genres)) {
+          return this.storyService.getStoriesByGenres(genres, pageable, imGod);
         }
 
-        if (isDefinedArray(authors)) {
-          return this.storyService.getStoriesByAuthors(authors, pagination, imGod);
+        if (Array.isArray(authors)) {
+          return this.storyService.getStoriesByAuthors(authors, pageable, imGod);
         }
 
         if (search) {
@@ -137,7 +134,7 @@ export class StoryController {
   @UseGuards(JwtGuard)
   @JwtConfig({ anonymous: true })
   async getStory(@Param("idOrSlug") idOrSlug: string | number, @Req() req): Promise<GetStoryDto | boolean> {
-    const storyData = this.isSlug(idOrSlug)
+    const storyData = isSlug(idOrSlug)
       ? await this.storyService.getStoryByUrl(idOrSlug)
       : await this.storyService.getStory(idOrSlug);
 
@@ -149,11 +146,7 @@ export class StoryController {
       throw new ForbiddenException();
     }
 
-    return this.storyService.toDto(storyData);
-  }
-
-  private isSlug(idOrSlug: number | string): idOrSlug is string {
-    return !isNumber(idOrSlug);
+    return StoryService.toDto(storyData);
   }
 
   @Post()
@@ -179,7 +172,7 @@ export class StoryController {
     }
     const currentStory = await this.getAndCheckStoryPermission(id, req);
     const storyData = await this.storyService.updateStory(currentStory, story, req.user);
-    return this.storyService.toDto(storyData);
+    return StoryService.toDto(storyData);
   }
 
   private async getAndCheckStoryPermission(id: number, req): Promise<Story> {
@@ -213,7 +206,7 @@ export class StoryController {
     story.thumbnail = uploadedData.thumbnail;
     story.cover = uploadedData.cover;
     await this.storyService.updateStory(story, story, req.user);
-    return this.storyService.toDto(story);
+    return StoryService.toDto(story);
   }
 
   @Delete(":id/cover")
@@ -226,6 +219,6 @@ export class StoryController {
     story.thumbnail = "";
     story.cover = "";
     await this.storyService.updateStory(story, story, req.user);
-    return this.storyService.toDto(story);
+    return StoryService.toDto(story);
   }
 }

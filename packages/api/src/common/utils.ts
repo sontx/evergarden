@@ -1,5 +1,5 @@
 import { Story } from "../story/story.entity";
-import { GetChapterDto, GetStoryDto, PaginationOptions } from "@evergarden/shared";
+import { GetChapterDto, GetStoryDto } from "@evergarden/shared";
 import { Chapter } from "../chapter/chapter.entity";
 import { Readable } from "stream";
 import * as path from "path";
@@ -59,11 +59,6 @@ export async function writeFileAsync(
     await fs.promises.mkdir(dir, { recursive: true });
   }
   await fs.promises.writeFile(filePath, data, options);
-}
-
-export function getQuerySkip(options: PaginationOptions): number {
-  const value = isFinite(options.skip) ? options.skip : options.page * options.limit;
-  return isFinite(value) ? value : 0;
 }
 
 export async function forEachChunk<T>(arr: T[], limit: number, callback: (chunk: T[]) => Promise<void>) {

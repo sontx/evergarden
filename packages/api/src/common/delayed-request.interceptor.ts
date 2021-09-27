@@ -7,7 +7,7 @@ export class DelayedRequestInterceptor implements NestInterceptor {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(next.handle());
-      }, 2000);
+      }, 0);
     });
   }
 }

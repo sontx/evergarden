@@ -4,7 +4,6 @@ import {
   Controller,
   ForbiddenException,
   Get,
-  Logger,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -15,14 +14,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ChapterService } from "./chapter.service";
-import {
-  CreateChapterDto,
-  GetChapterDto,
-  PaginationResult,
-  toInt,
-  UpdateChapterDto,
-  GetPreviewChapter,
-} from "@evergarden/shared";
+import { CreateChapterDto, CreateReportChapterDto, GetChapterDto, UpdateChapterDto } from "@evergarden/shared";
 import { Role } from "../auth/role/roles.decorator";
 import JwtGuard from "../auth/jwt/jwt.guard";
 import { RolesGuard } from "../auth/role/roles.guard";
@@ -30,13 +22,16 @@ import { StoryService } from "../story/story.service";
 import { isOwnerOrGod } from "../common/utils";
 import { JwtConfig } from "../auth/jwt/jwt-config.decorator";
 import { Chapter } from "./chapter.entity";
-import { CreateReportChapterDto } from "@evergarden/shared";
+import { Pageable } from "../common/pageable";
+import { ReportService } from "./report.service";
 
 @Controller()
 export class ChapterController {
-  private readonly logger = new Logger(ChapterController.name);
-
-  constructor(private chapterService: ChapterService, private storyService: StoryService) {}
+  constructor(
+    private chapterService: ChapterService,
+    private storyService: StoryService,
+    private reportService: ReportService,
+  ) {}
 
   @Get("chapters/:id")
   @UseGuards(JwtGuard)
@@ -49,7 +44,7 @@ export class ChapterController {
     if (!chapter.published && !isOwnerOrGod(req, chapter)) {
       throw new ForbiddenException();
     }
-    return this.chapterService.toDto(chapter);
+    return ChapterService.toDto(chapter);
   }
 
   @Get("stories/:storyId/chapters/:chapterNo")
@@ -75,7 +70,7 @@ export class ChapterController {
         throw new ForbiddenException();
       }
 
-      return this.chapterService.toDto(chapter);
+      return ChapterService.toDto(chapter);
     }
     throw new BadRequestException();
   }
@@ -90,31 +85,16 @@ export class ChapterController {
     @Query("limit") limit,
     @Query("sort") sort: "asc" | "desc",
     @Req() req,
-  ): Promise<PaginationResult<GetPreviewChapter>> {
-    page = toInt(page);
-    limit = toInt(limit);
-    skip = toInt(skip);
-
+  ) {
     const story = await this.storyService.getStory(storyId);
     if (!story) {
       throw new NotFoundException();
     }
-
-    try {
-      return await this.chapterService.getChapters(
-        storyId,
-        {
-          page,
-          skip,
-          limit: limit > 100 ? 100 : limit,
-        },
-        isOwnerOrGod(req, story),
-        sort,
-      );
-    } catch (e) {
-      this.logger.warn(`Error while finding chapters of story ${storyId}`, e);
-      throw new BadRequestException();
-    }
+    const pageable = Pageable.from(page, skip, limit);
+    return await this.chapterService.getChapters(storyId, pageable, {
+      includesUnpublished: isOwnerOrGod(req, story),
+      sort,
+    });
   }
 
   @Post("stories/:storyId/chapters")
@@ -180,6 +160,6 @@ export class ChapterController {
     }
 
     const { id } = req.user || {};
-    await this.chapterService.report(chapter, report, id);
+    await this.reportService.report(chapter, report, id);
   }
 }

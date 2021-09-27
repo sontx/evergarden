@@ -45,7 +45,7 @@ export function calculateVoteCount(
   return null;
 }
 
-export function toInt(st: any): number {
+export function toInt(st: any, defaultValue: any = undefined): number {
   if (typeof st === "string" && st) {
     const num = parseInt(st);
     if (isNaN(num)) {
@@ -53,7 +53,7 @@ export function toInt(st: any): number {
     }
     return num;
   }
-  return st;
+  return defaultValue;
 }
 
 export function mergeObjects(from: any, to: any): any {
