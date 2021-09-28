@@ -6,7 +6,7 @@ import { AbstractViewHitsCacheService } from "../abstract-view-hits-cache.servic
 export class LocalViewHitsCacheService extends AbstractViewHitsCacheService {
   private cacheData: {
     [x: string]: ViewIncreasedEvent[];
-  };
+  } = {};
 
   constructor() {
     super();
