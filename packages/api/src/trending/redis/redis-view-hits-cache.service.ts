@@ -26,16 +26,27 @@ export class RedisViewHitsCacheService extends AbstractViewHitsCacheService {
   async popAll(): Promise<ViewIncreasedEvent[]> {
     const batchId = this.batchId;
     this.newBatch();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_, found] = await this.redisClient.scan(0, "MATCH", `hits:${batchId}:*`);
     const result: ViewIncreasedEvent[] = [];
-    for (const key of found) {
-      const stData = await this.redisClient.get(key);
-      if (stData) {
-        await this.redisClient.del(key);
-        result.push(JSON.parse(stData));
+    const readKeys: string[] = [];
+
+    const doPopAll = async (cursor: string | number) => {
+      const [nextCursor, found] = await this.redisClient.scan(cursor, "MATCH", `hits:${batchId}:*`);
+      for (const key of found) {
+        const stData = await this.redisClient.get(key);
+        if (stData && !readKeys.includes(key)) {
+          await this.redisClient.del(key);
+          result.push(JSON.parse(stData));
+          readKeys.push(key);
+        }
       }
-    }
+
+      const validCursor = parseInt(`${nextCursor}`);
+      if (validCursor > 0) {
+        await doPopAll(validCursor);
+      }
+    };
+
+    await doPopAll(0);
     return result;
   }
 }
